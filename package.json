@@ -1,0 +1,38 @@
+{
+  "name": "the-llm",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "typecheck": "astro check",
+    "a11y:check": "node scripts/a11y-check.mjs",
+    "style:check": "node scripts/style-policy-check.mjs",
+    "rwd:check": "node scripts/rwd-check.mjs",
+    "quality": "npm run format:check && npm run lint && npm run typecheck && npm run build && npm run a11y:check && npm run style:check && npm run rwd:check"
+  },
+  "dependencies": {
+    "@astrojs/check": "0.9.10",
+    "astro": "7.3.2",
+    "typescript": "5.9.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@typescript-eslint/eslint-plugin": "8.70.0",
+    "@typescript-eslint/parser": "8.70.0",
+    "eslint": "10.10.0",
+    "eslint-plugin-astro": "3.1.0",
+    "globals": "17.12.0",
+    "prettier": "3.9.6",
+    "prettier-plugin-astro": "1.0.0",
+    "@tailwindcss/vite": "4.3.3",
+    "@types/node": "22.20.2",
+    "tailwindcss": "4.3.3",
+    "typescript-eslint": "8.70.0"
+  }
+}

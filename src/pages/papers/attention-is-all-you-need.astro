@@ -1,0 +1,2253 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PaperMeta from '../../components/PaperMeta.astro';
+import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
+import StoryRail from '../../components/StoryRail.astro';
+import {
+  attentionIsAllYouNeed,
+  attentionSources,
+} from '../../content/papers/attention-is-all-you-need';
+
+const paper = attentionIsAllYouNeed;
+const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
+const paperUrl = `https://arxiv.org/abs/${paper.arxivId}`;
+const sourceMap: Record<string, (typeof attentionSources)[number]> = Object.fromEntries(
+  attentionSources.map((source) => [source.id, source]),
+);
+const sourceKindLabels: Record<string, string> = {
+  paper: '論文 / PAPER',
+  'authorial-account': '作者文章 / AUTHORIAL ACCOUNT',
+  interview: '訪談 / INTERVIEW',
+  'later-history': '後續紀錄 / LATER HISTORY',
+};
+const confidenceLabels: Record<string, string> = {
+  direct: '直接',
+  corroborated: '交叉印證',
+  inference: '推論',
+  unknown: '未知',
+};
+const story = [
+  {
+    year: '之前',
+    label: '問題 / THE PROBLEM',
+    title: '翻譯遇到記憶問題。',
+    body: 'RNN 一個 token 接一個 token 地讀。句子一長，訓練就變慢，也更難記住前面的內容。',
+    status: 'past' as const,
+  },
+  {
+    year: '2017',
+    label: '論文 / THE PAPER',
+    title: 'Attention 成為架構的核心。',
+    body: 'Transformer 讓每個 token 直接查看其他 token，再一次處理許多位置。',
+    status: 'current' as const,
+  },
+  {
+    year: '之後',
+    label: '後果 / THE CONSEQUENCE',
+    title: '同一個架構，後來擴展成語言模型。',
+    body: '後來的研究保留 Transformer，改變訓練目標，再把模型規模拉高。',
+    status: 'future' as const,
+  },
+];
+---
+
+<BaseLayout
+  title="Attention Is All You Need"
+  section="paper"
+  description="用台灣繁體中文逐句拆解 Attention Is All You Need，以及 2017 年 Transformer 如何誕生。"
+>
+  <article>
+    <header class={`${shell} pt-10`}>
+      <div class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
+        <a class="text-red underline underline-offset-4" href="/">
+          THE LLM
+        </a>
+        <span aria-hidden="true">/</span>
+        <span>第 01 章</span>
+      </div>
+      <div class="grid items-end gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-24">
+        <div>
+          <p class="mb-5 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            理論 / THEORY 01
+          </p>
+          <h1 class="m-0 font-display text-5xl sm:text-6xl lg:text-7xl leading-none tracking-[-0.05em]">
+            <span class="block whitespace-nowrap">Attention Is</span>
+            <em class="block">All You Need.</em>
+          </h1>
+          <p class="mt-8 max-w-[52ch] text-lg leading-8 text-muted">
+            翻譯最難的不是把每個字換成另一個字，而是判斷句子裡的關係：誰在做事、哪個詞修飾哪個詞、前面提到的東西後面怎麼被指回。2017
+            年，這篇論文在 English–German 與 English–French 的機器翻譯 benchmark 上測試
+            Transformer，並把 recurrence 從核心路徑拿掉。
+          </p>
+        </div>
+        <aside
+          class="border-t-4 border-red bg-surface p-6 shadow-editorial"
+          aria-label="這篇論文的一句評語"
+        >
+          <p class="mb-6 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            一句評語 / THE SHORT VERDICT
+          </p>
+          <p class="m-0 max-w-[20ch] font-display text-3xl leading-tight">
+            這篇論文把 attention 從輔助機制改成主要計算路徑。
+          </p>
+          <p class="mt-6 mb-0 text-base leading-7 text-muted">
+            論文的原始任務是機器翻譯，不是聊天。
+          </p>
+        </aside>
+      </div>
+      <PaperMeta
+        year={paper.year}
+        venue={paper.venue}
+        readTime="28 分鐘"
+        difficulty="核心概念"
+        doi={paper.doi}
+      />
+      <div class="flex flex-wrap items-center gap-x-6 gap-y-3 py-4 font-mono text-sm uppercase tracking-[0.04em] text-muted">
+        <span>原始論文</span>
+        <a
+          class="underline underline-offset-4 hover:text-red"
+          href={paperUrl}
+          target="_blank"
+          rel="noreferrer"
+          aria-label="在 arXiv 閱讀原始論文（在新分頁開啟）"
+        >
+          在 arXiv 閱讀 ↗
+        </a>
+      </div>
+    </header>
+
+    <section
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24`}
+      aria-labelledby="core-question-title"
+    >
+      <div class="max-w-none">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            問題 / THE PROBLEM
+          </p>
+          <h2
+            id="core-question-title"
+            class="m-0 max-w-[13ch] font-display text-5xl sm:text-6xl lg:text-7xl leading-tight tracking-[-0.04em]"
+          >
+            <span class="block">翻譯一個字時，</span>
+            <span class="block">
+              <em>答案可能在句子的另一端。</em>
+            </span>
+          </h2>
+          <p class="mt-7 max-w-[40ch] text-base leading-8 text-muted">
+            單字表可以告訴你「自己」大致和反身代名詞有關，卻不會告訴你它在這一大段話裡跟著誰。翻譯時，人物、動作順序和代名詞的對象，必須一起看。
+          </p>
+          <div class="mt-7 max-w-none border border-blue/40 bg-blue/5 p-6 sm:p-8">
+            <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-blue">
+              情境案例 / A LONG CASE
+            </p>
+            <div class="mt-6 grid gap-8 lg:grid-cols-2 lg:gap-12">
+              <div>
+                <p class="m-0 font-mono text-sm tracking-[0.08em] text-blue">
+                  中文原句 / SOURCE SENTENCE
+                </p>
+                <p class="mt-2 font-display text-base leading-8">
+                  上週五下午，碩一的小明把修改三次的研究計畫交給王老師，請系辦寄給兩位口試委員。王老師看完摘要後，提醒他在方法章補上受訪者同意書。那天晚上，小明先把摘要改好，又整理了口試委員的聯絡資料，還重新排版研究計畫。隔天早上，他回到研究室才發現，自己把那份同意書夾在原稿裡，於是先回系辦找回那份同意書，再把修正版寄出，並在信中向委員說明延誤的原因。
+                </p>
+              </div>
+              <div>
+                <p class="m-0 font-mono text-sm tracking-[0.08em] text-blue">
+                  英文譯法 / ENGLISH TRANSLATION
+                </p>
+                <p class="mt-2 font-mono text-base leading-7 text-blue">
+                  Last Friday afternoon, Xiaoming, a first-year graduate student, submitted the
+                  research proposal he had revised three times to Professor Wang and asked the
+                  department office to send the proposal to two committee members. After reading the
+                  abstract, Professor Wang reminded him to add the participants’ consent form to the
+                  methods chapter. That evening, Xiaoming revised the abstract, organized the
+                  committee members’ contact information, and reformatted the research proposal. The
+                  next morning, when he returned to the lab, he realized that he had left the
+                  consent form inside the original draft, so he first returned to the department
+                  office to find it, then sent out the revised proposal and explained the delay to
+                  the committee members in his email.
+                </p>
+              </div>
+            </div>
+            <div class="mt-8 grid gap-px border-y border-blue/30 bg-blue/30 sm:grid-cols-2">
+              <div class="bg-paper p-6 sm:p-8">
+                <p class="m-0 font-mono text-sm font-semibold tracking-[0.08em] text-blue">
+                  誰在做動作？ / SUBJECT
+                </p>
+                <p class="mt-3 mb-0 text-base leading-8 text-muted">
+                  <code>Professor Wang</code> 在 <code>reminded him</code> 裡是動作者，
+                  <code>him</code> 才是被提醒的小明；後面的 <code>he realized</code> 和{' '}
+                  <code>he first returned</code>
+                  ，才是小明回到研究室、回系辦尋找文件。中文的「自己」也跟著小明，英文不另外寫成
+                  <code>himself</code>，而是沿用 <code>he</code>。
+                </p>
+              </div>
+              <div class="bg-surface p-6 sm:p-8">
+                <p class="m-0 font-mono text-sm font-semibold tracking-[0.08em] text-red">
+                  「那份同意書」是哪一份？ / REFERENCE
+                </p>
+                <p class="mt-3 mb-0 text-base leading-8 text-muted">
+                  「那份同意書」回指前面提過的「受訪者同意書」，不是「原稿」；英文因此寫成{' '}
+                  <code>the consent form</code>，後面再用 <code>it</code> 找回同一份文件。
+                </p>
+              </div>
+            </div>
+            <dl class="mt-8 border-t border-dashed border-blue/30 text-base leading-8 text-muted">
+              <div class="grid gap-3 border-b border-dashed border-blue/30 py-5 sm:grid-cols-[7rem_1fr] sm:gap-5">
+                <dt class="font-mono text-sm text-blue">小明 / he</dt>
+                <dd class="m-0">
+                  <code>Professor Wang</code> 是 <code>reminded him</code> 的主詞；<code>him</code>{' '}
+                  是接受提醒的小明。到了 <code>he realized</code> 和 <code>he first returned</code>
+                  ，主詞才回到小明。
+                </dd>
+              </div>
+              <div class="grid gap-3 border-b border-dashed border-blue/30 py-5 sm:grid-cols-[7rem_1fr] sm:gap-5">
+                <dt class="font-mono text-sm text-blue">後</dt>
+                <dd class="m-0">
+                  <code>After reading the abstract</code>
+                  只連接「王老師看完摘要」和「提醒他」；交研究計畫發生在前面，是因為它位於前一個中文句子，不是
+                  <code>after</code> 自己額外交代的。
+                </dd>
+              </div>
+              <div class="grid gap-3 border-b border-dashed border-blue/30 py-5 sm:grid-cols-[7rem_1fr] sm:gap-5">
+                <dt class="font-mono text-sm text-blue">先、再、才</dt>
+                <dd class="m-0">
+                  <code>After</code>、<code>When</code>、<code>so</code> 和 <code>then</code>
+                  把「看摘要、提醒、發現、尋找、寄出」排出順序；翻譯時還要把中文的「才」和「於是」所帶出的前後關係保留下來。
+                </dd>
+              </div>
+              <div class="grid gap-3 py-5 sm:grid-cols-[7rem_1fr] sm:gap-5">
+                <dt class="font-mono text-sm text-blue">那份同意書</dt>
+                <dd class="m-0">
+                  <code>the consent form</code> 和 <code>it</code>
+                  都回到前面提過的「受訪者同意書」；「原稿」是夾住它的另一份文件。
+                </dd>
+              </div>
+            </dl>
+          </div>
+          <PaperReadingLayout class="mt-12 text-base leading-8 text-muted">
+            <div class="min-w-0 max-w-2xl">
+              <p class="mb-10">
+                模型把輸入切成一串可以依序編號的小片段。這些小片段叫作 <code>token</code>；一個
+                token
+                可能是一個字、一個詞，也可能只是詞的一部分。這裡說的「位置（position）」就是某個
+                token
+                在這串輸入裡的編號，不是畫面上的座標。這個編號先回答「它排在哪裡」，還沒有回答另一個問題：讀到第
+                4 格的資料後，模型要怎麼把它帶到第 10 格？下面的示意會把幾個 token
+                合併成讀者熟悉的詞組，方便追蹤前後距離。
+              </p>
+              <p class="mb-10">
+                早期常用的答案是 <code>RNN</code>。<code>RNN</code> 是 recurrent neural
+                network（循環神經網路）：它從左到右讀一串輸入，每讀到一個新的位置，就把「這一格的資料」和「上一格留下的摘要」合在一起，再把合成的結果交給下一格。於是，第
+                10 格若要用第 4 格的線索，就只能接收已經一路更新過來的結果。
+              </p>
+              <p class="mb-10">
+                RNN 每一格交給下一格的那串摘要叫作 <code>hidden state</code>
+                。它不是暫存的中文字，也不是已經完成的英文翻譯，而是一串固定長度的數字，用來攜帶模型目前認為重要的資訊。每讀一格，模型都會重新整理這串數字；它不是把前面整段話原封不動存起來。
+              </p>
+              <div class="mb-10 border-l-2 border-blue pl-5 text-base leading-8 text-blue">
+                <div class="font-mono">h₁ = f(小明)</div>
+                <div class="font-mono">h₂ = f(研究計畫, h₁)</div>
+                <div class="font-mono">h₃ = f(王老師, h₂)</div>
+                <div class="font-mono">h₄ = f(受訪者同意書, h₃)</div>
+                <div class="font-mono">h₅ = f(摘要, h₄)</div>
+                <div class="font-mono">h₆ = f(聯絡資料, h₅)</div>
+                <div class="font-mono">h₇ = f(研究計畫, h₆)</div>
+                <div class="font-mono">h₈ = f(研究室, h₇)</div>
+                <div class="font-mono">h₉ = f(原稿, h₈)</div>
+                <div class="font-mono">h₁₀ = f(那份同意書, h₉)</div>
+                <p class="mt-4 mb-0 font-sans text-base leading-8 text-muted">
+                  這裡把幾個詞組合併成一格，方便看清楚路徑；真實模型還會把文字切成更小的 token。每個{' '}
+                  <code>hᵢ</code> 都是同樣固定長度的 hidden state；<code>f</code>
+                  每次只把目前輸入和前一個固定大小的 state 合成下一個 state。第 4
+                  格的「受訪者同意書」要傳到第 10 格的「那份同意書」，中間必須經過第 5、6、7、8、9
+                  格。
+                </p>
+              </div>
+              <div class="mb-10 border-y-2 border-red bg-red-soft/30 px-5 py-6 sm:px-7">
+                <p class="m-0 text-base leading-8 text-ink">
+                  <strong>
+                    RNN 的限制不在於它完全讀不到前文，而在於它只能帶著一份固定大小的摘要往前走。
+                  </strong>
+                  句子越長，後面要找前面的線索時，中間要經過的更新就越多。
+                </p>
+              </div>
+              <p class="mb-10">
+                這是資訊容量的限制，常被稱為「記憶瓶頸」；它不是電腦的 RAM 不夠。RNN 的每一格{' '}
+                <code>hidden state</code>
+                都有固定大小；輸入越長，新的資料越多，模型卻還是要把目前重要的內容塞進同樣大小的一串數字。這就像隨身只帶著一張固定大小的小便箋，每讀到一個新動作，就必須在同一張紙上擦去舊筆記、改寫成最新摘要。它不能把讀過的整段文字原封不動留著，只能一直改寫這份摘要。
+              </p>
+              <p class="mb-10">
+                回到這段案例：讀到「小明」時，模型需要留下「這是整段故事的主角」；讀到王老師、口試委員、受訪者同意書、原稿時，還要保留誰做了什麼、哪些文件彼此相關；讀到「那份同意書」和「他」時，才要把這些資訊用在英文翻譯裡。如果便箋空間有限，中間任何一次改寫都可能讓主角、順序或文件之間的線索被覆蓋或沖淡。這不是說每個
+                RNN 翻譯結果都一定會錯，而是這條記憶路徑越長，模型要學的工作越難。
+              </p>
+              <p class="mb-10">
+                訓練時，模型會把自己產生的英文和正確譯文比較，算出
+                loss（損失）：這是一個表示「這次預測離目標有多遠」的數字。正確譯文不會直接告訴模型「第
+                4 格一定要連到第 10
+                格」；模型只能從最後的翻譯結果得到修正方向，再把這個方向用回前面的計算。
+              </p>
+              <p class="mb-10">
+                在 RNN 裡，這個修正訊號得從最後的 <code>h₁₀</code> 沿著 <code>h₉</code>、
+                <code>h₈</code> 一格一格傳回
+                <code>h₁</code>
+                ；路徑越長，訊號越容易變弱或變得不穩定。這是「訓練訊號要走多遠」的問題，和前面「資訊要塞進多大的摘要」有關，但不是同一件事。
+              </p>
+              <p class="mb-10">
+                還有一個不同的限制：前向計算的順序被鎖住。第 10 格必須等第 9 格算完，第 9
+                格又必須等第 8 格，所以 GPU 不能在同一層直接同時計算這條 RNN
+                鏈上的所有位置。這是等待時間的問題，不是記憶容量的問題。
+              </p>
+              <p class="mb-10">
+                把這些限制放在一起看：RNN
+                讓資料沿著同一條鏈往前傳，讓訓練的修正訊號沿著這條鏈往回走，也讓每一格都得等待前一格。要翻譯「那份同意書」時，前面的線索既要塞進固定大小的摘要，又要經過中間每一格才能抵達。這正是作者要改的地方：處理一個位置時，能不能直接查看同一段輸入裡其他位置的資料，少走這段繞路？
+              </p>
+              <div class="mb-10 border-y border-line py-6">
+                <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+                  把位置編出來 / NUMBER THE POSITIONS
+                </p>
+                <ol class="m-0 grid list-none grid-cols-1 gap-x-6 p-0 sm:grid-cols-2 lg:grid-cols-5">
+                  <li class="flex items-baseline gap-3 border-b border-line py-3">
+                    <span class="font-mono text-sm text-red">01</span>
+                    <span>小明</span>
+                  </li>
+                  <li class="flex items-baseline gap-3 border-b border-line py-3">
+                    <span class="font-mono text-sm text-red">02</span>
+                    <span>研究計畫</span>
+                  </li>
+                  <li class="flex items-baseline gap-3 border-b border-line py-3">
+                    <span class="font-mono text-sm text-red">03</span>
+                    <span>王老師</span>
+                  </li>
+                  <li class="flex items-baseline gap-3 border-b border-line py-3">
+                    <span class="font-mono text-sm text-red">04</span>
+                    <span>受訪者同意書</span>
+                  </li>
+                  <li class="flex items-baseline gap-3 border-b border-line py-3">
+                    <span class="font-mono text-sm text-red">05</span>
+                    <span>摘要</span>
+                  </li>
+                  <li class="flex items-baseline gap-3 border-b border-line py-3">
+                    <span class="font-mono text-sm text-red">06</span>
+                    <span>聯絡資料</span>
+                  </li>
+                  <li class="flex items-baseline gap-3 border-b border-line py-3">
+                    <span class="font-mono text-sm text-red">07</span>
+                    <span>研究計畫</span>
+                  </li>
+                  <li class="flex items-baseline gap-3 border-b border-line py-3">
+                    <span class="font-mono text-sm text-red">08</span>
+                    <span>研究室</span>
+                  </li>
+                  <li class="flex items-baseline gap-3 border-b border-line py-3">
+                    <span class="font-mono text-sm text-red">09</span>
+                    <span>原稿</span>
+                  </li>
+                  <li class="flex items-baseline gap-3 border-b border-line py-3">
+                    <span class="font-mono text-sm text-red">10</span>
+                    <span>那份同意書</span>
+                  </li>
+                </ol>
+                <p class="mt-5 mb-0 text-base leading-8 text-muted">
+                  這裡先用詞組來數，因為模型實際切出的 <code>token</code>
+                  可能更細；先把同一個詞組放在一起，才能看清楚前後相隔多遠。
+                </p>
+              </div>
+              <p class="mb-10">
+                有了這個編號，再回到第 10 個位置「那份同意書」。在 RNN 裡，第 10 格只能先接收第 9
+                格留下的摘要；如果它需要第 4 格「受訪者同意書」的線索，這條線索就得經過第
+                5、6、7、8、9 格，一格一格傳過來。新的做法讓第 10
+                格直接把自己的數字資料，和同一段輸入裡的其他位置放在一起比較。
+              </p>
+              <p class="mb-10">
+                第 10 格為什麼不能把每個位置都同樣處理？因為第 4 格「受訪者同意書」和第 9
+                格「原稿」對判斷「那份同意書」的幫助不同。模型先替每個位置算一個關聯分數，再把這些分數換成總和為
+                1 的權重，最後按照權重把各位置提供的數字資料加在一起。這樣，第 4
+                格可以影響得多一點，第 9 格可以影響得少一點；模型得到的是第 10
+                格的新數字資料，不是把某個詞原封不動搬過來。
+              </p>
+              <p class="mb-10">
+                這種「先算分數、再換成權重、最後把資料按權重混合」的運算，在翻譯研究裡叫作
+                <code>attention</code>
+                。這個名字沿自對齊問題：產生一個翻譯詞時，模型不需要把來源句的每個位置當成同樣重要，而是把較大的權重放在當下有用的來源位置上。這裡的
+                attention 不是視線，也不是模型真的理解了哪個字；它是一套用數字分配資料份量的計算。{' '}
+                <a
+                  class="text-red underline underline-offset-4"
+                  href={sourceMap['paper-2014-align-translate'].url}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="來源 S5：Neural Machine Translation by Jointly Learning to Align and Translate（在新分頁開啟）"
+                >
+                  [S5]
+                </a>
+              </p>
+              <p class="mb-10">
+                在這個 encoder 的例子裡，第 10 個位置會和第 1 到第 10
+                格的每一格比較，也包括它自己。為了讓後面的算例可以手算，文章只列出第 1
+                格「小明」、第 4 格「受訪者同意書」和第 9 格「原稿」；第 5、6、7、8
+                格一樣會有自己的分數，只是先不把十個數字全部寫出來。因為查找者和候選資料都來自同一段輸入，所以這種
+                attention 叫作
+                <code>self-attention</code>
+                ：同一段輸入中的各個位置互相提供線索，不是模型有意識地看自己。
+              </p>
+              <p class="mb-10">
+                因此，論文標題中的「Attention Is All You Need」不是說模型只剩下
+                attention，也不是說其他運算都不重要；它指出的是，跨位置傳遞資訊這件事不必再靠
+                recurrence，attention 可以成為主要通道，其他逐點運算仍然存在。
+              </p>
+              <p class="mb-10">
+                這個改動直接回應前面的兩個限制。前向計算時，「那份同意書」可以直接連到「受訪者同意書」，不必先穿過
+                <code>h₅</code>、<code>h₆</code>、<code>h₇</code>、<code>h₈</code>、<code>h₉</code>
+                等中間狀態；訓練時，最後的翻譯結果要修正這個關聯，也不必只沿著 <code>
+                  h₁₀
+                </code> 到 <code>h₁</code>
+                的鏈傳回去。路徑縮短，不代表模型從此不會遺失資訊，也不保證每次都翻對；它只是讓中間需要轉手的狀態變少，相關的兩個位置比較容易連在一起。
+              </p>
+              <p class="mb-10">
+                不過，「直接連到」有一個前提：第 4 格和第 10
+                格必須同時出現在這一層的輸入裡。attention
+                不是把模型看過的整個訓練資料庫叫回來，而是在這一次送進模型的那一段文字中，讓各個位置互相比較；這也就是上一段所說的「所有位置」的範圍。
+                這段一次能放進模型處理的文字範圍，叫作 context
+                window。訓練時，研究團隊把資料切成一段段的輸入，再分批送進
+                GPU，每一批都有自己的長度上限。
+              </p>
+              <p class="mb-10">
+                如果真的把 1 兆個 token 放進同一個輸入，dense self-attention
+                就要讓每一個位置和其他每一個位置比較，分數表的大小會是 <code>n × n</code>；
+                <code>n = 10¹²</code> 時，就是
+                <code>10²⁴</code> 個分數。這不是把 GPU
+                再加大一點就能輕鬆處理的工作，標準模型不會把這麼長的文字當成一個 context
+                window。實際系統會限制輸入長度，或使用分段、局部視窗、稀疏 attention
+                等方法降低代價。
+              </p>
+              <aside class="mb-10 border-l-2 border-blue bg-blue/5 pl-5 text-base leading-8 text-blue">
+                <p class="m-0">
+                  所以 Transformer
+                  解決的是：在一個有限長度的輸入裡，讓不同位置有較短的資訊路徑，並讓 encoder
+                  的同層計算更容易平行化；它沒有解決無限長記憶，也沒有消除 attention
+                  的記憶體和計算成本。在逐步處理的當下，RNN 只需帶著固定大小的
+                  state，代價是每一格都要等待；訓練時為了傳回修正訊號，仍可能需要保留或重算這些
+                  state。Transformer 讓同一個 context window
+                  裡的多個位置一起算，實作上要處理每個位置的向量和位置之間的分數；即使使用節省記憶體的實作，不把完整分數表留在記憶體裡，輸入變長時，計算與記憶體壓力仍會快速增加。
+                </p>
+              </aside>
+              <p class="mb-10">
+                前面說的是「一段有限輸入裡的計算代價」；要看它怎麼完成翻譯，還要把流程分成兩個角色。在機器翻譯裡，
+                <code>encoder</code>
+                讀入來源句子，為每個來源位置整理出帶有上下文的數字資料；<code>decoder</code>
+                再根據這些資料和已經寫出的目標 token，一個 token 一個 token 寫出下一個目標
+                token。同一層裡的多個來源位置可以一起做 attention，所以 encoder
+                在訓練時能把這些運算交給 GPU 平行處理；decoder 生成英文時，未來的目標 token
+                還不存在，仍然要照順序往下寫。
+              </p>
+            </div>
+            <aside
+              class="border-t-4 border-blue bg-blue/5 p-6 sm:p-8"
+              aria-labelledby="rnn-term-title"
+              slot="rail"
+            >
+              <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-blue">
+                字典 / TERM DICTIONARY
+              </p>
+              <h3 id="rnn-term-title" class="mt-4 mb-6 font-display text-3xl leading-tight">
+                RNN
+              </h3>
+              <dl class="grid gap-4 border-t border-blue/30 pt-5 text-base leading-8">
+                <div>
+                  <dt class="font-mono text-sm text-blue">它讀什麼</dt>
+                  <dd class="m-0 text-muted">一串有順序的 token；每次只處理目前這一格。</dd>
+                </div>
+                <div>
+                  <dt class="font-mono text-sm text-blue">它收到什麼</dt>
+                  <dd class="m-0 text-muted">
+                    目前 token 的數字資料，加上前一格留下的 hidden state。
+                  </dd>
+                </div>
+                <div>
+                  <dt class="font-mono text-sm text-blue">它留下什麼</dt>
+                  <dd class="m-0 text-muted">一串固定長度的數字，交給下一格繼續使用。</dd>
+                </div>
+                <div>
+                  <dt class="font-mono text-sm text-blue">它的限制</dt>
+                  <dd class="m-0 text-muted">
+                    第 10 格想用第 4 格的線索，必須先等並接收第 5–9 格傳來的結果。
+                  </dd>
+                </div>
+              </dl>
+            </aside>
+          </PaperReadingLayout>
+        </div>
+
+        <figure class="mt-14 max-w-none" role="img" aria-labelledby="sequence-title">
+          <figcaption id="sequence-title" class="mb-5 border-t-4 border-red pt-4">
+            <span class="font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+              模型怎麼把「那份同意書」接回「受訪者同意書」？
+            </span>
+            <span class="mt-3 block max-w-[52ch] text-base leading-7 text-muted">
+              圖中只追蹤「那份同意書」
+              這一個位置。左邊先算前面的字，再把結果交給下一個位置；右邊讓第 10
+              格和同一段輸入的每一格比較。圖上只畫出三個候選位置，完整計算不會只看這三格。
+            </span>
+          </figcaption>
+          <svg
+            class="block h-auto w-full border border-ink bg-surface"
+            viewBox="0 0 1200 900"
+            role="img"
+            aria-hidden="true"
+          >
+            <defs>
+              <marker
+                id="flow-arrow"
+                markerWidth="10"
+                markerHeight="10"
+                refX="8"
+                refY="5"
+                orient="auto"
+              >
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#355b70"></path>
+              </marker>
+              <marker
+                id="flow-arrow-red"
+                markerWidth="10"
+                markerHeight="10"
+                refX="8"
+                refY="5"
+                orient="auto"
+              >
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#b6412c"></path>
+              </marker>
+            </defs>
+            <rect x="0" y="0" width="1200" height="900" fill="#fffdf8"></rect>
+            <text
+              x="40"
+              y="42"
+              fill="#b6412c"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-lg"
+              font-weight="700"
+            >
+              輸入句子 / INPUT
+            </text>
+            <text
+              x="40"
+              y="82"
+              fill="#1e2224"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-2xl"
+            >
+              小明 / 研究計畫 / 王老師 / 受訪者同意書 / 摘要 / 聯絡資料 / 研究計畫 / 研究室 / 原稿 /
+              那份同意書
+            </text>
+            <line x1="40" y1="112" x2="1160" y2="112" stroke="#d6cec0" stroke-width="2"></line>
+            <line x1="600" y1="145" x2="600" y2="850" stroke="#d6cec0" stroke-width="2"></line>
+
+            <text
+              x="40"
+              y="155"
+              fill="#b6412c"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-lg"
+              font-weight="700"
+            >
+              舊做法 / 一次一個位置
+            </text>
+            <text
+              x="40"
+              y="185"
+              fill="#62665f"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-base"
+            >
+              前一個結果，要交給下一個
+            </text>
+            <rect
+              x="40"
+              y="225"
+              width="200"
+              height="72"
+              fill="#ebe3d4"
+              stroke="#1e2224"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="140"
+              y="256"
+              text-anchor="middle"
+              fill="#1e2224"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-lg"
+            >
+              第 1 格「小明」
+            </text>
+            <text
+              x="140"
+              y="280"
+              text-anchor="middle"
+              fill="#62665f"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              先記住主角
+            </text>
+            <line
+              x1="240"
+              y1="261"
+              x2="286"
+              y2="261"
+              stroke="#355b70"
+              stroke-width="3"
+              marker-end="url(#flow-arrow)"
+            ></line>
+            <rect
+              x="300"
+              y="225"
+              width="200"
+              height="72"
+              fill="#ebe3d4"
+              stroke="#1e2224"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="400"
+              y="256"
+              text-anchor="middle"
+              fill="#1e2224"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-lg"
+            >
+              h₁：第 1 格結果
+            </text>
+            <text
+              x="400"
+              y="280"
+              text-anchor="middle"
+              fill="#62665f"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              小明
+            </text>
+            <rect
+              x="40"
+              y="365"
+              width="200"
+              height="72"
+              fill="#ebe3d4"
+              stroke="#1e2224"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="140"
+              y="396"
+              text-anchor="middle"
+              fill="#1e2224"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-lg"
+            >
+              第 2、3 格
+            </text>
+            <text
+              x="140"
+              y="420"
+              text-anchor="middle"
+              fill="#62665f"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              研究計畫、王老師
+            </text>
+            <line
+              x1="240"
+              y1="401"
+              x2="286"
+              y2="401"
+              stroke="#355b70"
+              stroke-width="3"
+              marker-end="url(#flow-arrow)"
+            ></line>
+            <line
+              x1="400"
+              y1="297"
+              x2="400"
+              y2="355"
+              stroke="#355b70"
+              stroke-width="3"
+              marker-end="url(#flow-arrow)"
+            ></line>
+            <line
+              x1="400"
+              y1="437"
+              x2="400"
+              y2="495"
+              stroke="#355b70"
+              stroke-width="3"
+              marker-end="url(#flow-arrow)"
+            ></line>
+            <rect
+              x="300"
+              y="365"
+              width="200"
+              height="72"
+              fill="#ebe3d4"
+              stroke="#1e2224"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="400"
+              y="396"
+              text-anchor="middle"
+              fill="#1e2224"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-lg"
+            >
+              h₃：第 3 格結果
+            </text>
+            <text
+              x="400"
+              y="420"
+              text-anchor="middle"
+              fill="#62665f"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              保留前面線索
+            </text>
+            <rect
+              x="40"
+              y="505"
+              width="200"
+              height="72"
+              fill="#ebe3d4"
+              stroke="#1e2224"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="140"
+              y="536"
+              text-anchor="middle"
+              fill="#1e2224"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              第 4 格「受訪者同意書」
+            </text>
+            <text
+              x="140"
+              y="560"
+              text-anchor="middle"
+              fill="#62665f"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              加入文件線索
+            </text>
+            <line
+              x1="240"
+              y1="541"
+              x2="286"
+              y2="541"
+              stroke="#355b70"
+              stroke-width="3"
+              marker-end="url(#flow-arrow)"
+            ></line>
+            <rect
+              x="300"
+              y="505"
+              width="200"
+              height="72"
+              fill="#ebe3d4"
+              stroke="#1e2224"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="400"
+              y="536"
+              text-anchor="middle"
+              fill="#1e2224"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-lg"
+            >
+              h₄：第 4 格結果
+            </text>
+            <text
+              x="400"
+              y="560"
+              text-anchor="middle"
+              fill="#62665f"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              還沒到第 10 格
+            </text>
+            <rect
+              x="40"
+              y="645"
+              width="200"
+              height="72"
+              fill="#ebe3d4"
+              stroke="#1e2224"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="140"
+              y="676"
+              text-anchor="middle"
+              fill="#1e2224"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              第 5–9 格：摘要…原稿
+            </text>
+            <text
+              x="140"
+              y="700"
+              text-anchor="middle"
+              fill="#62665f"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              中間資料持續更新
+            </text>
+            <line
+              x1="240"
+              y1="681"
+              x2="286"
+              y2="681"
+              stroke="#355b70"
+              stroke-width="3"
+              marker-end="url(#flow-arrow)"
+            ></line>
+            <line
+              x1="400"
+              y1="577"
+              x2="400"
+              y2="635"
+              stroke="#355b70"
+              stroke-width="3"
+              marker-end="url(#flow-arrow)"
+            ></line>
+            <line
+              x1="400"
+              y1="717"
+              x2="400"
+              y2="775"
+              stroke="#355b70"
+              stroke-width="3"
+              marker-end="url(#flow-arrow)"
+            ></line>
+            <rect
+              x="300"
+              y="645"
+              width="200"
+              height="72"
+              fill="#ebe3d4"
+              stroke="#1e2224"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="400"
+              y="676"
+              text-anchor="middle"
+              fill="#1e2224"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-lg"
+            >
+              h₉：第 9 格結果
+            </text>
+            <text
+              x="400"
+              y="700"
+              text-anchor="middle"
+              fill="#62665f"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              還要傳到第 10 格
+            </text>
+            <rect
+              x="40"
+              y="785"
+              width="200"
+              height="72"
+              fill="#f0d8cf"
+              stroke="#1e2224"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="140"
+              y="816"
+              text-anchor="middle"
+              fill="#1e2224"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              第 10 格「那份同意書」
+            </text>
+            <text
+              x="140"
+              y="840"
+              text-anchor="middle"
+              fill="#62665f"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              找第 4 格的線索
+            </text>
+            <line
+              x1="240"
+              y1="821"
+              x2="286"
+              y2="821"
+              stroke="#b6412c"
+              stroke-width="3"
+              marker-end="url(#flow-arrow-red)"
+            ></line>
+            <rect
+              x="300"
+              y="785"
+              width="200"
+              height="72"
+              fill="#b6412c"
+              stroke="#1e2224"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="400"
+              y="816"
+              text-anchor="middle"
+              fill="#fffdf8"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              h₁₀：只能接第 9 格
+            </text>
+            <text
+              x="400"
+              y="840"
+              text-anchor="middle"
+              fill="#f0d8cf"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              沒有直通 h₄
+            </text>
+
+            <text
+              x="640"
+              y="155"
+              fill="#b6412c"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-lg"
+              font-weight="700"
+            >
+              新做法 / 一起看整句
+            </text>
+            <text
+              x="640"
+              y="185"
+              fill="#62665f"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-base"
+            >
+              完整比較第 1–10 格；圖上只畫三個候選
+            </text>
+            <rect
+              x="640"
+              y="225"
+              width="110"
+              height="82"
+              fill="#ebe3d4"
+              stroke="#1e2224"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="695"
+              y="260"
+              text-anchor="middle"
+              fill="#1e2224"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              第 1 格
+            </text>
+            <text
+              x="695"
+              y="275"
+              text-anchor="middle"
+              fill="#62665f"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              小明
+            </text>
+            <rect
+              x="760"
+              y="225"
+              width="110"
+              height="82"
+              fill="#ebe3d4"
+              stroke="#1e2224"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="815"
+              y="260"
+              text-anchor="middle"
+              fill="#1e2224"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              第 4 格
+            </text>
+            <text
+              x="815"
+              y="275"
+              text-anchor="middle"
+              fill="#62665f"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              受訪者同意書
+            </text>
+            <rect
+              x="880"
+              y="225"
+              width="110"
+              height="82"
+              fill="#ebe3d4"
+              stroke="#1e2224"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="935"
+              y="260"
+              text-anchor="middle"
+              fill="#1e2224"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              第 9 格
+            </text>
+            <text
+              x="935"
+              y="275"
+              text-anchor="middle"
+              fill="#62665f"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              原稿
+            </text>
+            <rect
+              x="1000"
+              y="225"
+              width="160"
+              height="82"
+              fill="#b6412c"
+              stroke="#1e2224"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="1080"
+              y="260"
+              text-anchor="middle"
+              fill="#fffdf8"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              第 10 格
+            </text>
+            <text
+              x="1080"
+              y="275"
+              text-anchor="middle"
+              fill="#f0d8cf"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              那份同意書（目標）
+            </text>
+            <line
+              x1="695"
+              y1="307"
+              x2="805"
+              y2="380"
+              stroke="#355b70"
+              stroke-width="3"
+              marker-end="url(#flow-arrow)"
+            ></line>
+            <line
+              x1="815"
+              y1="307"
+              x2="835"
+              y2="380"
+              stroke="#355b70"
+              stroke-width="3"
+              marker-end="url(#flow-arrow)"
+            ></line>
+            <line
+              x1="935"
+              y1="307"
+              x2="865"
+              y2="380"
+              stroke="#355b70"
+              stroke-width="3"
+              marker-end="url(#flow-arrow)"
+            ></line>
+            <line
+              x1="1080"
+              y1="307"
+              x2="890"
+              y2="380"
+              stroke="#b6412c"
+              stroke-width="3"
+              marker-end="url(#flow-arrow-red)"
+            ></line>
+            <circle
+              cx="850"
+              cy="420"
+              r="54"
+              fill="#dce7e9"
+              stroke="#1e2224"
+              stroke-width="2"
+            ></circle>
+            <text
+              x="850"
+              y="412"
+              text-anchor="middle"
+              fill="#1e2224"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              比較哪個有關
+            </text>
+            <text
+              x="850"
+              y="435"
+              text-anchor="middle"
+              fill="#1e2224"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              算出權重
+            </text>
+            <line
+              x1="850"
+              y1="475"
+              x2="850"
+              y2="520"
+              stroke="#b6412c"
+              stroke-width="3"
+              marker-end="url(#flow-arrow-red)"
+            ></line>
+            <rect
+              x="735"
+              y="535"
+              width="230"
+              height="78"
+              fill="#f0d8cf"
+              stroke="#1e2224"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="850"
+              y="568"
+              text-anchor="middle"
+              fill="#1e2224"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-lg"
+            >
+              取出有用資訊
+            </text>
+            <text
+              x="850"
+              y="593"
+              text-anchor="middle"
+              fill="#1e2224"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-base"
+            >
+              帶回受訪者同意書的線索
+            </text>
+            <line
+              x1="850"
+              y1="613"
+              x2="850"
+              y2="648"
+              stroke="#b6412c"
+              stroke-width="3"
+              marker-end="url(#flow-arrow-red)"
+            ></line>
+            <rect
+              x="700"
+              y="665"
+              width="300"
+              height="62"
+              fill="#b6412c"
+              stroke="#1e2224"
+              stroke-width="2"
+            ></rect>
+            <text
+              x="850"
+              y="691"
+              text-anchor="middle"
+              fill="#fffdf8"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-lg"
+            >
+              這一格不換位置
+            </text>
+            <text
+              x="850"
+              y="714"
+              text-anchor="middle"
+              fill="#f0d8cf"
+              font-family="LINE Seed TW, sans-serif"
+              class="text-sm"
+            >
+              帶著「同一份同意書」的線索
+            </text>
+          </svg>
+          <p class="mt-5 mb-0 text-right font-mono text-sm leading-6 tracking-[0.06em] text-muted">
+            圖 01 / 上方列出長文案例的關鍵位置順序；左邊追蹤第 4 格的線索如何經過第 5–9 格抵達第 10
+            格，右邊完整運算會比較第 1–10 格，圖上只畫第 1、4、9 格與第 10 格的關係。
+          </p>
+        </figure>
+        <PaperReadingLayout class="mt-12 border-t border-ink pt-5">
+          <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            把剛才的連線算出來 / FROM THE EXAMPLE
+          </p>
+          <h3 class="mt-4 mb-0 font-display text-4xl sm:text-5xl lg:text-5xl leading-tight tracking-[-0.03em]">
+            <span class="block">第 10 格怎麼找到</span>
+            <span class="block">
+              <em>第 4 格的資料？</em>
+            </span>
+          </h3>
+          <div class="mt-6 grid gap-px border border-ink bg-ink sm:grid-cols-2">
+            <div class="bg-paper p-5">
+              <p class="m-0 font-mono text-sm tracking-[0.08em] text-red">只看到「那份同意書」</p>
+              <p class="mt-4 mb-0 font-display text-2xl leading-tight">這個詞沒有答案。</p>
+              <p class="mt-3 mb-0 text-base leading-7 text-muted">
+                單看「那份同意書」，知道它是某份同意書，卻還不知道句子前面哪一次提到的同意書；要回頭找到「受訪者同意書」，才知道它們是同一份。
+              </p>
+            </div>
+            <div class="bg-surface p-5">
+              <p class="m-0 font-mono text-sm tracking-[0.08em] text-red">把整句放在一起</p>
+              <p class="mt-4 mb-0 font-display text-2xl leading-tight">「那份同意書」↔「同意書」</p>
+              <p class="mt-3 mb-0 text-base leading-7 text-muted">
+                看過整段後，模型可以把「那份同意書」和前面的「受訪者同意書」連起來，知道小明找的是哪一份文件。
+              </p>
+            </div>
+          </div>
+          <p class="mt-6 max-w-[58ch] text-base leading-7 text-muted">
+            要完成第 10
+            格的回查，模型同時要處理三種關係：把「提醒他」「回到研究室」「他把修正版寄出」接回小明，把交研究計畫、王老師提醒、發現文件夾錯地方排出先後，還要把「那份同意書」接回「受訪者同意書」。下面先追蹤最後這一種關係，看看第
+            10 格怎麼算出該參考第 4 格。
+          </p>
+          <ul class="mt-5 max-w-[58ch] list-none space-y-3 border-l-2 border-blue pl-5 text-base leading-7 text-muted">
+            <li>
+              <strong class="text-ink">「那份同意書」↔「受訪者同意書」：</strong>{' '}
+              前面先談交稿、摘要和修改，隔了幾個動作後才出現「那份同意書」；兩個位置仍要在意思上連成同一份文件。
+            </li>
+            <li>
+              <strong class="text-ink">「後」「才」「於是」↔ 幾個動作：</strong>{' '}
+              這些字把「交研究計畫」「發現文件夾錯地方」「回系辦尋找」排出先後。
+            </li>
+          </ul>
+          <p class="mt-5 max-w-[58ch] text-base leading-7 text-muted">
+            這些關係不是單看某一個字就能得到的。模型必須把同一段文字裡的多個位置放在一起比較，才有資料可以判斷哪裡和現在正在處理的「那份同意書」有關。
+          </p>
+          <p class="mt-6 max-w-[58ch] text-base leading-8 text-muted">
+            要把剛才那個操作算出來，模型不能只保留一串沒有分工的數字。同一個位置的資料會被轉成三種用途：一種說明「目前要找什麼」，一種說明「這個位置有哪些可比對的線索」，另一種保留「被找到後要提供的內容」。這三種角色分別叫
+            Query、Key、Value；接下來先說明它們由什麼參數轉出來，再逐步把分數換成權重。
+          </p>
+          <aside
+            class="border-t-4 border-blue bg-blue/5 p-6 sm:p-8"
+            aria-labelledby="qkv-matrix-title"
+            slot="rail"
+          >
+            <div class="grid gap-3">
+              <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-blue">
+                字典 / TERM DICTIONARY
+              </p>
+              <h4 id="qkv-matrix-title" class="m-0 font-mono text-2xl leading-tight">
+                W<sub>i</sub>
+                <sup>Q</sup>、W<sub>i</sub>
+                <sup>K</sup>、W<sub>i</sub>
+                <sup>V</sup>
+              </h4>
+            </div>
+            <dl class="mt-6 grid gap-4 border-t border-blue/30 pt-5 text-base leading-8">
+              <dt class="font-mono text-sm text-blue">它們是什麼</dt>
+              <dd class="m-0 text-muted">
+                它們是矩陣
+                (matrix)：很多可調整的數字排成規則的網格，就像一組組固定的「換算濾鏡」。它們不是替每個詞查答案的普通表格；
+                <code>
+                  W<sub>i</sub>
+                  <sup>Q</sup>
+                </code>
+                、
+                <code>
+                  W<sub>i</sub>
+                  <sup>K</sup>
+                </code>
+                、
+                <code>
+                  W<sub>i</sub>
+                  <sup>V</sup>
+                </code>
+                分別代表三套不同的濾鏡，會把同一個輸入的數字資料卡（向量），換算成三種不同用途的向量。
+              </dd>
+              <dt class="font-mono text-sm text-blue">誰訓練它們</dt>
+              <dd class="m-0 text-muted">
+                研究人員決定模型架構、訓練資料、目標和 optimizer；訓練程式依照 loss 算出的
+                gradient，用 gradient descent 或 Adam 一類的 optimizer
+                反覆更新整個模型。沒有人逐格手填{' '}
+                <code>
+                  W<sub>i</sub>
+                  <sup>Q</sup>
+                </code>
+                。
+              </dd>
+              <dt class="font-mono text-sm text-blue">是不是每個詞一套</dt>
+              <dd class="m-0 text-muted">
+                不是。在同一個 attention layer 和第
+                <code>i</code> 個 head 裡，同一組{' '}
+                <code>
+                  W<sub>i</sub>
+                  <sup>Q</sup>
+                </code>{' '}
+                會套用在每個輸入位置的
+                <code>
+                  x<sub>j</sub>
+                </code>
+                ；這裡用 <code>j</code> 表示位置，避免和 head 編號
+                <code>i</code> 混在一起。不同 layer 或不同 head 會有自己的參數。
+                共用同一套轉換，所有位置的分數才是在同一個規則下比較。
+              </dd>
+              <dt class="font-mono text-sm text-blue">三者怎麼分工</dt>
+              <dd class="m-0 text-muted">
+                <code>
+                  W<sub>i</sub>
+                  <sup>Q</sup>
+                </code>{' '}
+                把目前位置轉成「我要找什麼」的 Query，
+                <code>
+                  W<sub>i</sub>
+                  <sup>K</sup>
+                </code>
+                把候選位置轉成「我有哪些可比對線索」的 Key，
+                <code>
+                  W<sub>i</sub>
+                  <sup>V</sup>
+                </code>
+                則把候選位置轉成「找到後要提供的內容」的 Value。
+              </dd>
+            </dl>
+            <div class="mt-6 border-t border-blue/30 pt-5">
+              <p class="m-0 font-mono text-sm font-semibold tracking-[0.08em] text-blue">
+                論文記號 / PAPER NOTATION
+              </p>
+              <div class="mt-4 overflow-x-auto bg-paper-deep p-4 font-mono text-sm leading-7 text-blue">
+                <div class="whitespace-nowrap">
+                  MultiHead(Q, K, V) = Concat(head<sub>1</sub>, …, head<sub>h</sub>) W<sup>O</sup>
+                </div>
+                <div class="whitespace-nowrap">
+                  head<sub>i</sub> = Attention(Q W<sub>i</sub>
+                  <sup>Q</sup>, K W<sub>i</sub>
+                  <sup>K</sup>, V W<sub>i</sub>
+                  <sup>V</sup>)
+                </div>
+              </div>
+              <p class="mt-4 mb-0 text-base leading-8 text-muted">
+                這裡的 <code>i</code> 是第幾個 attention head，不是句子裡的第幾個位置；
+                <code>Q</code>、<code>K</code>、<code>V</code> 的上標則表示三組不同用途的投影矩陣。
+                原論文的意思是：每個 head 各自把整組
+                <code>Q</code>、<code>K</code>、<code>V</code> 投影一次，再平行計算 attention。
+              </p>
+            </div>
+          </aside>
+          <ol class="mt-7 m-0 list-none border-y border-line p-0">
+            <li class="grid grid-cols-[3rem_1fr] gap-4 border-b border-line py-4 sm:grid-cols-[4rem_1fr]">
+              <span class="font-mono text-sm text-red">01</span>
+              <p class="m-0 text-base leading-7 text-muted">
+                <strong class="text-ink">先把每個位置變成可計算的資料。</strong> 模型先把每個 token
+                換成一串數字，這一步叫作 token embedding，記作{' '}
+                <code>
+                  x<sub>j</sub>
+                </code>
+                。在數學上，這串有順序的數字就叫作「向量
+                (vector)」，就像替這個詞填妥一張固定欄位的特徵資料卡。<code>j</code>{' '}
+                是位置編號：本例第 10 格「那份同意書」就是 <code>x₁₀</code>
+                。這是後面比較位置、取回資料的起點。
+              </p>
+            </li>
+            <li class="grid grid-cols-[3rem_1fr] gap-4 border-b border-line py-4 sm:grid-cols-[4rem_1fr]">
+              <span class="font-mono text-sm text-red">02</span>
+              <p class="m-0 text-base leading-7 text-muted">
+                <strong class="text-ink">第 10 格先做出 Query。</strong> 模型把 <code>x₁₀</code>{' '}
+                乘上矩陣
+                <code>
+                  W<sub>i</sub>
+                  <sup>Q</sup>
+                </code>
+                ，得到{' '}
+                <code>
+                  q<sub>10</sub>
+                  <sup>(i)</sup> = x<sub>10</sub> W<sub>i</sub>
+                  <sup>Q</sup>
+                </code>
+                。這個 Query 不是一個真的中文問題，而是一串表示「目前這個位置要找哪類線索」的數字。
+              </p>
+            </li>
+            <li class="grid grid-cols-[3rem_1fr] gap-4 border-b border-line py-4 sm:grid-cols-[4rem_1fr]">
+              <span class="font-mono text-sm text-red">03</span>
+              <p class="m-0 text-base leading-7 text-muted">
+                <strong class="text-ink">先替每個位置做出 Key，再算關聯分數。</strong> 上一步第 10
+                格已經有了 Query，但它還沒有可以比較的對象。完整運算要對第 1 到第 10
+                格都各算一次。每個位置都把自己的資料乘上同一組模型學到的矩陣{' '}
+                <code>
+                  W<sub>i</sub>
+                  <sup>K</sup>
+                </code>
+                ，得到{' '}
+                <code>
+                  k<sub>j</sub>
+                  <sup>(i)</sup> = x<sub>j</sub> W<sub>i</sub>
+                  <sup>K</sup>
+                </code>
+                ；Key 不是人工寫上的標籤，而是這個位置為了「方便被比較」而算出的另一串數字。
+                為了讓算式可以手算，下面只挑第 1、4、9 格做例子，其他格的做法完全相同。模型用內積
+                (dot product) 比較{' '}
+                <code>
+                  q<sub>10</sub>
+                  <sup>(i)</sup>
+                </code>{' '}
+                和
+                <code>
+                  k<sub>j</sub>
+                  <sup>(i)</sup>
+                </code>
+                ：對應位置的數字相乘，再全部加起來。內積可以衡量兩組數字有多契合：只要特徵方向越一致，乘出來加總的數值就越高。以下的數字只是為了示範：假設{' '}
+                <code>
+                  q<sub>10</sub>
+                  <sup>(i)</sup> = [1, 1]
+                </code>
+                ，第 4 格的{' '}
+                <code>
+                  k<sub>4</sub>
+                  <sup>(i)</sup> = [1, 1]
+                </code>
+                ，分數是 <code>1×1 + 1×1 = 2</code>；第 9 格的{' '}
+                <code>
+                  k<sub>9</sub>
+                  <sup>(i)</sup> = [1, 0]
+                </code>
+                ，分數是 <code>1×1 + 1×0 = 1</code>；第 1 格的{' '}
+                <code>
+                  k<sub>1</sub>
+                  <sup>(i)</sup> = [0.5, 0]
+                </code>
+                ，分數是 <code>1×0.5 + 1×0 = 0.5</code>。2 比 1 和 0.5 高，所以在這組示意數字裡，第
+                4 格更符合第 10
+                格正在找的線索。「接近」不是兩個字在畫面上靠得近，而是它們經過模型轉換後，內積得到較高分。
+              </p>
+            </li>
+            <li class="grid grid-cols-[3rem_1fr] gap-4 py-4 sm:grid-cols-[4rem_1fr]">
+              <span class="font-mono text-sm text-red">04</span>
+              <p class="m-0 text-base leading-7 text-muted">
+                <strong class="text-ink">把分數變成權重，再取回 Value。</strong> 完整運算會把第 1
+                到第 10 格的分數一起送進 <code>softmax</code>；下面沿用第 1、4、9
+                格的三個例子，把剛才的分數換成一組加起來等於 1 的權重。每個位置再用第三組模型參數
+                <code>
+                  W<sub>i</sub>
+                  <sup>V</sup>
+                </code>{' '}
+                算出自己的 Value，{' '}
+                <code>
+                  v<sub>j</sub>
+                  <sup>(i)</sup> = x<sub>j</sub> W<sub>i</sub>
+                  <sup>V</sup>
+                </code>
+                。Key 回答「哪裡值得找」，Value 回答「找到之後要帶回什麼」；模型按照權重把這些 Value
+                加在一起，放回第 10 格的計算。第 10 格仍然是「那份同意書」，只是現在多帶著第 4
+                格「受訪者同意書」提供的線索。
+              </p>
+            </li>
+          </ol>
+          <p class="mt-6 text-base leading-8 text-muted">
+            這也回答「模型怎麼知道哪個 Key 比較合適」：沒有一條人寫好的規則告訴它第 4 格一定要連到第
+            10 格。模型反覆用正確譯文計算 loss，再用 gradient 更新參數；如果某種 Query–Key
+            關聯能讓翻譯更接近目標，這種數字組合日後就比較容易得到高分。高分表示模型在訓練中學到的相容性，不是人替它查好的答案。
+          </p>
+          <aside
+            class="mt-8 border-t-4 border-red bg-surface p-6 sm:p-8"
+            aria-labelledby="softmax-term-title"
+            slot="rail"
+          >
+            <div class="grid gap-3">
+              <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+                字典 / TERM DICTIONARY
+              </p>
+              <h4 id="softmax-term-title" class="m-0 font-mono text-2xl leading-tight">
+                softmax
+              </h4>
+            </div>
+            <dl class="mt-6 grid gap-4 border-t border-line pt-5 text-base leading-8">
+              <dt class="font-mono text-sm text-blue">它接收什麼</dt>
+              <dd class="m-0 text-muted">
+                一組剛算出的關聯分數，例如
+                <code>2.0</code>、<code>1.0</code>、<code>0.5</code>
+                。這些分數只能表示誰比較相關，還不是「各自要拿多少資料」的比例。
+              </dd>
+              <dt class="font-mono text-sm text-blue">它怎麼做</dt>
+              <dd class="m-0 text-muted">
+                它先算「<code>e</code> 的每個分數次方」，再除以所有次方的總和：
+                <code class="bg-paper-deep px-2 py-1 text-sm text-blue">
+                  softmax(sᵢ) = eˢᵢ ÷ Σⱼeˢⱼ
+                </code>
+                。Σⱼ 的意思是「把所有候選位置都加進來」；<code>e</code> 是約等於 2.718
+                的數學常數。以
+                <code>2.0</code>、<code>1.0</code>、<code>0.5</code> 為例，先得到{' '}
+                <code>e²·⁰ ≈ 7.39</code>、<code>e¹·⁰ ≈ 2.72</code>、<code>e⁰·⁵ ≈ 1.65</code>
+                ，再用各自的數字除以總和 <code>11.76</code>。這裡不必先背
+                <code>e</code>，重點是先把分數變成正數，再整理成可以分配的比例。
+              </dd>
+              <dt class="font-mono text-sm text-blue">它產生什麼</dt>
+              <dd class="m-0 text-muted">
+                以 <code>2.0</code>、<code>1.0</code>、<code>0.5</code> 為例，結果約是{' '}
+                <code>0.63</code>、<code>0.23</code>、<code>0.14</code>。每個數都大於
+                0，三個數加起來等於 1；模型就能用它們表示每個位置要提供多少 Value。
+              </dd>
+              <dt class="font-mono text-sm text-blue">為什麼需要它</dt>
+              <dd class="m-0 text-muted">
+                attention 需要的不是一張「誰分數最高」的榜單，而是一組能拿來加權的數字。softmax
+                讓模型可以保留多個線索，只是讓重要的位置影響較大。
+              </dd>
+              <dt class="font-mono text-sm text-blue">這不是什麼</dt>
+              <dd class="m-0 text-muted">
+                這些數字不是「哪個位置一定正確」的機率，而是這一次計算中，各位置分到的權重。
+              </dd>
+            </dl>
+          </aside>
+          <p class="mt-6 text-base leading-7 text-muted">
+            前一步算出的 <code>2.0</code>、<code>1.0</code>、<code>0.5</code>{' '}
+            是關聯分數，不是可以直接相加的比例。<code>softmax</code>
+            先把它們換成 <code>0.63</code>、<code>0.23</code>、<code>0.14</code>，這三個數就是
+            α，表示第 4、9、1 格各自提供多少份量；<code>V</code>{' '}
+            則是候選位置真正提供的向量。在技術記號裡，就是把每個位置的 Value
+            乘上它的權重，再全部加起來：
+            <code class="bg-paper-deep px-2 py-1 text-sm text-blue">
+              結果(第 10 格) = α₄V(受訪者同意書) + α₉V(原稿) + α₁V(小明)
+            </code>
+            。這裡只示範運算方式，不是論文報告的實驗數值。
+          </p>
+          <div class="mt-8 border-t border-dashed border-blue/30 pt-5">
+            <p class="m-0 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-blue">
+              一組示意數字 / WORKED NUMBERS
+            </p>
+            <p class="mt-4 max-w-[62ch] text-base leading-8 text-muted">
+              延續前一步的三格簡化算例：模型在處理第 10 格「那份同意書」時，給第 4
+              格「受訪者同意書」 2.0 分、第 9 格「原稿」1.0 分、第 1 格「小明」0.5 分。完整
+              attention 仍會替第 5、6、7、8、10
+              格算分數；這裡先省略它們，讓比例的換算可以直接看懂。分數越高，表示這個位置目前看起來越值得參考；但它還不是比例。
+            </p>
+            <div class="mt-5 grid gap-px border border-ink bg-ink sm:grid-cols-3">
+              <div class="bg-paper p-4">
+                <p class="m-0 font-display text-xl">受訪者同意書</p>
+                <p class="mt-2 mb-0 font-mono text-sm text-blue">2.0 → 0.63</p>
+              </div>
+              <div class="bg-surface p-4">
+                <p class="m-0 font-display text-xl">原稿</p>
+                <p class="mt-2 mb-0 font-mono text-sm text-blue">1.0 → 0.23</p>
+              </div>
+              <div class="bg-paper p-4">
+                <p class="m-0 font-display text-xl">小明</p>
+                <p class="mt-2 mb-0 font-mono text-sm text-blue">0.5 → 0.14</p>
+              </div>
+            </div>
+            <p class="mt-5 max-w-[62ch] text-base leading-8 text-muted">
+              softmax 把 2.0、1.0、0.5 轉成 0.63、0.23、0.14；三個權重加起來是
+              1。若先用單一數字示意三個 Value：受訪者同意書是 1.0、原稿是 0.2、小明是
+              0，那麼加權結果就是
+              <code class="bg-paper-deep px-2 py-1 font-mono text-sm text-blue">
+                0.63 × 1.0 + 0.23 × 0.2 + 0.14 × 0 = 0.68
+              </code>
+              。真正的 Value
+              是向量，不是一個數字；這裡只拿其中一個分量示範「分數如何變成比例，再如何影響結果」。完整的加權結果仍是一個向量，會留在第
+              10 格，交給下一個 layer 繼續計算。
+            </p>
+          </div>
+        </PaperReadingLayout>
+      </div>
+    </section>
+
+    <section class={`${shell} border-t border-line py-24`}>
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            歷史 / 從翻譯任務開始
+          </p>
+          <h2 class="m-0 font-display text-5xl sm:text-6xl lg:text-6xl leading-tight tracking-[-0.04em]">
+            <span class="block">先是算得慢，</span>
+            <span class="block">
+              <em>後來還得記住前文。</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          當時的翻譯工作同時受三件事牽制：句子要保留遠距關係，位置要依序計算，訓練還要用上 GPU。
+        </p>
+      </div>
+      <PaperReadingLayout>
+        <div class="min-w-0 max-w-2xl">
+          <p class="font-display text-3xl leading-snug">
+            看懂了 attention 的運算，讀者很自然會問：既然直接跨格查看這麼直覺，為什麼直到 2017
+            年才有人把循環鏈完全拿掉？
+          </p>
+          <p class="mt-8 text-base leading-8 text-muted">
+            因為在 2017
+            年之前，研究團隊面對的是一個很具體、歷史包袱很深的工作：把來源語言的句子改寫成另一種語言，同時保留人物、動作和語序之間的關係。在當時，大家並不是在一張白紙上自由設計機器，而是一步步在修補既有的系統。
+          </p>
+          <p class="mt-8 text-base leading-8 text-muted">
+            這裡的 <code>encoder</code> 是讀入來源句子的部分，<code>decoder</code>
+            是根據它整理好的資料，逐步寫出目標句子的部分。到那時，attention 已經不是新名詞。前代的
+            recurrent translation system 讓 decoder
+            在產生每個目標詞時，回頭查看來源句子的相關位置；有的做法看全部來源詞，有的只看局部位置。但
+            encoder 和 decoder 的核心仍然是 recurrent
+            network，下一個位置仍要等上一個位置。Transformer
+            接手的不是空白問題，而是把「已經會找來源位置的 attention」改成整個 encoder–decoder
+            的主要計算路徑。{' '}
+            <a
+              class="text-red underline underline-offset-4"
+              href={sourceMap['paper-2017-arxiv'].url}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="來源 S1：Attention Is All You Need（在新分頁開啟）"
+            >
+              [S1]
+            </a>
+          </p>
+          <p class="mt-6 text-base leading-8 text-muted">
+            前一段說的等待，並不是抽象的速度問題：舊系統的 encoder
+            讀來源句子時，下一個位置必須等前一個位置完成；recurrent decoder
+            產生目標句子時，也必須等上一個目標 token。前代 attention 已經讓 decoder
+            能回頭取用來源位置，卻沒有拿掉這條循環的依賴鏈。Transformer
+            接手的就是這個尚未解開的部分：讓來源端的多個位置能在同一層一起計算，同時保留目標端生成時必要的先後順序。記憶的問題則出現在長句裡：讀到「那份同意書」時，模型得從一路更新的
+            hidden state 找回前面提過的「受訪者同意書」，還要分清楚「原稿」是另一份東西。Uszkoreit
+            同期的說明，也把長決策鏈連到學習遠距依賴 (distant dependencies) 的困難。{' '}
+            <a
+              class="text-red underline underline-offset-4"
+              href={sourceMap['google-uszkoreit-2017'].url}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="來源 S2：Transformer 說明文章（在新分頁開啟）"
+            >
+              [S2]
+            </a>
+          </p>
+          <p class="mt-6 text-base leading-8 text-muted">
+            論文和同期文章能支持的，是這條技術脈絡：attention 已能提供位置之間的路徑，而 recurrence
+            仍把計算排成一條必須等待的隊伍。至於哪一場討論先提出「移除
+            recurrence」，公開紀錄沒有留下答案。
+          </p>
+          <p class="mt-6 text-base leading-8 text-muted">
+            Gomez 後來回憶，團隊當時專注的是一個「very
+            scoped」的翻譯問題，沒有預見這項工作最後會變成什麼。這個回憶可以說明研究當時的視野，不能替論文補出一條私下的發明時間線。{' '}
+            <a
+              class="text-red underline underline-offset-4"
+              href={sourceMap['gomez-time-2023'].url}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="來源 S3：Aidan Gomez 訪談（在新分頁開啟）"
+            >
+              [S3]
+            </a>
+          </p>
+          <p class="mt-6 text-base leading-8 text-muted">
+            論文報告的結果則是另一件事：WMT 2014 English–German 得到 28.4 BLEU；English–French 在 8
+            張 GPU 上訓練 3.5 天後得到 41.8 BLEU。BLEU
+            是拿模型翻譯和人工參考譯文比對的分數；它能比較這組實驗，不能直接代表所有翻譯或其他任務。{' '}
+            <a
+              class="text-red underline underline-offset-4"
+              href={sourceMap['paper-2017-arxiv'].url}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="來源 S1：Attention Is All You Need（在新分頁開啟）"
+            >
+              [S1]
+            </a>
+          </p>
+        </div>
+        <aside
+          class="self-start border-t-4 border-red bg-surface p-6 sm:p-8"
+          aria-labelledby="evidence-ladder-title"
+          slot="rail"
+        >
+          <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            證據階梯 / THE EVIDENCE LADDER
+          </p>
+          <h3 id="evidence-ladder-title" class="mt-4 mb-5 font-display text-3xl leading-tight">
+            這些話，證據在哪裡？
+          </h3>
+          <p class="mb-6 text-base leading-8 text-muted">
+            這四個層級回答的是：「我們憑什麼這樣說？」直接，是來源明白寫出的事；交叉印證，是兩個公開來源互相支持；推論，是把資料連起來後的合理解讀；未知，則是目前不能下結論的地方。
+          </p>
+          <dl class="m-0">
+            <div class="grid gap-2 border-t border-line py-4 sm:grid-cols-[7rem_1fr] sm:gap-4">
+              <dt class="font-mono text-sm text-red">直接 / DIRECT</dt>
+              <dd class="m-0 text-base leading-7 text-muted">
+                論文明白寫出它要處理 recurrent model 的 bottleneck、提出 Transformer 架構，並在翻譯
+                benchmark 上報告結果。
+              </dd>
+            </div>
+            <div class="grid gap-2 border-t border-line py-4 sm:grid-cols-[7rem_1fr] sm:gap-4">
+              <dt class="font-mono text-sm text-red">印證 / CORROBORATED</dt>
+              <dd class="m-0 text-base leading-7 text-muted">
+                論文與 Uszkoreit 的同期文章都指出循序計算會造成等待；兩者一起支持「self-attention
+                可以縮短位置之間的資訊路徑」這個說法。
+              </dd>
+            </div>
+            <div class="grid gap-2 border-t border-line py-4 sm:grid-cols-[7rem_1fr] sm:gap-4">
+              <dt class="font-mono text-sm text-red">推論 / INFERENCE</dt>
+              <dd class="m-0 text-base leading-7 text-muted">
+                從這些資料可以重建研究團隊面對的設計壓力；但資料沒有記錄每一次討論，不能把重建的順序當成作者親口說的時間線。
+              </dd>
+            </div>
+            <div class="grid gap-2 border-t border-line py-4 sm:grid-cols-[7rem_1fr] sm:gap-4">
+              <dt class="font-mono text-sm text-faint">未知 / UNKNOWN</dt>
+              <dd class="m-0 text-base leading-7 text-muted">
+                現有公開資料無法回答誰最先提出移除 recurrence；這件事先保留，不補寫故事。
+              </dd>
+            </div>
+          </dl>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <section class={`${shell} border-t border-ink py-24`}>
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            歷史 / 2014–2017
+          </p>
+          <h2 class="m-0 font-display text-5xl sm:text-6xl lg:text-7xl leading-tight tracking-[-0.04em]">
+            <span class="block">三次修補，</span>
+            <span class="block">
+              <em>最後換了路。</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          Transformer
+          並不是突然出現。前面的論文先解決「序列怎麼讀」，再解決「長句怎麼找回」，最後才把循環本身拿掉。
+        </p>
+      </div>
+      <div class="grid gap-12 lg:grid-cols-[1fr_0.55fr] lg:gap-24">
+        <div class="max-w-[68ch]">
+          <p class="text-base leading-8 text-muted">
+            2014 年，Sutskever、Vinyals 和 Le 用 LSTM encoder–decoder
+            把變長的來源句子轉成固定維度向量，再由另一個 LSTM decoder 寫出目標句子。這讓 neural
+            machine translation 可以用一個端到端模型完成，但整句資訊仍得先擠進那個向量。{' '}
+            <a
+              class="text-red underline underline-offset-4"
+              href={sourceMap['paper-2014-seq2seq'].url}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="來源 S4：Sequence to Sequence Learning with Neural Networks（在新分頁開啟）"
+            >
+              [S4]
+            </a>
+          </p>
+          <p class="mt-6 text-base leading-8 text-muted">
+            同年，Bahdanau、Cho 和 Bengio 把問題說得更直接：固定長度向量是 basic encoder–decoder
+            的瓶頸。他們讓 decoder 產生每個目標詞時，回頭對來源句子的 annotation vectors （encoder
+            在每個來源位置留下的數字資料）做 soft search；整句不再只有一個可以取用的摘要，但 encoder
+            和 decoder 仍是 recurrent network。{' '}
+            <a
+              class="text-red underline underline-offset-4"
+              href={sourceMap['paper-2014-align-translate'].url}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="來源 S5：Neural Machine Translation by Jointly Learning to Align and Translate（在新分頁開啟）"
+            >
+              [S5]
+            </a>
+          </p>
+          <p class="mt-6 text-base leading-8 text-muted">
+            2015 年，Luong、Pham 和 Manning 再把 attention 分成 global 與
+            local：一次看全部來源詞，或只看附近的一部分。這些方法改善了長句翻譯，卻沒有移除
+            recurrent encoder–decoder；來源端仍逐步讀，目標端仍逐詞寫。attention
+            已經證明值得留下，還沒被解開的是 recurrence 帶來的等待。{' '}
+            <a
+              class="text-red underline underline-offset-4"
+              href={sourceMap['paper-2015-attention-nmt'].url}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="來源 S6：Effective Approaches to Attention-based Neural Machine Translation（在新分頁開啟）"
+            >
+              [S6]
+            </a>
+          </p>
+          <div class="mt-8 border-l-2 border-blue bg-blue/5 p-5 text-blue">
+            <p class="m-0 text-base leading-8">
+              到 2017 年，Transformer
+              把問題再往前推一步：如果每個位置都能直接和其他位置建立關係，為什麼還要讓資訊排隊經過
+              recurrence？
+            </p>
+          </div>
+        </div>
+        <div class="self-start border-t-4 border-ink p-5">
+          <p class="mb-8 font-mono text-sm tracking-[0.08em] text-red">這篇論文接手的問題</p>
+          <p class="m-0 font-display text-3xl leading-tight">
+            模型能不能連起相距很遠的字，又不必把整個句子塞進一個依序更新的記憶裡？
+          </p>
+        </div>
+      </div>
+      <div class="mt-20">
+        <StoryRail events={story} label="論文發展時間線，可使用鍵盤瀏覽" />
+      </div>
+    </section>
+
+    <section class={`${shell} border-t border-line py-24`}>
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            理論 / 這台機器
+          </p>
+          <h2 class="m-0 font-display text-4xl sm:text-5xl lg:text-5xl leading-tight tracking-[-0.04em]">
+            <span class="block">Transformer 先分成兩邊，</span>
+            <span class="block">
+              <em>每一邊有自己的工作。</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          左邊的 encoder 讀來源句子，右邊的 decoder 根據已產生的目標 token 寫下一個；中間的
+          cross-attention 讓右邊取用左邊整理好的資料。
+        </p>
+      </div>
+      <figure role="img" aria-labelledby="transformer-diagram-title">
+        <figcaption id="transformer-diagram-title" class="sr-only">
+          Transformer 的簡化 encoder–decoder 示意圖：左側由輸入 token 經過 self-attention
+          與前饋網路產生上下文，右側由輸出 token 經過遮罩 attention 與 cross-attention 產生下一個
+          token。
+        </figcaption>
+        <div
+          class="grid gap-8 border border-ink bg-surface p-5 md:grid-cols-[1fr_0.5fr_1fr] md:items-center md:p-8"
+          aria-hidden="true"
+        >
+          <div class="grid gap-3">
+            <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+              編碼器 / ENCODER
+            </p>
+            <div class="border border-ink bg-paper-deep p-4 text-center font-display text-lg">
+              輸入 token
+            </div>
+            <span class="text-center text-muted">↓</span>
+            <div class="border border-ink bg-red-soft p-4 text-center font-display text-lg">
+              Self-attention
+            </div>
+            <span class="text-center text-muted">↓</span>
+            <div class="border border-ink bg-[#dce7e9] p-4 text-center font-display text-lg">
+              前饋網路 / Feed-forward
+            </div>
+            <span class="text-center text-muted">↓</span>
+            <div class="border border-ink bg-ink p-4 text-center font-display text-lg text-surface">
+              上下文 / Context
+            </div>
+          </div>
+          <div class="grid gap-3 text-center font-mono text-sm uppercase tracking-[0.06em] text-blue">
+            <span>上下文從這裡傳過去</span>
+            <span class="h-px bg-red"></span>
+          </div>
+          <div class="grid gap-3">
+            <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+              解碼器 / DECODER
+            </p>
+            <div class="border border-ink bg-paper-deep p-4 text-center font-display text-lg">
+              已產生的輸出 token
+            </div>
+            <span class="text-center text-muted">↓</span>
+            <div class="border border-ink bg-red-soft p-4 text-center font-display text-lg">
+              遮罩 attention
+            </div>
+            <span class="text-center text-muted">↓</span>
+            <div class="border border-ink bg-[#dce7e9] p-4 text-center font-display text-lg">
+              Cross-attention
+            </div>
+            <span class="text-center text-muted">↓</span>
+            <div class="border border-ink bg-ink p-4 text-center font-display text-lg text-surface">
+              下一個 token
+            </div>
+          </div>
+        </div>
+        <p class="mt-4 mb-0 text-right font-mono text-sm tracking-[0.06em] text-muted">
+          圖 01 / 教學示意圖，不是論文的完整實作。
+        </p>
+        <p class="mt-6 max-w-[68ch] border-l-2 border-blue bg-blue/5 p-5 text-base leading-7 text-blue">
+          在這個架構裡，encoder 先把來源句子的每個位置整理成帶有上下文的數字資料；decoder
+          再根據這些資料，一個 token 一個 token
+          地寫出目標句子。訓練時可以平行處理輸入，生成時仍然有先後順序；這兩個階段不能混成同一件事。
+        </p>
+      </figure>
+    </section>
+
+    <section class={`${shell} border-t border-ink py-24`}>
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            理論 / 摘要的四個主張
+          </p>
+          <h2 class="m-0 font-display text-5xl sm:text-6xl lg:text-7xl leading-tight tracking-[-0.04em]">
+            <span class="block">摘要裡的四個主張，</span>
+            <span class="block">
+              <em>各自對應一個選擇。</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          有些句子說明方法，有些句子限定結果能推到哪裡。
+        </p>
+      </div>
+      <div class="mx-auto max-w-[900px] border-t border-ink">
+        <article class="grid gap-5 border-b border-line py-8 md:grid-cols-[5rem_1fr] md:gap-8">
+          <p class="m-0 font-mono text-sm text-red">A / 01</p>
+          <div>
+            <p class="mb-3 font-mono text-sm font-semibold tracking-[0.1em] text-red">
+              主張 / CLAIM
+            </p>
+            <h3 class="m-0 font-display text-3xl leading-tight">論文先把比較對象擺上桌。</h3>
+            <p class="mt-4 max-w-[60ch] text-base leading-8 text-muted">
+              早期的序列模型 (sequence model) 使用 recurrence 或 convolution。兩者都能連起
+              token，卻都無法讓模型直接、低成本地查看其他位置。
+            </p>
+            <div class="mt-5 grid grid-cols-[auto_1fr] gap-4 border-t border-dashed border-blue/30 pt-4 text-blue">
+              <span class="font-mono text-xs" aria-hidden="true">
+                →
+              </span>
+              <p class="m-0 text-base leading-7">
+                舊模型要照順序讀，或把注意力限制在局部視窗。這篇論文讓每個位置都能計算自己要參考哪些位置。
+              </p>
+            </div>
+          </div>
+        </article>
+        <article class="grid gap-5 border-b border-line border-l-4 border-red bg-red-soft/30 px-5 py-8 md:grid-cols-[5rem_1fr] md:gap-8">
+          <p class="m-0 font-mono text-sm text-red">A / 02</p>
+          <div>
+            <p class="mb-3 font-mono text-sm font-semibold tracking-[0.1em] text-red">
+              提案 / PROPOSAL
+            </p>
+            <h3 class="m-0 font-display text-3xl leading-tight">
+              讓 attention 負責位置之間的連結。
+            </h3>
+            <p class="mt-4 max-w-[60ch] text-base leading-8 text-muted">
+              Transformer 由 attention layer 和逐點運算的網路組成。核心路徑裡沒有 recurrence。
+            </p>
+            <div class="mt-5 grid grid-cols-[auto_1fr] gap-4 border-t border-dashed border-blue/30 pt-4 text-blue">
+              <span class="font-mono text-xs" aria-hidden="true">
+                →
+              </span>
+              <p class="m-0 text-base leading-7">
+                每個位置都能從其他位置取回需要的資訊，不必等待一條循環鏈逐步傳完。
+              </p>
+            </div>
+          </div>
+        </article>
+        <article class="grid gap-5 border-b border-line py-8 md:grid-cols-[5rem_1fr] md:gap-8">
+          <p class="m-0 font-mono text-sm text-red">A / 03</p>
+          <div>
+            <p class="mb-3 font-mono text-sm font-semibold tracking-[0.1em] text-red">
+              證據 / EVIDENCE
+            </p>
+            <h3 class="m-0 font-display text-3xl leading-tight">平行化改變了訓練的取捨。</h3>
+            <p class="mt-4 max-w-[60ch] text-base leading-8 text-muted">
+              論文報告了不錯的翻譯結果，訓練時間也比早期系統少很多。比較是在翻譯 benchmark
+              與這篇論文的訓練設定上進行。
+            </p>
+            <div class="mt-5 grid grid-cols-[auto_1fr] gap-4 border-t border-dashed border-blue/30 pt-4 text-blue">
+              <span class="font-mono text-xs" aria-hidden="true">
+                →
+              </span>
+              <p class="m-0 text-base leading-7">
+                這組結果只支持一個較窄的結論：在論文設定的翻譯 benchmark
+                上，這個架構同時改善了結果與訓練效率。 它沒有回答其他任務是否也成立。
+              </p>
+            </div>
+          </div>
+        </article>
+        <article class="grid gap-5 border-b border-line py-8 md:grid-cols-[5rem_1fr] md:gap-8">
+          <p class="m-0 font-mono text-sm text-red">A / 04</p>
+          <div>
+            <p class="mb-3 font-mono text-sm font-semibold tracking-[0.1em] text-red">
+              界線 / LIMIT
+            </p>
+            <h3 class="m-0 font-display text-3xl leading-tight">
+              原始實驗回答的是翻譯與句法分析問題。
+            </h3>
+            <p class="mt-4 max-w-[60ch] text-base leading-8 text-muted">
+              它處理的是序列轉換 (sequence transduction)，尤其是 English–German 與 English–French
+              翻譯；論文也用 English constituency parsing
+              測試這個架構。後來的研究沿用這個架構，換了目標函數，再把規模放大。
+            </p>
+            <div class="mt-5 grid grid-cols-[auto_1fr] gap-4 border-t border-dashed border-blue/30 pt-4 text-blue">
+              <span class="font-mono text-xs" aria-hidden="true">
+                →
+              </span>
+              <p class="m-0 text-base leading-7">
+                後續研究改寫訓練目標，才把這個架構帶進更廣的語言模型任務。
+              </p>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class={`${shell} border-t border-line py-24`}>
+      <div class="mb-12 grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-end lg:gap-12">
+        <div class="min-w-0">
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            理論拆解 / THE THEORY IN PIECES
+          </p>
+          <h2 class="m-0 font-display text-4xl sm:text-5xl lg:text-5xl xl:text-6xl leading-tight tracking-[-0.04em]">
+            <span class="block xl:whitespace-nowrap">四個設計選擇，</span>
+            <span class="block">
+              <em>各自處理一個問題。</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          這四個選擇分別處理：怎麼找資料、怎麼讓分數穩定、怎麼保留多種關係、怎麼保留順序。
+        </p>
+      </div>
+      <div class="grid grid-cols-1 gap-px border border-ink bg-ink md:grid-cols-2">
+        <article class="min-h-[17rem] bg-surface p-7">
+          <p class="m-0 font-mono text-sm text-red">01</p>
+          <h3 class="mt-12 mb-3 font-display text-3xl leading-tight">Query、Key、Value</h3>
+          <p class="max-w-[38ch] text-base leading-8 text-muted">
+            模型先把每個 token 變成一串數字。Query 是「我需要找什麼」、Key 是「我有哪些特徵」、Value
+            是「我能提供哪些內容」；attention 先比較 Query 和 Key，再按分數收集 Value。
+          </p>
+          <div class="mt-5 grid grid-cols-[auto_1fr] gap-4 border-t border-dashed border-blue/30 pt-4 text-blue">
+            <span class="font-mono text-xs" aria-hidden="true">
+              →
+            </span>
+            <p class="m-0 text-base leading-7">
+              以第 10 格「那份同意書」為例，模型先用這一格的數字提出要找的線索，再和第 1、4、9 格的
+              Key 比較，最後把第 4 格提供的 Value 加回來。它不是查字典，而是在比較並組合數字資料。
+            </p>
+          </div>
+          <code class="bg-paper-deep px-2 py-1 text-sm text-blue">attention(Q, K, V)</code>
+        </article>
+        <article class="min-h-[17rem] bg-surface p-7">
+          <p class="m-0 font-mono text-sm text-red">02</p>
+          <h3 class="mt-12 mb-3 font-display text-3xl leading-tight">
+            替內積 (dot product) 做縮放
+          </h3>
+          <p class="max-w-[38ch] text-base leading-8 text-muted">
+            Query 和 Key 做內積 (dot
+            product)：對應位置相乘，再全部加起來，得到一個關聯分數。向量的維度變大時，分數也可能變得太大；論文因此除以
+            key 維度的平方根，讓 softmax 不會只剩一個極端高分。
+          </p>
+          <div class="mt-5 grid grid-cols-[auto_1fr] gap-4 border-t border-dashed border-blue/30 pt-4 text-blue">
+            <span class="font-mono text-xs" aria-hidden="true">
+              →
+            </span>
+            <p class="m-0 text-base leading-7">
+              先想像用分數比較三個答案。數字太大時，最高分會把其他答案全部壓成零；先把分數縮小，模型才看得見其他可能性。
+            </p>
+          </div>
+          <code class="bg-paper-deep px-2 py-1 text-sm text-blue">softmax(QKᵀ / √dₖ)V</code>
+        </article>
+        <article class="min-h-[17rem] bg-surface p-7">
+          <p class="m-0 font-mono text-sm text-red">03</p>
+          <h3 class="mt-12 mb-3 font-display text-3xl leading-tight">使用多個 head</h3>
+          <p class="max-w-[38ch] text-base leading-8 text-muted">
+            Multi-head attention 不只算一次關聯，而是把向量切成幾個較小的子空間，平行執行多組
+            attention，再把結果接回來。不同 head 可能學到不同的關係，但論文不保證哪個 head
+            一定代表文法或指涉。
+          </p>
+          <div class="mt-5 grid grid-cols-[auto_1fr] gap-4 border-t border-dashed border-blue/30 pt-4 text-blue">
+            <span class="font-mono text-xs" aria-hidden="true">
+              →
+            </span>
+            <p class="m-0 text-base leading-7">
+              同一個第 10 格可以用不同組參數找不同線索：一組可能較重視「那份同意書」和第 4
+              格的指涉關係，另一組可能較重視人物或時間順序。這些結果最後會合在一起；這不是說論文替每個
+              head 指定了固定職責，而是說模型可以同時學習多種關係。
+            </p>
+          </div>
+          <code class="bg-paper-deep px-2 py-1 text-sm text-blue">multi-head = many views</code>
+        </article>
+        <article class="min-h-[17rem] bg-surface p-7">
+          <p class="m-0 font-mono text-sm text-red">04</p>
+          <h3 class="mt-12 mb-3 font-display text-3xl leading-tight">把位置加回來</h3>
+          <p class="max-w-[38ch] text-base leading-8 text-muted">
+            Self-attention 看到的是一組向量；如果不另外提供位置，它不知道誰先出現。前面第 1–10
+            格的編號只是我們為了講解方便貼上的標籤，模型還需要把順序變成每個 token
+            都能使用的數字。位置編碼 (positional encoding) 就是加進 token
+            的位置資訊，讓「先修改摘要、再寄出」和「先寄出、再修改摘要」不會被當成同一組順序。
+          </p>
+          <div class="mt-5 grid grid-cols-[auto_1fr] gap-4 border-t border-dashed border-blue/30 pt-4 text-blue">
+            <span class="font-mono text-xs" aria-hidden="true">
+              →
+            </span>
+            <p class="m-0 text-base leading-7">
+              同一個詞組若在第 2 格和第 7
+              格出現，兩格的內容可能相近，但它們在故事裡扮演的時間和作用不一定相同。位置資訊讓模型知道這兩格不在同一個地方，也知道哪一格先出現。
+            </p>
+          </div>
+          <code class="bg-paper-deep px-2 py-1 text-sm text-blue">token meaning + position</code>
+        </article>
+      </div>
+    </section>
+
+    <section class={`${shell} border-t border-ink py-24`}>
+      <div class="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-24">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            洪流 / 後來發生了什麼
+          </p>
+          <h2 class="m-0 font-display text-5xl sm:text-6xl lg:text-7xl leading-tight tracking-[-0.04em]">
+            <span class="block">原始任務是翻譯，</span>
+            <span class="block">
+              <em>後來影響遠超過翻譯。</em>
+            </span>
+          </h2>
+        </div>
+        <div class="max-w-[68ch]">
+          <p class="text-base leading-8 text-muted">
+            Transformer
+            最初是翻譯架構。後來的研究很快發現，它真正好用的地方不只適用於翻譯。保留這個架構，改成預測缺少的
+            token 或下一個 token，語言本身就能成為訓練訊號。
+          </p>
+          <p class="mt-6 text-base leading-8 text-muted">
+            這條路後來通往 BERT、GPT、scaling law、instruction
+            tuning，以及今天的生成式系統。血緣是真的，但不是命中注定。原始設計也留下平方級的
+            attention 成本，依賴位置編碼方式，對資料治理 (data governance) 或 alignment
+            幾乎沒有著墨。
+          </p>
+          <div class="mt-8 border border-red p-5">
+            <p class="m-0 text-base leading-8">
+              <strong>一句評語。</strong>
+              這篇論文最重要的貢獻，是改變了思考單位：不再問「要怎麼把序列一路帶過去」，而是問「哪些關係值得計算？」
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class={`${shell} border-t border-ink py-24`}>
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            來源清單 / SOURCE LEDGER V1
+          </p>
+          <h2 class="m-0 font-display text-5xl sm:text-6xl lg:text-7xl leading-tight tracking-[-0.04em]">
+            <span class="block">每個故事都有</span>
+            <span class="block">
+              <em>它的邊界。</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          本章使用論文、同期文章與後來的訪談；不同來源能說到的程度並不相同。
+        </p>
+      </div>
+      <div class="grid grid-cols-1 gap-px border border-ink bg-ink md:grid-cols-2">
+        {attentionSources.map((source, index) => (
+          <article class="min-h-[20rem] bg-surface p-7">
+            <div class="flex justify-between gap-4 font-mono text-sm uppercase tracking-[0.08em] text-red">
+              <span>S / {String(index + 1).padStart(2, '0')}</span>
+              <span class="text-right text-blue">{sourceKindLabels[source.kind]}</span>
+            </div>
+            <h3 class="mt-12 mb-3 max-w-[31ch] font-display text-2xl leading-tight">
+              {source.title}
+            </h3>
+            <p class="font-mono text-sm uppercase tracking-[0.03em] text-red">
+              {source.publisher}
+              {source.published ? ` / ${source.published}` : ''}
+            </p>
+            <p class="mt-5 max-w-[55ch] text-base leading-7 text-muted">
+              {source.supports.join(' ')}
+            </p>
+            <p class="mt-4 border-t border-dashed border-line pt-3 text-sm leading-7 text-faint">
+              <span class="font-mono text-xs text-red">界線</span> {source.limits}
+            </p>
+            <a
+              class="mt-5 inline-block font-mono text-sm uppercase underline underline-offset-4 hover:text-red"
+              href={source.url}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={`開啟來源：${source.title}（在新分頁開啟）`}
+            >
+              開啟來源 ↗
+            </a>
+          </article>
+        ))}
+      </div>
+      <p class="mt-6 ml-auto max-w-[82ch] text-base leading-8 text-muted">
+        <span class="font-mono text-sm text-red">目前範圍</span> {paper.coverageNote}
+      </p>
+    </section>
+
+    <section class={`${shell} border-t border-line py-16 sm:py-20`}>
+      <div class="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            作者 / THE AUTHORS
+          </p>
+          <h2 class="m-0 max-w-[15ch] font-display text-5xl sm:text-6xl lg:text-7xl leading-tight tracking-[-0.04em]">
+            <span class="block">八位作者，</span>
+            <span class="block">
+              <em>共同署名一個架構。</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[36ch] text-base leading-8 text-muted">
+          論文署名八人。公開文章和訪談能補上部分工作脈絡，不能替每位作者補出一段沒有來源的故事。
+        </p>
+      </div>
+      <div class="grid grid-cols-1 gap-px border border-ink bg-ink md:grid-cols-2">
+        {paper.authorBriefs.map((author) => (
+          <article class="min-h-[18rem] bg-surface p-6">
+            <h3 class="m-0 font-mono text-sm font-semibold tracking-[0.04em]">{author.name}</h3>
+            <p class="mt-2 mb-8 font-mono text-sm uppercase tracking-[0.06em] text-red">
+              {author.affiliationAtPublication}
+            </p>
+            <p class="max-w-[32ch] font-display text-2xl leading-tight">{author.roleInPaper}</p>
+            <p class="max-w-[46ch] text-base leading-7 text-muted">{author.verifiedContext}</p>
+            <div class="mt-6 flex flex-wrap gap-x-4 gap-y-2 border-t border-dashed border-line pt-3 font-mono text-xs leading-6 text-blue">
+              <span>證據等級 / {confidenceLabels[author.confidence]}</span>
+              <span>
+                來源 / {author.evidenceIds.map((id) => sourceMap[id].publisher).join('、')}
+              </span>
+            </div>
+            <p class="mt-4 mb-0 text-sm leading-6 text-faint">
+              <span class="font-mono text-xs text-red">資料缺口</span> {author.unknowns[0]}
+            </p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class={`${shell} border-t border-ink py-24`}>
+      <p class="mb-5 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+        下一章 / CHAPTER 02
+      </p>
+      <div class="flex flex-col items-start justify-between gap-8 bg-ink p-7 text-surface md:flex-row md:items-end md:p-8">
+        <div>
+          <p class="m-0 font-mono text-sm tracking-[0.08em] text-paper-deep">第 02 章 / 2018</p>
+          <h2 class="mt-10 mb-3 font-display text-4xl sm:text-5xl lg:text-6xl leading-tight tracking-[-0.04em]">
+            Pre-training 往上游移動。
+          </h2>
+          <p class="m-0 max-w-[42ch] text-base leading-7 text-paper-deep">
+            模型回答任務以前，如果先學會語言本身的形狀，會發生什麼事？
+          </p>
+        </div>
+        <span class="font-mono text-4xl text-red" aria-hidden="true">
+          ↗
+        </span>
+      </div>
+    </section>
+  </article>
+</BaseLayout>

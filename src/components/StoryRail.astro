@@ -1,0 +1,73 @@
+---
+interface StoryEvent {
+  year: string;
+  label: string;
+  title: string;
+  body: string;
+  status?: 'past' | 'current' | 'future';
+}
+
+interface Props {
+  events: StoryEvent[];
+  variant?: 'rail' | 'list';
+  label?: string;
+}
+
+const { events, variant = 'rail', label = '論文發展時間線，可水平捲動' } = Astro.props;
+const railClasses =
+  variant === 'list'
+    ? 'grid grid-cols-1 border-t border-ink'
+    : 'grid grid-cols-1 border-t border-ink pt-6 md:grid-cols-3';
+const itemClasses =
+  variant === 'list'
+    ? 'grid grid-cols-[12px_5rem_1fr] gap-x-3 gap-y-2 border-b border-line py-5 md:grid-cols-[12px_6rem_11rem_minmax(14rem,0.8fr)_minmax(18rem,1fr)] md:items-start md:gap-5 md:py-6'
+    : 'relative min-h-[15rem] border-r border-line pr-5 last:border-r-0 md:pl-6 md:first:pl-0';
+---
+
+<ol class={railClasses} tabindex="0" aria-label={label}>
+  {events.map((event) => (
+    <li class:list={[itemClasses, event.status === 'current' && 'bg-red-soft/30']}>
+      <div
+        class:list={[
+          'h-3 w-3 rounded-full border-2 border-paper bg-ink shadow-[0_0_0_1px_theme(colors.ink)]',
+          variant === 'list' ? 'static mt-1' : 'absolute -top-[2.05rem] left-0',
+          event.status === 'current' && 'bg-red shadow-[0_0_0_1px_theme(colors.red)]',
+        ]}
+        aria-hidden="true"
+      ></div>
+      <p
+        class:list={[
+          'm-0 font-mono text-sm tracking-[0.08em]',
+          variant === 'list' && 'col-start-2 row-start-1',
+        ]}
+      >
+        {event.year}
+      </p>
+      <p
+        class:list={[
+          'm-0 font-mono text-sm uppercase tracking-[0.12em] text-red',
+          variant === 'list' && 'col-start-3 row-start-1 md:col-start-3',
+        ]}
+      >
+        {event.label}
+      </p>
+      <h3
+        class:list={[
+          'm-0 max-w-[17ch] font-display text-2xl leading-tight',
+          variant === 'list' &&
+            'col-start-3 row-start-2 max-w-none md:col-start-4 md:row-start-1 md:text-2xl',
+        ]}
+      >
+        {event.title}
+      </h3>
+      <p
+        class:list={[
+          'm-0 max-w-[25ch] text-base leading-7 text-muted',
+          variant === 'list' && 'col-start-3 row-start-3 max-w-none md:col-start-5 md:row-start-1',
+        ]}
+      >
+        {event.body}
+      </p>
+    </li>
+  ))}
+</ol>

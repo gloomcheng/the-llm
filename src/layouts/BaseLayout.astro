@@ -1,0 +1,44 @@
+---
+import SiteHeader from '../components/SiteHeader.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  section?: string;
+}
+
+const {
+  title,
+  description = '從資訊到生成——沿著論文，一句一句讀懂 large language model。',
+  section = 'home',
+} = Astro.props;
+
+const pageTitle =
+  title === 'THE LLM' ? 'THE LLM: From Information to Generation' : `${title} — THE LLM`;
+---
+
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{pageTitle}</title>
+  </head>
+  <body
+    data-section={section}
+    class="min-w-[320px] bg-paper font-sans text-base leading-8 text-ink"
+  >
+    <SiteHeader />
+    <main id="main-content" class="min-h-screen">
+      <slot />
+    </main>
+    <footer class="grid gap-3 border-t border-ink px-4 py-8 text-sm sm:px-8 md:grid-cols-[auto_1fr_auto] md:gap-8 lg:px-[max(2rem,calc((100vw-1280px)/2))]">
+      <div class="font-display text-xl font-semibold">THE LLM</div>
+      <p class="m-0">從資訊到生成。</p>
+      <p class="m-0 text-muted md:text-right">沿著論文，一句一句讀懂 large language model。</p>
+    </footer>
+  </body>
+</html>

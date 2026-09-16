@@ -1,0 +1,50 @@
+---
+interface Props {
+  year: number;
+  venue: string;
+  readTime: string;
+  difficulty: string;
+  doi: {
+    value: string;
+    url: string;
+  };
+}
+
+const { year, venue, readTime, difficulty, doi } = Astro.props;
+---
+
+<dl
+  class="grid grid-cols-2 border-y border-ink py-5 sm:grid-cols-3 lg:grid-cols-5"
+  aria-label="論文 metadata"
+>
+  <div class="border-r border-line p-3 first:pl-0 last:border-r-0">
+    <dt class="mb-1 font-mono text-xs tracking-[0.09em] text-red">年份 / YEAR</dt>
+    <dd class="m-0 text-base">{year}</dd>
+  </div>
+  <div class="border-r border-line p-3 first:pl-0 last:border-r-0 sm:first:pl-3 lg:first:pl-3">
+    <dt class="mb-1 font-mono text-xs tracking-[0.09em] text-red">發表場合 / VENUE</dt>
+    <dd class="m-0 text-base">{venue}</dd>
+  </div>
+  <div class="border-r border-line p-3 last:border-r-0">
+    <dt class="mb-1 font-mono text-xs tracking-[0.09em] text-red">閱讀時間 / READING TIME</dt>
+    <dd class="m-0 text-base">{readTime}</dd>
+  </div>
+  <div class="border-r border-line p-3 first:pl-0 last:border-r-0 sm:first:pl-3 lg:first:pl-3">
+    <dt class="mb-1 font-mono text-xs tracking-[0.09em] text-red">難度 / LEVEL</dt>
+    <dd class="m-0 text-base">{difficulty}</dd>
+  </div>
+  <div class="p-3 last:border-r-0">
+    <dt class="mb-1 font-mono text-xs tracking-[0.09em] text-red">DOI</dt>
+    <dd class="m-0 break-words text-base">
+      <a
+        class="underline underline-offset-4 hover:text-red"
+        href={doi.url}
+        target="_blank"
+        rel="noreferrer"
+        aria-label={`開啟 DOI ${doi.value}（在新分頁開啟）`}
+      >
+        {doi.value}
+      </a>
+    </dd>
+  </div>
+</dl>

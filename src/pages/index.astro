@@ -1,0 +1,659 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import StoryRail from '../components/StoryRail.astro';
+import { milestonePapers } from '../content/papers/milestones';
+
+const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
+
+const epoch0Papers = milestonePapers.filter((p) => ['shannon-1948'].includes(p.id));
+const epoch1Papers = milestonePapers.filter((p) => ['attention-is-all-you-need'].includes(p.id));
+const epoch2Papers = milestonePapers.filter((p) => ['gpt-1', 'bert', 'gpt-2'].includes(p.id));
+const epoch3Papers = milestonePapers.filter((p) =>
+  ['scaling-laws', 'gpt-3', 'chinchilla'].includes(p.id),
+);
+const epoch4Papers = milestonePapers.filter((p) =>
+  ['instructgpt', 'llama', 'dpo', 'vit', 'clip', 'latent-diffusion', 'llava', 'var'].includes(p.id),
+);
+
+const timeline = [
+  {
+    year: '1948',
+    label: '測量 / THE MEASURE',
+    title: '意義有了位元。',
+    body: '克勞德·香農在貝爾實驗室發表資訊理論，人類第一次將無形的思想與符號，化為可以用物理位元度量的客觀實體。',
+    status: 'past' as const,
+  },
+  {
+    year: '2017',
+    label: '結構 / THE GEOMETRY',
+    title: '空間終結了時間。',
+    body: '八位研究者在機器翻譯論文中拆除循環記憶鏈，讓文字在多維幾何空間中同步互查，Transformer 意外成為通用智慧的骨架。',
+    status: 'current' as const,
+  },
+  {
+    year: '2018–2019',
+    label: '預訓練 / THE PRE-TRAINING',
+    title: '閱讀全人類的文字。',
+    body: 'GPT-1 與 BERT 證明，機器不需要標註標籤；只要在無盡的文明文本中學會猜測下一個字，它就學會了語言的普遍形狀。',
+    status: 'future' as const,
+  },
+  {
+    year: '2020',
+    label: '湧現 / THE EMERGENCE',
+    title: '規模跨越臨界點。',
+    body: '縮放定律證實了計算的物理冪律。當參數量推進至千億規模，單純的下字預測突然跨越臨界，湧現出人類未曾設計的常識與推理。',
+    status: 'future' as const,
+  },
+  {
+    year: '2021–2023',
+    label: '感官 / THE SENSORIUM',
+    title: '萬物皆可化為單字。',
+    body: 'ViT 與 CLIP 抹平了文字與光影的邊界，擴散模型在混沌噪點中雕刻現實，原生自回歸將感知與思考收斂於同一個神經架構。',
+    status: 'future' as const,
+  },
+  {
+    year: '2023—',
+    label: '意志 / THE ALIGNMENT',
+    title: '為鏡像錨定良知。',
+    body: '當模型成為映照人類文明全貌的巨鏡，RLHF 與直接偏好優化將人類微弱的倫理意志注入數學損失函數，通用智能的時代正式啟幕。',
+    status: 'future' as const,
+  },
+];
+---
+
+<BaseLayout
+  title="THE LLM — 從資訊到生成：重構人類智慧的漫長思想史詩"
+  section="home"
+  description="一本獻給當代研究者的思想紀事：探索人類如何用數學、幾何與矽晶片，讓機器學會理解語言、看見世界並開始思索。"
+>
+  <!-- 莊嚴的學術與思想報頭 -->
+  <header class={`${shell} pt-10 sm:pt-16`}>
+    <div class="border-b-4 border-ink pb-6">
+      <div class="flex flex-wrap items-center justify-between gap-3 font-mono text-xs uppercase tracking-[0.2em] text-muted">
+        <span>A RESEARCH MONOGRAPH ON ARTIFICIAL INTELLIGENCE</span>
+        <span>FOUNDATIONS & FRONTIERS</span>
+        <span>TAIWAN ACADEMIC EDITION</span>
+      </div>
+      <div class="mt-8 flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
+        <div>
+          <h1 class="m-0 font-display text-7xl sm:text-8xl lg:text-9xl leading-none tracking-[-0.06em] text-ink">
+            THE <span class="text-red">LLM</span>
+          </h1>
+          <p class="mt-3 mb-0 font-mono text-sm sm:text-base tracking-[0.12em] text-red uppercase font-semibold">
+            FROM INFORMATION TO GENERATION
+          </p>
+        </div>
+        <p class="m-0 max-w-[34ch] font-display text-lg sm:text-xl leading-8 text-muted md:text-right">
+          人類如何用幾何與算力，讓冰冷的矽晶片理解語言、重構感官，並開始想像？
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <!-- 宏大封面特輯 (A Grand Intellectual Opening) -->
+  <section class={`${shell} py-10 sm:py-14`}>
+    <article
+      class="border-4 sm:border-8 border-red bg-surface p-6 sm:p-12 lg:p-16 shadow-editorial"
+      aria-labelledby="monograph-lead-title"
+    >
+      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-line pb-4 font-mono text-xs uppercase tracking-[0.15em] text-red">
+        <span class="font-bold">PROLOGUE / 歷史開篇</span>
+        <span class="text-muted">NEURIPS 2017 / THE ARCHITECTURAL GENESIS</span>
+      </div>
+
+      <div class="mt-10 grid grid-cols-1 gap-12 lg:grid-cols-[1.3fr_0.7fr] lg:gap-16 items-start">
+        <div>
+          <p class="mb-4 font-mono text-xs sm:text-sm font-semibold uppercase tracking-[0.18em] text-red">
+            第一章節思想躍遷 / 2017 年 6 月
+          </p>
+          <h2
+            id="monograph-lead-title"
+            class="m-0 font-display text-4xl sm:text-6xl lg:text-7xl leading-[1.08] tracking-[-0.04em] text-ink"
+          >
+            語言的幾何學：
+            <br />
+            <em class="text-red not-italic">一段將思想編碼為世界的史詩</em>
+          </h2>
+
+          <div class="mt-8 space-y-5 text-base sm:text-lg leading-8 text-muted font-sans">
+            <p class="m-0">
+              在漫長的計算史中，人類曾無數次嘗試教導機器理解自己的語言。我們曾試圖將語法寫成密密麻麻的規則樹，曾試圖將詞彙編纂成冰冷的辭典，也曾試圖讓神經網絡像吟遊詩人一樣，將前一個詞的記憶在一條看不見盡頭的循環鏈上艱難地傳遞給下一個詞。
+            </p>
+            <p class="m-0">
+              然而，時間是記憶的敵人。在那條依序等待的鏈條上，句子越長，最初的思緒就越迅速地被沖淡磨滅。
+            </p>
+            <p class="m-0">
+              直到 2017
+              年夏天，一場看似局部的工程嘗試徹底改變了這一切。為了打破翻譯長句時的漫長等待，研究者做了一個在當時近乎狂妄的決定——
+              <strong>
+                徹底拆毀承載時間順序的循環結構，讓整段語言中的每一個符號，同時漂浮在一個高維的幾何空間裡
+              </strong>
+              。他們發現，只要給予每個符號一組探測彼此關聯的注意力向量，符號之間便能在一瞬間彼此照亮。
+            </p>
+            <p class="m-0 text-ink font-medium">
+              這個最初只為了機器翻譯而生的幾何結構，在隨後的幾千個日夜裡，意外地吞下了全人類文明積累的所有書籍、對話與程式碼，並在千億參數的物理奇點中，引爆了機器心智的黎明。
+            </p>
+          </div>
+
+          <div class="mt-10 flex flex-wrap items-center gap-6 border-t border-line pt-8">
+            <a
+              class="inline-flex items-center gap-3 border border-ink bg-ink px-8 py-5 font-mono text-sm uppercase tracking-[0.08em] text-surface no-underline hover:bg-red hover:border-red transition-colors"
+              href="/papers/attention-is-all-you-need"
+            >
+              進入第一樂章：探索注意力機制的誕生 <span aria-hidden="true">↗</span>
+            </a>
+            <span class="font-mono text-xs text-muted">
+              28 分鐘深度研讀・逐句拆解與手工數學推演
+            </span>
+          </div>
+        </div>
+
+        <!-- 右側：典藏檔案卡 -->
+        <aside class="border-t-4 border-ink bg-paper p-6 sm:p-8" aria-label="本章歷史檔案">
+          <p class="m-0 font-mono text-xs font-semibold uppercase tracking-[0.15em] text-red">
+            思想檔案 / THE DOSSIER 01
+          </p>
+          <h3 class="mt-3 mb-4 font-display text-2xl sm:text-3xl leading-tight text-ink">
+            Attention Is All You Need
+          </h3>
+          <dl class="grid gap-4 border-t border-line pt-4 text-sm leading-7 text-muted font-sans">
+            <div>
+              <dt class="font-mono text-xs text-blue uppercase font-bold">歷史問題</dt>
+              <dd class="m-0 text-ink">
+                長距語義依賴在時間傳遞中的必然衰減，與現代 GPU 在循序鏈條上的算力停滯。
+              </dd>
+            </div>
+            <div>
+              <dt class="font-mono text-xs text-blue uppercase font-bold">本質突破</dt>
+              <dd class="m-0 text-ink">
+                以「空間中的全域幾何注意力（Self-Attention）」取代「時間中的狀態迭代（Recurrence）」。
+              </dd>
+            </div>
+            <div>
+              <dt class="font-mono text-xs text-blue uppercase font-bold">文明後果</dt>
+              <dd class="m-0 text-ink">
+                意外確立了從 GPT、BERT 到多模態大一統的終極幾何骨架，將計算機科學推進至生成式時代。
+              </dd>
+            </div>
+          </dl>
+          <div class="mt-6 border-t border-dashed border-line pt-4">
+            <p class="m-0 font-mono text-xs leading-6 text-faint">
+              「這篇論文最重要的貢獻不是在指標上多贏幾分，而是徹底改變了思考單位——不再問如何把序列依序帶過去，而是問哪些關係值得直接計算。」
+            </p>
+          </div>
+        </aside>
+      </div>
+    </article>
+  </section>
+
+  <!-- 五大終極大問 (The Five Grand Inquiries) — 思想維度的深度開展 -->
+  <section
+    class={`${shell} py-14 sm:py-20 border-t-2 border-ink`}
+    aria-labelledby="inquiries-title"
+  >
+    <div class="mb-14 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="mb-3 font-mono text-xs font-semibold uppercase tracking-[0.2em] text-red">
+          思想基石 / THE GRAND INQUIRIES
+        </p>
+        <h2
+          id="inquiries-title"
+          class="m-0 font-display text-4xl sm:text-5xl lg:text-6xl leading-tight text-ink"
+        >
+          五個直面智慧本質的終極追問
+        </h2>
+      </div>
+      <p class="m-0 max-w-[38ch] font-sans text-sm text-muted leading-6 sm:text-right">
+        在探討任何一行公式與模型之前，讓我們先凝視推動這場革命的核心哲學命題。
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-px border border-ink bg-ink md:grid-cols-2 lg:grid-cols-3">
+      <article class="bg-surface p-7 sm:p-9 flex flex-col justify-between">
+        <div>
+          <span class="font-mono text-xs font-bold text-red uppercase tracking-widest">
+            INQUIRY 01 / 幾何
+          </span>
+          <h3 class="mt-4 mb-3 font-display text-2xl leading-snug text-ink">意義如何獲得形狀？</h3>
+          <p class="m-0 text-sm leading-7 text-muted font-sans">
+            人類的符號原本是孤立離散的記號。神經網絡是如何在高達數千維的幾何空間裡，將世間所有詞彙編織成一張連續的拓撲地圖？當「概念」可以用向量加減運算時，機器究竟是真的理解了意義，還是掌握了語言最精密的投影？
+          </p>
+        </div>
+        <p class="mt-6 pt-4 border-t border-line font-mono text-xs text-blue m-0">
+          核心探索：Embedding 與語義流形
+        </p>
+      </article>
+
+      <article class="bg-surface p-7 sm:p-9 flex flex-col justify-between">
+        <div>
+          <span class="font-mono text-xs font-bold text-red uppercase tracking-widest">
+            INQUIRY 02 / 時間
+          </span>
+          <h3 class="mt-4 mb-3 font-display text-2xl leading-snug text-ink">
+            記憶如何擺脫遺忘的詛咒？
+          </h3>
+          <p class="m-0 text-sm leading-7 text-muted font-sans">
+            人類的思維像一道連綿不絕的意識之流，但機器的記憶卻曾被困在長句子的循環迭代中。Transformer
+            為什麼可以用「空間中所有位置的瞬時共振」，徹底終結了時間上的排隊等待？這項代價昂貴的平方級計算，究竟買到了什麼？
+          </p>
+        </div>
+        <p class="mt-6 pt-4 border-t border-line font-mono text-xs text-blue m-0">
+          核心探索：Recurrence 的黃昏與 Self-Attention
+        </p>
+      </article>
+
+      <article class="bg-surface p-7 sm:p-9 flex flex-col justify-between">
+        <div>
+          <span class="font-mono text-xs font-bold text-red uppercase tracking-widest">
+            INQUIRY 03 / 湧現
+          </span>
+          <h3 class="mt-4 mb-3 font-display text-2xl leading-snug text-ink">
+            單純的「預測」，為何能催生心智？
+          </h3>
+          <p class="m-0 text-sm leading-7 text-muted font-sans">
+            這是當代科學最深邃的謎團之一：當計算資源與數據跨過物理臨界點，單純追求「猜對下一個字」的統計目標，為什麼會突變成看似具備常識、多步推理與抽象反思的能力？量變是如何在神經突觸間引爆質變的？
+          </p>
+        </div>
+        <p class="mt-6 pt-4 border-t border-line font-mono text-xs text-blue m-0">
+          核心探索：Scaling Laws 與 In-Context Learning
+        </p>
+      </article>
+
+      <article class="bg-surface p-7 sm:p-9 flex flex-col justify-between">
+        <div>
+          <span class="font-mono text-xs font-bold text-red uppercase tracking-widest">
+            INQUIRY 04 / 感官
+          </span>
+          <h3 class="mt-4 mb-3 font-display text-2xl leading-snug text-ink">
+            萬物如何收斂於同一把尺度？
+          </h3>
+          <p class="m-0 text-sm leading-7 text-muted font-sans">
+            在物理世界中，文字、光線與聲音遵循完全不同的規律。但為什麼在 Transformer
+            眼中，百萬像素的照片能被切成名為 Patch
+            的單字，擴散去噪能如畫家打草稿般由粗入細，而原生自回歸又能像修改文本一樣精確抽換畫面的局域？
+          </p>
+        </div>
+        <p class="mt-6 pt-4 border-t border-line font-mono text-xs text-blue m-0">
+          核心探索：ViT、擴散去噪與視覺自回歸
+        </p>
+      </article>
+
+      <article class="bg-surface p-7 sm:p-9 flex flex-col justify-between md:col-span-2 lg:col-span-2">
+        <div>
+          <span class="font-mono text-xs font-bold text-red uppercase tracking-widest">
+            INQUIRY 05 / 意志
+          </span>
+          <h3 class="mt-4 mb-3 font-display text-2xl leading-snug text-ink">
+            當造物通曉全人類的文字，它將服從誰的意志？
+          </h3>
+          <p class="m-0 text-sm leading-7 text-muted font-sans">
+            大語言模型是一面無比誠實的巨鏡，它原封不動地映照出人類文明的全部智慧，也映照出我們的深沉偏見、謊言與惡意。在無邊的可能文字生成中，我們如何用強化學習與直接偏好的韁繩，為一個具備超人知識的數學實體錨定良知與真實？
+          </p>
+        </div>
+        <p class="mt-6 pt-4 border-t border-line font-mono text-xs text-blue m-0">
+          核心探索：對齊問題、RLHF 與直接偏好優化
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <!-- 思想躍遷的四大紀元 (The Four Epochs of Modern AI) — 宏大的思想編年史 -->
+  <section
+    id="milestones"
+    class={`${shell} py-16 sm:py-24 border-t-2 border-ink`}
+    aria-labelledby="annals-title"
+  >
+    <div class="mb-16 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="mb-3 font-mono text-xs font-semibold uppercase tracking-[0.2em] text-red">
+          思想史詩 / THE LIVING ANNALS
+        </p>
+        <h2
+          id="annals-title"
+          class="m-0 font-display text-4xl sm:text-6xl lg:text-7xl leading-tight text-ink"
+        >
+          決定現代 AI 命運的思想躍遷
+        </h2>
+        <p class="mt-4 mb-0 font-sans text-base text-muted max-w-[62ch] leading-7">
+          這不是一份封閉的專利年表，而是一條沿著人類智慧極限不斷生長的思想航道。每一篇里程碑論文，都是研究者在數學、算力與未解瓶頸面前所做出的一次重大決策。
+        </p>
+      </div>
+      <div class="font-mono text-xs text-muted sm:text-right">
+        <span>跨越 1948 至當代的知識矩陣</span>
+        <br />
+        <span class="text-red font-semibold">點擊章節即可查閱深度大綱與研讀筆記</span>
+      </div>
+    </div>
+
+    <!-- 序章：資訊的創世紀與前史 -->
+    <div class="mb-16">
+      <div class="mb-8 flex items-baseline gap-4 border-b-2 border-ink pb-3">
+        <span class="bg-ink px-3 py-1 font-mono text-xs font-bold text-surface uppercase tracking-widest">
+          PROLOGUE
+        </span>
+        <h3 class="m-0 font-display text-2xl sm:text-3xl text-ink">
+          序章：資訊的創世紀與統計語言的誕生（1948）
+        </h3>
+      </div>
+      <div class="grid grid-cols-1 gap-6">
+        {epoch0Papers.map((paper) => (
+          <article class="border-2 border-ink/60 bg-paper p-7 sm:p-10">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">
+              <span class="font-mono text-xs font-bold uppercase tracking-[0.1em] text-muted">
+                VOL. {paper.vol} / {paper.year} / {paper.org}
+              </span>
+              <span class="border border-ink font-mono text-xs px-2.5 py-1 uppercase tracking-wider font-semibold text-ink">
+                前史・思想根源・大綱已開放
+              </span>
+            </div>
+            <div class="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_0.8fr] items-start">
+              <div>
+                <h4 class="m-0 font-display text-3xl sm:text-4xl text-ink leading-snug">
+                  <a class="no-underline text-ink hover:text-red" href={paper.url}>
+                    {paper.title}
+                  </a>
+                </h4>
+                <p class="mt-2 font-display text-xl text-muted">{paper.chineseTitle}</p>
+                <div class="mt-6 space-y-3 text-sm sm:text-base leading-7 text-muted font-sans">
+                  <p class="m-0">
+                    <strong class="text-red font-mono text-xs tracking-wider uppercase">
+                      創世之問：
+                    </strong>
+                    {paper.why}
+                  </p>
+                  <p class="m-0">
+                    <strong class="text-blue font-mono text-xs tracking-wider uppercase">
+                      統計突破：
+                    </strong>
+                    {paper.how}
+                  </p>
+                  <p class="m-0">
+                    <strong class="text-ink font-mono text-xs tracking-wider uppercase">
+                      文明遺產：
+                    </strong>
+                    {paper.what}
+                  </p>
+                </div>
+              </div>
+              <div class="border-t lg:border-t-0 lg:border-l border-line pt-6 lg:pt-0 lg:pl-8 flex flex-col justify-between h-full">
+                <p class="text-sm leading-6 text-muted font-sans m-0">
+                  本章追溯統計語言模型的源頭，拆解「交叉熵損失」的數學血脈，並還原香農如何在 1948
+                  年親手寫下人類第一個 N-gram 語言模型雛形。
+                </p>
+                <a
+                  class="mt-8 inline-block font-mono text-sm font-bold text-red uppercase underline underline-offset-4 hover:text-ink"
+                  href={paper.url}
+                >
+                  進入序章開始閱讀 ↗
+                </a>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+
+    <!-- 紀元一：結構革命 -->
+    <div class="mb-16">
+      <div class="mb-8 flex items-baseline gap-4 border-b-2 border-ink pb-3">
+        <span class="bg-ink px-3 py-1 font-mono text-xs font-bold text-surface uppercase tracking-widest">
+          EPOCH 01
+        </span>
+        <h3 class="m-0 font-display text-2xl sm:text-3xl text-ink">
+          第一紀元：結構革命與幾何的誕生（2017）
+        </h3>
+      </div>
+      <div class="grid grid-cols-1 gap-6">
+        {epoch1Papers.map((paper) => (
+          <article class="border-2 border-red bg-surface p-7 sm:p-10 shadow-editorial">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">
+              <span class="font-mono text-xs font-bold uppercase tracking-[0.1em] text-red">
+                VOL. {paper.vol} / {paper.year} / {paper.org}
+              </span>
+              <span class="bg-red text-surface font-mono text-xs px-2.5 py-1 uppercase tracking-wider font-semibold">
+                核心巨著・完整導讀已上線
+              </span>
+            </div>
+            <div class="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_0.8fr] items-start">
+              <div>
+                <h4 class="m-0 font-display text-3xl sm:text-4xl text-ink leading-snug">
+                  <a class="no-underline text-ink hover:text-red" href={paper.url}>
+                    {paper.title}
+                  </a>
+                </h4>
+                <p class="mt-2 font-display text-xl text-red">{paper.chineseTitle}</p>
+                <div class="mt-6 space-y-3 text-sm sm:text-base leading-7 text-muted font-sans">
+                  <p class="m-0">
+                    <strong class="text-red font-mono text-xs tracking-wider uppercase">
+                      瓶頸命題：
+                    </strong>
+                    {paper.why}
+                  </p>
+                  <p class="m-0">
+                    <strong class="text-blue font-mono text-xs tracking-wider uppercase">
+                      幾何突破：
+                    </strong>
+                    {paper.how}
+                  </p>
+                  <p class="m-0">
+                    <strong class="text-ink font-mono text-xs tracking-wider uppercase">
+                      歷史遺產：
+                    </strong>
+                    {paper.what}
+                  </p>
+                </div>
+              </div>
+              <div class="border-t lg:border-t-0 lg:border-l border-line pt-6 lg:pt-0 lg:pl-8 flex flex-col justify-between h-full">
+                <p class="text-sm leading-6 text-muted font-sans m-0">
+                  本章包含 28 分鐘逐句精讀、小明情境案例、QKV 數值手算推演與 2014–2017
+                  完整技術流變考證。
+                </p>
+                <a
+                  class="mt-8 inline-block font-mono text-sm font-bold text-red uppercase underline underline-offset-4 hover:text-ink"
+                  href={paper.url}
+                >
+                  進入章節開始閱讀 ↗
+                </a>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+
+    <!-- 紀元二：預訓練與範式轉移 -->
+    <div class="mb-16">
+      <div class="mb-8 flex items-baseline gap-4 border-b-2 border-ink pb-3">
+        <span class="bg-ink px-3 py-1 font-mono text-xs font-bold text-surface uppercase tracking-widest">
+          EPOCH 02
+        </span>
+        <h3 class="m-0 font-display text-2xl sm:text-3xl text-ink">
+          第二紀元：無監督預訓練與範式轉移（2018–2019）
+        </h3>
+      </div>
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {epoch2Papers.map((paper) => (
+          <article class="flex flex-col justify-between border-2 border-ink bg-paper p-6 sm:p-8 hover:bg-surface transition-colors">
+            <div>
+              <div class="flex items-center justify-between border-b border-line pb-3">
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                  VOL. {paper.vol}
+                </span>
+                <span class="font-mono text-xs text-muted">{paper.year}</span>
+              </div>
+              <p class="mt-4 mb-1 font-mono text-xs text-blue uppercase">{paper.theme}</p>
+              <h4 class="m-0 font-display text-2xl leading-snug text-ink">
+                <a class="no-underline text-ink hover:text-red" href={paper.url}>
+                  {paper.title}
+                </a>
+              </h4>
+              <p class="mt-1 font-display text-sm text-red">{paper.chineseTitle}</p>
+              <div class="mt-5 space-y-2 text-xs sm:text-sm leading-6 text-muted font-sans">
+                <p class="m-0">
+                  <span class="font-mono text-xs font-bold text-red">WHY: </span>
+                  {paper.why}
+                </p>
+                <p class="m-0">
+                  <span class="font-mono text-xs font-bold text-ink">WHAT: </span>
+                  {paper.what}
+                </p>
+              </div>
+            </div>
+            <div class="mt-6 border-t border-line pt-3 font-mono text-xs">
+              <a
+                class="font-bold text-red uppercase underline underline-offset-4 hover:text-ink"
+                href={paper.url}
+              >
+                查閱章節大綱 ↗
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+
+    <!-- 紀元三：縮放定律與心智湧現 -->
+    <div class="mb-16">
+      <div class="mb-8 flex items-baseline gap-4 border-b-2 border-ink pb-3">
+        <span class="bg-ink px-3 py-1 font-mono text-xs font-bold text-surface uppercase tracking-widest">
+          EPOCH 03
+        </span>
+        <h3 class="m-0 font-display text-2xl sm:text-3xl text-ink">
+          第三紀元：縮放定律與心智湧現（2020–2022）
+        </h3>
+      </div>
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {epoch3Papers.map((paper) => (
+          <article class="flex flex-col justify-between border-2 border-ink bg-paper p-6 sm:p-8 hover:bg-surface transition-colors">
+            <div>
+              <div class="flex items-center justify-between border-b border-line pb-3">
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                  VOL. {paper.vol}
+                </span>
+                <span class="font-mono text-xs text-muted">{paper.year}</span>
+              </div>
+              <p class="mt-4 mb-1 font-mono text-xs text-blue uppercase">{paper.theme}</p>
+              <h4 class="m-0 font-display text-2xl leading-snug text-ink">
+                <a class="no-underline text-ink hover:text-red" href={paper.url}>
+                  {paper.title}
+                </a>
+              </h4>
+              <p class="mt-1 font-display text-sm text-red">{paper.chineseTitle}</p>
+              <div class="mt-5 space-y-2 text-xs sm:text-sm leading-6 text-muted font-sans">
+                <p class="m-0">
+                  <span class="font-mono text-xs font-bold text-red">WHY: </span>
+                  {paper.why}
+                </p>
+                <p class="m-0">
+                  <span class="font-mono text-xs font-bold text-ink">WHAT: </span>
+                  {paper.what}
+                </p>
+              </div>
+            </div>
+            <div class="mt-6 border-t border-line pt-3 font-mono text-xs">
+              <a
+                class="font-bold text-red uppercase underline underline-offset-4 hover:text-ink"
+                href={paper.url}
+              >
+                查閱章節大綱 ↗
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+
+    <!-- 紀元四：感官大一統與意志對齊 -->
+    <div>
+      <div class="mb-8 flex items-baseline gap-4 border-b-2 border-red pb-3">
+        <span class="bg-red px-3 py-1 font-mono text-xs font-bold text-surface uppercase tracking-widest">
+          EPOCH 04
+        </span>
+        <h3 class="m-0 font-display text-2xl sm:text-3xl text-ink">
+          第四紀元：感官大一統、視覺自回歸與意志對齊（2021—當代）
+        </h3>
+      </div>
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {epoch4Papers.map((paper) => (
+          <article class="flex flex-col justify-between border-2 border-ink/40 bg-surface p-6 hover:border-red transition-colors shadow-sm">
+            <div>
+              <div class="flex items-center justify-between border-b border-line pb-2">
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                  VOL. {paper.vol}
+                </span>
+                <span class="font-mono text-xs text-muted">{paper.year}</span>
+              </div>
+              <p class="mt-3 mb-1 font-mono text-xs text-blue uppercase">{paper.theme}</p>
+              <h4 class="m-0 font-display text-xl leading-snug text-ink">
+                <a class="no-underline text-ink hover:text-red" href={paper.url}>
+                  {paper.title}
+                </a>
+              </h4>
+              <p class="mt-1 font-display text-xs text-red">{paper.chineseTitle}</p>
+              <p class="mt-4 text-xs leading-6 text-muted font-sans m-0">{paper.what}</p>
+            </div>
+            <div class="mt-6 border-t border-line pt-3 font-mono text-xs">
+              <a
+                class="font-bold text-red uppercase underline underline-offset-4 hover:text-ink"
+                href={paper.url}
+              >
+                查閱大綱與草稿 ↗
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 宏觀時間線 (The Grand Chronology) -->
+  <section id="timeline" class={`${shell} py-16 sm:py-24 border-t-2 border-ink`}>
+    <div class="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="mb-2 font-mono text-xs font-semibold uppercase tracking-[0.2em] text-red">
+          歷史經緯 / THE HISTORICAL CONTINUUM
+        </p>
+        <h2 class="m-0 font-display text-4xl sm:text-5xl leading-tight text-ink">
+          半個世紀的智力航程
+        </h2>
+      </div>
+      <p class="m-0 max-w-[36ch] font-sans text-sm text-muted">
+        從 1948 年克勞德·香農定義資訊的度量，到當代通用多模態智能體的誕生。
+      </p>
+    </div>
+    <StoryRail events={timeline} variant="list" label="LLM 發展時間線，可使用鍵盤瀏覽" />
+  </section>
+
+  <!-- 底部莊嚴召喚 -->
+  <section
+    class={`${shell} mb-20 flex flex-col items-start justify-between gap-8 border-4 border-ink bg-ink p-8 text-surface sm:p-14 md:flex-row md:items-end`}
+  >
+    <div>
+      <p class="mb-3 font-mono text-xs font-semibold uppercase tracking-[0.2em] text-red-soft">
+        思想的起點 / BEGIN THE INQUIRY
+      </p>
+      <h2 class="m-0 font-display text-4xl sm:text-5xl lg:text-6xl leading-tight tracking-[-0.03em] text-surface">
+        從第一座思想燈塔啟程：
+        <br />
+        <span class="text-red">Claude Shannon, 1948</span>
+      </h2>
+      <p class="mt-5 mb-0 max-w-[48ch] font-sans text-base text-paper-deep leading-8">
+        七十六年前，一位數學家在貝爾實驗室用熵與位元丈量了資訊。那一刻，現代語言模型的命運已悄悄埋下伏筆。從序章出發，沿著思想航道，走過幾何革命、縮放湧現、視覺多模態，直到意志對齊的當代。
+      </p>
+    </div>
+    <div class="flex flex-col gap-4 shrink-0">
+      <a
+        class="inline-flex items-center gap-3 border border-red bg-red px-9 py-5 font-mono text-sm uppercase tracking-[0.1em] text-surface no-underline hover:bg-surface hover:text-ink hover:border-surface transition-colors"
+        href="/papers/shannon-1948"
+      >
+        進入序章：香農與資訊 ↗
+      </a>
+      <a
+        class="inline-flex items-center gap-3 border border-surface/30 px-9 py-4 font-mono text-xs uppercase tracking-[0.1em] text-surface/60 no-underline hover:text-surface hover:border-surface transition-colors"
+        href="/papers/attention-is-all-you-need"
+      >
+        或直接跳至第一樂章：Attention ↗
+      </a>
+    </div>
+  </section>
+</BaseLayout>

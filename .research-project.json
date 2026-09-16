@@ -1,0 +1,14 @@
+{
+  "project_id": "the-llm",
+  "project_kind": "evidence-backed-editorial-research",
+  "owning_repository": ".",
+  "output_directory": "research/",
+  "evidence_identity": "the-llm-source-ledger-v1",
+  "language": "zh-Hant",
+  "policy": {
+    "direct_claims_require_source_ids": true,
+    "inferences_require_explicit_label": true,
+    "unknowns_must_remain_visible": true,
+    "full_paper_reproduction": false
+  }
+}

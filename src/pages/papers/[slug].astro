@@ -1,0 +1,242 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { milestonePapers, type MilestonePaper } from '../../content/papers/milestones';
+
+export function getStaticPaths() {
+  return milestonePapers
+    .filter((paper) => paper.id !== 'attention-is-all-you-need')
+    .map((paper) => ({
+      params: { slug: paper.id },
+      props: { paper },
+    }));
+}
+
+interface Props {
+  paper: MilestonePaper;
+}
+
+const { paper } = Astro.props;
+const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
+---
+
+<BaseLayout
+  title={`${paper.title} — 大綱規劃`}
+  section="paper"
+  description={`探索 ${paper.title}（${paper.chineseTitle}）的核心動機、技術突破與章節大綱規劃。`}
+>
+  <article>
+    <header class={`${shell} pt-10`}>
+      <nav class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
+        <a class="text-red underline underline-offset-4" href="/">
+          THE LLM
+        </a>
+        <span aria-hidden="true">/</span>
+        <a class="text-muted underline underline-offset-4" href="/#milestones">
+          全系列大綱
+        </a>
+        <span aria-hidden="true">/</span>
+        <span class="text-ink font-semibold">第 {paper.vol} 章</span>
+      </nav>
+
+      <div class="grid items-end gap-10 py-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
+        <div>
+          <div class="mb-5 flex flex-wrap items-center gap-3">
+            <span class="border border-red bg-red/10 px-2.5 py-1 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+              {paper.kicker}
+            </span>
+            <span class="font-mono text-xs text-muted uppercase tracking-[0.08em]">
+              {paper.date} / {paper.venue}
+            </span>
+          </div>
+          <h1 class="m-0 font-display text-4xl sm:text-5xl lg:text-6xl leading-tight tracking-[-0.04em]">
+            {paper.title}
+          </h1>
+          <p class="mt-4 font-display text-2xl sm:text-3xl text-red leading-snug">
+            {paper.chineseTitle}
+          </p>
+          <p class="mt-6 max-w-[52ch] text-base leading-8 text-muted">
+            作者：{paper.authors}（{paper.org}）
+          </p>
+        </div>
+
+        <aside
+          class="border-t-4 border-red bg-surface p-6 shadow-editorial"
+          aria-label="本章研究狀態"
+        >
+          <p class="mb-4 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+            章節狀態 / CHAPTER STATUS
+          </p>
+          <div class="flex items-center gap-2">
+            <span
+              class="inline-block h-3 w-3 rounded-full bg-blue animate-pulse"
+              aria-hidden="true"
+            ></span>
+            <p class="m-0 font-mono text-lg font-bold text-ink">
+              {paper.draftSections && paper.draftSections.length > 0
+                ? '研究大綱確立・已有重點草稿'
+                : '研究大綱已確立・內文編纂中'}
+            </p>
+          </div>
+          <p class="mt-4 mb-0 text-sm leading-6 text-muted">
+            本章遵循嚴謹的史實考證與「Start with
+            Why」科普架構，正在整理第一手原始文獻與交互印證資料。
+          </p>
+          {paper.arxivId && (
+            <div class="mt-5 border-t border-line pt-4">
+              <a
+                class="font-mono text-xs uppercase tracking-[0.05em] text-red underline underline-offset-4 hover:text-ink"
+                href={`https://arxiv.org/abs/${paper.arxivId}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                在 arXiv 查閱原始文獻 ({paper.arxivId}) ↗
+              </a>
+            </div>
+          )}
+        </aside>
+      </div>
+    </header>
+
+    <!-- Start with Why: 三問核心 -->
+    <section class={`${shell} border-t-2 border-ink py-16`} aria-labelledby="start-with-why-title">
+      <div class="mb-10">
+        <p class="mb-3 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+          黃金圈拆解 / START WITH WHY
+        </p>
+        <h2
+          id="start-with-why-title"
+          class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight"
+        >
+          這篇論文為什麼重要？
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 gap-px border border-ink bg-ink md:grid-cols-3">
+        <div class="bg-surface p-6 sm:p-8">
+          <div class="flex items-center justify-between border-b border-line pb-3">
+            <span class="font-mono text-xs font-bold uppercase tracking-[0.1em] text-red">
+              WHY / 痛點與本質限制
+            </span>
+            <span class="font-mono text-xs text-muted">01</span>
+          </div>
+          <h3 class="mt-6 mb-3 font-display text-2xl leading-snug">遇到了什麼走不通的瓶頸？</h3>
+          <p class="m-0 text-base leading-7 text-muted">{paper.why}</p>
+        </div>
+
+        <div class="bg-surface p-6 sm:p-8">
+          <div class="flex items-center justify-between border-b border-line pb-3">
+            <span class="font-mono text-xs font-bold uppercase tracking-[0.1em] text-blue">
+              HOW / 突破假設與機制
+            </span>
+            <span class="font-mono text-xs text-muted">02</span>
+          </div>
+          <h3 class="mt-6 mb-3 font-display text-2xl leading-snug">作者換了什麼新思路？</h3>
+          <p class="m-0 text-base leading-7 text-muted">{paper.how}</p>
+        </div>
+
+        <div class="bg-surface p-6 sm:p-8">
+          <div class="flex items-center justify-between border-b border-line pb-3">
+            <span class="font-mono text-xs font-bold uppercase tracking-[0.1em] text-ink">
+              WHAT / 歷史地位與後續衝擊
+            </span>
+            <span class="font-mono text-xs text-muted">03</span>
+          </div>
+          <h3 class="mt-6 mb-3 font-display text-2xl leading-snug">最終給後人留下了什麼？</h3>
+          <p class="m-0 text-base leading-7 text-muted">{paper.what}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 草稿筆記與核心探討 (Draft Insights & Why Analysis) -->
+    {paper.draftSections && paper.draftSections.length > 0 && (
+      <section
+        class={`${shell} border-t-4 border-red bg-red/5 p-6 sm:p-10 my-10`}
+        aria-labelledby="draft-insights-title"
+      >
+        <div class="mb-8">
+          <p class="mb-2 font-mono text-xs font-bold uppercase tracking-[0.15em] text-red">
+            編輯室重點草稿 / DRAFT INSIGHTS
+          </p>
+          <h2
+            id="draft-insights-title"
+            class="m-0 font-display text-3xl sm:text-4xl text-ink leading-tight"
+          >
+            讀者最想知道的「為什麼」：核心草稿初探
+          </h2>
+          <p class="mt-3 mb-0 text-base text-muted">
+            在正式導讀完成前，編輯團隊已將本章最關鍵的機制原理與直覺比喻整理於此：
+          </p>
+        </div>
+
+        <div class="space-y-6">
+          {paper.draftSections.map((section, idx) => (
+            <article class="border border-ink/20 bg-surface p-6 sm:p-8 shadow-sm">
+              <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                POINT 0{idx + 1}
+              </span>
+              <h3 class="mt-2 mb-4 font-display text-2xl text-ink leading-snug">
+                {section.heading}
+              </h3>
+              <p class="m-0 text-base sm:text-lg leading-8 text-muted">{section.body}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Chapter Outline -->
+    <section class={`${shell} border-t border-line py-16`} aria-labelledby="chapter-outline-title">
+      <div class="mb-10">
+        <p class="mb-3 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+          章節大綱規劃 / CHAPTER OUTLINE
+        </p>
+        <h2
+          id="chapter-outline-title"
+          class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight"
+        >
+          深入導讀的三大樂章
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div class="border-t-4 border-ink bg-paper p-6">
+          <p class="font-mono text-xs uppercase tracking-[0.1em] text-red">樂章一 / MOVEMENT 01</p>
+          <h3 class="mt-4 mb-3 font-display text-2xl leading-snug">歷史：問題從何而來</h3>
+          <p class="text-sm leading-7 text-muted">{paper.outline.history}</p>
+        </div>
+
+        <div class="border-t-4 border-red bg-paper p-6">
+          <p class="font-mono text-xs uppercase tracking-[0.1em] text-red">樂章二 / MOVEMENT 02</p>
+          <h3 class="mt-4 mb-3 font-display text-2xl leading-snug">理論：這台機器怎麼運轉</h3>
+          <p class="text-sm leading-7 text-muted">{paper.outline.theory}</p>
+        </div>
+
+        <div class="border-t-4 border-blue bg-paper p-6">
+          <p class="font-mono text-xs uppercase tracking-[0.1em] text-red">樂章三 / MOVEMENT 03</p>
+          <h3 class="mt-4 mb-3 font-display text-2xl leading-snug">洪流：後續規模與未解難題</h3>
+          <p class="text-sm leading-7 text-muted">{paper.outline.flood}</p>
+        </div>
+      </div>
+
+      <div class="mt-14 border border-red/40 bg-red/5 p-8 text-center sm:text-left sm:flex sm:items-center sm:justify-between sm:gap-6">
+        <div>
+          <p class="m-0 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+            推薦先讀篇章 / CURRENT FEATURE
+          </p>
+          <h3 class="mt-2 mb-1 font-display text-2xl text-ink">
+            第 01 章〈Attention Is All You Need〉
+          </h3>
+          <p class="m-0 text-sm text-muted">
+            已完成 28 分鐘完整逐字拆解、小明生活案例、QKV 手工算例與歷史回顧。
+          </p>
+        </div>
+        <a
+          class="mt-5 inline-block shrink-0 border border-ink bg-ink px-6 py-3 font-mono text-sm uppercase text-surface no-underline hover:bg-red hover:border-red sm:mt-0"
+          href="/papers/attention-is-all-you-need"
+        >
+          立即閱讀第 01 章 ↗
+        </a>
+      </div>
+    </section>
+  </article>
+</BaseLayout>
