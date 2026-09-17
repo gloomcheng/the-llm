@@ -238,7 +238,7 @@ export const milestonePapers: MilestonePaper[] = [
     venue: 'NeurIPS 2020',
     arxivId: '2005.14165',
     url: '/papers/language-models-are-few-shot-learners',
-    status: 'outline',
+    status: 'published',
     track: 'language',
     theme: '少樣本湧現',
     kicker: 'VOL. 06 / FEW-SHOT & EMERGENT',

@@ -9,6 +9,7 @@ const pages = [
   'dist/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding/index.html',
   'dist/papers/language-models-are-unsupervised-multitask-learners/index.html',
   'dist/papers/scaling-laws-for-neural-language-models/index.html',
+  'dist/papers/language-models-are-few-shot-learners/index.html',
 ];
 /** @type {string[]} */
 const failures = [];

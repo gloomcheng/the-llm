@@ -1,0 +1,1198 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StoryRail from '../../components/StoryRail.astro';
+import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
+import AsideCard from '../../components/AsideCard.astro';
+import Callout from '../../components/Callout.astro';
+import AuthorGrid from '../../components/AuthorGrid.astro';
+import PaperMeta from '../../components/PaperMeta.astro';
+import PaperNavigation from '../../components/PaperNavigation.astro';
+import {
+  fewShotPaper,
+  fewShotSources,
+} from '../../content/papers/language-models-are-few-shot-learners';
+
+const paper = fewShotPaper;
+const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
+
+const story = [
+  {
+    year: '2018.10',
+    label: '前史 / 微調典範',
+    title: 'BERT 與 GPT-1 確立「預訓練 + 任務微調」標準工作流',
+    body: '所有下游任務皆需收集專用標註集，透過反向傳播更新模型權重，每個任務都需要維護一套專屬模型。',
+    status: 'past' as const,
+  },
+  {
+    year: '2020.01',
+    label: '理論 / SCALING LAWS',
+    title: '縮放定律確立：模型規模越大，預訓練損失越低且完全可預測',
+    body: 'Kaplan 等人以統計物理證實規模的壓倒性支配力，為千億參數的超級工程提供了不可動搖的投資與研發底氣。',
+    status: 'past' as const,
+  },
+  {
+    year: '2020.05',
+    label: '論文 / GPT-3',
+    title: '1750 億參數引爆上下文學習與少樣本湧現能力',
+    body: 'Tom B. Brown 等人證明：凍結全部權重（ΔW = 0），僅憑提示詞中的範例即可即學即用，徹底開闢 Prompt 時代。',
+    status: 'current' as const,
+  },
+  {
+    year: '2022.03',
+    label: '後續 / 對齊與 CHINCHILLA',
+    title: '從機率接龍到意圖對齊，算力最優化改寫訓練比例',
+    body: 'Chinchilla 指出 GPT-3 數據量嚴重不足；InstructGPT 則引入 RLHF 解決原始大模型「不聽指令與幻覺」的原罪。',
+    status: 'future' as const,
+  },
+];
+
+interface TimelineEpoch {
+  id: string;
+  year: string;
+  period: string;
+  title: string;
+  summary: string;
+  sources: Array<{
+    source: (typeof fewShotSources)[number];
+    num: number;
+    refCode: string;
+    featured?: boolean;
+    role: string;
+    takeaway: string;
+  }>;
+}
+
+const timelineEpochs: TimelineEpoch[] = [
+  {
+    id: 'epoch-2018-finetune',
+    year: '2018–2019',
+    period: '微調典範的統治與隱形天花板',
+    title: '任務專用數據集與梯度更新的雙重代價',
+    summary:
+      'GPT-1 與 BERT 確立了先在大規模語料預訓練、再於下游任務微調的黃金架構。然而每個新任務都需要耗費高昂人力收集標註，且模型在微調集上容易過擬合並喪失泛化能力。',
+    sources: [
+      {
+        source: fewShotSources.find((s) => s.id === 'paper-2019-gpt2')!,
+        num: 1,
+        refCode: 'S01',
+        featured: true,
+        role: '概念萌芽',
+        takeaway:
+          'GPT-2 首次在 15 億參數上展示 Zero-shot 提示詞的潛力，證明自然語言本身能作為任務輸入介面。',
+      },
+      {
+        source: fewShotSources.find((s) => s.id === 'paper-2020-scaling-laws')!,
+        num: 2,
+        refCode: 'S02',
+        role: '理論依據',
+        takeaway:
+          'Kaplan 等人確立的冪律曲線，為 GPT-3 擴展至 1750 億參數提供了精確的收斂損失預測。',
+      },
+    ],
+  },
+  {
+    id: 'epoch-2020-gpt3',
+    year: '2020.05',
+    period: '千億參數與上下文學習的歷史轉折',
+    title: 'Tom B. Brown 等人發表 GPT-3，少樣本學習橫空出世',
+    summary:
+      '將參數量推升至 1750 億，跨越 8 個模型尺度系統性檢驗。證實在完全不更新權重的前提下，模型僅憑提示詞中的範例即可推導任務規則，並在多個基準上逼近甚至超越微調 SOTA。',
+    sources: [
+      {
+        source: fewShotSources.find((s) => s.id === 'paper-2020-gpt3')!,
+        num: 3,
+        refCode: 'S03',
+        featured: true,
+        role: '本篇核心',
+        takeaway:
+          '確立 In-Context Learning（ICL）為全新的人機協作典範，展現三位數算術、單字重組與代碼合成等階躍式湧現能力。',
+      },
+    ],
+  },
+  {
+    id: 'epoch-2022-evolution',
+    year: '2022',
+    period: '計算最優化與意圖對齊的雙軌演進',
+    title: 'Chinchilla 修正數據分配，RLHF 馴服原始預訓練基座',
+    summary:
+      'DeepMind 證明 GPT-3 數據量嚴重吃不飽；OpenAI 則透過 InstructGPT 引入人類反饋強化學習，解決基座模型漫無邊際接龍與難以遵循指令的缺陷。',
+    sources: [
+      {
+        source: fewShotSources.find((s) => s.id === 'paper-2022-chinchilla')!,
+        num: 4,
+        refCode: 'S04',
+        role: '資源修正',
+        takeaway:
+          '指出參數量與訓練 token 數應以 1:1 等比例增長，70B 的 Chinchilla 憑藉 1.4 兆 token 擊敗 GPT-3。',
+      },
+      {
+        source: fewShotSources.find((s) => s.id === 'paper-2022-instructgpt')!,
+        num: 5,
+        refCode: 'S05',
+        role: '行為對齊',
+        takeaway:
+          '透過人類反饋強化學習（RLHF）讓 1.3B 模型超越 175B 原始 GPT-3 的滿意度，開啟 ChatGPT 時代。',
+      },
+    ],
+  },
+];
+---
+
+<BaseLayout title={`${paper.title} | THE LLM`} description={paper.abstractSummary}>
+  <main id="main-content">
+    <!-- 1. Hero Header -->
+    <header class={`${shell} pt-10`}>
+      <div class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
+        <a class="text-red underline underline-offset-4" href="/">
+          THE LLM
+        </a>
+        <span aria-hidden="true">/</span>
+        <span>第六章</span>
+      </div>
+
+      <div class="grid grid-cols-1 items-end gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-24">
+        <div>
+          <p class="mb-5 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            VOL. 06 / FEW-SHOT & EMERGENT
+          </p>
+
+          <h1 class="m-0 font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight tracking-[-0.04em] text-ink">
+            <span class="block">Language Models</span>
+            <em class="block">are Few-Shot Learners.</em>
+          </h1>
+
+          <p class="mt-8 max-w-[52ch] text-lg leading-8 text-muted">
+            在 2020
+            年以前，將語言模型應用於新任務的唯一途徑是「微調」：收集數千筆標註資料，透過反向傳播更新數億個權重參數。然而人類學習新技能從不依賴重新布線大腦——給予兩三個範例，我們便能理解規則。Tom
+            B. Brown 等人以 1750 億參數的 GPT-3
+            證實：純粹透過預測下一個字訓練的大模型，在完全不更新任何權重（ΔW =
+            0）的前提下，僅憑提示詞中的上下文範例，就能在翻譯、問答、推理與寫程式上展現強大的少樣本學習能力。
+          </p>
+        </div>
+
+        <aside
+          class="border-t-4 border-red bg-surface p-6 shadow-editorial"
+          aria-label="這篇論文的一句評語"
+        >
+          <p class="mb-4 sm:mb-6 font-mono text-xs sm:text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            一句評語 / THE SHORT VERDICT
+          </p>
+          <p class="m-0 max-w-[20ch] sm:max-w-[22ch] font-display text-2xl sm:text-3xl leading-tight text-ink">
+            不用梯度更新的學習：提示詞裡的範例，就是軟體的新介面。
+          </p>
+          <p class="mt-6 mb-0 text-sm sm:text-base leading-relaxed sm:leading-7 text-muted">
+            GPT-3 將自然語言確立為最通用的程式語言，證明規模擴展能引發質變，開啟由 Prompt
+            Engineering 與湧現能力主導的現代生成式 AI 紀元。
+          </p>
+        </aside>
+      </div>
+
+      <PaperMeta
+        year={paper.year}
+        venue={paper.venue}
+        readTime="32 分鐘"
+        difficulty="進階核心"
+        doi={paper.doi}
+      />
+    </header>
+
+    <!-- 2. 歷史進程 StoryRail -->
+    <section class="border-y border-line bg-surface/50 py-12" aria-label="歷史轉折總覽">
+      <div class={shell}>
+        <div class="mb-6">
+          <p class="font-mono text-xs font-bold text-red uppercase tracking-wider mb-1">
+            歷史轉折 / 2020
+          </p>
+          <h2 class="m-0 font-display text-2xl sm:text-3xl text-ink">
+            從梯度微調的專用模型，到零梯度更新的上下文學習
+          </h2>
+        </div>
+        <StoryRail events={story} />
+      </div>
+    </section>
+
+    <!-- MOVEMENT 1: 微調典範的極限 (THE FINE-TUNING BOTTLENECK) -->
+    <section
+      id="finetune-bottleneck"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="finetune-bottleneck-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            第一樂章 / 微調典範的結構性困境
+          </p>
+          <h2
+            id="finetune-bottleneck-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">微調典範的四重代價：</span>
+            <span class="block">
+              <em>為什麼機器學習必須擺脫任務專用權重更新</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          當每個新任務都需要數千筆高品質標註、梯度反向傳播與獨立模型權重維護，深度學習的規模化落地正面臨無法承受的工程成本。
+        </p>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p class="text-lg leading-relaxed text-ink">
+            在 2018 年至 2020
+            年初的自然語言處理領域，整個學界與工業界共同信奉一套標準作業程序：先在大規模未標註文本上預訓練一個通用語言模型（如
+            GPT-1 或
+            BERT），接著針對特定下游任務——無論是情緒分類、生物醫療實體識別、還是跨語言翻譯——收集數千至數萬筆精心標註的訓練樣本，透過反向傳播算法持續更新神經網路的所有權重。這種「預訓練
+            + 微調」（Pre-train and
+            Fine-tune）的兩階段典範，雖然刷新了無數基準測試的最高分紀錄，卻在現實世界的應用中撞上了一面堅硬的工程高牆。
+          </p>
+
+          <p>
+            這堵高牆由四重難以克服的結構性代價堆砌而成：第一重是「標註數據的枯竭與昂貴」——在常規的新聞分類任務中獲取標註尚稱容易，但在法律合約審查、罕見病理診斷或精密機械故障排查等高度專業領域，獲取數萬筆專家級標註資料的成本極其高昂，甚至在許多長尾場景中根本不可行；第二重是「偽泛化與分佈漂移脆弱性」——微調過程會迫使龐大的預訓練特徵空間過擬合於狹窄的微調數據集分佈，一旦測試環境中的用語習慣、格式或排版發生些許微調，模型的推論準確率便會發生斷崖式崩潰；第三重是「基礎設施維護的幾何級膨脹」——若一家企業擁有
+            100
+            個不同的業務語言任務，微調典範要求為每個任務分別保存並部署一份獨立的模型權重副本，這在百億甚至千億參數時代意味著天文數字般的儲存與託管開銷。
+          </p>
+
+          <p>
+            然而，最深層的矛盾在於認知科學層面：人類智能在學習全新語言任務時，從來不需要重新布線大腦中的神經突觸。當我們被要求將一段中文翻譯成英文、或者判斷一句話是否帶有諷刺意味時，我們只需要在口頭說明中聽取兩三個具體的示範範例，就能即刻掌握規則並執行任務。人類大腦在接收新任務時，神經元的權重連接是恆定凍結的（ΔW
+            = 0），所有學習與理解都發生在即時的工作記憶與上下文資訊處理之中。
+          </p>
+
+          <p>
+            OpenAI 的 Tom B. Brown、Melanie Subbiah、Jared Kaplan 與 Dario Amodei
+            等人由此提出了一個大膽的科學假說：既然前一章的縮放定律（Scaling
+            Laws）證實了語言模型的損失函數會隨著參數規模的擴展而呈現嚴格的冪律下降，那麼當我們把模型從
+            GPT-2 的 15 億參數一口氣推升至 1750
+            億參數時，這個龐大的自回歸網路是否也能如同人類大腦一般，在完全不更新任何權重的情況下，僅僅藉由閱讀提示詞（Prompt）中的前文示範，就學會此前從未見過的全新任務？這個被稱為「上下文學習」（In-Context
+            Learning, ICL）的機制，成為了 GPT-3 撼動整個 AI 領域的核心支點。
+          </p>
+        </div>
+
+        <div slot="rail" class="space-y-6">
+          <AsideCard kicker="典範對比" title="微調 vs 上下文學習">
+            <dl class="m-0 space-y-4 text-sm leading-6">
+              <div>
+                <dt class="font-bold text-ink">傳統微調（Fine-tuning）</dt>
+                <dd class="mt-1 text-muted">
+                  透過反向傳播計算梯度，更新模型內部全部或部分權重參數（ΔW ≠
+                  0）。每個任務都需要專屬數據集與獨立權重檔案。
+                </dd>
+              </div>
+              <div class="border-t border-line pt-3">
+                <dt class="font-bold text-red">上下文學習（In-Context Learning）</dt>
+                <dd class="mt-1 text-muted">
+                  模型權重完全凍結（ΔW =
+                  0），零梯度更新。任務規格與範例純粹透過輸入文字序列傳遞，在推論前向傳播中即時完成任務理解。
+                </dd>
+              </div>
+            </dl>
+          </AsideCard>
+
+          <Callout
+            variant="note"
+            kicker="術語精確釐清"
+            title="In-Context Learning 不是 Meta-Learning"
+          >
+            <p class="m-0 text-sm leading-6 text-muted">
+              在機器學習文獻中，「元學習」（Meta-Learning）通常指涉專門設計了內外雙迴圈優化目標以學會快速調整參數的算法（如
+              MAML）。而 GPT-3 的 In-Context Learning
+              並沒有專門的元學習訓練目標，它只是純粹預測下一個字的無監督自回歸模型，少樣本學習能力是純粹在規模擴展過程中自發「湧現」出來的副產品。
+            </p>
+          </Callout>
+        </div>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- MOVEMENT 2: 1750 億參數的物理矩陣 (THE 175B ARCHITECTURE) -->
+    <section
+      id="architecture-engineering"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="architecture-engineering-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            第二樂章 / 1750 億參數的物理矩陣
+          </p>
+          <h2
+            id="architecture-engineering-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">千億規模的架構解剖：</span>
+            <span class="block">
+              <em>交替稀疏注意力與萬卡分散式平行工程</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          從 1.25 億到 1750 億，跨越 8 個模型尺度的地毯式對比；如何將超過 350GB 的 FP16
+          矩陣切分至數百顆 GPU 叢集中同步運算。
+        </p>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p class="text-lg leading-relaxed text-ink">
+            為了驗證少樣本學習究竟是規模擴展的普遍趨勢，還是僅僅在極端參數下才出現的孤立現象，Tom B.
+            Brown 等人在論文中並未孤立地只訓練一個超大模型，而是構建了一個跨越三個數量級、包含 8
+            個不同規模的 Transformer 解碼器矩陣梯隊。從最小的 GPT-3 Small（1.25 億參數，相當於原始
+            GPT-1 的體量），一路攀升至 GPT-3 XL（13 億參數，逼近 GPT-2
+            最大尺寸），最終抵達前所未有的旗艦王者——1750 億參數的 GPT-3 175B。
+          </p>
+
+          <p>
+            解構 GPT-3 175B 的內部物理規格，這座神經網路巨獸由整整 96 層 Transformer Decoder
+            區塊垂直堆疊而成；模型的隱藏層維度（hidden dimension, d<sub>model</sub>）高達
+            12,288；每一層配備了 96 個平行的注意力頭，每個頭的投影維度為 d<sub>head</sub> =
+            128；前向回饋神經網路（FFN）的中間擴展維度為 4 &times; d<sub>model</sub> =
+            49,152；上下文窗口長度（Context Window）則全面擴充至 2,048 個 tokens。
+          </p>
+
+          <!-- 8 Models Comparison Table -->
+          <div class="my-8 overflow-x-auto border border-line bg-surface p-6 shadow-sm">
+            <p class="mb-3 font-mono text-xs font-bold uppercase tracking-wider text-red">
+              TABLE 2.1 / 論文正式規格對照表：GPT-3 家族 8 種尺度幾何架構
+            </p>
+            <table class="w-full border-collapse text-left font-mono text-sm leading-relaxed">
+              <thead>
+                <tr class="border-b border-ink/20 text-muted">
+                  <th class="py-2.5 pr-4 font-semibold">模型代號</th>
+                  <th class="py-2.5 pr-4 font-semibold">總參數量 (N)</th>
+                  <th class="py-2.5 pr-4 font-semibold">
+                    層數 (n<sub>layers</sub>)
+                  </th>
+                  <th class="py-2.5 pr-4 font-semibold">
+                    隱藏維度 (d<sub>model</sub>)
+                  </th>
+                  <th class="py-2.5 pr-4 font-semibold">
+                    頭數 (n<sub>heads</sub>)
+                  </th>
+                  <th class="py-2.5 pr-4 font-semibold">學習率 (Learning Rate)</th>
+                  <th class="py-2.5 font-semibold">Batch Size (Tokens)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-line text-ink">
+                <tr>
+                  <td class="py-2.5 pr-4 font-bold">GPT-3 Small</td>
+                  <td class="py-2.5 pr-4">125M</td>
+                  <td class="py-2.5 pr-4">12</td>
+                  <td class="py-2.5 pr-4">768</td>
+                  <td class="py-2.5 pr-4">12</td>
+                  <td class="py-2.5 pr-4">
+                    6.0 &times; 10<sup>-4</sup>
+                  </td>
+                  <td class="py-2.5">0.5M</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 pr-4 font-bold">GPT-3 Medium</td>
+                  <td class="py-2.5 pr-4">350M</td>
+                  <td class="py-2.5 pr-4">24</td>
+                  <td class="py-2.5 pr-4">1024</td>
+                  <td class="py-2.5 pr-4">16</td>
+                  <td class="py-2.5 pr-4">
+                    3.0 &times; 10<sup>-4</sup>
+                  </td>
+                  <td class="py-2.5">0.5M</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 pr-4 font-bold">GPT-3 Large</td>
+                  <td class="py-2.5 pr-4">760M</td>
+                  <td class="py-2.5 pr-4">24</td>
+                  <td class="py-2.5 pr-4">1536</td>
+                  <td class="py-2.5 pr-4">16</td>
+                  <td class="py-2.5 pr-4">
+                    2.5 &times; 10<sup>-4</sup>
+                  </td>
+                  <td class="py-2.5">0.5M</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 pr-4 font-bold">GPT-3 XL</td>
+                  <td class="py-2.5 pr-4">1.3B</td>
+                  <td class="py-2.5 pr-4">24</td>
+                  <td class="py-2.5 pr-4">2048</td>
+                  <td class="py-2.5 pr-4">16</td>
+                  <td class="py-2.5 pr-4">
+                    2.0 &times; 10<sup>-4</sup>
+                  </td>
+                  <td class="py-2.5">1.0M</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 pr-4 font-bold">GPT-3 2.7B</td>
+                  <td class="py-2.5 pr-4">2.7B</td>
+                  <td class="py-2.5 pr-4">32</td>
+                  <td class="py-2.5 pr-4">2560</td>
+                  <td class="py-2.5 pr-4">32</td>
+                  <td class="py-2.5 pr-4">
+                    1.6 &times; 10<sup>-4</sup>
+                  </td>
+                  <td class="py-2.5">1.0M</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 pr-4 font-bold">GPT-3 6.7B</td>
+                  <td class="py-2.5 pr-4">6.7B</td>
+                  <td class="py-2.5 pr-4">32</td>
+                  <td class="py-2.5 pr-4">4096</td>
+                  <td class="py-2.5 pr-4">32</td>
+                  <td class="py-2.5 pr-4">
+                    1.2 &times; 10<sup>-4</sup>
+                  </td>
+                  <td class="py-2.5">2.0M</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 pr-4 font-bold">GPT-3 13B</td>
+                  <td class="py-2.5 pr-4">13.0B</td>
+                  <td class="py-2.5 pr-4">40</td>
+                  <td class="py-2.5 pr-4">5120</td>
+                  <td class="py-2.5 pr-4">40</td>
+                  <td class="py-2.5 pr-4">
+                    1.0 &times; 10<sup>-4</sup>
+                  </td>
+                  <td class="py-2.5">2.0M</td>
+                </tr>
+                <tr class="bg-red/5 font-bold text-red">
+                  <td class="py-2.5 pr-4">GPT-3 175B</td>
+                  <td class="py-2.5 pr-4">175.0B</td>
+                  <td class="py-2.5 pr-4">96</td>
+                  <td class="py-2.5 pr-4">12288</td>
+                  <td class="py-2.5 pr-4">96</td>
+                  <td class="py-2.5 pr-4">
+                    0.6 &times; 10<sup>-4</sup>
+                  </td>
+                  <td class="py-2.5">3.2M</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p>
+            在架構細節上，GPT-3 沿用了 Rewon Child 等人在 2019
+            年發明的「交替局部帶狀稀疏注意力」（Alternating Dense and Locally Banded Sparse
+            Attention Patterns）。在標準的 Self-Attention
+            機制中，計算複雜度與顯存消耗隨序列長度呈平方比例 O(n<sup>2</sup>) 增長，當序列長度從
+            GPT-2 的 1024 翻倍至 2048
+            時，注意力矩陣的記憶體開銷激增了四倍。為了緩解長程運算的壓力，GPT-3
+            在每一層交替安排：一層使用標準的全局 Dense Attention，允許每個位置觀察所有先前的
+            token；緊接著下一層則切換為 Locally Banded Sparse
+            Attention，每個位置只與相鄰的局部窗口（Bandwidth）以及特定步長（Strided）的代表節點進行比對。這種交替設計既保留了全局訊息的穿透流通，又顯著抑制了超大層數下的記憶體爆炸。
+          </p>
+
+          <p>
+            然而，這座模型面臨的最根本障礙在於硬體物理極限。在 2020 年，市場上最頂級的 AI 晶片是配備
+            16GB 或 32GB 顯存的 NVIDIA V100 GPU。即使以最省顯存的半精度浮點數（FP16，每個參數佔用 2
+            個位元組）來儲存，單純將 1750 億個靜態參數加載進記憶體，就需要 350GB
+            的純粹空間！如果再加上 Adam 優化器的動態狀態（一階矩動量與二階矩方差各佔 4
+            個位元組，加上 FP32 主副本權重，優化器每參數需要 16
+            位元組）、前向傳播的激活值（Activations）以及反向傳播的梯度向量，訓練 GPT-3 175B
+            至少需要超過 1.2TB 的高速顯存，這意味著任何單一伺服器節點都無法容納模型。
+          </p>
+
+          <p>
+            為此，微軟與 OpenAI 專門研製了基於 Megatron-LM 與 Pipeline Parallelism
+            的分散式混合平行訓練架構。每個 Transformer 層的巨型權重矩陣（如 QKV 投影矩陣與 FFN
+            升維矩陣）被沿著行或列進行張量切分（Tensor Parallelism），分散在同一個節點內由高速
+            NVLink 互連的 8 顆 GPU 上；而整整 96 個層級則被沿著縱深切分為數個流水線階段（Pipeline
+            Parallelism），跨越數百個計算節點。透過這種精密調度的立體分散式網路，數千顆 V100 GPU
+            才能協同運轉，將每秒浮點運算次數維持在極高的硬體利用率上。
+          </p>
+        </div>
+
+        <div slot="rail" class="space-y-6">
+          <AsideCard kicker="硬體算力帳本" title="訓練 175B 需要多少資源？">
+            <p class="m-0 text-sm leading-6 text-muted">
+              根據論文估算，GPT-3 175B 在 3000 億 token 上的訓練總運算量高達 3.14 &times; 10
+              <sup>23</sup> FLOPS（約 3,640 個 PFlops-days）。如果使用單張當時最先進的 NVIDIA V100
+              GPU 連續不間斷訓練，需要耗費整整 355 年！實際訓練在微軟 Azure 超級電腦集群上調度了約
+              10,000 顆 GPU 共同完成。
+            </p>
+          </AsideCard>
+
+          <Callout variant="note" kicker="架構細節" title="稀疏注意力的交替節奏">
+            <p class="m-0 text-sm leading-6 text-muted">
+              Dense 與 Sparse
+              注意力的交替排列，類似於現代晶片設計中的區域快取與全局匯流排分工：局部帶狀注意力負責捕捉相鄰單詞間的語法修飾與緊密詞組結構，而全局注意力則在宏觀層面協調跨段落的核心主旨與長程因果指代。
+            </p>
+          </Callout>
+        </div>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- MOVEMENT 3: 數據濾網與清洗工程 (THE DATA PIPELINE) -->
+    <section
+      id="data-pipeline"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="data-pipeline-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            第三樂章 / 數據濾網與清洗工程
+          </p>
+          <h2
+            id="data-pipeline-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">45TB 網路荒原的沙裡淘金：</span>
+            <span class="block">
+              <em>Common Crawl 分類器清洗與數據混合配方</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          單純堆砌網路文本只會引入海量垃圾與噪音。OpenAI
+          如何利用高品質二元分類器與去重算法，提煉出足以啟蒙千億智慧的 570GB 純淨養分。
+        </p>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p class="text-lg leading-relaxed text-ink">
+            在 GPT-2 時代，研究團隊為確保語料品質，採取了一種相當謹慎的封閉策略：僅爬取 Reddit
+            上獲得至少 3 個讚賞評分的對外超連結網頁，建構了 40GB 的 WebText
+            數據集。然而，當模型的參數量從 15 億膨脹至 1750 億時，40GB
+            的數據規模在千億級參數面前顯得捉襟見肘，如果不進行跨數量級的語料庫擴充，模型在預訓練的第一個週期內便會迅速耗盡所有文本，陷入毀滅性的記憶過擬合。
+          </p>
+
+          <p>
+            擺在研究團隊面前唯一的公開巨型寶藏，是開源非營利組織爬取的「Common
+            Crawl」——這是一個累積了數十億網頁、原始容量高達 45TB
+            的非結構化網際網路鏡像數據庫。然而，未經篩選的 Common Crawl
+            是一片充斥著數位垃圾的未開墾荒原：其中混雜著數以億計的色情垃圾訊息、博弈廣告、SEO
+            關鍵字堆砌農場、格式錯亂的 HTML
+            標籤、機器自動生成的重複亂碼以及無意義的日誌字串。直接拿這樣的資料庫訓練模型，只會培育出一個口齒不清、思維混亂的胡言亂語生成器。
+          </p>
+
+          <!-- Data Composition Table -->
+          <div class="my-8 overflow-x-auto border border-line bg-surface p-6 shadow-sm">
+            <p class="mb-3 font-mono text-xs font-bold uppercase tracking-wider text-red">
+              TABLE 2.2 / 訓練語料混合比例與採樣權重配方
+            </p>
+            <table class="w-full border-collapse text-left font-mono text-sm leading-relaxed">
+              <thead>
+                <tr class="border-b border-ink/20 text-muted">
+                  <th class="py-2.5 pr-4 font-semibold">數據集名稱</th>
+                  <th class="py-2.5 pr-4 font-semibold">原始文本大小</th>
+                  <th class="py-2.5 pr-4 font-semibold">語料 Token 總數</th>
+                  <th class="py-2.5 pr-4 font-semibold">訓練期間採樣佔比</th>
+                  <th class="py-2.5 font-semibold">訓練集 Epoch 次數</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-line text-ink">
+                <tr>
+                  <td class="py-2.5 pr-4 font-bold">Filtered Common Crawl</td>
+                  <td class="py-2.5 pr-4">410 GB</td>
+                  <td class="py-2.5 pr-4">410 Billion</td>
+                  <td class="py-2.5 pr-4 font-bold text-ink">60%</td>
+                  <td class="py-2.5">0.44</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 pr-4 font-bold">WebText2</td>
+                  <td class="py-2.5 pr-4">19 GB</td>
+                  <td class="py-2.5 pr-4">19 Billion</td>
+                  <td class="py-2.5 pr-4 font-bold text-red">22%</td>
+                  <td class="py-2.5">3.44</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 pr-4 font-bold">Books1 (長篇小說)</td>
+                  <td class="py-2.5 pr-4">12 GB</td>
+                  <td class="py-2.5 pr-4">12 Billion</td>
+                  <td class="py-2.5 pr-4 font-bold text-ink">8%</td>
+                  <td class="py-2.5">2.00</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 pr-4 font-bold">Books2 (精選圖書)</td>
+                  <td class="py-2.5 pr-4">55 GB</td>
+                  <td class="py-2.5 pr-4">55 Billion</td>
+                  <td class="py-2.5 pr-4 font-bold text-ink">8%</td>
+                  <td class="py-2.5">0.44</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 pr-4 font-bold">Wikipedia (全英文維基)</td>
+                  <td class="py-2.5 pr-4">9 GB</td>
+                  <td class="py-2.5 pr-4">3 Billion</td>
+                  <td class="py-2.5 pr-4 font-bold text-ink">3%</td>
+                  <td class="py-2.5">3.00</td>
+                </tr>
+                <tr class="bg-surface font-bold">
+                  <td class="py-2.5 pr-4">總計 (Total Trained)</td>
+                  <td class="py-2.5 pr-4">505 GB</td>
+                  <td class="py-2.5 pr-4">499 Billion (池子)</td>
+                  <td class="py-2.5 pr-4">100%</td>
+                  <td class="py-2.5">訓練 300B Tokens</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p>
+            為了將 45TB 的未加工泥沙提煉成黃金，Melanie Subbiah
+            等人設計了一套自動化品質分類與過濾管線：首先，研究團隊以高品質的 WebText
+            作為正樣本（代表人類喜愛的高品質文章），以未過濾的 Common Crawl
+            隨機採樣作為負樣本，訓練了一個邏輯斯蒂迴歸分類器（Logistic Regression
+            Classifier）。透過詞特徵與文字流暢度打分，分類器僅保留預測機率高於門檻的優質網頁，一口氣過濾掉了超過
+            98% 的垃圾內容；接著，團隊利用 MinHash LSH
+            算法進行文檔級別的模糊去重，將各網站相互轉載的重複內容與模板文本剔除。
+          </p>
+
+          <p>
+            最終，45TB 的網路巨浪被壓縮提煉為 570GB（約 4100 億
+            tokens）的高品質清洗文本。在訓練時，OpenAI 巧妙地採用了「非等比例加權採樣策略」：雖然
+            Filtered Common Crawl 在語料庫總量中佔據絕對多數，但團隊刻意將其訓練權重壓制在
+            60%；而原本僅佔極少數的高品質語料（如 WebText2、圖書庫 Books 以及英文維基百科
+            Wikipedia），則被賦予了極高的過採樣（Over-sampling）權重。例如維基百科只佔 30 億
+            tokens，但在整個訓練過程中被重複閱讀了整整 3 次；WebText2 則被反覆研讀了將近 3.5
+            次。這種「優質精讀，廣博粗讀」的配方設計，成為保障 GPT-3
+            具備高度常識深度與邏輯嚴密性的關鍵工程基石。
+          </p>
+        </div>
+
+        <div slot="rail" class="space-y-6">
+          <AsideCard kicker="數據工程洞見" title="嚴格的測試集防污染稽核">
+            <p class="m-0 text-sm leading-6 text-muted">
+              因為預訓練語料爬遍了整個網路，學界普遍質疑 GPT-3
+              的驚人表現是否來自「偷看答案」（將測試集的題目與答案直接背了下來）。團隊為此進行了極其嚴苛的
+              N-gram
+              重合度污染分析，統計出每個評估基準與訓練集的重疊百分比，並發現在排除受污染樣本後，絕大多數任務的準確率評估僅產生微不足道的浮動，證實模型具備貨真價實的少樣本推理泛化力。
+            </p>
+          </AsideCard>
+        </div>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- MOVEMENT 4: 上下文學習的動態機制 (IN-CONTEXT LEARNING MECHANICS) -->
+    <section
+      id="icl-mechanics"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="icl-mechanics-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            第四樂章 / 上下文學習的動態機制
+          </p>
+          <h2
+            id="icl-mechanics-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">三種學習形態的動態擾動：</span>
+            <span class="block">
+              <em>Zero-Shot、One-Shot 與 Few-Shot 的機率調度</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          從純文字任務指令，到在 Prompt 中注入示範範例；親眼觀察 Attention
+          矩陣如何將示範轉化為隱式推論導航。
+        </p>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p class="text-lg leading-relaxed text-ink">
+            在 GPT-3
+            的體系中，「學習」（Learning）一詞的物理意義被徹底改寫了。它不再指代神經網路權重空間中沿著梯度反方向的微小位移，而是指模型在長達
+            2048 個 token
+            的單一序列脈絡內，如何利用注意力機制的權重分配，動態建立輸入與輸出之間的映射規則。為了釐清這個機制的邊界，論文正式規範了上下文學習的三種經典形態：
+          </p>
+
+          <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+            <div class="border border-line bg-surface p-5">
+              <p class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                模式 A / ZERO-SHOT
+              </p>
+              <h3 class="mt-2 text-xl font-bold text-ink">零樣本推論</h3>
+              <p class="mt-3 text-sm leading-relaxed text-muted">
+                僅提供自然語言任務描述與測試題目，不給予任何示範範例。要求模型完全依賴預訓練過程中沉澱的內部知識直接給出答案。
+              </p>
+            </div>
+            <div class="border border-line bg-surface p-5">
+              <p class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                模式 B / ONE-SHOT
+              </p>
+              <h3 class="mt-2 text-xl font-bold text-ink">單樣本示範</h3>
+              <p class="mt-3 text-sm leading-relaxed text-muted">
+                在任務描述之後，精確提供一組完整的「輸入 &rarr;
+                輸出」示範，讓模型能夠鎖定目標格式、語義風格與任務範疇。
+              </p>
+            </div>
+            <div class="border border-line bg-surface p-5 bg-red/5 border-red/30">
+              <p class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                模式 C / FEW-SHOT
+              </p>
+              <h3 class="mt-2 text-xl font-bold text-ink">少樣本學習 (K 範例)</h3>
+              <p class="mt-3 text-sm leading-relaxed text-muted">
+                在上下文窗口允許的前提下，提供 K 個連續範例（通常 K &isin; [10,
+                100]）。模型從多個示範中歸納模式，推論準確率大幅躍升。
+              </p>
+            </div>
+          </div>
+
+          <!-- Interactive Perturbation Demonstration -->
+          <div class="my-8 border border-line bg-surface p-6 sm:p-8">
+            <div class="mb-4 flex items-center justify-between">
+              <p class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                動態擾動實驗 / THE DYNAMIC PERTURBATION PRINCIPLE
+              </p>
+              <span class="rounded bg-line px-2 py-0.5 font-mono text-xs text-muted">
+                任務：台灣地名閩南語羅馬字轉譯
+              </span>
+            </div>
+            <h3 class="m-0 font-display text-2xl text-ink">
+              改變 Prompt 條件注入，觀察下一個 Token 的機率分佈躍遷
+            </h3>
+            <p class="mt-3 text-sm leading-7 text-muted">
+              假設我們要讓模型將台灣地名翻譯為台灣閩南語白話字（POJ）。觀察當示範範例從 0 個增加到 2
+              個時，自回歸模型如何在未修改任何權重的情況下，自主校準輸出機率：
+            </p>
+
+            <!-- Case A: Zero Shot -->
+            <div class="mt-6 border-l-2 border-line pl-4">
+              <p class="font-mono text-xs font-bold uppercase text-muted">
+                實驗條件 1：零樣本條件 (Zero-Shot Prompt)
+              </p>
+              <div class="mt-2 rounded bg-ink/5 p-3 font-mono text-sm text-ink">
+                將以下地名翻譯為台語白話字：
+                <br />
+                淡水 &rarr;
+              </div>
+              <p class="mt-2 text-sm text-muted">
+                &rarr; <strong>模型輸出困惑</strong>
+                ：因為沒有任何格式前例，模型在自回歸推論時，注意力矩陣分散於各種常見語料接龍，候選詞機率極為發散：
+                <code>「古稱滬尾」(p=34%)</code>、<code>「老街」(p=28%)</code>、
+                <code>「Tamsui」(p=19%)</code>，輸出格式難以預測。
+              </p>
+            </div>
+
+            <!-- Case B: Few-Shot with 2 examples -->
+            <div class="mt-6 border-l-2 border-red pl-4">
+              <p class="font-mono text-xs font-bold uppercase text-red">
+                實驗條件 2：注入兩組少樣本範例 (Few-Shot Conditioned)
+              </p>
+              <div class="mt-2 rounded bg-ink/5 p-3 font-mono text-sm text-ink">
+                將以下地名翻譯為台語白話字：
+                <br />
+                高雄 &rarr; Ko-hiong
+                <br />
+                基隆 &rarr; Ke-lang
+                <br />
+                淡水 &rarr;
+              </div>
+              <p class="mt-2 text-sm text-muted">
+                &rarr; <strong>模型鎖定規則</strong>：當第 3 題的「淡水
+                &rarr;」進入注意力計算時，自注意力頭精確鎖定了前兩行的 <code>&rarr;</code>{' '}
+                與後綴音標結構。模型瞬間將下一個 token 的機率質量高度收斂至{' '}
+                <code>「T&acirc;m-ch&uacute;i」(p=92%)</code>！
+              </p>
+            </div>
+          </div>
+
+          <p>
+            這種現象揭示了注意力機制的本質：在長序列中，前文的範例並不是死板的閱讀文本，它們在神經網路的深層表示空間中充當了「動態虛擬權重」。自注意力機制（Self-Attention）扮演了即時檢索器與條件引導器的角色，Query
+            向量比對各個範例的 Key，並將 Value
+            向量中所蘊含的「轉換規則」與「格式特徵」提取到當前的生成位置。
+          </p>
+
+          <p>
+            更關鍵的發現是：
+            <strong>隨著模型參數量的增加，模型從少樣本範例中吸取營養的速度呈現幾何級數增長</strong>
+            。在 1.25
+            億的小模型上，增加範例數量（Few-shot）帶來的性能提升非常平緩，模型往往記不住太長的上下文；但在
+            1750 億參數的 GPT-3 上，Few-shot 曲線的斜率極其陡峭——僅僅給予 10 到 30 個示範樣本，GPT-3
+            的表現便迅速逼近甚至反超那些在數萬筆標註數據上精心微調的專用 SOTA 模型！
+          </p>
+        </div>
+
+        <div slot="rail" class="space-y-6">
+          <AsideCard kicker="數學本質" title="上下文條件條件機率">
+            <p class="m-0 text-sm leading-6 text-muted">
+              自回歸模型的核心公式為最大化條件對數似然：
+            </p>
+            <math
+              display="block"
+              class="editorial-math my-4 text-ink"
+              aria-label="上下文學習條件機率公式"
+            >
+              <mi>P</mi>
+              <mo>(</mo>
+              <mi>y</mi>
+              <mo>|</mo>
+              <mi>x</mi>
+              <mo>,</mo>
+              <msub><mi>E</mi><mn>1</mn></msub>
+              <mo>,</mo>
+              <mo>&hellip;</mo>
+              <mo>,</mo>
+              <msub><mi>E</mi><mi>K</mi></msub>
+              <mo>)</mo>
+              <mo>=</mo>
+              <munderover>
+                <mo>&prod;</mo>
+                <mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow>
+                <mi>T</mi>
+              </munderover>
+              <mi>P</mi>
+              <mo>(</mo>
+              <msub><mi>y</mi><mi>i</mi></msub>
+              <mo>|</mo>
+              <msub><mi>y</mi><mrow><mo>&lt;</mo><mi>i</mi></mrow></msub>
+              <mo>,</mo>
+              <mi>x</mi>
+              <mo>,</mo>
+              <msub><mi>E</mi><mn>1</mn></msub>
+              <mo>,</mo>
+              <mo>&hellip;</mo>
+              <mo>,</mo>
+              <msub><mi>E</mi><mi>K</mi></msub>
+              <mo>)</mo>
+            </math>
+            <p class="m-0 text-sm leading-6 text-muted">
+              其中 E<sub>1</sub> 到 E<sub>K</sub> 是 K 個示範範例。範例的存在實質上改變了 Softmax
+              的條件先驗分佈，使模型在無需修改神經網路內部任何權重矩陣 W
+              的情況下，完成了任務空間的收斂。
+            </p>
+          </AsideCard>
+        </div>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- MOVEMENT 5: 湧現能力與相變爆發 (EMERGENCE AND PHASE TRANSITIONS) -->
+    <section
+      id="emergent-abilities"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="emergent-abilities-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            第五樂章 / 湧現能力與相變爆發
+          </p>
+          <h2
+            id="emergent-abilities-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">平滑損失下的階躍奇蹟：</span>
+            <span class="block">
+              <em>算術推理、單字重組與代碼合成的非線性相變</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          當預訓練交叉熵損失呈現完美線性下降時，下游離散任務的準確率卻像水結成冰一樣，在跨過百億與千億門檻時發生了戲劇性的爆發。
+        </p>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p class="text-lg leading-relaxed text-ink">
+            在科學哲學中，諾貝爾物理學獎得主 Philip Anderson 曾提出著名的論斷：「多則異也」（More is
+            Different）——當系統的基本單元數量跨越某個臨界尺度時，整個系統會展現出微觀個體所完全不具備的全新宏觀性質。GPT-3
+            帶給人類人工智慧歷史最震撼的衝擊，正是這場被稱為「能力湧現」（Emergent
+            Abilities）的物理相變。
+          </p>
+
+          <p>
+            在前一章的縮放定律中，我們看見模型的跨尺度訓練損失呈現出極為平滑、毫無波瀾的對數線性下降。許多批評者據此推斷：GPT-3
+            不過是一個把預測下一個字做得稍微好一點點的機率統計機器，不會帶來任何認知本質的變化。然而，當研究團隊將
+            8
+            個不同尺寸的模型置於一系列高度複雜的符號操作與推理任務中進行評估時，令人瞠目結舌的景象出現了。
+          </p>
+
+          <div class="my-8 border border-line bg-surface p-6 shadow-sm">
+            <h3 class="font-mono text-xs font-bold uppercase tracking-wider text-red mb-4">
+              FIGURE 3.1 / 跨尺度能力相變躍遷示意圖（純少樣本設定）
+            </h3>
+            <div class="space-y-4 font-mono text-sm">
+              <div class="border-b border-line pb-3">
+                <div class="flex justify-between font-bold">
+                  <span>三位數加減法（3-digit Addition / Subtraction, e.g. 248 + 579 = 827）</span>
+                </div>
+                <div class="mt-2 grid grid-cols-2 gap-4 text-xs text-muted sm:grid-cols-4">
+                  <div>
+                    GPT-3 Small (125M): <span class="font-bold text-ink">0.0%</span>
+                  </div>
+                  <div>
+                    GPT-3 XL (1.3B): <span class="font-bold text-ink">1.2%</span>
+                  </div>
+                  <div>
+                    GPT-3 13B: <span class="font-bold text-ink">23.8%</span>
+                  </div>
+                  <div class="text-red font-bold">
+                    GPT-3 175B: <span class="text-sm">80.4% (相變湧現)</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="border-b border-line pb-3">
+                <div class="flex justify-between font-bold">
+                  <span>亂序單字重組（Word Scramble / Anagram, e.g. 'c-a-t' &rarr; 'cat'）</span>
+                </div>
+                <div class="mt-2 grid grid-cols-2 gap-4 text-xs text-muted sm:grid-cols-4">
+                  <div>
+                    GPT-3 Small (125M): <span class="font-bold text-ink">0.1%</span>
+                  </div>
+                  <div>
+                    GPT-3 XL (1.3B): <span class="font-bold text-ink">3.5%</span>
+                  </div>
+                  <div>
+                    GPT-3 13B: <span class="font-bold text-ink">18.2%</span>
+                  </div>
+                  <div class="text-red font-bold">
+                    GPT-3 175B: <span class="text-sm">67.5% (相變湧現)</span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between font-bold">
+                  <span>
+                    新聞文章真偽辨別（Human Accuracy in Detecting Model-Generated Articles）
+                  </span>
+                </div>
+                <div class="mt-2 grid grid-cols-2 gap-4 text-xs text-muted sm:grid-cols-4">
+                  <div>
+                    GPT-3 Small (125M): <span class="font-bold text-ink">76% 識破</span>
+                  </div>
+                  <div>
+                    GPT-3 Medium (350M): <span class="font-bold text-ink">68% 識破</span>
+                  </div>
+                  <div>
+                    GPT-3 13B: <span class="font-bold text-ink">55% 識破</span>
+                  </div>
+                  <div class="text-red font-bold">
+                    GPT-3 175B: <span class="text-sm">52% (接近盲猜 50%)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p>
+            觀察三位數的加法運算：從 1.25 億參數到 13
+            億參數，模型的準確率幾乎是一條死寂的水平線，長年徘徊在 0% 到 1%
+            之間，這意味著小模型對多位數算術完全沒有理解，輸出結果與胡亂蒙猜無異。然而，當模型跨過
+            130 億參數、最終抵達 1750 億參數時，準確率曲線突然發生了垂直仰衝，一路狂飆至 80% 以上！
+          </p>
+
+          <p>
+            這種「看似毫無進展，實則蓄力相變」的現象，徹底擊碎了傳統對語言模型的質疑。平滑的交叉熵損失下降，反映的是模型預測全域字符分佈的不確定性在均勻縮小；而下游特定任務的成功（例如算術必須每一位數都算對，錯一位整個答案即判定為
+            0
+            分），則需要多個底層電路——符號對齊、進位邏輯、工作記憶暫存——同時達到足夠高的精確度閾值。當所有必要環節在
+            1750 億參數的巨大空間內同時就緒時，宏觀的能力相變便在瞬間爆發。
+          </p>
+
+          <p>
+            除了算術運算，GPT-3
+            還在完全未經刻意訓練的領域展現出了不可思議的衍生天賦：其中最引發科技產業地震的，是其編寫程式碼的能力。在提示詞中輸入簡單的英文函數功能描述，GPT-3
+            竟能流暢地生成語法完全正確的 Python、JavaScript 或 SQL
+            查詢語句，甚至能即時修復代碼中的語法錯誤。這一意外的湧現，直接促成了 OpenAI
+            在隔年將代碼預訓練獨立化，打造出 Codex 模型，並孕育了後來的 GitHub Copilot 革命。
+          </p>
+        </div>
+
+        <div slot="rail" class="space-y-6">
+          <AsideCard kicker="科學爭辯" title="湧現能力是物理真相還是度量幻覺？">
+            <p class="m-0 text-sm leading-6 text-muted">
+              在 GPT-3 發表後，史丹佛大學等研究團隊在 2023
+              年發表論文質疑：湧現能力可能部分源自「非連續非線性評估指標」（如全對才計分的 Exact
+              Match）。如果將指標換成連續的編輯距離或 Token
+              似然度，能力提升其實一直是連續平滑的。但無論理論如何爭辯，工程事實已經確立：在人類可感知的任務維度上，175B
+              確實展現了前所未有的質變。
+            </p>
+          </AsideCard>
+        </div>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- MOVEMENT 6: 未竟之功與對齊革命的前夜 (THE BRIDGE TO ALIGNMENT) -->
+    <section
+      id="alignment-bridge"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="alignment-bridge-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            第六樂章 / 原始基座的未竟之功
+          </p>
+          <h2
+            id="alignment-bridge-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">未馴服的文字接龍巨獸：</span>
+            <span class="block">
+              <em>原始基座模型的幻覺、偏見與對齊革命前夜</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          GPT-3
+          證明了預訓練能凝聚廣博智慧，但身為「機率接龍者」的基座模型，既不懂得何時停止，更無法區分真理與謊言。
+        </p>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p class="text-lg leading-relaxed text-ink">
+            儘管 GPT-3 在 NeurIPS 2020 榮獲了最佳論文獎（Best Paper
+            Award），並在科技界掀起了一場自網際網路普及以來最熱烈的投資與研發狂潮，但冷靜審視論文第
+            6 節與第 7 節的坦率自白，這座由 1750
+            億參數鑄造的奇蹟，同時也是一尊極其危險且難以捉摸的未馴服巨獸。
+          </p>
+
+          <p>
+            問題的根源在於「預訓練損失函數」與「人類真實意圖」之間的深層背離。GPT-3
+            的本質是一個純粹的自回歸基座模型（Base Model），它所受到的唯一訓練指令就是：
+            <strong>根據前文詞語，預測網際網路文本中最可能出現的下一個詞</strong>
+            。然而，網際網路文本並不等同於客觀真理，更不代表人類的道德與指令倫理：
+          </p>
+
+          <div class="my-6 space-y-4 border-l-2 border-red pl-6">
+            <div>
+              <h3 class="font-bold text-ink">1. 事實性幻覺（Hallucination）與盲目自信</h3>
+              <p class="mt-1 text-sm leading-relaxed text-muted">
+                當被問及一個它不知道答案的問題時，模型並不會誠實地回答「我不知道」，而是會根據機率分佈，編造出極具說服力、文筆優雅卻完全虛構的歷史事件、學術文獻或假名。對模型而言，胡說八道只要符合語法規律，其在數學上的損失就是最小的。
+              </p>
+            </div>
+            <div>
+              <h3 class="font-bold text-ink">2. 無差別延續有害內容與社會偏見</h3>
+              <p class="mt-1 text-sm leading-relaxed text-muted">
+                因為 Common Crawl 吸納了整個人類網路歷史的文字污泥，GPT-3
+                忠實繼承了性別、種族與宗教偏見。如果提示詞輸入帶有惡意偏見的開頭，模型會毫無心理障礙地順著前文生成極具攻擊性甚至危險的言論。
+              </p>
+            </div>
+            <div>
+              <h3 class="font-bold text-ink">
+                3. 無法直接遵循指令（Instruction-following Failure）
+              </h3>
+              <p class="mt-1 text-sm leading-relaxed text-muted">
+                如果你直接向 GPT-3
+                輸入一個指令：「寫一首關於秋天的十四行詩」，模型很可能不會為你寫詩，而是將其當作某個中學語文考卷的題目，接著替你自動補完：「第
+                2 題：請分析上述詩歌的修辭手法；第 3
+                題：請解釋詞語含義……」。它不知道使用者是「發號施令的主人」，它只知道自己是「繼續說話的文字接龍者」。
+              </p>
+            </div>
+          </div>
+
+          <p>
+            這三大致命缺陷，直接導致了「提示工程」（Prompt Engineering）在 2020
+            年後的畸形繁榮。使用者必須像哄騙一個心智未成熟的神童一樣，在 Prompt
+            中精心編寫複雜的前言背景、設定角色人設、甚至給出數組示範，才能誘使模型產出符合預期的結果。任何標點符號或用詞的些微變動，都可能導致輸出品質的大幅波動。
+          </p>
+
+          <p>
+            GPT-3 的未竟之功，為整個大語言模型的演進歷程指明了下一個決定性的歷史戰場：
+            <strong>
+              單純依靠擴展參數與無監督預訓練，固然能不斷推高模型的「認知智商上限」，卻無法解決模型的「行為意圖對齊」
+            </strong>
+            。要將一尊只會無休止續寫文字的機率巨獸，轉變為一個忠誠、誠實、有益且隨叫隨到的數位助手，我們必須在無監督預訓練的鋼鐵骨架之上，注入一套以人類反饋強化學習（RLHF）為核心的全新對齊靈魂。這場劃時代的轉型，將在本書第八章的
+            InstructGPT 中正式爆發。
+          </p>
+        </div>
+
+        <div slot="rail" class="space-y-6">
+          <AsideCard kicker="歷史分水嶺" title="從 Base Model 到 Align Model">
+            <p class="m-0 text-sm leading-6 text-muted">
+              GPT-3 是最後一個以「純無監督預訓練基座」形態直接推向大眾視野的旗艦模型。在 GPT-3
+              之後，整個 AI
+              界達成了不可逆的共識：未經對齊（Alignment）的千億基座只能算是半成品，現代 LLM
+              必須由「預訓練（Pre-training）+ 對齊微調（Post-training / RLHF）」雙輪驅動。
+            </p>
+          </AsideCard>
+        </div>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- MOVEMENT 7: 歷時溯源與一手文獻清單 (SOURCES & EVIDENCE) -->
+    <section
+      id="sources-evidence"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="sources-evidence-title"
+    >
+      <div class="mb-12">
+        <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+          第七樂章 / 歷時溯源與證據清單
+        </p>
+        <h2
+          id="sources-evidence-title"
+          class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+        >
+          一手文獻清單，與技術宣稱邊界
+        </h2>
+      </div>
+
+      <div class="space-y-12">
+        {timelineEpochs.map((epoch) => (
+          <div class="border border-line bg-surface p-6 sm:p-8">
+            <div class="flex flex-wrap items-baseline justify-between gap-4 border-b border-line pb-4">
+              <div>
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                  {epoch.year} &middot; {epoch.period}
+                </span>
+                <h3 class="mt-1 font-display text-2xl text-ink">{epoch.title}</h3>
+              </div>
+            </div>
+            <p class="mt-4 text-base leading-7 text-muted">{epoch.summary}</p>
+            <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+              {epoch.sources.map((item) => (
+                <div class="rounded border border-line/60 bg-paper p-4">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-mono font-bold text-red">[{item.refCode}]</span>
+                    <span class="rounded bg-line px-1.5 py-0.5 font-mono text-muted">
+                      {item.role}
+                    </span>
+                  </div>
+                  <h4 class="mt-2 text-base font-bold text-ink">
+                    <a
+                      href={item.source.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="hover:text-red hover:underline"
+                    >
+                      {item.source.title}
+                    </a>
+                  </h4>
+                  <p class="mt-2 text-sm leading-relaxed text-muted">{item.takeaway}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- MOVEMENT 8: 核心作者檔案 (AUTHORS) -->
+    <section
+      id="authors"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="authors-title"
+    >
+      <div class="mb-12">
+        <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+          第八樂章 / 核心研發團隊檔案
+        </p>
+        <h2
+          id="authors-title"
+          class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+        >
+          推動千億大模型落地的先驅者
+        </h2>
+      </div>
+
+      <AuthorGrid authors={paper.authorBriefs} />
+    </section>
+
+    <!-- 頁面導航 -->
+    <PaperNavigation
+      prev={{
+        url: '/papers/scaling-laws-for-neural-language-models',
+        title: 'Scaling Laws for Neural Language Models',
+        vol: 'VOL. 05',
+      }}
+      next={{
+        url: '/papers/training-compute-optimal-large-language-models',
+        title: 'Training Compute-Optimal Large Language Models (Chinchilla)',
+        vol: 'VOL. 07',
+      }}
+    />
+  </main>
+</BaseLayout>
