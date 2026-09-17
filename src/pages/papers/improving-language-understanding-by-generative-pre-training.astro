@@ -176,33 +176,24 @@ const timelineEpochs: TimelineEpoch[] = [
   <article>
     <!-- 頂部頁首導航 -->
     <header class={`${shell} pt-10`}>
-      <nav class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
+      <div class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
         <a class="text-red underline underline-offset-4" href="/">
           THE LLM
         </a>
         <span aria-hidden="true">/</span>
-        <a class="text-muted underline underline-offset-4" href="/#milestones">
-          全系列里程碑
-        </a>
-        <span aria-hidden="true">/</span>
-        <span class="text-ink font-semibold">第一卷 · 第二章</span>
-      </nav>
+        <span>第二章</span>
+      </div>
 
       <div class="grid grid-cols-1 items-end gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-24">
         <div>
-          <div class="mb-5 flex flex-wrap items-center gap-3">
-            <span class="border border-red bg-red/10 px-2.5 py-1 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
-              VOL. 02 / GENERATIVE PRE-TRAINING
-            </span>
-            <span class="font-mono text-xs text-muted uppercase tracking-[0.08em]">
-              2018.06 / OpenAI Technical Report
-            </span>
-          </div>
-          <h1 class="m-0 font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-none tracking-[-0.04em]">
+          <p class="mb-5 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            理論 / THEORY 02
+          </p>
+          <h1 class="m-0 font-display text-4xl sm:text-5xl lg:text-6xl leading-tight tracking-[-0.04em] text-ink">
             <span class="block">Improving Language Understanding</span>
-            <em class="block text-red">by Generative Pre-Training.</em>
+            <em class="block">by Generative Pre-Training.</em>
           </h1>
-          <p class="mt-8 max-w-[56ch] text-lg leading-8 text-muted">
+          <p class="mt-8 max-w-[52ch] text-lg leading-8 text-muted">
             在 2018
             年以前，自然語言處理如同中世紀的手工作坊：每換一個任務，工程師就必須重寫一套專用神經網路，並耗資數百萬採集標註資料。OpenAI
             在這篇論文中給出了一個顛覆常識的解答——丟掉所有專用網路，只用 12 層 Transformer
