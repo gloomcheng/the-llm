@@ -138,6 +138,7 @@ export const bertPaper: PaperRecord = {
       evidenceIds: ['paper-2018-bert'],
       confidence: 'direct',
       unknowns: [],
+      portraitUrl: '/images/authors/jacob-devlin.png',
     },
     {
       name: 'Ming-Wei Chang (張明偉)',
@@ -149,6 +150,7 @@ export const bertPaper: PaperRecord = {
       evidenceIds: ['paper-2018-bert'],
       confidence: 'direct',
       unknowns: [],
+      portraitUrl: '/images/authors/ming-wei-chang.png',
     },
     {
       name: 'Kenton Lee',
@@ -158,6 +160,7 @@ export const bertPaper: PaperRecord = {
       evidenceIds: ['paper-2018-bert'],
       confidence: 'direct',
       unknowns: [],
+      portraitUrl: '/images/authors/kenton-lee.png',
     },
     {
       name: 'Kristina Toutanova',
@@ -168,6 +171,7 @@ export const bertPaper: PaperRecord = {
       evidenceIds: ['paper-2018-bert'],
       confidence: 'direct',
       unknowns: [],
+      portraitUrl: '/images/authors/kristina-toutanova.png',
     },
   ],
   abstractSummary:

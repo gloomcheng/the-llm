@@ -29,7 +29,7 @@ export const gpt2Sources: SourceRecord[] = [
     url: 'https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf',
     supports: [
       'GPT-2 的直接前身：確立了自回歸預訓練 Transformer Decoder 骨幹架構',
-      'GPT-1 依賴「兩階段範式」（無監督預訓練 + 有監督微調），而 GPT-2 邁出關鍵一步：試圖徹底廢除第二階段的下游微調，實現通用零樣本學習',
+      'GPT-1 依賴「兩階段典範」（無監督預訓練 + 有監督微調），而 GPT-2 邁出關鍵一步：試圖徹底廢除第二階段的下游微調，實現通用零樣本學習',
     ],
     limits:
       'GPT-1 僅有 1.17 億參數與 512 上下文視窗，且每個下游任務都需要重新收集標註數據訓練專屬線性層。',
@@ -133,6 +133,7 @@ export const gpt2Paper: PaperRecord = {
       evidenceIds: ['paper-2019-gpt2'],
       confidence: 'direct',
       unknowns: [],
+      portraitUrl: '/images/authors/alec-radford.png',
     },
     {
       name: 'Ilya Sutskever',
@@ -143,6 +144,7 @@ export const gpt2Paper: PaperRecord = {
       evidenceIds: ['paper-2019-gpt2'],
       confidence: 'direct',
       unknowns: [],
+      portraitUrl: '/images/authors/ilya-sutskever.png',
     },
     {
       name: 'Dario Amodei',
@@ -152,6 +154,7 @@ export const gpt2Paper: PaperRecord = {
       evidenceIds: ['openai-2019-release'],
       confidence: 'direct',
       unknowns: [],
+      portraitUrl: '/images/authors/dario-amodei.png',
     },
     {
       name: 'Jeffrey Wu',
@@ -161,6 +164,7 @@ export const gpt2Paper: PaperRecord = {
       evidenceIds: ['paper-2019-gpt2'],
       confidence: 'direct',
       unknowns: [],
+      portraitUrl: '/images/authors/jeffrey-wu.png',
     },
   ],
   abstractSummary:

@@ -17,7 +17,7 @@ export const gpt1Sources: SourceRecord[] = [
       '實驗揭示生成式預訓練隨訓練步數自然產生零樣本（Zero-shot）任務遷移能力之趨勢（Figure 5）',
     ],
     limits:
-      '奠定生成式自回歸預訓練標準範式。當時尚未採用 BPE 大詞表（使用 40,000 詞 byte-pair），模型參數量為 1.17 億（117M），下游仍需依賴輕量微調。',
+      '奠定生成式自回歸預訓練標準典範。當時尚未採用 BPE 大詞表（使用 40,000 詞 byte-pair），模型參數量為 1.17 億（117M），下游仍需依賴輕量微調。',
   },
   {
     id: 'paper-2017-transformer',

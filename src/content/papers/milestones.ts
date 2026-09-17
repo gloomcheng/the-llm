@@ -112,11 +112,11 @@ export const milestonePapers: MilestonePaper[] = [
     url: '/papers/improving-language-understanding-by-generative-pre-training',
     status: 'published',
     track: 'language',
-    theme: '預訓練範式',
+    theme: '預訓練典範',
     kicker: 'VOL. 02 / GENERATIVE PRE-TRAINING',
     why: '監督式學習極度依賴昂貴且有限的人工標註數據，模型換一個任務就必須從頭訓練。',
     how: '只取 Transformer Decoder 架構，在海量無標註書籍文本上執行「預測下一個字」的自回歸預訓練，再於特定任務上做微調。',
-    what: '確立了「大數據無監督預訓練 + 小數據微調」的兩階段標準範式，開啟 GPT 家族的演進序列。',
+    what: '確立了「大數據無監督預訓練 + 小數據微調」的兩階段標準典範，開啟 GPT 家族的演進序列。',
     outline: {
       history: 'Word2Vec 與 ELMo 的啟發：靜態詞向量無法應付動態上下文，預訓練需要更深的模型。',
       theory:
@@ -498,7 +498,7 @@ export const milestonePapers: MilestonePaper[] = [
     theme: '原生自回歸生圖',
     kicker: 'VOL. 15 / NEXT-SCALE AUTOREGRESSION',
     why: '傳統擴散模型每次改圖都在全域重新隨機抽卡，無法局部精確微調；而傳統自回歸生圖（如 Image-GPT）像印表機一樣從左上掃到右下，缺乏全域宏觀視野。',
-    how: '提出「下一尺度預測（Next-Scale Prediction）」範式：打破平鋪光柵掃描，以多尺度視覺碼本自回歸地從 $1 \times 1$ 粗略構圖到 $64 \times 64$ 細膩紋理逐級生成；並與 GPT-4o 原生多模態 Token 理念共振。',
+    how: '提出「下一尺度預測（Next-Scale Prediction）」典範：打破平鋪光柵掃描，以多尺度視覺碼本自回歸地從 $1 \times 1$ 粗略構圖到 $64 \times 64$ 細膩紋理逐級生成；並與 GPT-4o 原生多模態 Token 理念共振。',
     what: '自回歸生圖在畫質、速度與縮放定律上首度擊敗擴散變壓器（DiT）；為「文字、影像同源自回歸」與「多輪對話精準局部編輯」奠定新一代黃金標準。',
     outline: {
       history: '從光柵掃描（Raster-scan）到多尺度草圖（Next-Scale）：視覺到底應該如何自回歸？',
