@@ -35,6 +35,78 @@ Every chapter is written from the reader's perspective, not the researcher's ret
 - **Accessible, zero-heavy-dependency native implementation:**
   All diagrams and interactive explainers must be rendered as responsive SVG or clean HTML/Tailwind components with semantic ARIA labels, responsive coordinates, and accessible text fallbacks. Never rely on heavy external iframes, closed canvas scripts, or uncaptioned raster blobs.
 
+## Macro structure governance: chapter archetypes and anti-scaffolding discipline
+
+Every chapter in THE LLM is part of a single, continuous, masterwork editorial volume. A graduate reader moving from Shannon (1948) to Transformer (2017) to GPT-1 (2018) must feel an immediate sense of shared intellectual rigor, visual cohesion, and authorial voice—never the feeling of an assembled patchwork of disjointed blog posts.
+
+However, scientific breakthroughs are not identical in nature. Forcing an information theory milestone into an architectural benchmark template, or forcing a self-supervised pre-training revolution into a machine translation mold, produces artificial, superficial copy.
+
+Macro structure is therefore governed by **Four Canonical Paper Archetypes**. Each chapter must identify its archetype and follow its dedicated structural movements, while adhering to the universal visual and editorial rules.
+
+### The Four Paper Archetypes Matrix
+
+| Archetype                                                          | Core Dynamic                                                                   | Canonical Papers                                                                                                      | Structural Arc                                                                                                                                                                                                                                                                               |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Archetype A: Foundational Theory & Epistemology**                | Abstracting physical transmission into mathematical laws                       | Shannon 1948 (`a-mathematical-theory-of-communication`)                                                               | **3-Act Classical Arc**:<br>1. Physical Crisis & Definition of Information<br>2. Mathematical Engine & Capacity Theorems<br>3. Digital Foundation & Modern LLM Loss                                                                                                                          |
+| **Archetype B: Architectural Invention & Computational Mechanics** | Replacing sequential recurrence with parallel pairwise comparison              | Transformer 2017 (`attention-is-all-you-need`), ViT 2020                                                              | **5-Movement Engineering Symphony**:<br>1. Recurrent Impasse & Sequential Bottleneck<br>2. Intuitive Mechanism & Dynamic Perturbation<br>3. Complete Machine Architecture (Encoder/Decoder)<br>4. Empirical Ablations & Complexity Trade-offs<br>5. Historical Shockwave & Paradigm Openings |
+| **Archetype C: Paradigm Shift & Pre-training Foundations**         | Abolishing task-specific architectures via universal self-supervision          | GPT-1 2018 (`improving-language-understanding-by-generative-pre-training`), BERT 2018, Chinchilla / Scaling Laws 2020 | **4-Movement Paradigm Evolution**:<br>1. The Supervision Cliff & Architecture Sprawl<br>2. Unsupervised Generative Pre-training (Causal Decoder)<br>3. Unified Input Serialization & Minimal Fine-tuning<br>4. Zero-Shot Emergence & Historical Paradigm Clash                               |
+| **Archetype D: Alignment, Reasoning & System Steering**            | Steering raw base models toward human intent, safety, and multi-step inference | InstructGPT 2022, DPO 2023, DeepSeek-R1 2025                                                                          | **4-Movement Post-Training Trajectory**:<br>1. The Alignment Tax & Misalignment Dilemma<br>2. Objective Formulation & Human Preference Modeling<br>3. Algorithmic Mechanics & Training Stability<br>4. Safety Frontiers, Evaluation Rubrics & Philosophical Limits                           |
+
+### Detailed Archetype Blueprints
+
+#### Archetype A: Foundational Theory & Epistemology (e.g. Shannon 1948)
+
+- **Act I: The Physical Dilemma & Operational Definition**:
+  Deconstruct physical hardware (copper wires, telegraph keys, analog noise) before writing equations. Define the irreducible operational unit (e.g., bit, surprise).
+- **Act II: The Mathematical Engine & Fundamental Theorems**:
+  Develop the core mathematics geometrically and algebraically (Surprise $I(p)$, Entropy $H(X)$, Markov chains, Source Coding Theorem, Noisy-Channel Theorem).
+- **Act III: The Digital Foundation & Modern Legacy**:
+  Trace the direct lineage to contemporary LLMs (Cross-Entropy loss in next-token prediction, token perplexity, fundamental limits of lossless compression).
+
+#### Archetype B: Architectural Invention & Computational Mechanics (e.g. Transformer 2017)
+
+- **Movement 1: The Recurrent Impasse & Hardware Bottleneck**:
+  Explain why the existing standard (RNN/LSTM) broke down at scale: $O(n)$ sequential computation, vanishing memory, poor GPU hardware parallelism.
+- **Movement 2: The Core Mechanism & Dynamic Perturbation**:
+  Provide an accessible, perturbation-driven mental model (Q/K/V database analogy, dot product similarity, $\sqrt{d_k}$ scaling, Softmax normalization, Winograd schema attention shifts).
+- **Movement 3: The Complete Machine Architecture**:
+  Systematically assemble the machine: Multi-Head projections, Positional Encodings, Feed-Forward sublayers, Residual connections, and LayerNorm. Explicitly distinguish Encoder vs Decoder roles.
+- **Movement 4: Empirical Ablations & Complexity Trade-offs**:
+  Analyze experimental benchmarks (WMT BLEU scores, training compute, attention head ablations) and formal asymptotic complexity ($O(1)$ sequential operations vs $O(n^2)$ memory).
+- **Movement 5: Historical Shockwave & Paradigm Openings**:
+  Report how a model designed for translation escaped its niche and swallowed all sequence modeling.
+
+#### Archetype C: Paradigm Shift & Pre-training Foundations (e.g. GPT-1 2018)
+
+- **Movement 1: The Supervision Cliff & Architecture Sprawl**:
+  Expose the fatal bottleneck of pre-2018 NLP: expensive labeled datasets and bespoke neural networks for every single task (classification, entailment, QA, similarity).
+- **Movement 2: Unsupervised Generative Pre-training**:
+  Formulate next-token prediction on massive uncurated text (BooksCorpus) as implicit world-model learning. Detail the 12-layer causal Transformer Decoder spine.
+- **Movement 3: Unified Input Serialization & Minimal Fine-tuning**:
+  Showcase the radical architectural elimination: instead of redesigning models, format task inputs into structured token sequences (`[Start]...[Delim]...[Extract]`) feeding a single linear head with auxiliary language modeling loss $L_3$.
+- **Movement 4: Zero-Shot Emergence & Historical Paradigm Clash**:
+  Document the early sparks of zero-shot task transfer, the contemporary clash with BERT's bidirectional masked autoencoding, and the historical bifurcation between predictive generation and discriminative extraction.
+
+#### Archetype D: Alignment, Reasoning & System Steering (e.g. InstructGPT, DPO)
+
+- **Movement 1: The Alignment Tax & Misalignment Dilemma**:
+  Explain why maximizing raw likelihood on internet corpora produces models that lie, hallucinate, generate dangerous instructions, and fail to follow direct user intent.
+- **Movement 2: Objective Formulation & Preference Modeling**:
+  Formulate the mathematical alignment target: Supervised Fine-Tuning (SFT), Reward Model (RM) with Bradley-Terry preferences, or Direct Preference Optimization (DPO).
+- **Movement 3: Algorithmic Mechanics & Training Stability**:
+  Step through optimization dynamics: PPO policy gradients, KL-divergence penalty against reference policy $\pi_{\text{ref}}$, value function estimation, and stability safeguards.
+- **Movement 4: Safety Frontiers, Evaluation Rubrics & Philosophical Limits**:
+  Examine reward hacking, sycophancy, the boundary between reasoning and recitation, and the limits of automated evaluation.
+
+### Anti-Scaffolding & Structural Integrity Discipline
+
+- **Strictly prohibit exposing internal pedagogical prompts in reader-facing headings:**
+  Never use checklist tags or writing prompts such as `WHY`, `HOW`, `WHAT`, `第一部分 · 痛點根源`, `第二部分 · 機制拆解`, or `第三部分 · 現代啟示` as section titles or subtitles.
+- **Strictly prohibit numbered badge clutter in titles:**
+  Never place decorative circular numbers `1`, `2`, `3` or pill badges into section headings.
+- **Authoritative, substantive Traditional Chinese headings:**
+  Every section heading must name a concrete technical concept, physical contradiction, or historical turning point in elegant Traditional Chinese (e.g., use 「預訓練的雙重困境：標註資料的懸崖，與專用架構的泥淖」 instead of 「第一部分 · 痛點根源 / WHY」; use 「四大關鍵機制拆解：QKV 檢索、縮放因子、多頭注意力與位置編碼」 instead of 「第二部分 · 機制 / HOW」).
+
 ## Narrative and evidence
 
 - Open with a concrete situation, action, or documented problem before introducing abstract claims. Develop connected paragraphs with people, circumstances, decisions, and consequences; headings and summary cards must not replace the story.
@@ -123,6 +195,108 @@ Use an inexpensive model for the window audit when available. Its role is to ask
 - **Avoid juvenile simplifications:**
   Never talk down to graduate readers with toddler-like phrases (e.g., avoid 「Transformer 先分成兩邊，每一邊有自己的工作」; write instead 「編碼器與解碼器分工：Encoder 理解全文，Decoder 逐字生成」).
 
+## Visual, layout, and mathematical notation invariant specification
+
+To prevent visual drift, typography mismatches, and broken formulas across chapters, all paper pages must adhere strictly to these visual and mathematical invariants.
+
+### 1. Hero Header Visual Anatomy (Universal Invariant)
+
+Every chapter page header must implement the exact semantic structure below:
+
+```astro
+<header class={`${shell} pt-10`}>
+  <!-- 1. Breadcrumb: clean mono typography with red separator -->
+  <div class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
+    <a class="text-red underline underline-offset-4" href="/">THE LLM</a>
+    <span aria-hidden="true">/</span>
+    <span>第 XX 章</span> <!-- Or 序章 / VOL. 00 -->
+  </div>
+
+  <div class="grid grid-cols-1 items-end gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-24">
+    <div>
+      <!-- 2. Mono Kicker: single-line mono uppercase text-red. NO border, NO background pill -->
+      <p class="mb-5 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+        理論 / THEORY 02
+      </p>
+
+      <!-- 3. Title (H1): Serif display, pure text-ink. NO red words or colored spans -->
+      <h1 class="m-0 font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight tracking-[-0.04em] text-ink">
+        <span class="block">Improving Language Understanding</span>
+        <em class="block">by Generative Pre-Training.</em>
+      </h1>
+
+      <!-- 4. Lead Paragraph: strictly bounded measure of max-w-[52ch] -->
+      <p class="mt-8 max-w-[52ch] text-lg leading-8 text-muted">
+        在 2018 年以前，自然語言處理如同中世紀的手工作坊...
+      </p>
+    </div>
+
+    <!-- 5. Short Verdict Aside: callout card with top red bar -->
+    <aside
+      class="border-t-4 border-red bg-surface p-6 shadow-editorial"
+      aria-label="這篇論文的一句評語"
+    >
+      <p class="mb-4 sm:mb-6 font-mono text-xs sm:text-sm font-semibold uppercase tracking-[0.12em] text-red">
+        一句評語 / THE SHORT VERDICT
+      </p>
+      <p class="m-0 max-w-[20ch] sm:max-w-[22ch] font-display text-2xl sm:text-3xl leading-tight text-ink">
+        預測下一個字不是文字接龍，而是讓機器在未標註的世界裡建構常識與因果。
+      </p>
+      <p class="mt-6 mb-0 text-sm sm:text-base leading-relaxed sm:leading-7 text-muted">
+        GPT-1 首次證明：大數據自回歸預訓練搭配極簡線性微調，足以通吃所有主流 NLP 任務。
+      </p>
+    </aside>
+  </div>
+
+  <!-- 6. Paper Meta Specs Grid -->
+  <PaperMeta
+    year={paper.year}
+    venue={paper.venue}
+    readTime="25 分鐘"
+    difficulty="核心概念"
+    doi={...}
+  />
+</header>
+```
+
+#### Visual Invariant Prohibitions:
+
+- **No pill badges in kickers:** Never wrap the kicker in `border border-red bg-red/10 px-3 py-1 rounded-full`. The kicker is always unadorned mono text in `text-red`.
+- **No multi-colored titles:** Never highlight individual words in H1 with `text-red` or background gradients. The entire title must be uniformly rendered in `text-ink`.
+- **No unconstrained lead paragraphs:** Never use fluid, unbounded widths or `max-w-2xl` for lead paragraphs. Always enforce `max-w-[52ch]` to preserve typographic rhythm.
+- **Consistent breadcrumb schema:** Always use `THE LLM / [第 XX 章]` or `THE LLM / [序章 / VOL. 00]`. Never invent inconsistent chapter labels like `Vol.2` or shorthand tags.
+
+---
+
+### 2. Mathematical Formula and Notation Standard (Strict W3C MathML Core)
+
+To ensure maximum accessibility, semantic clarity, and high-fidelity mathematical rendering without heavy JavaScript bundles, all mathematical equations must follow standard W3C MathML Core.
+
+#### MathML Implementation Rules:
+
+1. **Block-level formulas (`display="block"`):**
+   Render standalone equations using `<math display="block" class="editorial-math my-6" aria-label="...">`. Always provide a descriptive Traditional Chinese `aria-label` explaining the formula for screen readers and search engines.
+2. **Semantic element hierarchy:**
+   Use proper MathML tags:
+   - `<mi>` for mathematical variables and symbols ($x$, $y$, $W$, $h$, $\lambda$).
+   - `<mo>` for operators ($=$, $+$, $\times$, $\sum$, $\log$, $\prod$, $\in$).
+   - `<msub>`, `<msup>`, and `<msubsup>` for subscripts and superscripts ($W_y$, $h_l^m$, $d_k$, $e^x$).
+   - `<mfrac>` for fractions ($\frac{Q K^T}{\sqrt{d_k}}$).
+   - `<munder>`, `<mover>`, and `<munderover>` for summation and product limits ($\sum_{i=1}^n$).
+   - `<mtext>` for plain textual annotations inside math expressions.
+3. **Strict prohibition of plaintext ASCII approximations:**
+   Never write equations in raw plaintext or mangled Unicode (e.g., `W_y`, `h_l^m W_y`, `L_1(U) = \sum \log P(...)`, `Σ_(x,y)`). Any formal mathematical equation must be rendered in MathML.
+4. **Astro JSX curly-brace escaping requirement:**
+   In `.astro` templates, raw curly braces `{` and `}` are reserved for JSX JavaScript expressions. When writing literal set notation or condition braces inside MathML strings, you **MUST** escape them with HTML character entities:
+   - Use `&#123;` for `{`
+   - Use `&#125;` for `}`
+     _Failing to escape curly braces causes fatal Astro compiler build errors._
+5. **Mandatory tensor and variable breakdown:**
+   No naked formulas. Every mathematical formula must be immediately accompanied by an exhaustive variable and tensor specification block:
+   - Every tensor, matrix, and vector symbol must have its shape/dimensions explicitly stated (e.g., $W_y \in \mathbb{R}^{d \times C}$ is the linear classification weight matrix projecting hidden dimension $d$ to class count $C$).
+   - Every index and coordinate must be defined ($l \in [1, L]$ is the transformer layer index, $m$ is the sequence position).
+   - The operational intuition of the formula must be worked out in plain, grounded language.
+
 ## Audit
 
 Read the case, prose, diagrams, formulas, and cited evidence together. Prioritize contradictions and unsupported historical claims, then missing explanatory steps, narrative discontinuities, and typography. Report exact line references, the reader-facing consequence, and a concrete repair. An audit request does not authorize article edits. Respect the requested verification cadence; do not launch browsers or render harnesses during a copy-only pass.
@@ -137,6 +311,9 @@ Read the case, prose, diagrams, formulas, and cited evidence together. Prioritiz
 - At every architecture or historical switch, are the model, source/target side, training/generation phase, and changed assumptions explicit?
 - Do headings, diagrams, and component lists describe the same level of the architecture? Are newly introduced mechanisms motivated before their names appear?
 - Does each repeated explanation add a comparison, result, or consequence? Can production commentary and unsupported chronological language be removed without losing evidence?
+- Does the hero header strictly adhere to the Visual Invariant specification (clean mono red kicker without badge pill wrappers, pure `text-ink` serif display title without colored words, `max-w-[52ch]` lead paragraph, standard breadcrumb)?
+- Does the chapter follow its assigned Archetype blueprint (A: 3-Act, B: 5-Movement, C: 4-Movement, D: 4-Movement) without exposing internal prompt scaffolding tags (`WHY`, `HOW`, `WHAT`, `第一部分`) or numbered circle badges?
+- Are all mathematical formulas rendered using native W3C MathML Core with accessible `aria-label` attributes and escaped curly braces (`&#123;` / `&#125;`), and accompanied by explicit tensor/variable definitions?
 - Report remaining failures as location → missing knowledge or contradiction → reader consequence → concrete repair. Distinguish confirmed source contradictions from claims still needing verification. A passing formatter or typecheck is not editorial approval.
 
 ## Paper page filename and routing harness specification
