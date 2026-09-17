@@ -136,7 +136,7 @@ export const milestonePapers: MilestonePaper[] = [
     venue: 'NAACL 2019',
     arxivId: '1810.04805',
     url: '/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding',
-    status: 'outline',
+    status: 'published',
     track: 'language',
     theme: '雙向理解',
     kicker: 'VOL. 03 / BIDIRECTIONAL ENCODER',

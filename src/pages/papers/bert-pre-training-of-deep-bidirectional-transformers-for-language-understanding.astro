@@ -1,0 +1,1135 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import StoryRail from '../../components/StoryRail.astro';
+import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
+import AsideCard from '../../components/AsideCard.astro';
+import Callout from '../../components/Callout.astro';
+import AuthorGrid from '../../components/AuthorGrid.astro';
+import PaperMeta from '../../components/PaperMeta.astro';
+import PaperNavigation from '../../components/PaperNavigation.astro';
+import PaperSectionHeader from '../../components/PaperSectionHeader.astro';
+import {
+  bertPaper,
+  bertSources,
+} from '../../content/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding';
+
+const paper = bertPaper;
+const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
+
+const story = [
+  {
+    year: '2018.06',
+    label: '前史 / GPT-1',
+    title: '單向自回歸確立預訓練範式',
+    body: 'GPT-1 證明在無標註文本上預訓練 Transformer 的巨大威力，但因果遮罩迫使模型只能由左至右看前文，在閱讀理解上留下單眼盲點。',
+    status: 'past' as const,
+  },
+  {
+    year: '2018.10',
+    label: '突破 / THE PAPER',
+    title: 'BERT：克漏字雙向理解的巔峰',
+    body: '重新召回 Transformer Encoder，以 Masked LM（完形填空）與 NSP 實現全雙向深層注意力，一口氣刷新 11 項 NLP 基準紀錄。',
+    status: 'current' as const,
+  },
+  {
+    year: '2019 之後',
+    label: '分水嶺 / THE DIVERGENCE',
+    title: '雙向理解與單向生成世紀分流',
+    body: 'BERT 主導工業界特徵搜尋與理解任務多年；而無法生成長文的本質天花板，則驅使 OpenAI 堅定走向 GPT-2 與千億生成大模型之路。',
+    status: 'future' as const,
+  },
+];
+
+interface TimelineEpoch {
+  id: string;
+  year: string;
+  period: string;
+  title: string;
+  summary: string;
+  sources: Array<{
+    source: (typeof bertSources)[number];
+    num: number;
+    refCode: string;
+    featured?: boolean;
+    role: string;
+    takeaway: string;
+  }>;
+}
+
+const timelineEpochs: TimelineEpoch[] = [
+  {
+    id: 'epoch-1953',
+    year: '1953',
+    period: '心理語言學啟蒙',
+    title: 'Wilson Taylor 發明克漏字測驗（Cloze Procedure）',
+    summary:
+      '隨機挖空報紙上的字詞讓受試者填空，作為評估文章可讀性與人類理解力之工具，日後成為 BERT Masked LM 的直接靈感祖先。',
+    sources: [
+      {
+        source: bertSources.find((s) => s.id === 'paper-1953-cloze')!,
+        num: 1,
+        refCode: 'S01',
+        featured: true,
+        role: '概念始祖',
+        takeaway: '奠定雙向語境補完的評測邏輯：藉由挖空強迫大腦調動前後全部上下文進行消歧。',
+      },
+    ],
+  },
+  {
+    id: 'epoch-2017',
+    year: '2017',
+    period: '雙向自注意力架構奠基',
+    title: 'Transformer Encoder 的全域關聯革命',
+    summary:
+      'Google Brain 發表 Transformer，其 Encoder 結構天生具備跨位置無損點積注意力，每個 Token 皆可無障礙獲取全句資訊。',
+    sources: [
+      {
+        source: bertSources.find((s) => s.id === 'paper-2017-transformer')!,
+        num: 2,
+        refCode: 'S02',
+        featured: true,
+        role: '架構基石',
+        takeaway: '提供 BERT 堆疊所需的深度全雙向自注意力骨幹，打破 RNN 循序傳播瓶頸。',
+      },
+    ],
+  },
+  {
+    id: 'epoch-2018-gpt1',
+    year: '2018.06',
+    period: '預訓練典範初立與單向盲點',
+    title: 'GPT-1 展現無監督威力，但因果遮罩割裂後文',
+    summary:
+      'OpenAI 證明大規模預訓練能通吃下游任務，但其 Decoder-only 的由左至右單向因果限制，在判別式閱讀理解上留下嚴重的語境盲點。',
+    sources: [
+      {
+        source: bertSources.find((s) => s.id === 'paper-2018-gpt1')!,
+        num: 3,
+        refCode: 'S03',
+        featured: true,
+        role: '對照基線',
+        takeaway: 'BERT 論文核心挑戰的靶心：證明自然語言理解本質上需要雙向視野，而非單向遮蔽。',
+      },
+    ],
+  },
+  {
+    id: 'epoch-2018-bert',
+    year: '2018.10',
+    period: '雙向預訓練王者降臨',
+    title: 'BERT 發布，橫掃 11 項 NLP 紀錄並超越人類表現',
+    summary:
+      'Jacob Devlin 等人融合 Transformer Encoder 與 Masked LM，在 GLUE、SQuAD 等基準創下壓倒性勝利，推動雙向預訓練進入黃金時代。',
+    sources: [
+      {
+        source: bertSources.find((s) => s.id === 'paper-2018-bert')!,
+        num: 4,
+        refCode: 'S04',
+        featured: true,
+        role: '核心文獻',
+        takeaway: '確立雙向 Transformer Encoder 預訓練標準，引發 NLP 工業界與學術界震撼革命。',
+      },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding (2018)"
+  section="paper"
+  description={paper.abstractSummary}
+>
+  <SiteHeader />
+
+  <main
+    id="main-content"
+    class="min-h-screen bg-canvas text-ink selection:bg-red selection:text-white"
+  >
+    <!-- HERO HEADER (Scheme B 規範) -->
+    <header class={`${shell} pt-10`}>
+      <div class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
+        <a class="text-red underline underline-offset-4" href="/">
+          THE LLM
+        </a>
+        <span aria-hidden="true">/</span>
+        <span>第 03 章</span>
+      </div>
+
+      <div class="grid grid-cols-1 items-end gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-24">
+        <div>
+          <p class="mb-5 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            VOL. 03 / BIDIRECTIONAL ENCODER
+          </p>
+
+          <h1 class="m-0 font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight tracking-[-0.04em] text-ink">
+            <span class="block">BERT: Pre-training of Deep</span>
+            <span class="block">Bidirectional Transformers</span>
+            <em class="block">for Language Understanding</em>
+          </h1>
+
+          <p class="mt-8 max-w-[52ch] text-lg leading-8 text-muted">
+            2018 年秋天，當 OpenAI 帶著單向自回歸的 GPT-1 確立生成式預訓練路線之際，Google
+            團隊以一場「克漏字填空」革命掀起了全域風暴。他們重新召回了 Transformer 最初的
+            Encoder，以雙向無損的注意力視野，徹底粉碎了單向因果模型在閱讀理解時無法看後文的盲點。BERT
+            一口氣刷新 11 項 NLP
+            基準紀錄，首度在史丹佛問答測驗上擊敗人類，奠定了自然語言理解的巔峰。
+          </p>
+        </div>
+
+        <aside
+          class="border-t-4 border-red bg-surface p-6 shadow-editorial"
+          aria-label="這篇論文的一句評語"
+        >
+          <p class="mb-4 sm:mb-6 font-mono text-xs sm:text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            一句評語 / THE SHORT VERDICT
+          </p>
+          <p class="m-0 max-w-[20ch] sm:max-w-[22ch] font-display text-2xl sm:text-3xl leading-tight text-ink">
+            閱讀理解不能蒙上一隻眼睛：雙向上下文是解開語意消歧的終極透鏡。
+          </p>
+          <p class="mt-6 mb-0 text-sm sm:text-base leading-relaxed sm:leading-7 text-muted">
+            BERT 證明了：只要改用克漏字遮罩，Transformer Encoder
+            就能在無標註文本中吸收全域雙向關聯，成為最強大的語言特徵提取器。
+          </p>
+        </aside>
+      </div>
+
+      <PaperMeta
+        year={paper.year}
+        venue={paper.venue}
+        readTime="30 分鐘"
+        difficulty="核心概念"
+        doi={paper.doi}
+      />
+    </header>
+
+    <!-- 歷史進程 StoryRail -->
+    <section class="border-y border-line bg-surface/50 py-12" aria-label="歷史轉折總覽">
+      <div class={shell}>
+        <div class="mb-6">
+          <p class="font-mono text-xs font-bold text-red uppercase tracking-wider mb-1">
+            歷史轉折 / 2018
+          </p>
+          <h2 class="m-0 font-display text-2xl sm:text-3xl text-ink">
+            從單向文字接龍到全雙向深層理解的世紀分流
+          </h2>
+        </div>
+        <StoryRail events={story} />
+      </div>
+    </section>
+
+    <!-- MOVEMENT 1: 痛點根源 (THE BLINDSPOT) -->
+    <section
+      id="blindspot"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="blindspot-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            第一樂章 / 痛點根源
+          </p>
+          <h2
+            id="blindspot-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">單向語言模型的視野盲點：</span>
+            <span class="block">
+              <em>當閱讀理解被迫蒙上一隻眼睛</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          文字接龍在寫作時無比自然，但在理解既有文章時卻留下了巨大缺陷：當模型讀到多義詞時，若無法看見後文，便只能在黑暗中盲目摸索。
+        </p>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p class="text-lg leading-relaxed text-ink">
+            在第二章〈
+            <a
+              href="/papers/improving-language-understanding-by-generative-pre-training"
+              class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+            >
+              GPT-1
+            </a>
+            〉中，我們見證了 OpenAI 取得的震撼突破：捨棄複雜的專用架構，僅僅依靠在 8
+            億字小說中反覆「預測下一個字」，模型就能自發將語法常識與物理因果壓縮進 768
+            維的幾何空間裡。
+          </p>
+
+          <p>
+            然而，這項優雅的成功背後，卻隱藏著一個令自然語言理解（NLU）學者坐立難安的結構性代價：
+            <strong>單向因果遮罩（Causal Masking）</strong>。
+          </p>
+
+          <h3 class="font-display text-2xl text-ink pt-4">一個生活中的消歧例子：河岸還是銀行？</h3>
+
+          <p>
+            為了看清單向視野的痛苦，請試想一位正在讀英文句子的讀者。英文中的 <code>bank</code>{' '}
+            是一個典型的多義詞——它既可以是金融體系裡的「銀行」，也可以是自然地理中的「河岸」。現在，請觀察以下兩句話：
+          </p>
+
+          <div class="grid gap-4 sm:grid-cols-2 my-6">
+            <div class="border border-line bg-surface p-5 shadow-sm">
+              <span class="font-mono text-xs font-bold text-blue uppercase block mb-1">
+                情境 A · 戶外釣魚
+              </span>
+              <p class="font-serif text-base text-ink mb-2">
+                "He walked along the <strong class="text-red font-bold">bank</strong> of the river
+                to fish."
+              </p>
+              <p class="text-xs text-muted m-0 leading-relaxed">
+                決定 <code>bank</code> 意指「河岸」的最關鍵線索，是後面的 <code>river</code>
+                （河流）與 <code>fish</code>（釣魚）。
+              </p>
+            </div>
+
+            <div class="border border-line bg-surface p-5 shadow-sm">
+              <span class="font-mono text-xs font-bold text-red uppercase block mb-1">
+                情境 B · 金融借貸
+              </span>
+              <p class="font-serif text-base text-ink mb-2">
+                "He walked into the <strong class="text-red font-bold">bank</strong> to deposit his
+                money."
+              </p>
+              <p class="text-xs text-muted m-0 leading-relaxed">
+                決定 <code>bank</code> 意指「銀行」的最關鍵線索，是後面的 <code>deposit</code>
+                （存款）與 <code>money</code>（金錢）。
+              </p>
+            </div>
+          </div>
+
+          <p>
+            現在，請想像 GPT-1 在處理這兩句話時的處境：
+            <strong>
+              因為因果遮罩的鐵律，當模型讀到 <code>bank</code>{' '}
+              這個詞的瞬間，後文的所有文字全都被黑幕嚴密遮蔽！
+            </strong>
+            在 GPT-1 眼中，兩句話的前半段完全是一模一樣的{' '}
+            <code>"He walked along/into the bank..."</code>。它在計算 <code>bank</code> 的 768
+            維特徵向量時，大腦裡只能盲目猜測：這個人到底是去存錢，還是去散步？
+          </p>
+
+          <Callout variant="editorial" title="生成與理解的本質分歧：前瞻還是全覽？">
+            <p class="m-0 text-base leading-relaxed text-muted">
+              「由左至右（Left-to-Right）」的單向語言模型，在<strong>文字生成（Generation）</strong>
+              時是絕對正確的，因為未來尚未發生，小說家寫作本來就是逐字推進；但在
+              <strong>文字理解（Comprehension）</strong>
+              時，整篇論文、整個病歷、整份合約早就白紙黑字擺在眼前。強迫模型把右手邊的文字全部遮住，就如同強迫一位口譯員一邊用眼罩遮住右眼、一邊考試一樣，是一種人為強加的智力自殘。
+            </p>
+          </Callout>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            重拾第一章的遺珠：為什麼當初不能直接做雙向？
+          </h3>
+
+          <p>
+            讀過第一章〈
+            <a
+              href="/papers/attention-is-all-you-need"
+              class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+            >
+              Attention Is All You Need
+            </a>
+            〉的讀者一定會立刻問出這個最深刻的問題：
+            <strong>
+              Transformer 的 Encoder 本來就天生具備雙向自注意力（Bidirectional
+              Self-Attention）啊！為什麼 GPT-1 當初不用 Encoder，偏偏要大費周章換成 Decoder？
+            </strong>
+          </p>
+
+          <p>
+            答案是致命的四個字：<strong>答案洩漏（Identity Leakage）</strong>。
+          </p>
+
+          <p>
+            在深度神經網絡中，每一層的計算都是上一層所有詞彙的線性加權組合。如果允許全雙向注意力在多層網絡中直接預測下一個字，那麼在計算第
+            2 層或第 3 層特徵時，目標詞的資訊早就透過其他相鄰單詞繞了一圈，直接抄襲回自己身上！
+            損失函數會在一瞬間跌落到 0，模型學會了完美的「照抄作弊」，卻完全不會學到任何語意理解。
+          </p>
+
+          <p>
+            這個看似無法調和的物理死結擺在 2018 年的所有研究者面前：
+            <strong>
+              既想要 Transformer Encoder
+              毫無遮蔽的全雙向視野，又不能讓模型在預測時抄到答案，這到底該怎麼辦？
+            </strong>
+          </p>
+        </div>
+
+        <aside slot="rail" class="space-y-6">
+          <AsideCard kicker="對比實驗 / ABLATION" title="視野對決：單向 vs 雙向" variant="surface">
+            <p class="text-xs leading-relaxed text-muted m-0">
+              BERT 論文在第 5.1 節做了殘酷的對照實驗：在完全相同架構與訓練量下，強制改用單向
+              Left-to-Right 訓練的 BERT，在 SQuAD 問答測驗上的分數暴跌了 10
+              分以上！這直接證明：單向視角是閱讀理解的天然枷鎖。
+            </p>
+          </AsideCard>
+
+          <AsideCard kicker="歷史線索 / ELMO" title="ELMo 的偽雙向遺憾" variant="paper">
+            <p class="text-xs leading-relaxed text-muted m-0">
+              在 BERT 之前，ELMo（2018 初）嘗試用「一個從左到右的 LSTM」加上「一個從右到左的
+              LSTM」拼湊出雙向。但兩者是獨立運算、在最後才強行拼接向量，中間每一層完全沒有進行深度的跨方向注意力交互，被稱為「淺層雙向（Shallow
+              Bidirectionality）」。
+            </p>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- MOVEMENT 2: 機制拆解 (THE MASKED ENGINE) -->
+    <section
+      id="mechanism"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24 space-y-12`}
+      aria-labelledby="mechanism-title"
+    >
+      <PaperSectionHeader
+        kicker="第二樂章 / 機制拆解"
+        title="克漏字革命：遮蔽語言模型與下一句預測"
+        subtitle="Google AI 團隊從 1953 年的英語心理測驗中獲得靈感，以完形填空打破抄襲死結，解鎖全雙向自監督學習"
+        id="act-2-masked-lm"
+      />
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p class="text-lg leading-relaxed text-ink">
+            2018 年 8 月，任職於 Google AI Language 的 Jacob Devlin
+            與台大資工系畢業的張明偉（Ming-Wei Chang）等人，找到了一個驚人優雅的破局點。
+          </p>
+
+          <p>
+            既然「預測下一個字」會迫使模型作弊，那何不
+            <strong>
+              把預測目標從「下一個字」，改成學生時代大家最熟悉的「克漏字填空（Cloze Test）」
+            </strong>
+            ？
+          </p>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            機制一：遮罩語言模型（Masked Language Model, MLM）
+          </h3>
+
+          <p>
+            克漏字測驗最早是由心理學家 Wilson Taylor 於 1953
+            年提出的方法：在報紙文章中隨機用立可白塗黑幾個字，交給受測者。受測者要猜出被塗黑的字，就必須調動前文的代名詞、後文的動詞、甚至整段文章的常識。
+          </p>
+
+          <p>
+            BERT 將整篇無標註文章直接倒進 12 層或 24 層的 <strong>Transformer Encoder</strong>{' '}
+            中。在輸入端，系統隨機選取序列中 <strong>15%</strong> 的 Token 作為預測目標。
+          </p>
+
+          <!-- 核心公式展示框 -->
+          <div class="my-6 border-2 border-red/30 bg-surface p-6 sm:p-8 shadow-editorial overflow-x-auto">
+            <div class="flex items-center justify-between border-b border-line pb-3 mb-4">
+              <span class="font-mono text-xs font-bold text-red uppercase tracking-wider">
+                論文核心公式 · 遮罩語言模型損失函數 (Masked LM Loss)
+              </span>
+              <span class="font-mono text-xs text-muted">Section 3.1 Task #1: Masked LM</span>
+            </div>
+
+            <div class="my-3">
+              <math
+                display="block"
+                class="text-xl sm:text-2xl text-ink font-serif"
+                aria-label="L of MLM equals negative sum over masked positions i of log P of x i given corrupted sequence X"
+              >
+                <mrow>
+                  <msub><mi mathvariant="script">L</mi><mi>MLM</mi></msub>
+                  <mo stretchy="false">(</mo><mi>θ</mi><mo stretchy="false">)</mo>
+                  <mo>=</mo>
+                  <mo>−</mo>
+                  <munder>
+                    <mo>∑</mo>
+                    <mrow><mi>i</mi><mo>∈</mo><mi>Masked</mi></mrow>
+                  </munder>
+                  <mo>log</mo>
+                  <mi>P</mi>
+                  <mo stretchy="false">(</mo>
+                  <msub><mi>x</mi><mi>i</mi></msub>
+                  <mo>∣</mo>
+                  <mover><mi>X</mi><mo>˜</mo></mover>
+                  <mo>;</mo>
+                  <mi>θ</mi>
+                  <mo stretchy="false">)</mo>
+                </mrow>
+              </math>
+            </div>
+
+            <div class="mt-4 border-t border-line pt-3 grid gap-3 sm:grid-cols-2 text-xs text-muted leading-relaxed">
+              <div>
+                <span class="font-semibold text-ink block mb-0.5">
+                  <math class="font-serif"><mover><mi>X</mi><mo>˜</mo></mover></math>：受損序列
+                </span>
+                輸入文字中約 15% 的位置經過替換或遮蔽，其餘 85%
+                保持完整，為模型提供充分且無遮蔽的前後語境。
+              </div>
+              <div>
+                <span class="font-semibold text-ink block mb-0.5">
+                  <math class="font-serif"><msub><mi>x</mi><mi>i</mi></msub></math>：被遮蔽的原詞
+                </span>
+                模型在該位置輸出 768 維向量後，通過單一 Softmax
+                投影回詞表，計算還原出真實單詞的交叉熵損失。
+              </div>
+            </div>
+          </div>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            80 / 10 / 10 混淆工程：解決預訓練與現實的脫節
+          </h3>
+
+          <p>
+            如果直接將選中的 15% 詞彙 100% 通通改成特殊標記 <code>[MASK]</code>
+            ，會立刻引發一個致命的工程難題：
+            <strong>
+              在下游真實世界中（例如用戶送進來的醫療報告或法律合約），文字裡根本不可能包含{' '}
+              <code>[MASK]</code> 符號！
+            </strong>
+            如果模型只習慣在看到 <code>[MASK]</code>{' '}
+            時才發動推理，那麼下游微調遇到普通句子時就會徹底失靈。
+          </p>
+
+          <p>
+            為了解開這個矛盾，Devlin 等人設計了堪稱神來之筆的{' '}
+            <strong>80 / 10 / 10 混合採樣策略</strong>：
+          </p>
+
+          <div class="grid gap-4 sm:grid-cols-3 my-6">
+            <div class="border-t-4 border-red bg-surface p-4 shadow-sm">
+              <span class="font-mono text-xs font-bold text-red uppercase block mb-1">
+                80% 的比例
+              </span>
+              <h4 class="m-0 font-display text-base text-ink mb-2">替換為 [MASK]</h4>
+              <p class="text-xs text-muted m-0 leading-relaxed">
+                例如：<code>"my dog is hairy"</code> → <code>"my dog is [MASK]"</code>
+                。強迫模型從前後文提取特徵以填補空缺。
+              </p>
+            </div>
+
+            <div class="border-t-4 border-blue bg-surface p-4 shadow-sm">
+              <span class="font-mono text-xs font-bold text-blue uppercase block mb-1">
+                10% 的比例
+              </span>
+              <h4 class="m-0 font-display text-base text-ink mb-2">替換為隨機雜訊詞</h4>
+              <p class="text-xs text-muted m-0 leading-relaxed">
+                例如：<code>"my dog is hairy"</code> → <code>"my dog is apple"</code>
+                。強迫模型隨時保持懷疑，具備糾正輸入錯誤語意之能力。
+              </p>
+            </div>
+
+            <div class="border-t-4 border-ink bg-surface p-4 shadow-sm">
+              <span class="font-mono text-xs font-bold text-ink uppercase block mb-1">
+                10% 的比例
+              </span>
+              <h4 class="m-0 font-display text-base text-ink mb-2">保持原詞不變</h4>
+              <p class="text-xs text-muted m-0 leading-relaxed">
+                例如：<code>"my dog is hairy"</code> → <code>"my dog is hairy"</code>
+                。強迫模型對完全沒有被遮蔽的真實詞彙，依然認真計算上下文表徵。
+              </p>
+            </div>
+          </div>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            機制二：下一句預測（Next Sentence Prediction, NSP）
+          </h3>
+
+          <p>
+            單詞層級的完形填空解決了，但自然語言理解中還有另一大類至關重要的任務——
+            <strong>判斷兩句話之間的邏輯關係</strong>
+            （例如閱讀理解時「問題」與「文章段落」的對應，或是邏輯推論時「前提」與「假設」的真偽）。
+          </p>
+
+          <p>
+            為了讓模型在預訓練階段就具備理解「篇章級連貫性」的能力，BERT
+            引入了第二項預訓練輔助任務：<strong>下一句預測（NSP）</strong>。
+          </p>
+
+          <p>在挑選訓練文本時，系統每次組裝一對句子 A 與句子 B：</p>
+          <ul class="list-disc pl-5 space-y-2 text-sm text-muted">
+            <li>
+              <strong>50% 的時間（IsNext）：</strong>句子 B 是語料庫中真實緊跟在句子 A
+              後面的下一句話。
+            </li>
+            <li>
+              <strong>50% 的時間（NotNext）：</strong>句子 B 是從語料庫中完全隨機挑選出來、與句子 A
+              風馬牛不相及的無關句子。
+            </li>
+          </ul>
+
+          <h3 class="font-display text-2xl text-ink pt-4">特殊符號的誕生：[CLS] 與 [SEP]</h3>
+
+          <p>
+            為了讓 Transformer Encoder 能同時容納兩句話並進行全局分類，BERT
+            定義了兩個成為現代深度學習標準的關鍵符號：
+          </p>
+
+          <div class="border-l-4 border-red bg-red-soft/25 p-5 my-6 space-y-3">
+            <div>
+              <strong class="text-ink font-mono text-sm block">
+                [CLS] · 分類錨點 (Classification Token)
+              </strong>
+              <p class="text-xs text-muted m-0 leading-relaxed">
+                永遠放置在整個輸入序列的最前端（第 0 個位置）。由於 Encoder 內部是全雙向注意力，第 0
+                個位置的向量在經過 12
+                層與全句所有單詞的交互後，吸收了「整篇文本的全局語意摘要」，直接拿來作為二元分類（IsNext
+                / NotNext）或下游情感判斷的指針！
+              </p>
+            </div>
+            <div class="border-t border-line/60 pt-2">
+              <strong class="text-ink font-mono text-sm block">
+                [SEP] · 句子邊界隔板 (Separator Token)
+              </strong>
+              <p class="text-xs text-muted m-0 leading-relaxed">
+                插在句子 A 與句子 B 之間，以及整個輸入序列的結尾，作為劃分不同語意區塊的明確邊界。
+              </p>
+            </div>
+          </div>
+
+          <!-- 三維嵌入可視化組件 -->
+          <div class="border border-line bg-surface p-6 sm:p-8 shadow-sm">
+            <div class="flex items-center justify-between border-b border-line pb-3 mb-4">
+              <span class="font-mono text-xs font-bold text-red uppercase tracking-wider">
+                架構解剖 · BERT 三重嵌入疊加體系 (Tri-fold Embeddings)
+              </span>
+              <span class="font-mono text-xs text-muted">Figure 2 Input Representation</span>
+            </div>
+
+            <p class="text-sm text-muted mb-6">
+              送入 BERT 每一層的初始輸入向量，並不是單純的詞向量，而是三個長度為 768 維的向量進行
+              <strong>逐元素相加（Element-wise Sum）</strong>：
+            </p>
+
+            <div class="space-y-3 font-mono text-xs">
+              <div class="grid grid-cols-[6rem_1fr] items-center gap-3 p-2 bg-paper-deep">
+                <span class="font-bold text-ink">輸入序列：</span>
+                <span class="text-red">[CLS] 小 明 喜 歡 貓 [SEP] 貓 喜 歡 睡 覺 [SEP]</span>
+              </div>
+              <div class="grid grid-cols-[6rem_1fr] items-center gap-3 p-2 border border-line">
+                <span class="font-semibold text-muted">詞嵌入 (Token)：</span>
+                <span class="text-muted">
+                  E_[CLS] E_小 E_明 E_喜 E_歡 E_貓 E_[SEP] E_貓 E_喜 E_歡 E_睡 E_覺 E_[SEP]
+                </span>
+              </div>
+              <div class="grid grid-cols-[6rem_1fr] items-center gap-3 p-2 border border-line bg-blue/5">
+                <span class="font-semibold text-blue">句段嵌入 (Segment)：</span>
+                <span class="text-blue">E_A E_A E_A E_A E_A E_A E_A E_B E_B E_B E_B E_B E_B</span>
+              </div>
+              <div class="grid grid-cols-[6rem_1fr] items-center gap-3 p-2 border border-line bg-red/5">
+                <span class="font-semibold text-red">位置嵌入 (Position)：</span>
+                <span class="text-red">E_0 E_1 E_2 E_3 E_4 E_5 E_6 E_7 E_8 E_9 E_10 E_11 E_12</span>
+              </div>
+            </div>
+
+            <p class="text-xs text-muted mt-4 mb-0 leading-relaxed">
+              三合一疊加確保了 Transformer
+              的矩陣同時知曉「這個詞是什麼」、「屬於第一句還是第二句」、以及「在全句的絕對排位是多少」。
+            </p>
+          </div>
+        </div>
+
+        <aside slot="rail" class="space-y-6">
+          <AsideCard kicker="模型規格 / SCALE" title="BERT 雙雄參數對照" variant="surface">
+            <div class="space-y-3 text-xs text-muted">
+              <div class="border-b border-line pb-2">
+                <strong class="text-ink block">BERT_BASE (對齊 GPT-1)</strong>
+                <span>12 層 · 768 隱藏維度 · 12 頭 · 1.1 億參數 (110M)</span>
+              </div>
+              <div>
+                <strong class="text-red block">BERT_LARGE (突破極限)</strong>
+                <span>24 層 · 1024 隱藏維度 · 16 頭 · 3.4 億參數 (340M)</span>
+              </div>
+            </div>
+            <p class="mt-3 mb-0 text-[11px] leading-relaxed text-muted">
+              BERT-Base 刻意將參數設定得與 GPT-1
+              完全一致（12層/768維），以最無可辯駁的科學控制變數，直接證明「雙向克漏字」在理解架構上的純粹勝出。
+            </p>
+          </AsideCard>
+
+          <AsideCard kicker="語料檔案 / CORPUS" title="33 億詞的巨型知識庫" variant="paper">
+            <p class="text-xs leading-relaxed text-muted m-0">
+              GPT-1 當初只訓練在 BooksCorpus（8 億詞小說）；而 BERT 除了 BooksCorpus
+              外，額外加入了整整 25 億詞的英文維基百科（English
+              Wikipedia，僅抽取純文字段落），總語料庫達到 33 億詞，為模型注入了龐大的百科常識體系。
+            </p>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- MOVEMENT 3: 極簡微調 (THE 11 BENCHMARKS) -->
+    <section
+      id="finetune"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24 space-y-12`}
+      aria-labelledby="finetune-title"
+    >
+      <PaperSectionHeader
+        kicker="第三樂章 / 極簡微調"
+        title="一張全連接層征服 11 項任務：閱讀理解超越人類"
+        subtitle="無須為個別任務修改模型骨幹，僅靠 [CLS] 輸出向量與序列起止指針，全面橫掃 GLUE 與 SQuAD 評測基準"
+        id="act-3-finetune"
+      />
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p class="text-lg leading-relaxed text-ink">
+            BERT 的工程哲學延續了第二章 GPT-1 最革命性的洞見：
+            <strong>微調時模型骨幹 100% 保持不變，全權由頂層輕量投影承接</strong>。
+          </p>
+
+          <p>
+            然而，因為 BERT 擁有全雙向的注意力能力，它在下游任務上的適配比 GPT-1 更加自然、強大：
+          </p>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            任務型態 A：分類與推論任務（使用 [CLS] 特徵）
+          </h3>
+
+          <p>
+            對於句子分類（如 SST-2 電影情緒分類）或句子對推論（如 MNLI
+            蘊涵關係判定），微調時只需要取出經過 12 或 24 層雙向注意力充分交互後的首位向量——
+            <math class="font-serif"><mi>C</mi><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mi>H</mi></msup></math>
+            （對應 <code>[CLS]</code> 標記），乘以一張極小的分類權重矩陣{' '}
+            <math class="font-serif"><mi>W</mi><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mi>K</mi><mo>×</mo><mi>H</mi></mrow></msup></math>
+            （<math class="font-serif"><mi>K</mi></math> 為分類數）：
+          </p>
+
+          <div class="my-3 bg-paper-deep p-4 font-mono text-sm overflow-x-auto">
+            <math
+              display="block"
+              class="text-lg text-ink font-serif"
+              aria-label="P equals softmax of C times W transpose"
+            >
+              <mrow>
+                <mi>P</mi>
+                <mo>=</mo>
+                <mo>softmax</mo>
+                <mo stretchy="false">(</mo>
+                <mi>C</mi>
+                <msup><mi>W</mi><mi>T</mi></msup>
+                <mo stretchy="false">)</mo>
+              </mrow>
+            </math>
+          </div>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            任務型態 B：抽取式問答（SQuAD Span Extraction）
+          </h3>
+
+          <p>
+            這是讓 BERT 一戰封神的歷史性戰場。在史丹佛問答資料集（SQuAD
+            v1.1）中，輸入包含一段文章與一個問題，模型必須精確圈選出文章中作為答案的「起始字（Start
+            Token）」與「結束字（End Token）」。
+          </p>
+
+          <p>
+            BERT 將問題作為句子 A、文章作為句子 B，以 <code>[SEP]</code>{' '}
+            拼接送入。微調時，只需引入兩個在訓練中學習的向量：<strong>起始指針向量</strong>{' '}
+            <math class="font-serif"><mi>S</mi><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mi>H</mi></msup></math>
+            與<strong>結束指針向量</strong>{' '}
+            <math class="font-serif"><mi>E</mi><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mi>H</mi></msup></math>
+            。
+          </p>
+
+          <p>
+            文章中每一個詞 <math class="font-serif"><mi>i</mi></math> 的最後一層雙向特徵向量為{' '}
+            <math class="font-serif"><msub><mi>T</mi><mi>i</mi></msub><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mi>H</mi></msup></math>
+            。該詞成為答案起始點的機率，就是其特徵與 <math class="font-serif"><mi>S</mi></math>{' '}
+            向量點積後的 Softmax：
+          </p>
+
+          <div class="my-3 bg-paper-deep p-4 font-mono text-sm overflow-x-auto">
+            <math
+              display="block"
+              class="text-lg text-ink font-serif"
+              aria-label="P i start equals exp of S dot T i divided by sum of exp of S dot T j"
+            >
+              <mrow>
+                <msubsup><mi>P</mi><mi>i</mi><mi>start</mi></msubsup>
+                <mo>=</mo>
+                <mfrac>
+                  <mrow><mo>exp</mo><mo stretchy="false">(</mo><mi>S</mi><mo>·</mo><msub><mi>T</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow>
+                  <mrow><munder><mo>∑</mo><mi>j</mi></munder><mo>exp</mo><mo stretchy="false">(</mo><mi>S</mi><mo>·</mo><msub><mi>T</mi><mi>j</mi></msub><mo stretchy="false">)</mo></mrow>
+                </mfrac>
+              </mrow>
+            </math>
+          </div>
+
+          <p>
+            這種直接利用雙向特徵做點積對齊的幾何直覺，在 SQuAD v1.1 上直接刷出了{' '}
+            <strong>86.8 EM（完全匹配率）與 93.2 F1 分數</strong>，
+            <strong>
+              首度在同一個基準測試上擊敗了人類專家的平均表現（人類得分為 82.3 EM / 86.8 F1）！
+            </strong>
+          </p>
+
+          <!-- 11 項評測紀錄榮譽榜 -->
+          <div class="border border-line bg-surface p-6 sm:p-8 shadow-sm my-8">
+            <h4 class="font-display text-xl text-ink m-0 mb-4">
+              GLUE 基準全線屠榜：BERT-Large vs GPT-1
+            </h4>
+            <div class="grid gap-3 sm:grid-cols-3 text-xs">
+              <div class="border border-line p-3 bg-paper-deep">
+                <span class="text-muted block mb-1">GLUE 綜合總分</span>
+                <span class="text-xl font-bold text-red block">80.5</span>
+                <span class="text-muted text-[11px]">GPT-1: 72.8 (+7.7 巨大跨越)</span>
+              </div>
+              <div class="border border-line p-3 bg-paper-deep">
+                <span class="text-muted block mb-1">MNLI 自然語言推論</span>
+                <span class="text-xl font-bold text-red block">86.7%</span>
+                <span class="text-muted text-[11px]">GPT-1: 82.1% (+4.6%)</span>
+              </div>
+              <div class="border border-line p-3 bg-paper-deep">
+                <span class="text-muted block mb-1">SQuAD v1.1 F1 分數</span>
+                <span class="text-xl font-bold text-red block">93.2</span>
+                <span class="text-muted text-[11px]">人類平均基準: 86.8 (超越人類)</span>
+              </div>
+            </div>
+            <p class="mt-4 mb-0 text-xs text-muted leading-relaxed">
+              在 2018 年底，BERT 席捲了整座 NLP
+              學界。過去數十個針對個別數據集精雕細琢的傳統模型，在一夜之間被這套雙向預訓練大模型全數推平。
+            </p>
+          </div>
+        </div>
+
+        <aside slot="rail" class="space-y-6">
+          <AsideCard
+            kicker="工業落地 / GOOGLE SEARCH"
+            title="搜尋引擎五年最大躍進"
+            variant="surface"
+          >
+            <p class="text-xs leading-relaxed text-muted m-0">
+              2019 年底，Google 宣布將 BERT 正式部署至其全球搜尋引擎核心演算法中，直接改善了超過 10%
+              的自然語言查詢結果。特別是對於包含介系詞（如 "2019 brazil traveler to usa need
+              visa"）等複雜語序問題，雙向注意力能準確辨識出究竟是「巴西人去美國」還是「美國人去巴西」。
+            </p>
+          </AsideCard>
+
+          <AsideCard kicker="衍生家族 / THE POST-BERT ERA" title="雙向編碼器的繁衍" variant="paper">
+            <p class="text-xs leading-relaxed text-muted m-0">
+              BERT 點燃了雙向預訓練的軍備競賽：Facebook 推出移除 NSP 並加大算力的{' '}
+              <strong>RoBERTa</strong>；Google 推出降低參數量並共享權重的 <strong>ALBERT</strong>
+              ；微軟推出解構位置注意力的 <strong>DeBERTa</strong>，在多年間主導了整個企業級 NLP
+              的落地應用。
+            </p>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- MOVEMENT 4: 世紀分水嶺 (THE DIVERGENCE & BLINDSPOT) -->
+    <section
+      id="divergence"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24 space-y-12`}
+      aria-labelledby="divergence-title"
+    >
+      <PaperSectionHeader
+        kicker="第四樂章 / 世紀分水嶺"
+        title="巔峰背後的天花板：BERT 為什麼永遠不會說話？"
+        subtitle="當 Google 慶祝雙向理解全面稱霸時，一場關於生成與理解、單向與雙向的終極歷史大分流悄然展開"
+        id="act-4-divergence"
+      />
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p class="text-lg leading-relaxed text-ink">
+            2018 年底的 Google 聲勢如日中天，BERT
+            被公認為自然語言處理有史以來最強大的特徵提取器。相較之下，剛剛發表 GPT-1 的 OpenAI
+            顯得落魄許多——在每一項理解測驗上，GPT-1 都被 BERT 徹底擊敗。
+          </p>
+
+          <p>
+            然而，就在所有人都在跟風模仿 BERT 的時候，極少數研究者卻敏銳地發現了 BERT
+            華麗皇冠下的隱形天花板：
+            <strong>
+              BERT 雖然精通「考試理解」，但它天生是一個「啞巴」——它完全不會寫作與長文對話！
+            </strong>
+          </p>
+
+          <h3 class="font-display text-2xl text-ink pt-4">克漏字訓練的致命內傷：條件獨立的假象</h3>
+
+          <p>
+            BERT 之所以能成為理解之王，是因為它採用了完形填空（Masked
+            LM）。但在數學上，完形填空有一個根深蒂固的盲點：
+            <strong>
+              它假設被遮蔽的所有詞彙在給定未遮蔽上下文時，彼此是條件獨立的（Conditionally
+              Independent）
+            </strong>
+            。
+          </p>
+
+          <p>
+            假設有一句話被挖掉了兩個詞：<code>"The capital of France is [MASK_1] [MASK_2]"</code>。
+          </p>
+          <ul class="list-disc pl-5 space-y-2 text-sm text-muted">
+            <li>
+              在真實語言中，<code>[MASK_1]</code> 與 <code>[MASK_2]</code> 必須強烈關聯（例如填入{' '}
+              <code>Paris City</code>）。
+            </li>
+            <li>
+              但 BERT 在預測時，是同時獨立計算這兩個位置的機率。它很有可能在第一個空位填出{' '}
+              <code>Paris</code>，卻在第二個空位同時填出 <code>London</code>，產生邏輯斷裂！
+            </li>
+          </ul>
+
+          <p>
+            更嚴重的是，當你想讓 BERT 寫出一篇 500 字的短文時，你該怎麼做？ 你無法像 GPT
+            一樣由左至右、一個字接一個字流暢地接下去。你只能預先在紙上畫出 500 個{' '}
+            <code>[MASK]</code>，然後讓模型反覆迭代重填（Gibbs
+            Sampling）。這種生成方式不僅速度極慢，且長篇文本的前後因果邏輯會迅速陷入局部矛盾與鬼打牆。
+          </p>
+
+          <Callout variant="editorial" title="歷史的大抉擇：理解是子集，生成才是超集">
+            <p class="m-0 text-base leading-relaxed text-muted">
+              在 OpenAI 的內部會議上，Ilya Sutskever 與 Alec Radford
+              做出了人工智慧歷史上最關鍵的戰略抉擇：
+              <strong>不要跟風 BERT，堅定守住單向自回歸！</strong>
+              <br />
+              <br />
+              他們的思考極其深邃：
+              <em>
+                「如果你只想做一個判別器，雙向確實很強；但如果你的終極目標是通用人工智慧（AGI），那麼『生成』才是包含一切的超集。只要你被強迫由左至右預測下一個字，為了預測得準，你就『不得不』學會理解；但只要你沉溺於克漏字填空，你永遠無法擁有自主創造世界與連續思維的能力。」
+              </em>
+            </p>
+          </Callout>
+
+          <h3 class="font-display text-2xl text-ink pt-4">雙塔終點，單向啟航：邁向第四章 GPT-2</h3>
+
+          <p>這場 2018 年的單雙向路線交鋒，構成了近代深度學習史上最精采的戲劇性轉折：</p>
+
+          <div class="border border-line bg-surface p-6 my-6 space-y-4">
+            <div class="grid gap-6 sm:grid-cols-2">
+              <div class="border-l-2 border-blue pl-4">
+                <span class="font-mono text-xs font-bold text-blue uppercase block mb-1">
+                  Google 的分流：雙向與混合架構
+                </span>
+                <p class="text-xs text-muted m-0 leading-relaxed">
+                  Google 沿著 BERT 的輝煌，陸續開發出 RoBERTa、ALBERT、以及試圖融合編碼與解碼的{' '}
+                  <strong>T5</strong>。在搜尋、分類、檢索與特徵工程中主導了整個大數據工業時代，直到
+                  2022 年底才驚覺生成大模型的質變。
+                </p>
+              </div>
+
+              <div class="border-l-2 border-red pl-4">
+                <span class="font-mono text-xs font-bold text-red uppercase block mb-1">
+                  OpenAI 的孤注一擲：規模化生成
+                </span>
+                <p class="text-xs text-muted m-0 leading-relaxed">
+                  面對 BERT 的全面壓制，OpenAI 選擇了最激進的孤注一擲：既然 GPT-1
+                  參數不夠大，那就把參數拉高 10 倍！在未標註的 40GB 網路世界（WebText）上，15
+                  億參數的 <strong>GPT-2</strong>{' '}
+                  即將在數個月後橫空出世，以令人恐懼的文字生成品質震撼全世界。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside slot="rail" class="space-y-6">
+          <AsideCard kicker="路線地圖 / PARADIGMS" title="NLP 兩大演化分支" variant="surface">
+            <div class="space-y-2 text-xs text-muted">
+              <div>
+                <strong class="text-blue block">Encoder-only 分支 (BERT)</strong>
+                <span>全雙向視野 · 專注於判別、檢索、情感分類、實體辨識與摘要評分。</span>
+              </div>
+              <div class="border-t border-line pt-2">
+                <strong class="text-red block">Decoder-only 分支 (GPT)</strong>
+                <span>單向因果視野 · 專注於對話、推理、代碼生成、角色扮演與開放式寫作。</span>
+              </div>
+            </div>
+          </AsideCard>
+
+          <AsideCard kicker="承先啟後 / BRIDGE" title="通往下一個里程碑" variant="paper">
+            <p class="text-xs leading-relaxed text-muted m-0">
+              搞懂了 BERT 的雙向極限，你才能徹底理解第四章〈GPT-2〉與第五章〈Scaling
+              Laws〉為什麼堅持將單向自回歸推向物理極限。那不僅是參數的膨脹，更是一場關於「生成即智慧」的信仰長征。
+            </p>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- 歷史時間軸 -->
+    <section class="border-t border-ink bg-canvas py-16 sm:py-24" aria-label="思想演進時間軸">
+      <div class={shell}>
+        <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between border-b border-ink/10 pb-8">
+          <div>
+            <span class="font-mono text-xs font-bold uppercase tracking-[0.14em] text-red">
+              歷史時間軸 / TIMELINE
+            </span>
+            <h2 class="m-0 mt-2 font-display text-3xl sm:text-4xl text-ink">
+              從心理語言學克漏字，到雙向霸權降臨
+            </h2>
+            <p class="m-0 mt-2 max-w-[65ch] text-sm text-muted">
+              串聯 1953 年克漏字測驗的誕生、2017 年 Transformer Encoder 的全域注意力，以及 2018
+              年秋天 BERT 與 GPT-1 的路線激盪。
+            </p>
+          </div>
+
+          <!-- 快速跳轉年代按鈕 -->
+          <div class="flex flex-wrap items-center gap-2 font-mono text-xs">
+            <span class="text-ink/50 uppercase tracking-wider mr-1">跳轉年代：</span>
+            {timelineEpochs.map((epoch) => (
+              <a
+                href={`#${epoch.id}`}
+                class="px-3 py-1.5 border border-ink/20 bg-surface/80 hover:bg-ink hover:text-surface text-ink transition-all rounded-none font-semibold"
+              >
+                {epoch.year}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <!-- 時間軸主體容器 -->
+        <div class="relative mt-16 sm:mt-24">
+          <div
+            class="hidden md:block absolute left-4 sm:left-8 top-4 bottom-8 w-0.5 bg-gradient-to-b from-blue via-ink/30 to-red/40"
+            aria-hidden="true"
+          ></div>
+
+          <div class="space-y-24 sm:space-y-32">
+            {timelineEpochs.map((epoch) => (
+              <div id={epoch.id} class="relative scroll-mt-28">
+                <!-- 背景水印年份 -->
+                <div
+                  class="pointer-events-none select-none absolute -top-12 sm:-top-20 -left-6 sm:left-4 font-display font-black text-8xl sm:text-9xl lg:text-[11rem] leading-none text-ink/[0.04] tracking-tighter"
+                  aria-hidden="true"
+                >
+                  {epoch.year.split('–')[0].replace(/[^0-9]/g, '')}
+                </div>
+
+                <!-- 標題與節點 -->
+                <div class="relative flex items-start gap-4 sm:gap-8 mb-8 sm:mb-12">
+                  <div
+                    class="hidden md:flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border-2 border-blue bg-surface font-mono text-xs font-bold text-blue shadow-sm z-10"
+                    aria-hidden="true"
+                  >
+                    {epoch.year.slice(-2)}
+                  </div>
+
+                  <div class="flex-1">
+                    <div class="flex flex-wrap items-center gap-3">
+                      <span class="font-mono text-xs font-bold uppercase tracking-[0.12em] text-blue">
+                        {epoch.period}
+                      </span>
+                    </div>
+                    <h3 class="m-0 mt-1 font-display text-2xl sm:text-3xl text-ink tracking-tight">
+                      {epoch.title}
+                    </h3>
+                    <p class="m-0 mt-2 max-w-[85ch] text-sm sm:text-base text-ink/75 leading-relaxed">
+                      {epoch.summary}
+                    </p>
+                  </div>
+                </div>
+
+                <!-- 論文卡片 -->
+                <div class="md:ml-16">
+                  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {epoch.sources.map((item) => (
+                      <div
+                        id={item.source.id}
+                        class={`group relative border bg-surface p-6 shadow-sm transition-all hover:shadow-md ${
+                          item.featured
+                            ? 'border-2 border-ink lg:col-span-2'
+                            : 'border-ink/20 hover:border-ink'
+                        }`}
+                      >
+                        <div class="flex items-center justify-between border-b border-line pb-3 mb-3">
+                          <span class="font-mono text-xs font-bold text-blue uppercase">
+                            [{item.refCode}] {item.role}
+                          </span>
+                          <span class="font-mono text-xs text-muted">
+                            {item.source.published} · {item.source.publisher}
+                          </span>
+                        </div>
+
+                        <h4 class="m-0 font-display text-lg sm:text-xl text-ink leading-snug">
+                          {item.source.title}
+                        </h4>
+
+                        <p class="mt-3 text-xs sm:text-sm text-ink/75 leading-relaxed">
+                          {item.takeaway}
+                        </p>
+
+                        <div class="mt-4 border-t border-line/60 pt-3">
+                          <p class="m-0 text-xs text-muted">
+                            <span class="font-bold text-ink">邊界限制：</span>
+                            {item.source.limits}
+                          </p>
+                        </div>
+
+                        <div class="mt-4 text-right">
+                          <a
+                            href={item.source.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            class="font-mono text-xs text-blue underline underline-offset-4 hover:text-ink"
+                          >
+                            原始來源 ↗
+                          </a>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 參考文獻與史料依據 -->
+    <section class={`${shell} border-t border-ink py-16`} aria-label="參考文獻與歷史證物">
+      <div class="mb-8">
+        <p class="font-mono text-xs font-bold uppercase tracking-wider text-red mb-1">
+          史料依據 / EVIDENCE & SOURCES
+        </p>
+        <h2 class="m-0 font-display text-2xl sm:text-3xl text-ink">一手文獻清單，與技術宣稱邊界</h2>
+      </div>
+
+      <div class="space-y-4">
+        {bertSources.map((s, idx) => (
+          <article class="border border-line bg-surface p-5 text-sm" id={`source-${s.id}`}>
+            <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-line pb-2 mb-3">
+              <span class="font-mono text-xs font-bold text-red">
+                [{idx + 1}] {s.id}
+              </span>
+              <span class="font-mono text-xs text-muted">
+                {s.publisher} · {s.published || 'n.d.'}
+              </span>
+            </div>
+            <h3 class="m-0 font-display text-base text-ink mb-2">
+              <a
+                href={s.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:text-red underline underline-offset-4"
+              >
+                {s.title}
+              </a>
+            </h3>
+            <ul class="list-disc pl-5 text-xs text-muted space-y-1 mb-3">
+              {s.supports.map((sup) => (
+                <li>{sup}</li>
+              ))}
+            </ul>
+            <p class="text-xs text-ink/70 italic border-l-2 border-line pl-3 m-0">
+              技術極限與邊界：{s.limits}
+            </p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- 作者群檔案 -->
+    <AuthorGrid authors={paper.authorBriefs} />
+
+    <!-- 篇章導航 -->
+    <PaperNavigation
+      currentId="bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding"
+      prev={{
+        summary: '以生成式自回歸預訓練與統一輸入序列化，開創通向下游任務的通用基礎模型之路。',
+      }}
+    />
+  </main>
+</BaseLayout>
