@@ -7,7 +7,6 @@ import Callout from '../../components/Callout.astro';
 import AuthorGrid from '../../components/AuthorGrid.astro';
 import PaperMeta from '../../components/PaperMeta.astro';
 import PaperNavigation from '../../components/PaperNavigation.astro';
-import PaperSectionHeader from '../../components/PaperSectionHeader.astro';
 import {
   scalingLawsPaper,
   scalingLawsSources,
@@ -206,730 +205,838 @@ const timelineEpochs: TimelineEpoch[] = [
       </div>
     </section>
 
-    <!-- 3. Main Reading Content Layout -->
-    <PaperReadingLayout>
-      <!-- 第一樂章 -->
-      <section
-        id="act-1-the-gambling-crisis"
-        class="border-b border-line pb-16 pt-12"
-        aria-labelledby="heading-act-1"
-      >
-        <PaperSectionHeader
-          kicker="MOVEMENT 01 / THE GAMBLING CRISIS"
-          title="投入千萬美元的豪賭困境：深度學習從盲目試誤到尋找物理地圖"
-        />
-
-        <p class="text-base leading-8 text-ink/80 mt-6">
-          在傳統軟體工程中，工程師修改一行程式碼，點擊編譯，數秒內就能得到測試回饋；即便系統崩潰，代價也不過是幾次除錯中斷。然而，在
-          2019 年底的深度學習領域，工程師面臨的是完全不同的殘酷物理法則：OpenAI 在第四章剛以 15
-          億參數的 GPT-2 震驚了學界，但如果想要更進一步，將模型擴展到 100 億、甚至 1000
-          億參數，需要投入多少運算資源？需要收集多少網頁文本？沒有人知道答案。
-        </p>
-
-        <p class="text-base leading-8 text-ink/80 mt-6">
-          當時業界普遍籠罩在三大直覺恐懼之中：其一是「過擬合深淵」——經典統計學習理論警告，模型參數若遠遠超過訓練樣本數，網路將迅速記住噪聲而喪失泛化能力；其二是「效益遞減天花板」——神經網路的性能提升是否會像傳統機器學習模型一樣，在參數量達到某個閥值後迅速飽和、陷入平頂；其三是「算力黑洞」——在數千顆
-          GPU
-          叢集上連續運算數個月，耗資數百萬美元電費與硬體折舊，如果最終損失函數紋風不動甚至中途發散，任何研究機構都難以承受這樣的戰略災難。
-        </p>
-
-        <AsideCard title="工程常識的崩潰：為什麼傳統機器學習的直覺全部失效？" class="my-8">
-          <p class="text-sm leading-7 text-ink/80 m-0">
-            在傳統統計學中，VC 維度理論與偏差-方差權衡（Bias-Variance
-            Tradeoff）告訴我們模型參數量必須嚴格受限於樣本容量。但在自回歸 Transformer
-            的世界裡，研究人員驚訝地發現模型哪怕參數量擴大十倍，只要訓練數據同步微調，測試集上的交叉熵損失（Cross-Entropy
-            Loss）居然平滑下降。這種違背古典統計直覺的現象，讓當時的 AI
-            研發宛如缺乏航海圖的冒險：所有人都在賭，但誰也說不清勝率幾何。
+    <!-- MOVEMENT 1: 豪賭千萬美元的困境 (THE GAMBLING CRISIS) -->
+    <section
+      id="gambling-crisis"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="gambling-crisis-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            第一樂章 / 豪賭千萬美元的困境
           </p>
-        </AsideCard>
-
-        <p class="text-base leading-8 text-ink/80 mt-6">
-          打破僵局的並不是傳統電腦科學家，而是一群帶著理論物理學背景的研究者。Jared Kaplan
-          原為約翰霍普金斯大學的量子場論與理論物理學者，與 Sam McCandlish、Dario Amodei 等人一道加入
-          OpenAI。他們審視神經網路的視角徹底顛覆了傳統思維：他們不把 Transformer
-          當作複雜的軟體程式碼，而是將其視為一個巨大的「統計力學物理系統」。如同氣體分子的巨觀壓力與溫度遵循理想氣體方程式，包含千億連接的神經網路在巨觀尺度下，必然也存在著某種跨越尺度的普遍數學約束。
-        </p>
-      </section>
-
-      <!-- 第二樂章 -->
-      <section
-        id="act-2-the-power-laws"
-        class="border-b border-line pb-16 pt-12"
-        aria-labelledby="heading-act-2"
-      >
-        <PaperSectionHeader
-          kicker="MOVEMENT 02 / THE PHYSICAL POWER LAWS"
-          title="統治神經網路的三大軸線：參數量、數據量與算力的冪律方程式"
-        />
-
-        <p class="text-base leading-8 text-ink/80 mt-6">
-          為了測量神經語言模型的宏觀物理規律，Kaplan
-          等人展開了一場極其奢華且系統化的實證測量：他們訓練了數百個不同規模的自回歸 Transformer
-          模型，參數量橫跨從 700（700 個參數的小玩具）到 16 億（1.6B
-          參數的當時頂尖規模），訓練文本橫跨數千萬到數十億 token，浮點計算量跨越 6
-          個數量級。當他們將所有實驗數據繪製在「雙對數座標系（Log-Log
-          Plot）」時，令人屏息的物理規律浮現了——所有數據點匯聚成一條條近乎完美的筆直直線。
-        </p>
-
-        <p class="text-base leading-8 text-ink/80 mt-6">
-          在數學上，雙對數座標系下的直線對應著純粹的「冪律分佈（Power
-          Law）」。論文指出，決定語言模型測試損失（Test Loss）
-          <math class="font-serif"><mi>L</mi></math>
-          的，是三個互相關聯但各自獨立起作用的物理維度：非詞表參數量{' '}
-          <math class="font-serif"><mi>N</mi></math>、數據集大小
-          <math class="font-serif"><mi>D</mi></math> 以及總計算量{' '}
-          <math class="font-serif"><mi>C</mi></math>。
-        </p>
-
-        <!-- 冪律核心公式 MathML Block -->
-        <div class="my-8 rounded border border-line bg-surface p-6 shadow-sm">
-          <p class="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red mb-4">
-            公式 01 / 神經語言模型三大單維度冪律方程
-          </p>
-
-          <math
-            display="block"
-            class="editorial-math my-6"
-            aria-label="神經語言模型在參數量、數據量與算力下的三大單維度冪律方程式"
+          <h2
+            id="gambling-crisis-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
           >
-            <mrow>
-              <mi>L</mi>
-              <mo stretchy="false">(</mo>
-              <mi>N</mi>
-              <mo stretchy="false">)</mo>
-              <mo>≈</mo>
-              <msup>
-                <mrow>
-                  <mo>(</mo>
-                  <mfrac>
-                    <msub><mi>N</mi><mi>c</mi></msub>
-                    <mi>N</mi>
-                  </mfrac>
-                  <mo>)</mo>
-                </mrow>
-                <msub><mi>α</mi><mi>N</mi></msub>
-              </msup>
-              <mo>,</mo>
-              <mspace width="2em" />
-              <mi>L</mi>
-              <mo stretchy="false">(</mo>
-              <mi>D</mi>
-              <mo stretchy="false">)</mo>
-              <mo>≈</mo>
-              <msup>
-                <mrow>
-                  <mo>(</mo>
-                  <mfrac>
-                    <msub><mi>D</mi><mi>c</mi></msub>
-                    <mi>D</mi>
-                  </mfrac>
-                  <mo>)</mo>
-                </mrow>
-                <msub><mi>α</mi><mi>D</mi></msub>
-              </msup>
-              <mo>,</mo>
-              <mspace width="2em" />
-              <mi>L</mi>
-              <mo stretchy="false">(</mo>
-              <mi>C</mi>
-              <mo stretchy="false">)</mo>
-              <mo>≈</mo>
-              <msup>
-                <mrow>
-                  <mo>(</mo>
-                  <mfrac>
-                    <msub><mi>C</mi><mi>c</mi></msub>
-                    <mi>C</mi>
-                  </mfrac>
-                  <mo>)</mo>
-                </mrow>
-                <msub><mi>α</mi><mi>C</mi></msub>
-              </msup>
-            </mrow>
-          </math>
+            <span class="block">投入千萬美元的豪賭困境：</span>
+            <span class="block">
+              <em>深度學習從盲目試誤到尋找物理地圖</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          當每一次擴展都意味著數百萬美元的算力投入與長達數月的訓練風險，深度學習迫切需要一套如同天體物理與熱力學般的確定性規律。
+        </p>
+      </div>
 
-          <div class="mt-6 grid grid-cols-1 gap-4 border-t border-line/60 pt-4 text-xs sm:grid-cols-3">
-            <div>
-              <span class="font-serif font-semibold text-ink">
-                參數量冪律軸線（不受數據限制）：
-              </span>
-              <p class="text-muted mt-1 m-0">
-                <math class="font-serif"><msub><mi>α</mi><mi>N</mi></msub><mo>≈</mo><mn>0.076</mn></math>
-                ，特徵尺度
-                <math class="font-serif"><msub><mi>N</mi><mi>c</mi></msub><mo>≈</mo><mn>8.8</mn><mo>×</mo><msup><mn>10</mn><mn>13</mn></msup></math>
-                。參數量每擴大 10 倍，損失穩定降低約 0.16 nats。
-              </p>
-            </div>
-            <div>
-              <span class="font-serif font-semibold text-ink">
-                數據量冪律軸線（不受容量限制）：
-              </span>
-              <p class="text-muted mt-1 m-0">
-                <math class="font-serif"><msub><mi>α</mi><mi>D</mi></msub><mo>≈</mo><mn>0.095</mn></math>
-                ，特徵尺度
-                <math class="font-serif"><msub><mi>D</mi><mi>c</mi></msub><mo>≈</mo><mn>5.4</mn><mo>×</mo><msup><mn>10</mn><mn>13</mn></msup></math>
-                。訓練 token 每擴大 10 倍，損失穩定降低約 0.20 nats。
-              </p>
-            </div>
-            <div>
-              <span class="font-serif font-semibold text-ink">計算量冪律軸線（最優配置）：</span>
-              <p class="text-muted mt-1 m-0">
-                <math class="font-serif"><msub><mi>α</mi><mi>C</mi></msub><mo>≈</mo><mn>0.050</mn></math>
-                ，特徵尺度
-                <math class="font-serif"><msub><mi>C</mi><mi>c</mi></msub><mo>≈</mo><mn>3.1</mn><mo>×</mo><msup><mn>10</mn><mn>8</mn></msup></math>
-                {' '} PF-days。總算力每擴展 10 倍，最優損失穩定下降約 0.10 nats。
-              </p>
-            </div>
-          </div>
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p class="text-lg leading-relaxed text-ink">
+            在傳統軟體工程中，工程師修改一行程式碼，點擊編譯，數秒內就能得到測試回饋；即便系統崩潰，代價也不過是幾次除錯中斷。然而，在
+            2019 年底的深度學習領域，工程師面臨的是完全不同的殘酷物理法則：OpenAI 在第四章剛以 15
+            億參數的 GPT-2 震驚了學界，但如果想要更進一步，將模型擴展到 100 億、甚至 1000
+            億參數，需要投入多少運算資源？需要收集多少網頁文本？沒有人知道答案。
+          </p>
+
+          <p>
+            當時業界普遍籠罩在三大直覺恐懼之中：其一是「過擬合深淵」——經典統計學習理論警告，模型參數若遠遠超過訓練樣本數，網路將迅速記住噪聲而喪失泛化能力；其二是「效益遞減天花板」——神經網路的性能提升是否會像傳統機器學習模型一樣，在參數量達到某個閥值後迅速飽和、陷入平頂；其三是「算力黑洞」——在數千顆
+            GPU
+            叢集上連續運算數個月，耗資數百萬美元電費與硬體折舊，如果最終損失函數紋風不動甚至中途發散，任何研究機構都難以承受這樣的戰略災難。
+          </p>
+
+          <p>
+            打破僵局的並不是傳統電腦科學家，而是一群帶著理論物理學背景的研究者。Jared Kaplan
+            原為約翰霍普金斯大學的量子場論與理論物理學者，與 Sam McCandlish、Dario Amodei
+            等人一道加入 OpenAI。他們審視神經網路的視角徹底顛覆了傳統思維：他們不把 Transformer
+            當作複雜的軟體程式碼，而是將其視為一個巨大的「統計力學物理系統」。如同氣體分子的巨觀壓力與溫度遵循理想氣體方程式，包含千億連接的神經網路在巨觀尺度下，必然也存在著某種跨越尺度的普遍數學約束。
+          </p>
         </div>
 
-        <p class="text-base leading-8 text-ink/80 mt-6">
-          這三個公式傳遞出一個石破天驚的結論：在跨越 6
-          個數量級的龐大區間內，曲線沒有出現任何拐點或平頂飽和！這意味著深度學習絕非某些學者悲觀預言的「已死之途」，只要工程師持續注入參數量、數據量與算力，模型的預測精度就必然會按照數學公式持續提升。
-        </p>
+        <aside slot="rail" class="space-y-6">
+          <AsideCard
+            kicker="直覺崩潰 / INTUITION BREAKDOWN"
+            title="工程常識的崩潰：為什麼傳統機器學習的直覺全部失效？"
+            variant="surface"
+          >
+            <p class="text-xs leading-relaxed text-muted m-0">
+              在傳統統計學中，VC 維度理論與偏差-方差權衡（Bias-Variance
+              Tradeoff）告訴我們模型參數量必須嚴格受限於樣本容量。但在自回歸 Transformer
+              的世界裡，研究人員驚訝地發現模型哪怕參數量擴大十倍，只要訓練數據同步微調，測試集上的交叉熵損失（Cross-Entropy
+              Loss）居然平滑下降。這種違背古典統計直覺的現象，讓當時的 AI
+              研發宛如缺乏航海圖的冒險：所有人都在賭，但誰也說不清勝率幾何。
+            </p>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
 
-        <!-- 跨尺度 Log-Log 示意圖 SVG -->
-        <div class="my-10 border border-line bg-surface p-6">
-          <div class="mb-4 flex items-baseline justify-between border-b border-line pb-3">
-            <div>
-              <p class="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red m-0">
-                FIGURE 01 / 跨越六個數量級的對數線性直線
-              </p>
-              <h3 class="font-display text-base text-ink m-0 mt-1">
-                參數量 N 與測試損失 L 的對數座標擬合（Log-Log Power-Law Straight Line）
-              </h3>
+    <!-- MOVEMENT 2: 統治神經網路的物理定律 (THE PHYSICAL POWER LAWS) -->
+    <section
+      id="power-laws"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="power-laws-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            第二樂章 / 統治神經網路的物理定律
+          </p>
+          <h2
+            id="power-laws-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">統治神經網路的三大軸線：</span>
+            <span class="block">
+              <em>參數量、數據量與算力的冪律方程式</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          物理學家測量自然常數的嚴謹方法，揭示損失函數不依賴架構微操，而是受控於純粹的物理規模。
+        </p>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p class="text-lg leading-relaxed text-ink">
+            為了測量神經語言模型的宏觀物理規律，Kaplan
+            等人展開了一場極其奢華且系統化的實證測量：他們訓練了數百個不同規模的自回歸 Transformer
+            模型，參數量橫跨從 700（700 個參數的小玩具）到 16 億（1.6B
+            參數的當時頂尖規模），訓練文本橫跨數千萬到數十億 token，浮點計算量跨越 6
+            個數量級。當他們將所有實驗數據繪製在「雙對數座標系（Log-Log
+            Plot）」時，令人屏息的物理規律浮現了——所有數據點匯聚成一條條近乎完美的筆直直線。
+          </p>
+
+          <p>
+            在數學上，雙對數座標系下的直線對應著純粹的「冪律分佈（Power
+            Law）」。論文指出，決定語言模型測試損失（Test Loss）
+            <math class="font-serif"><mi>L</mi></math>
+            的，是三個互相關聯但各自獨立起作用的物理維度：非詞表參數量{' '}
+            <math class="font-serif"><mi>N</mi></math>、數據集大小
+            <math class="font-serif"><mi>D</mi></math> 以及總計算量{' '}
+            <math class="font-serif"><mi>C</mi></math>。
+          </p>
+
+          <!-- 冪律核心公式 MathML Block -->
+          <div class="my-8 rounded border border-line bg-surface p-6 shadow-sm">
+            <p class="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red mb-4">
+              公式 01 / 神經語言模型三大單維度冪律方程
+            </p>
+
+            <math
+              display="block"
+              class="editorial-math my-6"
+              aria-label="神經語言模型在參數量、數據量與算力下的三大單維度冪律方程式"
+            >
+              <mrow>
+                <mi>L</mi>
+                <mo stretchy="false">(</mo>
+                <mi>N</mi>
+                <mo stretchy="false">)</mo>
+                <mo>≈</mo>
+                <msup>
+                  <mrow>
+                    <mo>(</mo>
+                    <mfrac>
+                      <msub><mi>N</mi><mi>c</mi></msub>
+                      <mi>N</mi>
+                    </mfrac>
+                    <mo>)</mo>
+                  </mrow>
+                  <msub><mi>α</mi><mi>N</mi></msub>
+                </msup>
+                <mo>,</mo>
+                <mspace width="2em" />
+                <mi>L</mi>
+                <mo stretchy="false">(</mo>
+                <mi>D</mi>
+                <mo stretchy="false">)</mo>
+                <mo>≈</mo>
+                <msup>
+                  <mrow>
+                    <mo>(</mo>
+                    <mfrac>
+                      <msub><mi>D</mi><mi>c</mi></msub>
+                      <mi>D</mi>
+                    </mfrac>
+                    <mo>)</mo>
+                  </mrow>
+                  <msub><mi>α</mi><mi>D</mi></msub>
+                </msup>
+                <mo>,</mo>
+                <mspace width="2em" />
+                <mi>L</mi>
+                <mo stretchy="false">(</mo>
+                <mi>C</mi>
+                <mo stretchy="false">)</mo>
+                <mo>≈</mo>
+                <msup>
+                  <mrow>
+                    <mo>(</mo>
+                    <mfrac>
+                      <msub><mi>C</mi><mi>c</mi></msub>
+                      <mi>C</mi>
+                    </mfrac>
+                    <mo>)</mo>
+                  </mrow>
+                  <msub><mi>α</mi><mi>C</mi></msub>
+                </msup>
+              </mrow>
+            </math>
+
+            <div class="mt-6 grid grid-cols-1 gap-4 border-t border-line/60 pt-4 text-xs sm:grid-cols-3">
+              <div>
+                <span class="font-serif font-semibold text-ink">
+                  參數量冪律軸線（不受數據限制）：
+                </span>
+                <p class="text-muted mt-1 m-0">
+                  <math class="font-serif"><msub><mi>α</mi><mi>N</mi></msub><mo>≈</mo><mn>0.076</mn></math>
+                  ，特徵尺度
+                  <math class="font-serif"><msub><mi>N</mi><mi>c</mi></msub><mo>≈</mo><mn>8.8</mn><mo>×</mo><msup><mn>10</mn><mn>13</mn></msup></math>
+                  。參數量每擴大 10 倍，損失穩定降低約 0.16 nats。
+                </p>
+              </div>
+              <div>
+                <span class="font-serif font-semibold text-ink">
+                  數據量冪律軸線（不受容量限制）：
+                </span>
+                <p class="text-muted mt-1 m-0">
+                  <math class="font-serif"><msub><mi>α</mi><mi>D</mi></msub><mo>≈</mo><mn>0.095</mn></math>
+                  ，特徵尺度
+                  <math class="font-serif"><msub><mi>D</mi><mi>c</mi></msub><mo>≈</mo><mn>5.4</mn><mo>×</mo><msup><mn>10</mn><mn>13</mn></msup></math>
+                  。訓練 token 每擴大 10 倍，損失穩定降低約 0.20 nats。
+                </p>
+              </div>
+              <div>
+                <span class="font-serif font-semibold text-ink">計算量冪律軸線（最優配置）：</span>
+                <p class="text-muted mt-1 m-0">
+                  <math class="font-serif"><msub><mi>α</mi><mi>C</mi></msub><mo>≈</mo><mn>0.050</mn></math>
+                  ，特徵尺度
+                  <math class="font-serif"><msub><mi>C</mi><mi>c</mi></msub><mo>≈</mo><mn>3.1</mn><mo>×</mo><msup><mn>10</mn><mn>8</mn></msup></math>
+                  {' '} PF-days。總算力每擴展 10 倍，最優損失穩定下降約 0.10 nats。
+                </p>
+              </div>
             </div>
-            <span class="font-mono text-xs text-muted">無飽和平頂 · 物理自相似性</span>
           </div>
 
-          <svg
-            viewBox="0 0 800 360"
-            class="w-full h-auto"
-            role="img"
-            aria-label="展示參數量從 10^3 到 10^9 擴展時測試損失呈現嚴格線性的 Log-Log 座標圖"
-          >
-            <!-- 背景網格 -->
-            <line x1="100" y1="50" x2="100" y2="300" stroke="#e5e5e5" stroke-dasharray="3 3" />
-            <line x1="240" y1="50" x2="240" y2="300" stroke="#e5e5e5" stroke-dasharray="3 3" />
-            <line x1="380" y1="50" x2="380" y2="300" stroke="#e5e5e5" stroke-dasharray="3 3" />
-            <line x1="520" y1="50" x2="520" y2="300" stroke="#e5e5e5" stroke-dasharray="3 3" />
-            <line x1="660" y1="50" x2="660" y2="300" stroke="#e5e5e5" stroke-dasharray="3 3" />
+          <p>
+            這三個公式傳遞出一個石破天驚的結論：在跨越 6
+            個數量級的龐大區間內，曲線沒有出現任何拐點或平頂飽和！這意味著深度學習絕非某些學者悲觀預言的「已死之途」，只要工程師持續注入參數量、數據量與算力，模型的預測精度就必然會按照數學公式持續提升。
+          </p>
 
-            <line x1="80" y1="70" x2="740" y2="70" stroke="#e5e5e5" stroke-dasharray="3 3" />
-            <line x1="80" y1="130" x2="740" y2="130" stroke="#e5e5e5" stroke-dasharray="3 3" />
-            <line x1="80" y1="190" x2="740" y2="190" stroke="#e5e5e5" stroke-dasharray="3 3" />
-            <line x1="80" y1="250" x2="740" y2="250" stroke="#e5e5e5" stroke-dasharray="3 3" />
+          <!-- 跨尺度 Log-Log 示意圖 SVG -->
+          <div class="my-10 border border-line bg-surface p-6">
+            <div class="mb-4 flex items-baseline justify-between border-b border-line pb-3">
+              <div>
+                <p class="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red m-0">
+                  FIGURE 01 / 跨越六個數量級的對數線性直線
+                </p>
+                <h3 class="font-display text-base text-ink m-0 mt-1">
+                  參數量 N 與測試損失 L 的對數座標擬合（Log-Log Power-Law Straight Line）
+                </h3>
+              </div>
+              <span class="font-mono text-xs text-muted">無飽和平頂 · 物理自相似性</span>
+            </div>
 
-            <!-- 座標軸 -->
-            <line x1="80" y1="300" x2="740" y2="300" stroke="#262626" stroke-width="1.5" />
-            <line x1="80" y1="50" x2="80" y2="300" stroke="#262626" stroke-width="1.5" />
+            <svg
+              viewBox="0 0 800 360"
+              class="w-full h-auto"
+              role="img"
+              aria-label="展示參數量從 10^3 到 10^9 擴展時測試損失呈現嚴格線性的 Log-Log 座標圖"
+            >
+              <!-- 背景網格 -->
+              <line x1="100" y1="50" x2="100" y2="300" stroke="#e5e5e5" stroke-dasharray="3 3" />
+              <line x1="240" y1="50" x2="240" y2="300" stroke="#e5e5e5" stroke-dasharray="3 3" />
+              <line x1="380" y1="50" x2="380" y2="300" stroke="#e5e5e5" stroke-dasharray="3 3" />
+              <line x1="520" y1="50" x2="520" y2="300" stroke="#e5e5e5" stroke-dasharray="3 3" />
+              <line x1="660" y1="50" x2="660" y2="300" stroke="#e5e5e5" stroke-dasharray="3 3" />
 
-            <!-- 軸標籤 -->
-            <text
-              x="740"
-              y="325"
-              font-family="monospace"
-              font-size="11"
-              fill="#737373"
-              text-anchor="end"
-            >
-              非詞表參數量 N (Log Scale: 10^3 → 10^9)
-            </text>
-            <text
-              x="40"
-              y="45"
-              font-family="monospace"
-              font-size="11"
-              fill="#737373"
-              text-anchor="start"
-            >
-              測試損失 L (nats/token)
-            </text>
+              <line x1="80" y1="70" x2="740" y2="70" stroke="#e5e5e5" stroke-dasharray="3 3" />
+              <line x1="80" y1="130" x2="740" y2="130" stroke="#e5e5e5" stroke-dasharray="3 3" />
+              <line x1="80" y1="190" x2="740" y2="190" stroke="#e5e5e5" stroke-dasharray="3 3" />
+              <line x1="80" y1="250" x2="740" y2="250" stroke="#e5e5e5" stroke-dasharray="3 3" />
 
-            <!-- X 刻度 -->
-            <text
-              x="100"
-              y="316"
-              font-family="monospace"
-              font-size="10"
-              fill="#737373"
-              text-anchor="middle"
-            >
-              10³
-            </text>
-            <text
-              x="240"
-              y="316"
-              font-family="monospace"
-              font-size="10"
-              fill="#737373"
-              text-anchor="middle"
-            >
-              10⁵
-            </text>
-            <text
-              x="380"
-              y="316"
-              font-family="monospace"
-              font-size="10"
-              fill="#737373"
-              text-anchor="middle"
-            >
-              10⁷
-            </text>
-            <text
-              x="520"
-              y="316"
-              font-family="monospace"
-              font-size="10"
-              fill="#737373"
-              text-anchor="middle"
-            >
-              10⁸
-            </text>
-            <text
-              x="660"
-              y="316"
-              font-family="monospace"
-              font-size="10"
-              fill="#737373"
-              text-anchor="middle"
-            >
-              10⁹
-            </text>
+              <!-- 座標軸 -->
+              <line x1="80" y1="300" x2="740" y2="300" stroke="#262626" stroke-width="1.5" />
+              <line x1="80" y1="50" x2="80" y2="300" stroke="#262626" stroke-width="1.5" />
 
-            <!-- Y 刻度 -->
-            <text
-              x="72"
-              y="74"
-              font-family="monospace"
-              font-size="10"
-              fill="#737373"
-              text-anchor="end"
-            >
-              4.5
-            </text>
-            <text
-              x="72"
-              y="134"
-              font-family="monospace"
-              font-size="10"
-              fill="#737373"
-              text-anchor="end"
-            >
-              3.5
-            </text>
-            <text
-              x="72"
-              y="194"
-              font-family="monospace"
-              font-size="10"
-              fill="#737373"
-              text-anchor="end"
-            >
-              2.5
-            </text>
-            <text
-              x="72"
-              y="254"
-              font-family="monospace"
-              font-size="10"
-              fill="#737373"
-              text-anchor="end"
-            >
-              1.8
-            </text>
+              <!-- 軸標籤 -->
+              <text
+                x="740"
+                y="325"
+                font-family="monospace"
+                font-size="11"
+                fill="#737373"
+                text-anchor="end"
+              >
+                非詞表參數量 N (Log Scale: 10^3 → 10^9)
+              </text>
+              <text
+                x="40"
+                y="45"
+                font-family="monospace"
+                font-size="11"
+                fill="#737373"
+                text-anchor="start"
+              >
+                測試損失 L (nats/token)
+              </text>
 
-            <!-- 不可約減熵下界 (L_inf = 1.69) -->
-            <line
-              x1="80"
-              y1="262"
-              x2="740"
-              y2="262"
-              stroke="#b91c1c"
-              stroke-width="1.5"
-              stroke-dasharray="4 4"
-            />
-            <text
-              x="735"
-              y="255"
-              font-family="monospace"
-              font-size="10"
-              fill="#b91c1c"
-              text-anchor="end"
+              <!-- X 刻度 -->
+              <text
+                x="100"
+                y="316"
+                font-family="monospace"
+                font-size="10"
+                fill="#737373"
+                text-anchor="middle"
+              >
+                10³
+              </text>
+              <text
+                x="240"
+                y="316"
+                font-family="monospace"
+                font-size="10"
+                fill="#737373"
+                text-anchor="middle"
+              >
+                10⁵
+              </text>
+              <text
+                x="380"
+                y="316"
+                font-family="monospace"
+                font-size="10"
+                fill="#737373"
+                text-anchor="middle"
+              >
+                10⁷
+              </text>
+              <text
+                x="520"
+                y="316"
+                font-family="monospace"
+                font-size="10"
+                fill="#737373"
+                text-anchor="middle"
+              >
+                10⁸
+              </text>
+              <text
+                x="660"
+                y="316"
+                font-family="monospace"
+                font-size="10"
+                fill="#737373"
+                text-anchor="middle"
+              >
+                10⁹
+              </text>
+
+              <!-- Y 刻度 -->
+              <text
+                x="72"
+                y="74"
+                font-family="monospace"
+                font-size="10"
+                fill="#737373"
+                text-anchor="end"
+              >
+                4.5
+              </text>
+              <text
+                x="72"
+                y="134"
+                font-family="monospace"
+                font-size="10"
+                fill="#737373"
+                text-anchor="end"
+              >
+                3.5
+              </text>
+              <text
+                x="72"
+                y="194"
+                font-family="monospace"
+                font-size="10"
+                fill="#737373"
+                text-anchor="end"
+              >
+                2.5
+              </text>
+              <text
+                x="72"
+                y="254"
+                font-family="monospace"
+                font-size="10"
+                fill="#737373"
+                text-anchor="end"
+              >
+                1.8
+              </text>
+
+              <!-- 不可約減熵下界 (L_inf = 1.69) -->
+              <line
+                x1="80"
+                y1="262"
+                x2="740"
+                y2="262"
+                stroke="#b91c1c"
+                stroke-width="1.5"
+                stroke-dasharray="4 4"
+              ></line>
+              <text
+                x="735"
+                y="255"
+                font-family="monospace"
+                font-size="10"
+                fill="#b91c1c"
+                text-anchor="end"
+              >
+                不可約減香農極限熵 L_inf ≈ 1.69
+              </text>
+
+              <!-- 冪律直線 (主擬合曲線) -->
+              <line x1="100" y1="65" x2="680" y2="245" stroke="#171717" stroke-width="2.5"></line>
+
+              <!-- 實驗實測散布點群（模擬不同幾何形狀全部落在同一條線） -->
+              <circle cx="100" cy="65" r="3.5" fill="#b91c1c"></circle>
+              <circle cx="180" cy="90" r="3.5" fill="#171717"></circle>
+              <circle cx="240" cy="108" r="3.5" fill="#171717"></circle>
+              <circle cx="310" cy="130" r="3.5" fill="#171717"></circle>
+              <circle cx="380" cy="151" r="3.5" fill="#b91c1c"></circle>
+              <circle cx="450" cy="173" r="3.5" fill="#171717"></circle>
+              <circle cx="520" cy="195" r="3.5" fill="#171717"></circle>
+              <circle cx="600" cy="220" r="3.5" fill="#171717"></circle>
+              <circle cx="660" cy="238" r="4.5" fill="#b91c1c"></circle>
+
+              <!-- 幾何形狀無關標註說明框 -->
+              <rect
+                x="360"
+                y="80"
+                width="280"
+                height="48"
+                fill="#fdfbf7"
+                stroke="#e5e5e5"
+                rx="2"
+              ></rect>
+              <text
+                x="375"
+                y="100"
+                font-family="sans-serif"
+                font-size="11"
+                fill="#171717"
+                font-weight="bold"
+              >
+                架構形狀無關性（Shape Invariance）
+              </text>
+              <text x="375" y="118" font-family="sans-serif" font-size="10" fill="#737373">
+                深而窄 vs. 淺而寬的 Transformer，全落在同一條線上
+              </text>
+            </svg>
+
+            <p class="mt-3 text-xs text-muted leading-relaxed m-0">
+              實驗證實：無論網路是堆疊 2 層還是 48 層、採用 4 個頭還是 32 個頭，只要總參數量
+              <math class="font-serif"><mi>N</mi></math>
+              相同，模型收斂的測試損失完全重合於同一條物理冪律直線上。
+            </p>
+          </div>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            回溯序章：自然語言的不可約減熵（
+            <math class="font-serif"><msub><mi>L</mi><mi>∞</mi></msub></math>）與香農極限
+          </h3>
+
+          <p>
+            仔細觀察上述曲線，敏銳的讀者會發現一個深邃的物理限制：這條直線能否無限向下延伸？如果參數量推到無窮大（
+            <math class="font-serif"><mi>N</mi><mo>→</mo><mi>∞</mi></math>），測試損失會變成 0 嗎？
+          </p>
+
+          <p>
+            答案是：<strong>絕對不可能</strong>。這正是在序章中我們探討過的 Claude Shannon 1948
+            年資訊理論奠定的宇宙鐵律。自然語言本質上具有客觀的「不確定性（Entropy）」。即便讓一個擁有全知算力的神級模型來預測人類寫下的下一個字，它也無法確定作者接下來究竟會寫「貓咪」還是「貓科動物」，因為語言中蘊含著人類自由意志、隨機語境與噪聲。
+          </p>
+
+          <p>
+            因此，Kaplan 等人進一步將冪律公式修正為包含「不可約減熵（Irreducible Entropy,
+            <math class="font-serif"><msub><mi>L</mi><mi>∞</mi></msub></math>）」的聯合方程式：
+          </p>
+
+          <!-- 聯合收斂方程 MathML Block -->
+          <div class="my-6 rounded border border-line bg-surface p-5">
+            <math
+              display="block"
+              class="editorial-math my-4"
+              aria-label="結合不可約減熵的聯合縮放定律方程式"
             >
-              不可約減香農極限熵 L_inf ≈ 1.69
-            </text>
+              <mrow>
+                <mi>L</mi>
+                <mo stretchy="false">(</mo>
+                <mi>N</mi>
+                <mo>,</mo>
+                <mi>D</mi>
+                <mo stretchy="false">)</mo>
+                <mo>=</mo>
+                <msub><mi>L</mi><mi>∞</mi></msub>
+                <mo>+</mo>
+                <msup>
+                  <mrow>
+                    <mo>(</mo>
+                    <mfrac>
+                      <msub><mi>N</mi><mi>c</mi></msub>
+                      <mi>N</mi>
+                    </mfrac>
+                    <mo>)</mo>
+                  </mrow>
+                  <msub><mi>α</mi><mi>N</mi></msub>
+                </msup>
+                <mo>+</mo>
+                <msup>
+                  <mrow>
+                    <mo>(</mo>
+                    <mfrac>
+                      <msub><mi>D</mi><mi>c</mi></msub>
+                      <mi>D</mi>
+                    </mfrac>
+                    <mo>)</mo>
+                  </mrow>
+                  <msub><mi>α</mi><mi>D</mi></msub>
+                </msup>
+              </mrow>
+            </math>
 
-            <!-- 冪律直線 (主擬合曲線) -->
-            <line x1="100" y1="65" x2="680" y2="245" stroke="#171717" stroke-width="2.5" />
+            <p class="text-xs text-muted leading-relaxed m-0 mt-3">
+              其中
+              <math class="font-serif"><msub><mi>L</mi><mi>∞</mi></msub><mo>≈</mo><mn>1.69</mn></math>
+              nats/token（約合每 token 2.44 bits）。這代表無論未來的 GPT 演進到 GPT-10 還是
+              GPT-100，在當前 WebText
+              網路文字分佈下，模型所能達到的理論損失下界就是這個香農極限。多出來的
+              <math class="font-serif"><mo stretchy="false">(</mo><msub><mi>N</mi><mi>c</mi></msub><mo>/</mo><mi>N</mi><msup><mo stretchy="false">)</mo><msub><mi>α</mi><mi>N</mi></msub></msup></math>
+              部分，正是模型因參數量有限、尚未學透世界知識所承受的「可約減知識赤字」。
+            </p>
+          </div>
 
-            <!-- 實驗實測散布點群（模擬不同幾何形狀全部落在同一條線） -->
-            <circle cx="100" cy="65" r="3.5" fill="#b91c1c" />
-            <circle cx="180" cy="90" r="3.5" fill="#171717" />
-            <circle cx="240" cy="108" r="3.5" fill="#171717" />
-            <circle cx="310" cy="130" r="3.5" fill="#171717" />
-            <circle cx="380" cy="151" r="3.5" fill="#b91c1c" />
-            <circle cx="450" cy="173" r="3.5" fill="#171717" />
-            <circle cx="520" cy="195" r="3.5" fill="#171717" />
-            <circle cx="600" cy="220" r="3.5" fill="#171717" />
-            <circle cx="660" cy="238" r="4.5" fill="#b91c1c" />
+          <h3 class="font-display text-2xl text-ink pt-4">架構形狀無關性：規模的壓倒性統治</h3>
 
-            <!-- 幾何形狀無關標註說明框 -->
-            <rect x="360" y="80" width="280" height="48" fill="#fdfbf7" stroke="#e5e5e5" rx="2" />
-            <text
-              x="375"
-              y="100"
-              font-family="sans-serif"
-              font-size="11"
-              fill="#171717"
-              font-weight="bold"
-            >
-              架構形狀無關性（Shape Invariance）
-            </text>
-            <text x="375" y="118" font-family="sans-serif" font-size="10" fill="#737373">
-              深而窄 vs. 淺而寬的 Transformer，全落在同一條線上
-            </text>
-          </svg>
+          <p>
+            在 2017 到 2019
+            年間，無數學術論文熱衷於精巧的架構「微操」：探討注意力矩陣要幾乘幾、前饋網路維度要放大 3
+            倍還是 4 倍、層數要如何交替交織。然而，Kaplan
+            的大規模消融實驗給了整個學界一記響亮的耳光：
+            <strong>架構細節在規模面前幾乎不值一提</strong>。
+          </p>
 
-          <p class="mt-3 text-xs text-muted leading-relaxed m-0">
-            實驗證實：無論網路是堆疊 2 層還是 48 層、採用 4 個頭還是 32 個頭，只要總參數量
+          <p>
+            論文系統性改變了網路的深度寬度比（從 2 層深、維度極寬，到 48
+            層深、維度極窄）、多頭數目（從 2 頭到 32
+            頭）以及前饋維度比例。結果顯示，只要避免極端的病態幾何結構，在固定總參數量
             <math class="font-serif"><mi>N</mi></math>
-            相同，模型收斂的測試損失完全重合於同一條物理冪律直線上。
+            的條件下，所有模型的損失差異小於 1%！這證明了一項至關重要的工程哲學：
+            <strong>
+              在大模型領域，花三個月微調架構超參數，遠不如把這三個月拿來擴充算力與參數量來得有效。
+            </strong>
           </p>
         </div>
 
-        <h3 class="font-display text-xl text-ink mt-8">
-          回溯序章：自然語言的不可約減熵（
-          <math class="font-serif"><msub><mi>L</mi><mi>∞</mi></msub></math>）與香農極限
-        </h3>
+        <aside slot="rail" class="space-y-6">
+          <AsideCard kicker="物理本質 / NATURE OF SCALE" title="為什麼是冪律？" variant="surface">
+            <p class="text-xs leading-relaxed text-muted m-0">
+              在統計物理中，冪律通常象徵著「無特徵尺度（Scale-Free）」與「臨界現象（Critical
+              Phenomena）」。這說明語言模型在汲取人類語料時，並沒有某個「只有 10
+              億參數才能學會」的特定斷崖，知識在所有尺度下以平滑自相似的方式被持續壓縮。
+            </p>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
 
-        <p class="text-base leading-8 text-ink/80 mt-4">
-          仔細觀察上述曲線，敏銳的讀者會發現一個深邃的物理限制：這條直線能否無限向下延伸？如果參數量推到無窮大（
-          <math class="font-serif"><mi>N</mi><mo>→</mo><mi>∞</mi></math>），測試損失會變成 0 嗎？
+    <!-- MOVEMENT 3: 算力預算最佳分配 (OPTIMAL ALLOCATION) -->
+    <section
+      id="optimal-allocation"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="optimal-allocation-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            第三樂章 / 算力預算最佳分配
+          </p>
+          <h2
+            id="optimal-allocation-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">算力預算的最佳分配：</span>
+            <span class="block">
+              <em>Kaplan 處方、臨界批次大小與 Chinchilla 修正伏筆</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          在 C ≈ 6ND 的硬性約束下，算力應該按什麼比例分給參數與數據？這條處方直接決定了 GPT-3 175B
+          的誕生格局。
         </p>
+      </div>
 
-        <p class="text-base leading-8 text-ink/80 mt-4">
-          答案是：<strong>絕對不可能</strong>。這正是在序章中我們探討過的 Claude Shannon 1948
-          年資訊理論奠定的宇宙鐵律。自然語言本質上具有客觀的「不確定性（Entropy）」。即便讓一個擁有全知算力的神級模型來預測人類寫下的下一個字，它也無法確定作者接下來究竟會寫「貓咪」還是「貓科動物」，因為語言中蘊含著人類自由意志、隨機語境與噪聲。
-        </p>
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p class="text-lg leading-relaxed text-ink">
+            既然模型參數量 <math class="font-serif"><mi>N</mi></math> 和訓練數據量{' '}
+            <math class="font-serif"><mi>D</mi></math>
+            都能降低損失，那麼當一家 AI 實驗室籌集到一筆固定算力預算（例如 100 萬美元的 GPU
+            浮點總運算量
+            <math class="font-serif"><mi>C</mi></math>）時，最核心的工程決策是：
+            <strong>算力應該按什麼比例分給參數量與數據量？</strong>
+          </p>
 
-        <p class="text-base leading-8 text-ink/80 mt-4">
-          因此，Kaplan 等人進一步將冪律公式修正為包含「不可約減熵（Irreducible Entropy,
-          <math class="font-serif"><msub><mi>L</mi><mi>∞</mi></msub></math>）」的聯合方程式：
-        </p>
+          <p>
+            我們首先建立標準 Transformer 訓練的物理算力關係式。在自回歸 Transformer 中，每個 token
+            在前向傳播（Forward Pass）中約需消耗
+            <math class="font-serif"><mn>2</mn><mi>N</mi></math>
+            次浮點運算（FLOPs），反向傳播（Backward Pass）計算梯度約需消耗
+            <math class="font-serif"><mn>4</mn><mi>N</mi></math> FLOPs。因此，訓練一個包含
+            <math class="font-serif"><mi>N</mi></math> 參數的模型處理{' '}
+            <math class="font-serif"><mi>D</mi></math> 個 token，所需的總浮點計算量公式為：
+          </p>
 
-        <!-- 聯合收斂方程 MathML Block -->
-        <div class="my-6 rounded border border-line bg-surface p-5">
           <math
             display="block"
-            class="editorial-math my-4"
-            aria-label="結合不可約減熵的聯合縮放定律方程式"
+            class="editorial-math my-5"
+            aria-label="Transformer 訓練計算量與參數量數據量關係式"
           >
             <mrow>
-              <mi>L</mi>
-              <mo stretchy="false">(</mo>
+              <mi>C</mi>
+              <mo>≈</mo>
+              <mn>6</mn>
               <mi>N</mi>
-              <mo>,</mo>
               <mi>D</mi>
-              <mo stretchy="false">)</mo>
-              <mo>=</mo>
-              <msub><mi>L</mi><mi>∞</mi></msub>
-              <mo>+</mo>
-              <msup>
-                <mrow>
-                  <mo>(</mo>
-                  <mfrac>
-                    <msub><mi>N</mi><mi>c</mi></msub>
-                    <mi>N</mi>
-                  </mfrac>
-                  <mo>)</mo>
-                </mrow>
-                <msub><mi>α</mi><mi>N</mi></msub>
-              </msup>
-              <mo>+</mo>
-              <msup>
-                <mrow>
-                  <mo>(</mo>
-                  <mfrac>
-                    <msub><mi>D</mi><mi>c</mi></msub>
-                    <mi>D</mi>
-                  </mfrac>
-                  <mo>)</mo>
-                </mrow>
-                <msub><mi>α</mi><mi>D</mi></msub>
-              </msup>
             </mrow>
           </math>
 
-          <p class="text-xs text-muted leading-relaxed m-0 mt-3">
-            其中
-            <math class="font-serif"><msub><mi>L</mi><mi>∞</mi></msub><mo>≈</mo><mn>1.69</mn></math>
-            nats/token（約合每 token 2.44 bits）。這代表無論未來的 GPT 演進到 GPT-10 還是
-            GPT-100，在當前 WebText
-            網路文字分佈下，模型所能達到的理論損失下界就是這個香農極限。多出來的
-            <math class="font-serif"><mo stretchy="false">(</mo><msub><mi>N</mi><mi>c</mi></msub><mo>/</mo><mi>N</mi><msup><mo stretchy="false">)</mo><msub><mi>α</mi><mi>N</mi></msub></msup></math>
-            部分，正是模型因參數量有限、尚未學透世界知識所承受的「可約減知識赤字」。
+          <p>
+            在 <math class="font-serif"><mi>C</mi><mo>≈</mo><mn>6</mn><mi>N</mi><mi>D</mi></math>
+            的硬性約束下，如果擴大模型 <math class="font-serif"><mi>N</mi></math>，就必須減少訓練
+            token
+            <math class="font-serif"><mi>D</mi></math>；反之亦然。Kaplan
+            等人利用拉格朗日乘數法求解極值，得出了 2020 年名震一時的「Kaplan 算力分配處方」：
           </p>
-        </div>
 
-        <h3 class="font-display text-xl text-ink mt-8">架構形狀無關性：規模的壓倒性統治</h3>
+          <!-- 算力分配比例 MathML Block -->
+          <div class="my-6 rounded border border-line bg-surface p-5">
+            <math
+              display="block"
+              class="editorial-math my-4"
+              aria-label="Kaplan 算力預算最佳分配關係式"
+            >
+              <mrow>
+                <msub><mi>N</mi><mtext>opt</mtext></msub>
+                <mo>∝</mo>
+                <msup><mi>C</mi><mn>0.73</mn></msup>
+                <mo>,</mo>
+                <mspace width="2em" />
+                <msub><mi>D</mi><mtext>opt</mtext></msub>
+                <mo>∝</mo>
+                <msup><mi>C</mi><mn>0.27</mn></msup>
+              </mrow>
+            </math>
 
-        <p class="text-base leading-8 text-ink/80 mt-4">
-          在 2017 到 2019
-          年間，無數學術論文熱衷於精巧的架構「微操」：探討注意力矩陣要幾乘幾、前饋網路維度要放大 3
-          倍還是 4 倍、層數要如何交替交織。然而，Kaplan 的大規模消融實驗給了整個學界一記響亮的耳光：
-          <strong>架構細節在規模面前幾乎不值一提</strong>。
-        </p>
+            <p class="text-xs text-muted leading-relaxed m-0 mt-3">
+              這個分配關係式宣告了一種極端偏向模型的擴展哲學：
+              <strong>
+                當總算力預算擴大 10 倍時，最優策略是將模型參數量擴大 5.4 倍（
+                <math class="font-serif"><msup><mn>10</mn><mn>0.73</mn></msup></math>
+                ），而訓練數據量僅需擴大 1.86 倍（
+                <math class="font-serif"><msup><mn>10</mn><mn>0.27</mn></msup></math>）。
+              </strong>
+            </p>
+          </div>
 
-        <p class="text-base leading-8 text-ink/80 mt-4">
-          論文系統性改變了網路的深度寬度比（從 2 層深、維度極寬，到 48
-          層深、維度極窄）、多頭數目（從 2 頭到 32
-          頭）以及前饋維度比例。結果顯示，只要避免極端的病態幾何結構，在固定總參數量
-          <math class="font-serif"><mi>N</mi></math>
-          的條件下，所有模型的損失差異小於 1%！這證明了一項至關重要的工程哲學：
-          <strong>
-            在大模型領域，花三個月微調架構超參數，遠不如把這三個月拿來擴充算力與參數量來得有效。
-          </strong>
-        </p>
-      </section>
+          <p>
+            換句話說，Kaplan 定律給當時 AI 界的明確指導方針是：
+            <strong>
+              「寧可訓練一個參數量極大、但還沒完全收斂（訓練 token
+              相對較少）的巨型模型，也絕不要去把一個較小的模型訓練到精疲力竭。」
+            </strong>{' '}
+            正是這條建議，直接塑造了 2020 年 OpenAI 打造 GPT-3 時的架構決策——他們設計了高達 1750
+            億參數的龐然巨物，但整個訓練過程僅餵入了 3000 億 token 的數據。
+          </p>
 
-      <!-- 第三樂章 -->
-      <section
-        id="act-3-optimal-allocation"
-        class="border-b border-line pb-16 pt-12"
-        aria-labelledby="heading-act-3"
-      >
-        <PaperSectionHeader
-          kicker="MOVEMENT 03 / OPTIMAL ALLOCATION"
-          title="算力預算的最佳分配：Kaplan 處方、臨界批次大小與 Chinchilla 修正伏筆"
-        />
+          <h3 class="font-display text-2xl text-ink pt-4">
+            臨界批次大小（<math class="font-serif"><msub><mi>B</mi><mtext>crit</mtext></msub></math>
+            ）：叢集平行加速的物理邊界
+          </h3>
 
-        <p class="text-base leading-8 text-ink/80 mt-6">
-          既然模型參數量 <math class="font-serif"><mi>N</mi></math> 和訓練數據量{' '}
-          <math class="font-serif"><mi>D</mi></math>
-          都能降低損失，那麼當一家 AI 實驗室籌集到一筆固定算力預算（例如 100 萬美元的 GPU
-          浮點總運算量
-          <math class="font-serif"><mi>C</mi></math>）時，最核心的工程決策是：
-          <strong>算力應該按什麼比例分給參數量與數據量？</strong>
-        </p>
+          <p>
+            除了算力與參數量，分佈式叢集訓練最關心的問題是：
+            <strong>我們能把訓練批次大小（Batch Size）開到多大？</strong> 如果能將 Batch Size 擴大
+            100 倍且訓練步數縮減 100 倍，我們就能用 100 倍的 GPU 實現近乎完美的線性加速。但若 Batch
+            Size 超過某個物理極限，梯度噪聲被過度平均化，新增的 GPU 就會陷入邊際效益遞減的浪費。
+          </p>
 
-        <p class="text-base leading-8 text-ink/80 mt-6">
-          我們首先建立標準 Transformer 訓練的物理算力關係式。在自回歸 Transformer 中，每個 token
-          在前向傳播（Forward Pass）中約需消耗
-          <math class="font-serif"><mn>2</mn><mi>N</mi></math>
-          次浮點運算（FLOPs），反向傳播（Backward Pass）計算梯度約需消耗
-          <math class="font-serif"><mn>4</mn><mi>N</mi></math> FLOPs。因此，訓練一個包含
-          <math class="font-serif"><mi>N</mi></math> 參數的模型處理{' '}
-          <math class="font-serif"><mi>D</mi></math> 個 token，所需的總浮點計算量公式為：
-        </p>
+          <p>
+            Kaplan 等人發現了「臨界批次大小（Critical Batch Size,
+            <math class="font-serif"><msub><mi>B</mi><mtext>crit</mtext></msub></math>
+            ）」隨模型訓練狀態演進的精確關係：
+          </p>
 
-        <math
-          display="block"
-          class="editorial-math my-5"
-          aria-label="Transformer 訓練計算量與參數量數據量關係式"
-        >
-          <mrow>
-            <mi>C</mi>
-            <mo>≈</mo>
-            <mn>6</mn>
-            <mi>N</mi>
-            <mi>D</mi>
-          </mrow>
-        </math>
-
-        <p class="text-base leading-8 text-ink/80 mt-4">
-          在 <math class="font-serif"><mi>C</mi><mo>≈</mo><mn>6</mn><mi>N</mi><mi>D</mi></math>
-          的硬性約束下，如果擴大模型 <math class="font-serif"><mi>N</mi></math>，就必須減少訓練
-          token
-          <math class="font-serif"><mi>D</mi></math>；反之亦然。Kaplan
-          等人利用拉格朗日乘數法求解極值，得出了 2020 年名震一時的「Kaplan 算力分配處方」：
-        </p>
-
-        <!-- 算力分配比例 MathML Block -->
-        <div class="my-6 rounded border border-line bg-surface p-5">
           <math
             display="block"
-            class="editorial-math my-4"
-            aria-label="Kaplan 算力預算最佳分配關係式"
+            class="editorial-math my-5"
+            aria-label="臨界批次大小與模型損失的關係式"
           >
             <mrow>
-              <msub><mi>N</mi><mtext>opt</mtext></msub>
-              <mo>∝</mo>
-              <msup><mi>C</mi><mn>0.73</mn></msup>
-              <mo>,</mo>
-              <mspace width="2em" />
-              <msub><mi>D</mi><mtext>opt</mtext></msub>
-              <mo>∝</mo>
-              <msup><mi>C</mi><mn>0.27</mn></msup>
+              <msub><mi>B</mi><mtext>crit</mtext></msub>
+              <mo stretchy="false">(</mo>
+              <mi>L</mi>
+              <mo stretchy="false">)</mo>
+              <mo>≈</mo>
+              <mfrac>
+                <msub><mi>B</mi><mo>*</mo></msub>
+                <msup>
+                  <mrow>
+                    <mo>(</mo>
+                    <mi>L</mi>
+                    <mo>−</mo>
+                    <msub><mi>L</mi><mi>∞</mi></msub>
+                    <mo>)</mo>
+                  </mrow>
+                  <msub><mi>α</mi><mi>B</mi></msub>
+                </msup>
+              </mfrac>
             </mrow>
           </math>
 
-          <p class="text-xs text-muted leading-relaxed m-0 mt-3">
-            這個分配關係式宣告了一種極端偏向模型的擴展哲學：
+          <p>
+            這個公式揭示了一項極其重要的工程指導：
             <strong>
-              當總算力預算擴大 10 倍時，最優策略是將模型參數量擴大 5.4 倍（
-              <math class="font-serif"><msup><mn>10</mn><mn>0.73</mn></msup></math>
-              ），而訓練數據量僅需擴大 1.86 倍（
-              <math class="font-serif"><msup><mn>10</mn><mn>0.27</mn></msup></math>）。
-            </strong>
+              當模型越聰明、損失 <math class="font-serif"><mi>L</mi></math>{' '}
+              越低時，臨界批次大小反而會急遽膨脹！
+            </strong>{' '}
+            這意味著在訓練初期，梯度噪聲大，必須用較小的 Batch
+            Size；而隨著模型逐漸收斂，工程師可以動態將批次大小擴大數十倍，調動數千張 GPU
+            進行大規模數據平行，而不會蒙受任何收斂效率的損失。
           </p>
         </div>
 
-        <p class="text-base leading-8 text-ink/80 mt-6">
-          換句話說，Kaplan 定律給當時 AI 界的明確指導方針是：
-          <strong>
-            「寧可訓練一個參數量極大、但還沒完全收斂（訓練 token
-            相對較少）的巨型模型，也絕不要去把一個較小的模型訓練到精疲力竭。」
-          </strong>{' '}
-          正是這條建議，直接塑造了 2020 年 OpenAI 打造 GPT-3 時的架構決策——他們設計了高達 1750
-          億參數的龐然巨物，但整個訓練過程僅餵入了 3000 億 token 的數據。
-        </p>
+        <aside slot="rail" class="space-y-6">
+          <Callout
+            variant="editorial"
+            title="歷史大伏筆：Kaplan 處方的盲點與 2022 年 Chinchilla 修正案"
+          >
+            <p class="text-xs leading-relaxed text-ink/80 m-0">
+              兩年後的 2022 年，DeepMind 的 Jordan Hoffmann 等人在第七章《Chinchilla》論文中發現了
+              Kaplan 實驗的一個關鍵致命瑕疵：Kaplan 在 2020
+              年的實驗中，對所有不同尺寸的模型統一使用了固定的「10
+              萬步餘弦學習率排程」，並且在訓練中途提前終止（Early
+              Stopping）。這項做法人為壓制了較大模型在長序列數據下的收斂潛力，導致 Kaplan
+              大幅低估了數據量的效益。DeepMind 修正學習率排程後證明：
+              <strong>
+                最優分配其實是參數量與數據量對等增加（各佔{' '}
+                <math class="font-serif"><msup><mi>C</mi><mn>0.50</mn></msup></math>）
+              </strong>
+              。然而，這項後續修正絲毫不減損 Kaplan 首次開創物理縮放定律的歷史地位。
+            </p>
+          </Callout>
+        </aside>
+      </PaperReadingLayout>
+    </section>
 
-        <Callout
-          variant="editorial"
-          title="歷史大伏筆：Kaplan 處方的盲點與 2022 年 Chinchilla 修正案"
-        >
-          <p class="text-sm leading-7 text-ink/80 m-0">
-            兩年後的 2022 年，DeepMind 的 Jordan Hoffmann 等人在第七章《Chinchilla》論文中發現了
-            Kaplan 實驗的一個關鍵致命瑕疵：Kaplan 在 2020
-            年的實驗中，對所有不同尺寸的模型統一使用了固定的「10
-            萬步餘弦學習率排程」，並且在訓練中途提前終止（Early
-            Stopping）。這項做法人為壓制了較大模型在長序列數據下的收斂潛力，導致 Kaplan
-            大幅低估了數據量的效益。DeepMind 修正學習率排程後證明：
+    <!-- MOVEMENT 4: 風洞試驗與工業軍備 (THE INDUSTRIAL SHOCKWAVE) -->
+    <section
+      id="wind-tunnel"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="wind-tunnel-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            第四樂章 / 風洞試驗與工業軍備
+          </p>
+          <h2
+            id="wind-tunnel-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">走出煉金術的風洞試驗：</span>
+            <span class="block">
+              <em>GPT-3 的誕生底氣與現代 AI 軍備競賽</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          航空風洞賦予了 OpenAI
+          豪擲數百萬美元的底氣；平滑的交叉熵下降，在特定臨界尺度引發高階認知能力的階躍湧現。
+        </p>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p class="text-lg leading-relaxed text-ink">
+            在現代航空工業中，波音或空中巴士在製造一架造價數億美元的全新噴射客機之前，絕對不可能直接組裝原型機推上跑道試飛。工程師會先在實驗室打造
+            1:50 比例的精密木質模型，放入「風洞（Wind
+            Tunnel）」中測量高速氣流下的升力、阻力與渦流數據，並運用空氣動力學方程式精確外推全尺寸客機的飛行性能。
+          </p>
+
+          <p>
+            Jared Kaplan 的這篇論文，就是現代人工智慧領域的第一個<strong>「算力風洞」</strong>。
+          </p>
+
+          <p>
+            2020 年初，OpenAI 正處於生死存亡的戰略十字路口：若要發動 GPT-3
+            計畫，需要向微軟申請數千張頂級 Nvidia V100 GPU
+            組成的超級叢集，預計消耗數百萬美元的巨額算力。在 2020
+            年，沒有任何投資人或董事會願意為一場隨機碰運氣的軟體實驗開出數百萬美元的支票。
+          </p>
+
+          <p>
+            正是 Kaplan 的縮放定律提供了不可動搖的科學依據：團隊先在數十顆 GPU 的小叢集上訓練 1.25
+            億、3.5 億、7.6 億、13
+            億等一組小型模型，在對數座標上畫出筆直的直線；接著，他們把尺向前一擺，直接在圖紙上外推到
+            1750 億（175B）參數的位置，向管理層與投資人清晰宣告：
             <strong>
-              最優分配其實是參數量與數據量對等增加（各佔{' '}
-              <math class="font-serif"><msup><mi>C</mi><mn>0.50</mn></msup></math>）
+              「只要給我們這筆算力，1750 億參數模型的最終測試損失一定會精確落在 1.73 nats/token
+              左右。」
             </strong>
-            。然而，這項後續修正絲毫不減損 Kaplan 首次開創物理縮放定律的歷史地位。
           </p>
-        </Callout>
 
-        <h3 class="font-display text-xl text-ink mt-8">
-          臨界批次大小（<math class="font-serif"><msub><mi>B</mi><mtext>crit</mtext></msub></math>
-          ）：叢集平行加速的物理邊界
-        </h3>
+          <h3 class="font-display text-2xl text-ink pt-4">
+            損失的平滑下降，如何轉化為能力的階躍湧現？
+          </h3>
 
-        <p class="text-base leading-8 text-ink/80 mt-4">
-          除了算力與參數量，分佈式叢集訓練最關心的問題是：
-          <strong>我們能把訓練批次大小（Batch Size）開到多大？</strong> 如果能將 Batch Size 擴大 100
-          倍且訓練步數縮減 100 倍，我們就能用 100 倍的 GPU 實現近乎完美的線性加速。但若 Batch Size
-          超過某個物理極限，梯度噪聲被過度平均化，新增的 GPU 就會陷入邊際效益遞減的浪費。
-        </p>
-
-        <p class="text-base leading-8 text-ink/80 mt-4">
-          Kaplan 等人發現了「臨界批次大小（Critical Batch Size,
-          <math class="font-serif"><msub><mi>B</mi><mtext>crit</mtext></msub></math>
-          ）」隨模型訓練狀態演進的精確關係：
-        </p>
-
-        <math
-          display="block"
-          class="editorial-math my-5"
-          aria-label="臨界批次大小與模型損失的關係式"
-        >
-          <mrow>
-            <msub><mi>B</mi><mtext>crit</mtext></msub>
-            <mo stretchy="false">(</mo>
-            <mi>L</mi>
-            <mo stretchy="false">)</mo>
-            <mo>≈</mo>
-            <mfrac>
-              <msub><mi>B</mi><mo>*</mo></msub>
-              <msup>
-                <mrow>
-                  <mo>(</mo>
-                  <mi>L</mi>
-                  <mo>−</mo>
-                  <msub><mi>L</mi><mi>∞</mi></msub>
-                  <mo>)</mo>
-                </mrow>
-                <msub><mi>α</mi><mi>B</mi></msub>
-              </msup>
-            </mfrac>
-          </mrow>
-        </math>
-
-        <p class="text-base leading-8 text-ink/80 mt-4">
-          這個公式揭示了一項極其重要的工程指導：
-          <strong>
-            當模型越聰明、損失 <math class="font-serif"><mi>L</mi></math>{' '}
-            越低時，臨界批次大小反而會急遽膨脹！
-          </strong>{' '}
-          這意味著在訓練初期，梯度噪聲大，必須用較小的 Batch
-          Size；而隨著模型逐漸收斂，工程師可以動態將批次大小擴大數十倍，調動數千張 GPU
-          進行大規模數據平行，而不會蒙受任何收斂效率的損失。
-        </p>
-      </section>
-
-      <!-- 第四樂章 -->
-      <section
-        id="act-4-the-wind-tunnel"
-        class="border-b border-line pb-16 pt-12"
-        aria-labelledby="heading-act-4"
-      >
-        <PaperSectionHeader
-          kicker="MOVEMENT 04 / THE INDUSTRIAL SHOCKWAVE"
-          title="走出煉金術的風洞試驗：GPT-3 的誕生底氣與現代 AI 軍備競賽"
-        />
-
-        <p class="text-base leading-8 text-ink/80 mt-6">
-          在現代航空工業中，波音或空中巴士在製造一架造價數億美元的全新噴射客機之前，絕對不可能直接組裝原型機推上跑道試飛。工程師會先在實驗室打造
-          1:50 比例的精密木質模型，放入「風洞（Wind
-          Tunnel）」中測量高速氣流下的升力、阻力與渦流數據，並運用空氣動力學方程式精確外推全尺寸客機的飛行性能。
-        </p>
-
-        <p class="text-base leading-8 text-ink/80 mt-6">
-          Jared Kaplan 的這篇論文，就是現代人工智慧領域的第一個<strong>「算力風洞」</strong>。
-        </p>
-
-        <p class="text-base leading-8 text-ink/80 mt-6">
-          2020 年初，OpenAI 正處於生死存亡的戰略十字路口：若要發動 GPT-3
-          計畫，需要向微軟申請數千張頂級 Nvidia V100 GPU
-          組成的超級叢集，預計消耗數百萬美元的巨額算力。在 2020
-          年，沒有任何投資人或董事會願意為一場隨機碰運氣的軟體實驗開出數百萬美元的支票。
-        </p>
-
-        <p class="text-base leading-8 text-ink/80 mt-6">
-          正是 Kaplan 的縮放定律提供了不可動搖的科學依據：團隊先在數十顆 GPU 的小叢集上訓練 1.25
-          億、3.5 億、7.6 億、13
-          億等一組小型模型，在對數座標上畫出筆直的直線；接著，他們把尺向前一擺，直接在圖紙上外推到
-          1750 億（175B）參數的位置，向管理層與投資人清晰宣告：
-          <strong>
-            「只要給我們這筆算力，1750 億參數模型的最終測試損失一定會精確落在 1.73 nats/token
-            左右。」
-          </strong>
-        </p>
-
-        <AsideCard title="歷史實證：GPT-3 完訓後的驚人驗證" class="my-8">
-          <p class="text-sm leading-7 text-ink/80 m-0">
-            四個月後的 2020 年 5 月，當 1750 億參數的 GPT-3
-            耗時數月終於完成訓練時，研究團隊測量其在測試集上的收斂損失——
-            <strong>
-              實際數值與 Kaplan 縮放定律幾個月前的預測曲線吻合度高達 99%
-              以上，誤差在小數點後兩位之內！
-            </strong>{' '}
-            這一刻標誌著深度學習正式告別了長達數十年的煉金術摸索，昂首跨入與天體物理、材料力學並肩的預測工程學時代。
+          <p>
+            縮放定律留下了一個最迷人且至今仍在深化的科學謎題：縮放定律描繪的是宏觀「交叉熵損失（Cross-Entropy
+            Loss）」的平滑、連續、可預測下降；然而，當我們在第六章觀察 GPT-3
+            時，我們會看到下游具體任務（如三位數乘法、解題推理、程式碼編寫）卻呈現出戲劇性的「階躍式湧現（Emergent
+            Abilities）」。
           </p>
-        </AsideCard>
 
-        <h3 class="font-display text-xl text-ink mt-8">
-          損失的平滑下降，如何轉化為能力的階躍湧現？
-        </h3>
+          <p>
+            這如同物理學中的相變（Phase Transition）：當水溫從 99 度升到 100
+            度時，吸收的熱量完全是平滑連續的；但在宏觀形態上，水分子卻在 100
+            度瞬間從液態沸騰為氣態。語言模型的跨尺度縮放亦復如是——當參數量跨越某個臨界尺度時，底層預測下一個字機率分佈的微小精確度提升，足以引發高階認知任務從「完全胡言亂語」到「具備邏輯推理」的質的飛躍。
+          </p>
+        </div>
 
-        <p class="text-base leading-8 text-ink/80 mt-4">
-          縮放定律留下了一個最迷人且至今仍在深化的科學謎題：縮放定律描繪的是宏觀「交叉熵損失（Cross-Entropy
-          Loss）」的平滑、連續、可預測下降；然而，當我們在第六章觀察 GPT-3
-          時，我們會看到下游具體任務（如三位數乘法、解題推理、程式碼編寫）卻呈現出戲劇性的「階躍式湧現（Emergent
-          Abilities）」。
-        </p>
-
-        <p class="text-base leading-8 text-ink/80 mt-4">
-          這如同物理學中的相變（Phase Transition）：當水溫從 99 度升到 100
-          度時，吸收的熱量完全是平滑連續的；但在宏觀形態上，水分子卻在 100
-          度瞬間從液態沸騰為氣態。語言模型的跨尺度縮放亦復如是——當參數量跨越某個臨界尺度時，底層預測下一個字機率分佈的微小精確度提升，足以引發高階認知任務從「完全胡言亂語」到「具備邏輯推理」的質的飛躍。
-        </p>
-      </section>
-    </PaperReadingLayout>
+        <aside slot="rail" class="space-y-6">
+          <AsideCard
+            kicker="歷史驗證 / HISTORICAL EVIDENCE"
+            title="歷史實證：GPT-3 完訓後的驚人驗證"
+            variant="surface"
+          >
+            <p class="text-xs leading-relaxed text-muted m-0">
+              四個月後的 2020 年 5 月，當 1750 億參數的 GPT-3
+              耗時數月終於完成訓練時，研究團隊測量其在測試集上的收斂損失——
+              <strong>
+                實際數值與 Kaplan 縮放定律幾個月前的預測曲線吻合度高達 99%
+                以上，誤差在小數點後兩位之內！
+              </strong>{' '}
+              這一刻標誌著深度學習正式告別了長達數十年的煉金術摸索，昂首跨入與天體物理、材料力學並肩的預測工程學時代。
+            </p>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
 
     <!-- 歷史時間軸：文獻與事件脈絡 -->
     <section class="border-t border-ink bg-canvas py-16 sm:py-24" aria-label="思想演進時間軸">
