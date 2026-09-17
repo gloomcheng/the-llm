@@ -569,10 +569,15 @@ const timelineEpochs: TimelineEpoch[] = [
                 [CLS] · 分類錨點 (Classification Token)
               </strong>
               <p class="text-xs text-muted m-0 leading-relaxed">
-                永遠放置在整個輸入序列的最前端（第 0 個位置）。由於 Encoder 內部是全雙向注意力，第 0
-                個位置的向量在經過 12
-                層與全句所有單詞的交互後，吸收了「整篇文本的全局語意摘要」，直接拿來作為二元分類（IsNext
-                / NotNext）或下游情感判斷的指針！
+                永遠放置在整個輸入序列的最前端（第 0 個位置）。
+                <br />
+                <span class="text-ink font-medium">
+                  與第二章 GPT-1 的巧妙對照：GPT-1 因為單向因果限制，只能把 <code>[Extract]</code>{' '}
+                  放在序列的最尾端，才能讀取前文累積的資訊；而 BERT 是全雙向注意力的
+                  Encoder，任何位置都能自由查看所有其他單詞！因此 Google 乾脆在開頭安插一個專門的{' '}
+                  <code>[CLS]</code> 標記，經過 12 或 24 層雙向交互後，第 0
+                  個位置的特徵向量自然吸收了「整篇文本的全局語意摘要」，直接拿來作為句子分類或真假句判斷的指針。
+                </span>
               </p>
             </div>
             <div class="border-t border-line/60 pt-2">
@@ -729,6 +734,15 @@ const timelineEpochs: TimelineEpoch[] = [
             <math class="font-serif"><mi>E</mi><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mi>H</mi></msup></math>
             。
           </p>
+
+          <div class="my-4 border-l-2 border-red pl-4 py-2 bg-red-soft/20 text-sm leading-relaxed text-ink">
+            <strong>零門檻直覺：什麼是「區間抽取（Span Extraction）」？</strong>
+            <p class="m-0 text-muted mt-1">
+              例如問題是：「誰發明了克漏字測驗？」文章段落是：「心理學家 Wilson Taylor 於 1953
+              年提出了克漏字測驗。」 答案顯然就是文章中的「Wilson
+              Taylor」。模型完全不需要像聊天機器人一樣憑空生成文字，只需要在文章所有的單詞中，精準圈出開頭是「Wilson」、結尾是「Taylor」這兩個錨點即可！
+            </p>
+          </div>
 
           <p>
             文章中每一個詞 <math class="font-serif"><mi>i</mi></math> 的最後一層雙向特徵向量為{' '}
