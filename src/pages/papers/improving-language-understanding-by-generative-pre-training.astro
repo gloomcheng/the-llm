@@ -821,7 +821,7 @@ const timelineEpochs: TimelineEpoch[] = [
           </h2>
         </div>
         <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
-          分類、推論、相似度與問答，無需重造專用拓撲：將結構變換全交給字串遍歷，全模型微調時唯一新增的只有一張微調投影矩陣
+          分類、推論、相似度與問答，無需重造專用拓撲：微調時除了少量特殊分隔符的嵌入向量外，全新引入的結構只有一層微調投影矩陣
           W<sub>y</sub>。
         </p>
       </div>
@@ -986,7 +986,7 @@ const timelineEpochs: TimelineEpoch[] = [
         <PaperReadingLayout class="text-base leading-8 text-ink">
           <div class="space-y-6">
             <h3 class="font-display text-2xl text-ink pt-2">
-              有監督微調數學推導：全模型唯一新增的參數 W<sub>y</sub>
+              有監督微調數學推導：分類頭投影矩陣 W<sub>y</sub> 與極簡參數增量
             </h3>
 
             <p>
@@ -1095,8 +1095,7 @@ const timelineEpochs: TimelineEpoch[] = [
                     符號解碼：W_y
                   </strong>
                   <p class="text-muted m-0 text-xs leading-relaxed">
-                    微調階段<strong>唯一全新加入</strong>的線性分類輸出矩陣（Linear Output Layer
-                    parameters），維度為{' '}
+                    微調階段新增的線性分類輸出矩陣（Linear Output Layer parameters），維度為{' '}
                     <math class="font-serif"><msub><mi>W</mi><mi>y</mi></msub><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mn>768</mn><mo>×</mo><mo stretchy="false">|</mo><mi>y</mi><mo stretchy="false">|</mo></mrow></msup></math>
                     。
                     <math class="font-serif"><mo stretchy="false">|</mo><mi>y</mi><mo stretchy="false">|</mo></math>
@@ -1111,16 +1110,27 @@ const timelineEpochs: TimelineEpoch[] = [
               在 2018 年以前，NLP 學者習慣為每個任務設計複雜的外部神經網路（如
               Tree-LSTM、雙向注意力池化層、多層感知機）；而 GPT-1 最激進的簡化正是：
               <strong>
-                模型結構 100% 保持不變，全模型唯一需要額外初始化的，只有這張僅佔幾千個參數的線性矩陣{' '}
-                <math class="font-serif"><msub><mi>W</mi><mi>y</mi></msub></math>！
+                模型骨幹結構 100% 保持不變！論文第 3.2
+                節明確註明：微調時唯一需要額外初始化的參數，只有這張僅佔數千參數的線性輸出矩陣{' '}
+                <math class="font-serif"><msub><mi>W</mi><mi>y</mi></msub></math>
+                ，以及少量特殊分隔符號的嵌入向量（Delimiter Token Embeddings）——整體新增參數佔比小於
+                0.004%！
               </strong>
             </p>
           </div>
 
           <aside slot="rail" class="space-y-6">
-            <AsideCard kicker="極簡微調 / PARAMETERS" title="唯一新增參數 W_y" variant="surface">
+            <AsideCard
+              kicker="極簡微調 / PARAMETERS"
+              title="微調新增參數：W_y 與分隔符向量"
+              variant="surface"
+            >
               <div class="my-2">
-                <math display="block" class="text-sm text-ink font-serif">
+                <math
+                  display="block"
+                  class="text-sm text-ink font-serif"
+                  aria-label="W y belongs to R 768 by size of y"
+                >
                   <mrow>
                     <msub><mi>W</mi><mi>y</mi></msub>
                     <mo>∈</mo>
@@ -1129,8 +1139,10 @@ const timelineEpochs: TimelineEpoch[] = [
                 </math>
               </div>
               <p class="mt-2 text-xs leading-relaxed text-muted">
-                全模型上億參數直接繼承預訓練權重，僅需學習 W_y 與分隔符 token embedding
-                即可完成跨任務遷移。
+                全模型 1.17 億參數直接繼承預訓練權重；微調時僅額外引入分類頭矩陣{' '}
+                <math class="font-serif"><msub><mi>W</mi><mi>y</mi></msub></math>{' '} 與特殊符號（
+                <code>[Start]</code>、<code>[Delim]</code>、<code>[Extract]</code>
+                ）的嵌入向量，共約數千參數。
               </p>
             </AsideCard>
           </aside>
