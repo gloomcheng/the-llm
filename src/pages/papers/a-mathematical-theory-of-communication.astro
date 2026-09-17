@@ -1039,7 +1039,7 @@ const story = [
                       階梯 03 / 二階字母轉移（2-order Digram）
                     </span>
                     <span class="font-mono text-xs text-red">
-                      看前 1 個字母決定下一個：P(c_t | c_&#123;t-1&#125;)
+                      看前 1 個字母決定下一個：P(c<sub>t</sub> | c<sub>t-1</sub>)
                     </span>
                   </div>
                   <p class="font-mono text-xs sm:text-sm text-ink bg-surface p-2.5 border border-red/30 tracking-wider break-all">
@@ -1057,8 +1057,8 @@ const story = [
                     <span class="font-mono text-xs font-bold text-red">
                       階梯 04 / 詞級雙詞轉移（Word Bigram）
                     </span>
-                    <span class="font-mono text-xs font-bold text-red">
-                      看前 1 個詞預測下一個詞：P(w_t | w_&#123;t-1&#125;)
+                    <span class="font-mono text-xs text-red">
+                      看前 1 個詞預測下一個詞：P(w<sub>t</sub> | w<sub>t-1</sub>)
                     </span>
                   </div>
                   <p class="font-mono text-xs sm:text-sm text-ink bg-red/5 p-2.5 border border-red/30 tracking-normal">
@@ -1078,7 +1078,7 @@ const story = [
                       邁向 2024 / 現代大語言模型（Transformer Attention）
                     </span>
                     <span class="font-mono text-xs text-muted">
-                      超長上下文條件機率：P(w_t | w_&#123;&lt;t&#125;)
+                      超長上下文條件機率：P(w<sub>t</sub> | w<sub>&lt;t</sub>)
                     </span>
                   </div>
                   <p class="mt-2 mb-0 text-xs text-muted leading-relaxed">
@@ -1273,7 +1273,7 @@ const story = [
             <div class="border-t border-dashed border-line pt-4">
               <dt class="font-mono text-xs text-blue uppercase font-bold">Perplexity</dt>
               <dd class="m-0 text-muted">
-                = 2^H(p,q)
+                = 2<sup>H(p, q)</sup>
                 <br />
                 語言模型標準評估指標
               </dd>

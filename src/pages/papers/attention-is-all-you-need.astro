@@ -384,11 +384,11 @@ const timelineEpochs: TimelineEpoch[] = [
             左側的<strong>編碼器（Encoder RNN）</strong>
             就像一位聽法文演講的口譯員，逐字讀入句子。每讀一個詞，大腦裡的「內心小劇場」就更新一次（
             <code class="text-xs bg-paper-deep px-1.5 py-0.5">
-              h_t = LSTM(x_t, h_&#123;t-1&#125;)
+              h<sub>t</sub> = LSTM(x<sub>t</sub>, h<sub>t-1</sub>)
             </code>
             ）。當讀到最後一個單詞時，口譯員聽完全文那一剎那的最後大腦狀態{' '}
             <code class="text-xs bg-paper-deep px-1.5 py-0.5">
-              h_T ∈ ℝ<sup>512</sup>
+              h<sub>T</sub> ∈ ℝ<sup>512</sup>
             </code>
             ，就被稱為整句話的<strong>「思想向量（Thought Vector）」</strong>。
           </p>
@@ -397,12 +397,14 @@ const timelineEpochs: TimelineEpoch[] = [
             <strong>
               口譯員在聽講過程中，前面每一句累積的所有逐字心路歷程{' '}
               <code class="text-xs bg-paper-deep px-1.5 py-0.5">
-                (h₁, h₂, ..., h_&#123;T-1&#125;)
+                (h₁, h₂, ..., h<sub>T-1</sub>)
               </code>
               ，被命令當場全部清空忘掉！
             </strong>
             為什麼？因為當時右側的<strong>解碼器（Decoder RNN）</strong>只有一個初始接口插槽（
-            <code class="text-xs bg-paper-deep px-1.5 py-0.5">s₀ = h_T</code>
+            <code class="text-xs bg-paper-deep px-1.5 py-0.5">
+              s₀ = h<sub>T</sub>
+            </code>
             ）。在注意力機制發明前，沒有人知道該如何讓模型動態調閱整排筆記。
           </p>
           <p>
@@ -454,7 +456,9 @@ const timelineEpochs: TimelineEpoch[] = [
           <p>
             他們的解法無比直覺：<strong>允許口譯員做便條紙筆記！</strong>
             編碼器每聽一個詞，就撕一張便條紙記下當下的理解{' '}
-            <code class="text-xs bg-paper-deep px-1.5 py-0.5">[h₁, h₂, ..., h_T]</code>
+            <code class="text-xs bg-paper-deep px-1.5 py-0.5">
+              [h₁, h₂, ..., h<sub>T</sub>]
+            </code>
             ，整齊貼在白板上。解碼器在翻譯英文時，每寫一個單詞，就抬起頭往白板掃視一眼（動態計算匹配權重），需要主詞就看主詞便條，需要動詞就看動詞便條。這套
             <strong>「動態翻筆記」</strong>的機制，就是<strong>注意力（Attention）</strong>
             ！長句遺忘症立刻治癒，BLEU 分數不再隨長度下跌。
@@ -569,14 +573,20 @@ const timelineEpochs: TimelineEpoch[] = [
               <span class="text-xs text-muted block mb-2">Sutskever et al.</span>
               <p class="m-0 text-xs text-muted leading-relaxed">
                 雙 RNN 結構。解決了變長映射，但整句壓縮為單一向量{' '}
-                <code class="text-[11px] bg-paper-deep px-1">h_T</code>，造成長句資訊瓶頸。
+                <code class="text-[11px] bg-paper-deep px-1">
+                  h<sub>T</sub>
+                </code>
+                ，造成長句資訊瓶頸。
               </p>
             </div>
             <div class="border border-line bg-surface p-4">
               <span class="font-bold text-ink block mb-1">② Seq2Seq + 注意力 (2014)</span>
               <span class="text-xs text-muted block mb-2">Bahdanau et al.</span>
               <p class="m-0 text-xs text-muted leading-relaxed">
-                保留所有 <code class="text-[11px] bg-paper-deep px-1">[h₁, ..., h_T]</code>
+                保留所有{' '}
+                <code class="text-[11px] bg-paper-deep px-1">
+                  [h₁, ..., h<sub>T</sub>]
+                </code>
                 ，動態軟對齊。解決了記憶瓶頸，但依然受限於 RNN 串行等待，無法平行。
               </p>
             </div>
@@ -2131,7 +2141,9 @@ const timelineEpochs: TimelineEpoch[] = [
               <div class="border-t border-line pt-4">
                 <p class="m-0 font-mono text-xs font-bold text-ink mb-2">數學幾何本質：</p>
                 <div class="bg-paper-deep p-3 border border-ink/20 font-mono text-xs text-ink space-y-1">
-                  <div>Score(q, k) = (q · kᵀ) ÷ √d_k</div>
+                  <div>
+                    Score(q, k) = (q · kᵀ) ÷ √d<sub>k</sub>
+                  </div>
                   <div>Weight α = softmax(Scores)</div>
                 </div>
                 <p class="mt-3 mb-0 text-xs text-muted leading-normal">
@@ -2431,7 +2443,7 @@ const timelineEpochs: TimelineEpoch[] = [
             <div class="border border-ink bg-ink p-4 text-center font-display text-base sm:text-lg text-surface">
               上下文 / Context
               <span class="mt-1 block font-mono text-xs text-surface/80">
-                H_enc ∈ ℝ<sup>n × 512</sup>
+                H<sub>enc</sub> ∈ ℝ<sup>n × 512</sup>
               </span>
             </div>
           </div>
@@ -2439,7 +2451,9 @@ const timelineEpochs: TimelineEpoch[] = [
             <span class="font-bold">上下文跨塔傳遞</span>
             <span class="text-[11px] text-muted">提供 Key & Value</span>
             <span class="h-0.5 w-16 bg-red md:w-full"></span>
-            <span class="text-[10px] text-muted hidden md:inline">K_enc, V_enc ──→</span>
+            <span class="text-[10px] text-muted hidden md:inline">
+              K<sub>enc</sub>, V<sub>enc</sub> ──→
+            </span>
           </div>
           <div class="grid gap-3">
             <div class="flex items-center justify-between">
@@ -2470,7 +2484,7 @@ const timelineEpochs: TimelineEpoch[] = [
             <div class="border border-ink bg-ink p-4 text-center font-display text-base sm:text-lg text-surface">
               下一個 token
               <span class="mt-1 block font-mono text-xs text-surface/80">
-                Softmax(y_t) 預測詞機率
+                Softmax(y<sub>t</sub>) 預測詞機率
               </span>
             </div>
           </div>
@@ -2511,7 +2525,7 @@ const timelineEpochs: TimelineEpoch[] = [
                   <strong>在舊式 Seq2Seq RNN 中：</strong>整句來源語言（例如 30
                   個單詞的法文）在讀到最後一個詞時，必須被硬生生壓縮成一個固定維度的單一向量{' '}
                   <code class="bg-paper-deep px-1.5 py-0.5 text-xs">
-                    h_T ∈ ℝ<sup>512</sup>
+                    h<sub>T</sub> ∈ ℝ<sup>512</sup>
                   </code>
                   。這造成了惡名昭彰的「資訊瓶頸（Information
                   Bottleneck）」——長句前面的細節與語意全被稀釋遺忘。
@@ -2520,7 +2534,7 @@ const timelineEpochs: TimelineEpoch[] = [
                   <strong>在 Transformer 的 Encoder 輸出中：</strong>
                   「上下文」根本不是單一向量，而是一個保留了完整長度的特徵矩陣{' '}
                   <code class="bg-paper-deep px-1.5 py-0.5 text-xs">
-                    H_enc ∈ ℝ<sup>n × 512</sup>
+                    H<sub>enc</sub> ∈ ℝ<sup>n × 512</sup>
                   </code>
                   。序列中的每一個 Token 都有一個專屬的 512 維向量；因為經過了 6 層雙向
                   Self-Attention
@@ -2531,7 +2545,8 @@ const timelineEpochs: TimelineEpoch[] = [
               <div class="mt-6 border-t border-line pt-4 bg-paper-deep/50 p-4 font-mono text-xs text-ink">
                 <span class="text-red font-semibold">張量維度流動：</span>
                 <br />
-                來源句 (n 個詞) → 詞嵌入 + 位置編碼 (n × 512) → 6 層 Encoder → H_enc (n × 512)
+                來源句 (n 個詞) → 詞嵌入 + 位置編碼 (n × 512) → 6 層 Encoder → H<sub>enc</sub> (n ×
+                512)
               </div>
             </article>
 
@@ -2613,7 +2628,7 @@ const timelineEpochs: TimelineEpoch[] = [
                 <p class="mt-4 text-base leading-7 text-muted">
                   <strong>解決之道：在 Softmax 前給矩陣戴上眼罩（Mask）：</strong>
                   <code class="block my-2 bg-paper-deep p-2 text-xs font-mono text-ink">
-                    Attention(Q, K, V) = softmax( (QKᵀ / √d_k) + M ) V
+                    Attention(Q, K, V) = softmax( (QKᵀ / √d<sub>k</sub>) + M ) V
                   </code>
                   遮罩矩陣 <code class="text-xs">M</code>{' '}
                   是一個嚴格的上三角矩陣：對角線及其左下方（過去與現在）全為 0；而右上角（所有未來的
@@ -2676,11 +2691,9 @@ const timelineEpochs: TimelineEpoch[] = [
               </div>
               <div class="mt-6 border-t border-line pt-4 bg-paper-deep/50 p-4 font-mono text-xs text-ink">
                 <span class="text-blue font-semibold">Q/K/V 來源配置：</span>
-                <br />
-                Q = Decoder 特徵 × W_Q
-                <br />
-                K = Encoder 上下文 (H_enc) × W_K
-                <br />V = Encoder 上下文 (H_enc) × W_V
+                <br />Q = Decoder 特徵 × W<sub>Q</sub>
+                <br />K = Encoder 上下文 (H<sub>enc</sub>) × W<sub>K</sub>
+                <br />V = Encoder 上下文 (H<sub>enc</sub>) × W<sub>V</sub>
               </div>
             </article>
           </div>

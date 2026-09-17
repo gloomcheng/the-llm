@@ -25,6 +25,8 @@ const variantClasses: Record<NonNullable<Props['variant']>, string> = {
   // alert: high-contrast vermilion alert block
   alert: 'border-l-4 border-red bg-red-soft/30 text-ink',
 };
+
+const hasTitle = Astro.slots.has('title') || Boolean(title);
 ---
 
 <Component
@@ -40,8 +42,10 @@ const variantClasses: Record<NonNullable<Props['variant']>, string> = {
       {kicker}
     </p>
   )}
-  {title && (
-    <h3 class="mt-0 mb-3 font-display text-xl sm:text-2xl leading-snug text-ink">{title}</h3>
+  {hasTitle && (
+    <h3 class="mt-0 mb-3 font-display text-xl sm:text-2xl leading-snug text-ink">
+      <slot name="title">{title}</slot>
+    </h3>
   )}
   <div class="space-y-4">
     <slot />

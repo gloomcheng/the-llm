@@ -8,22 +8,31 @@ interface Props {
 
 const { kicker, title, variant = 'surface', class: className = '' } = Astro.props;
 
-const variantClasses = {
+const variantClasses: Record<NonNullable<Props['variant']>, string> = {
   surface: 'border-t-4 border-red bg-surface p-6 shadow-editorial',
   paper: 'border-t-4 border-ink bg-paper-deep/50 p-6',
   deep: 'border-l-2 border-red bg-paper-deep/60 p-6 sm:p-8',
   alert: 'border-y-2 border-red bg-red-soft/30 px-5 py-6 sm:px-7',
-}[variant];
+};
+
+const hasTitle = Astro.slots.has('title') || Boolean(title);
 ---
 
-<aside class:list={[variantClasses, className]} data-slot="aside-card">
+<aside
+  class:list={[variantClasses[variant] || variantClasses.surface, className]}
+  data-slot="aside-card"
+>
   {kicker && (
     <p class="mb-3 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
       {kicker}
     </p>
   )}
-  {title && <h3 class="m-0 font-display text-xl text-ink leading-snug">{title}</h3>}
-  <div class:list={[title ? 'mt-4' : '']}>
+  {hasTitle && (
+    <h3 class="m-0 font-display text-xl text-ink leading-snug">
+      <slot name="title">{title}</slot>
+    </h3>
+  )}
+  <div class:list={[hasTitle ? 'mt-4' : '']}>
     <slot />
   </div>
 </aside>

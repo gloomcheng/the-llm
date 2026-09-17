@@ -287,8 +287,11 @@ To ensure maximum accessibility, semantic clarity, and high-fidelity mathematica
    - `<mfrac>` for fractions ($\frac{Q K^T}{\sqrt{d_k}}$).
    - `<munder>`, `<mover>`, and `<munderover>` for summation and product limits ($\sum_{i=1}^n$).
    - `<mtext>` for plain textual annotations inside math expressions.
-3. **Strict prohibition of plaintext ASCII approximations:**
-   Never write equations in raw plaintext or mangled Unicode (e.g., `W_y`, `h_l^m W_y`, `L_1(U) = \sum \log P(...)`, `Σ_(x,y)`). Any formal mathematical equation must be rendered in MathML.
+3. **Strict prohibition of plaintext ASCII approximations and leaky notations:**
+   - Never write mathematical expressions in raw plaintext ASCII or mangled Unicode with literal underscores `_` or carets `^` (e.g. `W_y`, `h_l^m`, `W_Q`, `H_enc`, `P(c_t | c_{t-1})`, `2^H(p,q)`).
+   - In headings, card titles, and inline text where MathML is cumbersome, always use semantic HTML formatting (`W<sub>y</sub>`, `h<sub>l</sub><sup>m</sup>`, `H<sub>enc</sub>`, `P(c<sub>t</sub> | c<sub>t-1</sub>)`, `2<sup>H(p, q)</sup>`).
+   - In symbol decoding cards and formal mathematical passages, use semantic MathML Core (`<math class="font-serif"><msub><mi>W</mi><mi>y</mi></msub></math>`).
+   - **Strictly prohibit wrapping math symbols in `font-mono uppercase` classes:** Applying CSS `uppercase` converts mathematical variables into wrong casing (e.g., transforming subscript label $y$ into uppercase $Y$), and `font-mono` renders mathematical variables as code variables instead of serif math typography.
 4. **Astro JSX curly-brace escaping requirement:**
    In `.astro` templates, raw curly braces `{` and `}` are reserved for JSX JavaScript expressions. When writing literal set notation or condition braces inside MathML strings, you **MUST** escape them with HTML character entities:
    - Use `&#123;` for `{`
@@ -317,7 +320,7 @@ Read the case, prose, diagrams, formulas, and cited evidence together. Prioritiz
 - Does the hero header strictly adhere to the Visual Invariant specification (clean mono red kicker without badge pill wrappers, pure `text-ink` serif display title without colored words, `max-w-[52ch]` lead paragraph, standard breadcrumb)?
 - Does the chapter follow its assigned Archetype blueprint (A: 3-Act, B: 5-Movement, C: 4-Movement, D: 4-Movement) without exposing internal prompt scaffolding tags (`WHY`, `HOW`, `WHAT`, `第一部分`) or numbered circle badges?
 - Are all headings and display titles free of trailing full stops / periods (「。」)?
-- Are all mathematical formulas rendered using native W3C MathML Core with accessible `aria-label` attributes and escaped curly braces (`&#123;` / `&#125;`), and accompanied by explicit tensor/variable definitions?
+- Are all mathematical formulas rendered using native W3C MathML Core with accessible `aria-label` attributes and escaped curly braces (`&#123;` / `&#125;`), and accompanied by explicit tensor/variable definitions? Are all mathematical symbols free of raw ASCII underscore/caret notation (`_`, `^`), never distorted by `font-mono uppercase`, and formatted using MathML or semantic HTML `<sub>`/`<sup>` tags?
 - Report remaining failures as location → missing knowledge or contradiction → reader consequence → concrete repair. Distinguish confirmed source contradictions from claims still needing verification. A passing formatter or typecheck is not editorial approval.
 
 ## Paper page filename and routing harness specification

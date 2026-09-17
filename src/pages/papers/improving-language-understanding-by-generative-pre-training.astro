@@ -1079,8 +1079,9 @@ const timelineEpochs: TimelineEpoch[] = [
 
               <div class="mt-6 border-t border-line pt-4 grid gap-4 sm:grid-cols-2 text-sm">
                 <div class="border-l-2 border-red pl-3">
-                  <strong class="font-mono text-xs uppercase tracking-wider text-red block mb-1">
-                    符號解碼：h_l^m
+                  <strong class="text-xs uppercase tracking-wider text-red block mb-1">
+                    符號解碼：
+                    <math class="font-serif"><msubsup><mi>h</mi><mi>l</mi><mi>m</mi></msubsup></math>
                   </strong>
                   <p class="text-muted m-0 text-xs leading-relaxed">
                     <math class="font-serif"><mi>l</mi><mo>=</mo><mn>12</mn></math>{' '}
@@ -1091,8 +1092,8 @@ const timelineEpochs: TimelineEpoch[] = [
                   </p>
                 </div>
                 <div class="border-l-2 border-red pl-3">
-                  <strong class="font-mono text-xs uppercase tracking-wider text-red block mb-1">
-                    符號解碼：W_y
+                  <strong class="text-xs uppercase tracking-wider text-red block mb-1">
+                    符號解碼：<math class="font-serif"><msub><mi>W</mi><mi>y</mi></msub></math>
                   </strong>
                   <p class="text-muted m-0 text-xs leading-relaxed">
                     微調階段新增的線性分類輸出矩陣（Linear Output Layer parameters），維度為{' '}
@@ -1120,11 +1121,11 @@ const timelineEpochs: TimelineEpoch[] = [
           </div>
 
           <aside slot="rail" class="space-y-6">
-            <AsideCard
-              kicker="極簡微調 / PARAMETERS"
-              title="微調新增參數：W_y 與分隔符向量"
-              variant="surface"
-            >
+            <AsideCard kicker="極簡微調 / PARAMETERS" variant="surface">
+              <Fragment slot="title">
+                微調新增參數：<math class="font-serif"><msub><mi>W</mi><mi>y</mi></msub></math>{' '}
+                與分隔符向量
+              </Fragment>
               <div class="my-2">
                 <math
                   display="block"
@@ -2055,7 +2056,7 @@ const timelineEpochs: TimelineEpoch[] = [
         benchmark: 'QQP (Quora 重複問題偵測)、MRPC (微軟改寫語料庫)。',
       },
       qa: {
-        tokens: ['[Start]', '文章與問題 (Context)', '[Delim]', '候選答案 (Answer_i)', '[Extract]'],
+        tokens: ['[Start]', '文章與問題 (Context)', '[Delim]', '候選答案 (Answer ᵢ)', '[Extract]'],
         mechanism:
           '若問題有 N 個候選答案，則將文本與問題複製 N 份，分別拼接各選項。模型計算出 N 個不同的 [Extract] 向量後，通過同一套線性層投影，並在各選項間進行 Softmax 競爭！',
         benchmark: 'RACE 國高中英語閱讀理解多選題、Story Cloze 克漏字。',
