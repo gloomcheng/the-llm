@@ -7,6 +7,34 @@ description: Write, revise, or audit THE LLM paper chapters as source-bound hist
 
 Write for graduate students from any discipline. Assume no machine-learning background; preserve the technical depth and supply the reasoning needed to reach it. Keep this skill and internal editorial records in English.
 
+## Reader-first foundation: Start with Why and How It Works
+
+Every chapter is written from the reader's perspective, not the researcher's retrospective diary. Graduate students from any discipline must never feel lost in abstract jargon or arbitrary formulas. The editorial structure must strictly follow: **Start with Why** (the visceral, concrete dilemma) → **How It Works** (the responsive, worked mathematical mechanism) → **What It Means Today** (how it powers modern LLMs).
+
+### Start with Why: from the reader's visceral dilemma
+
+- **Ground obsolete or abstract technologies in physical reality before equations:**
+  Never assume the reader knows historical or domain-specific hardware (such as 1940s telegraph lines, copper wires, teleprinters, or analog radio circuits). Deconstruct the physical object first: explain what humans held in their hands, how electrical pulses or signals moved (e.g., DC key tapping, dots and dashes), the economic pain points (sky-high per-word pricing), and physical failure modes (thermal noise, weather interference, pulse distortion). Bridge immediately to modern concepts (bits, packets, bandwidth) so the reader understands why the problem mattered.
+- **Anchor the chapter in a single, urgent question:**
+  Every chapter must open with a dilemma that any intelligent person can grasp without machine-learning training (e.g., "Can information be measured?", "How can an AI connect two words separated by 50 sentences without squashing all intermediate memory into one vector?").
+- **Expose why common sense and prior art failed:**
+  Demonstrate why the intuitive or previous standard solution broke down under scale (e.g., why simply increasing transmitter power cannot overcome channel capacity limits; why expanding RNN hidden states creates vanishing gradients and computational bottlenecks). The paper's contribution must emerge as the only elegant resolution to this impasse.
+
+### How It Works: dynamic perturbation and visual mechanisms
+
+- **Dynamic Perturbation Principle ("Change input X and watch mechanism Y respond"):**
+  A mechanism is truly understood only when the reader observes how it responds to changes. Whenever explaining attention weights, probability distributions, or classification logits, provide a dynamic perturbation:
+  - Contrast a base case with an altered case (e.g., the classic Winograd schema: _"The animal didn't cross the street because [it] was too [tired / wide]"_, or switching the subject in an academic lab scenario).
+  - Show how changing a single token dynamically reallocates attention weights across the entire sentence, shifting the heatmap focus (e.g., from `animal` to `street`, or from `小明` to `王老師`).
+  - This transforms abstract matrix multiplications into visible cause-and-effect that the reader can intuitively verify.
+- **Visual worked paths over static decorative boxes:**
+  Every foundational concept requires an accessible, responsive diagram or worked table:
+  - Diagram the complete system architecture (e.g., Shannon's 1948 Figure 1: `Information Source -> Transmitter -> Channel (+ Noise) -> Receiver -> Destination`).
+  - Plot mathematical functions geometrically (e.g., the $I(p) = -\log_2 p$ surprise curve and the bell-shaped Binary Entropy curve $H(p)$, showing peak uncertainty at $p = 0.5$).
+  - Trace real numbers through calculations: from input vectors, Query-Key dot products, $\sqrt{d_k}$ scaling, Softmax normalization, to Value weighting.
+- **Accessible, zero-heavy-dependency native implementation:**
+  All diagrams and interactive explainers must be rendered as responsive SVG or clean HTML/Tailwind components with semantic ARIA labels, responsive coordinates, and accessible text fallbacks. Never rely on heavy external iframes, closed canvas scripts, or uncaptioned raster blobs.
+
 ## Narrative and evidence
 
 - Open with a concrete situation, action, or documented problem before introducing abstract claims. Develop connected paragraphs with people, circumstances, decisions, and consequences; headings and summary cards must not replace the story.
@@ -86,6 +114,15 @@ Use an inexpensive model for the window audit when available. Its role is to ask
 - Remove vague slogans, rhetorical filler, invented reader confusion, and redundant restatements. Expand missing reasoning rather than compressing paragraphs to fit the layout.
 - Use only standard Tailwind font-size utilities: `text-xs`, `text-sm`, `text-base`, `text-lg`, `text-xl`, and `text-2xl` through `text-9xl`, with responsive variants as needed. Do not use arbitrary font sizes, inline font sizes, SVG numeric font sizes, or custom tokens to evade this rule. `xs` and `sm` name the permitted scale; they are not a requirement to make body text small. Keep substantive explanations at a comfortable body size and design the layout around readable text.
 
+### Anti-AI-prose discipline: prohibited clichés and false tropes
+
+- **Never invent or patronize the reader's thoughts:**
+  Strictly prohibit phrases such as 「讀者很自然會問……」 (The reader will naturally ask...), 「你可能會好奇……」 (You might wonder...), or 「我們不禁要問……」 (We cannot help but ask...). These are artificial AI conversational crutches that break the author-reader trust. State the technical conflict, engineering contradiction, or historical question directly and objectively (e.g., 「既然跨位置直接比對的 Attention 機制如此直覺，為什麼直到 2017 年才有人徹底拋棄 RNN 循環結構？」).
+- **Never use pseudo-literary, vague, or pseudo-profound headings:**
+  Strictly prohibit pseudo-poetic fluff such as 「每個故事都有它的邊界」, 「先是算得慢，後來還得記住前文」, or 「三次修補，最後換了路」. Headings must have concrete technical substance and clear subjects, naming the specific architecture, the physical/engineering bottleneck, or the mechanism (e.g., 「循環神經網路的瓶頸：循序依賴拖慢運算，長程記憶容易遺忘」, 「一手文獻清單，與技術宣稱邊界」, 「四大關鍵機制拆解：QKV 檢索、縮放因子、多頭注意力與位置編碼」).
+- **Avoid juvenile simplifications:**
+  Never talk down to graduate readers with toddler-like phrases (e.g., avoid 「Transformer 先分成兩邊，每一邊有自己的工作」; write instead 「編碼器與解碼器分工：Encoder 理解全文，Decoder 逐字生成」).
+
 ## Audit
 
 Read the case, prose, diagrams, formulas, and cited evidence together. Prioritize contradictions and unsupported historical claims, then missing explanatory steps, narrative discontinuities, and typography. Report exact line references, the reader-facing consequence, and a concrete repair. An audit request does not authorize article edits. Respect the requested verification cadence; do not launch browsers or render harnesses during a copy-only pass.
@@ -101,3 +138,11 @@ Read the case, prose, diagrams, formulas, and cited evidence together. Prioritiz
 - Do headings, diagrams, and component lists describe the same level of the architecture? Are newly introduced mechanisms motivated before their names appear?
 - Does each repeated explanation add a comparison, result, or consequence? Can production commentary and unsupported chronological language be removed without losing evidence?
 - Report remaining failures as location → missing knowledge or contradiction → reader consequence → concrete repair. Distinguish confirmed source contradictions from claims still needing verification. A passing formatter or typecheck is not editorial approval.
+
+## Paper page filename and routing harness specification
+
+All chapter files and routes in THE LLM project must adhere strictly to the canonical paper title slug standard:
+
+1. **File naming rule**: Standalone chapter files in `src/pages/papers/` and content files in `src/content/papers/` must be named strictly using the lowercase hyphenated canonical paper title slug (e.g. `improving-language-understanding-by-generative-pre-training.astro`, `attention-is-all-you-need.astro`). Informal nicknames, shorthand model names, or abbreviations (such as `gpt-1.astro`, `gpt-2.astro`, `bert.astro`, `llama.astro`) are strictly forbidden.
+2. **Milestones registry rule**: In `src/content/papers/milestones.ts`, every milestone paper's `id` and `url` must strictly match `slugifyPaperTitle(paper.title)` and `/papers/${slugifyPaperTitle(paper.title)}`.
+3. **Automated harness check**: `scripts/paper-routing-harness.mjs` is integrated into `npm run quality` (`npm run harness:check`). It validates that all `.astro` and `.ts` files, all registry entries, and all internal links strictly follow canonical title slugs. Any violation immediately fails the CI/quality gate.

@@ -3,6 +3,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PaperMeta from '../../components/PaperMeta.astro';
 import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
 import StoryRail from '../../components/StoryRail.astro';
+import AuthorGrid from '../../components/AuthorGrid.astro';
+import PaperNavigation from '../../components/PaperNavigation.astro';
+import Callout from '../../components/Callout.astro';
 import {
   attentionIsAllYouNeed,
   attentionSources,
@@ -14,18 +17,25 @@ const paperUrl = `https://arxiv.org/abs/${paper.arxivId}`;
 const sourceMap: Record<string, (typeof attentionSources)[number]> = Object.fromEntries(
   attentionSources.map((source) => [source.id, source]),
 );
-const sourceKindLabels: Record<string, string> = {
-  paper: '論文 / PAPER',
-  'authorial-account': '作者文章 / AUTHORIAL ACCOUNT',
-  interview: '訪談 / INTERVIEW',
-  'later-history': '後續紀錄 / LATER HISTORY',
+const sourceKindMeta: Record<string, { label: string; badge: string }> = {
+  paper: {
+    label: '一手論文 / DIRECT PAPER',
+    badge: 'border border-blue/30 bg-blue/10 text-blue',
+  },
+  'authorial-account': {
+    label: '官方解析 / OFFICIAL REPORT',
+    badge: 'border border-amber-600/30 bg-amber-500/10 text-amber-800',
+  },
+  interview: {
+    label: '口述訪談 / INTERVIEW',
+    badge: 'border border-red/30 bg-red/10 text-red',
+  },
+  'later-history': {
+    label: '同儕評審 / REVIEW RECORD',
+    badge: 'border border-emerald-700/30 bg-emerald-700/10 text-emerald-800',
+  },
 };
-const confidenceLabels: Record<string, string> = {
-  direct: '直接',
-  corroborated: '交叉印證',
-  inference: '推論',
-  unknown: '未知',
-};
+
 const story = [
   {
     year: '之前',
@@ -49,6 +59,102 @@ const story = [
     status: 'future' as const,
   },
 ];
+
+interface TimelineSourceItem {
+  refCode: string;
+  source: (typeof attentionSources)[number];
+  isFeatured?: boolean;
+}
+
+interface TimelineEpoch {
+  id: string;
+  year: string;
+  epochNumber: string;
+  title: string;
+  subtitle: string;
+  summary: string;
+  sources: TimelineSourceItem[];
+}
+
+const timelineEpochs: TimelineEpoch[] = [
+  {
+    id: 'epoch-2014',
+    year: '2014',
+    epochNumber: '01',
+    title: '循環神經網路的記憶極限，與初步對齊嘗試',
+    subtitle: 'THE RECURRENT BOTTLENECK & SOFT ALIGNMENT',
+    summary:
+      '在 Transformer 出現三年前，神經機器翻譯（NMT）的主流是 RNN/LSTM。模型必須把整句長度不一的文字硬塞進一個固定長度的中間向量，造成嚴重的長句遺忘。研究者開始嘗試用注意力機制在解碼時動態「對齊」來源詞。',
+    sources: [
+      {
+        refCode: 'S05',
+        source: sourceMap['paper-2014-align-translate'],
+      },
+      {
+        refCode: 'S04',
+        source: sourceMap['paper-2014-seq2seq'],
+      },
+    ],
+  },
+  {
+    id: 'epoch-2015',
+    year: '2015',
+    epochNumber: '02',
+    title: '注意力機制的工程分流，與循環枷鎖未解',
+    subtitle: 'GLOBAL VS. LOCAL ATTENTION & PERSISTENT RECURRENCE',
+    summary:
+      '注意力機制被證實能大幅改善長句翻譯，但當時的研究仍將其視為 RNN 的「輔助外掛」。模型骨幹依然依賴逐步疊加的循環計算，無法平行加速，計算等待依然存在。',
+    sources: [
+      {
+        refCode: 'S06',
+        source: sourceMap['paper-2015-attention-nmt'],
+      },
+    ],
+  },
+  {
+    id: 'epoch-2017',
+    year: '2017',
+    epochNumber: '03',
+    title: '典範轉移：完全拋棄循環，全自注意力橫空出世',
+    subtitle: 'PARADIGM SHIFT: SELF-ATTENTION AS THE SOLE ENGINE',
+    summary:
+      'Google Brain 團隊做出大膽的減法決策：徹底拋棄循環與卷積結構，僅依靠 Self-Attention 與 Multi-Head 機制建立全平行化矩陣運算。這篇論文直接奠定了日後大語言模型（LLM）的全球基石。',
+    sources: [
+      {
+        refCode: 'S01',
+        source: sourceMap['paper-2017-arxiv'],
+        isFeatured: true,
+      },
+      {
+        refCode: 'S02',
+        source: sourceMap['google-uszkoreit-2017'],
+      },
+      {
+        refCode: 'S08',
+        source: sourceMap['paper-review-record'],
+      },
+    ],
+  },
+  {
+    id: 'epoch-2023',
+    year: '2023–2024',
+    epochNumber: '04',
+    title: '大模型浪潮下的回顧：多晶片擴展與硬體協同',
+    subtitle: 'RETROSPECTIVE INSIGHTS: MULTI-CHIP SCALING & HARDWARE CO-DESIGN',
+    summary:
+      '從當初單純為了提升 Google 翻譯訓練速度的工程嘗試，到數年後驅動全球生成式 AI 洪流。共同作者 Aidan Gomez 在多場歷史專訪中，還原了早期的原始動機與 Transformer 跨多晶片擴展的硬體本質。',
+    sources: [
+      {
+        refCode: 'S03',
+        source: sourceMap['gomez-time-2023'],
+      },
+      {
+        refCode: 'S07',
+        source: sourceMap['gomez-ap-2024'],
+      },
+    ],
+  },
+];
 ---
 
 <BaseLayout
@@ -63,7 +169,7 @@ const story = [
           THE LLM
         </a>
         <span aria-hidden="true">/</span>
-        <span>第 01 章</span>
+        <span>第一章</span>
       </div>
       <div class="grid items-end gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-24">
         <div>
@@ -102,20 +208,396 @@ const story = [
         difficulty="核心概念"
         doi={paper.doi}
       />
-      <div class="flex flex-wrap items-center gap-x-6 gap-y-3 py-4 font-mono text-sm uppercase tracking-[0.04em] text-muted">
-        <span>原始論文</span>
-        <a
-          class="underline underline-offset-4 hover:text-red"
-          href={paperUrl}
-          target="_blank"
-          rel="noreferrer"
-          aria-label="在 arXiv 閱讀原始論文（在新分頁開啟）"
-        >
-          在 arXiv 閱讀 ↗
-        </a>
+      <div class="flex flex-wrap items-center justify-between gap-y-3 py-4 font-mono text-sm uppercase tracking-[0.04em] text-muted">
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+          <span>原始論文</span>
+          <a
+            class="underline underline-offset-4 hover:text-red"
+            href={paperUrl}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="在 arXiv 閱讀原始論文（在新分頁開啟）"
+          >
+            在 arXiv 閱讀 ↗
+          </a>
+        </div>
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs sm:text-sm">
+          <div class="flex items-center gap-1.5">
+            <span class="text-muted">上一篇章：</span>
+            <a
+              href="/papers/a-mathematical-theory-of-communication"
+              class="font-semibold text-muted underline underline-offset-4 hover:text-ink transition-colors"
+              aria-label="返回序章：A Mathematical Theory of Communication"
+            >
+              ← 序章 資訊理論
+            </a>
+          </div>
+          <span class="text-line hidden sm:inline" aria-hidden="true">
+            |
+          </span>
+          <div class="flex items-center gap-1.5">
+            <span class="text-muted">下一篇章：</span>
+            <a
+              href="/papers/improving-language-understanding-by-generative-pre-training"
+              class="font-semibold text-red underline underline-offset-4 hover:text-ink transition-colors"
+              aria-label="跳轉至第二章：Improving Language Understanding by Generative Pre-Training"
+            >
+              第二章 GPT-1 預訓練 ↗
+            </a>
+          </div>
+        </div>
       </div>
     </header>
 
+    <!-- SECTION 1: 歷史開局 / 說書人起手式 (START WITH WHY) -->
+    <section
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24`}
+      aria-labelledby="history-genesis-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            歷史開局 / 2014–2017：大模型前夜
+          </p>
+          <h2
+            id="history-genesis-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">從 Seq2Seq 到 Attention：</span>
+            <span class="block">
+              <em>天下苦 RNN 久矣，三次演進終破循環。</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          這不是一場預謀好的通用模型革命：Google 團隊當初只是為了解決機房裡昂貴的 GPU 算力被 RNN
+          串行等待活活拖死的工程絕境。
+        </p>
+      </div>
+
+      <PaperReadingLayout>
+        <div class="min-w-0 max-w-2xl space-y-6 text-base leading-8 text-muted">
+          <p class="font-display text-2xl text-ink leading-snug">
+            話說在 2017 年那篇驚天動地的《Attention Is All You
+            Need》問世之前，自然語言處理（NLP）完全是循環神經網路（RNN）與長短期記憶（LSTM）的天下。
+          </p>
+          <p>學界為什麼會被困在循環的泥淖裡？這一切，得從人類語言那令人抓狂的「變長」本質說起。</p>
+
+          <h3 class="font-display text-2xl text-ink pt-4">變長序列的迷局：語言不能削足適履</h3>
+          <p>
+            在 2014 年以前，深度學習的輝煌戰果幾乎全由電腦視覺（如 2012 年奪冠的
+            AlexNet）所獨占。那時的卷積神經網路（CNN）或多層感知機（MLP），背後的數學運算是尺寸完全焊死的矩陣乘法——它的根本假設，是
+            <strong>輸入與輸出的尺寸必須絕對固定</strong>。
+          </p>
+          <p>
+            最典型的例子是影像分類：不管你拍的是高山還是小狗，進神經網路前都要裁切或縮放成一張寬
+            224、高 224 個點的固定像素方格；乘上紅綠藍三通道後，輸入固定是 150,528
+            個數字。而模型的輸出，則是從 1,000 種預先定好的名冊（第 1 類是貓、第 2 類是客機、第 3
+            類是咖啡杯）中吐出固定 1,000 個機率數字。進出規格嚴絲合縫，矩陣乘法運轉無礙。
+          </p>
+          <p>
+            <strong>然而，人類語言是天然的變長序列（Variable-length Sequence）。</strong> 一句 2
+            個字的問候「早安」，可能對應英文 4 個單詞 "Good morning to you"；一段 40
+            個字的法文法律條文，可能需要 32
+            個字的英文翻譯。語言既沒有固定的長寬像素，也不會乖乖按照固定字數排隊。
+          </p>
+          <p>
+            在當時，面對這種忽長忽短的動態關係，傳統神經網路無從下手。產業界只能依賴傳統「統計機器翻譯（Statistical
+            Machine Translation,
+            SMT）」。那是一台由工程師手工拼裝的繁瑣流水線：一個模組管斷詞、一個模組查單字字典對齊、一個模組統計片語頻率、另一個模組靠統計機率評估英文語法是否通順。
+          </p>
+          <p>
+            這種拼裝系統最致命的缺陷，在於<strong>「無法實現端到端（End-to-End）學習」</strong>
+            。所謂端到端，就是
+            <strong>
+              「左端直接吃進原始中文，右端直接吐出最終英文；中間沒有人工外掛規則，由同一個神經網路大腦一體包辦」
+            </strong>
+            。在傳統拼裝系統裡，如果翻譯出來不知所云，工程師根本不知道該怪哪一道工序，錯誤像雪崩般逐層放大，也無法用單一的反向傳播誤差訊號讓全系統自我修正。語言處理，急需一套真正能包辦頭尾的端到端神經架構。
+          </p>
+
+          <h3 class="font-display text-2xl text-ink pt-4">思想向量的誕生：首尾相接的雙 LSTM</h3>
+          <p>
+            2014 年，Google Brain 的 Ilya Sutskever、Oriol Vinyals 與 Quoc Le
+            發表了里程碑論文《Sequence to Sequence Learning with Neural Networks》，開創了經典的
+            Seq2Seq 架構：{' '}
+            <a
+              class="text-red underline underline-offset-4"
+              href={sourceMap['paper-2014-seq2seq'].url}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="來源 S4：Sequence to Sequence Learning with Neural Networks（在新分頁開啟）"
+            >
+              [S4]
+            </a>
+            。他們首次證明：
+            <strong>
+              只要將兩組循環神經網路（RNN/LSTM）首尾相接，就能讓單一模型學會任意長度到任意長度的映射。
+            </strong>
+          </p>
+          <p>
+            但在理解這個架構之前，我們必須先跨過工程術語的鴻溝——
+            <strong>
+              究竟什麼是「隱藏狀態（Hidden State）」？為什麼它跟人類大腦的認知體驗一模一樣？
+            </strong>
+          </p>
+
+          <div class="my-6 border-l-4 border-red bg-paper-deep/60 p-5 sm:p-6 space-y-3 text-ink">
+            <h4 class="m-0 font-display text-lg font-bold text-red">
+              生活直覺：什麼是「隱藏狀態」？
+            </h4>
+            <p class="m-0 text-base leading-7">想像你在咖啡廳聽朋友說八卦。朋友慢慢開口說：</p>
+            <ul class="list-disc pl-5 space-y-1.5 text-sm sm:text-base leading-7 text-muted">
+              <li>
+                朋友說：<strong>「昨天……」</strong>
+                ——此時你的大腦一片空白，只知道時間，在等待主詞出現。
+              </li>
+              <li>
+                朋友接著說：<strong>「小明……」</strong>
+                ——你的腦袋立刻更新：「小明昨天怎麼了？」（產生好奇）。
+              </li>
+              <li>
+                朋友接著說：<strong>「在捷運站……」</strong>
+                ——你的腦袋又更新了：「他在捷運站摔倒？還是遇到誰？」（場景建立）。
+              </li>
+              <li>
+                朋友最後說：<strong>「遇見主管牽著別人的老婆。」</strong>
+                ——你的腦海「轟」的一聲，瞬間形成巨大震驚！
+              </li>
+            </ul>
+            <p class="m-0 text-base leading-7">
+              請注意：在聽這段話的每一秒鐘，你腦子裡的理解、情緒與猜想都在即時變化。
+              <strong>
+                這個「每聽完一個詞，內心當下累積的全部理解與心理小劇場」，在電腦眼裡就叫「狀態（State）」
+              </strong>
+              。
+            </p>
+            <p class="m-0 text-base leading-7">
+              那為什麼前面要加一個<strong>「隱藏（Hidden）」</strong>
+              ？因為外人只能看見輸入的文字（朋友說的話）和輸出的答案（你最後回的話），至於你肚子裡即時翻騰的心路歷程，藏在黑盒子大腦深處，外界看不見，所以工程師稱它為
+              <strong>「隱藏狀態」</strong>。在電腦裡，它沒有人類的情緒，只能以一排包含 512
+              個小數點數字的<strong>「向量（Vector）」</strong>來記錄。
+            </p>
+          </div>
+
+          <p>弄懂了這點，你就能看清經典 Seq2Seq 做了多麼精妙、卻又多麼殘酷的事：</p>
+          <p>
+            左側的<strong>編碼器（Encoder RNN）</strong>
+            就像一位聽法文演講的口譯員，逐字讀入句子。每讀一個詞，大腦裡的「內心小劇場」就更新一次（
+            <code class="text-xs bg-paper-deep px-1.5 py-0.5">
+              h_t = LSTM(x_t, h_&#123;t-1&#125;)
+            </code>
+            ）。當讀到最後一個單詞時，口譯員聽完全文那一剎那的最後大腦狀態{' '}
+            <code class="text-xs bg-paper-deep px-1.5 py-0.5">
+              h_T ∈ ℝ<sup>512</sup>
+            </code>
+            ，就被稱為整句話的<strong>「思想向量（Thought Vector）」</strong>。
+          </p>
+          <p>
+            然而，最殘酷的架構代價隨之而來：
+            <strong>
+              口譯員在聽講過程中，前面每一句累積的所有逐字心路歷程{' '}
+              <code class="text-xs bg-paper-deep px-1.5 py-0.5">
+                (h₁, h₂, ..., h_&#123;T-1&#125;)
+              </code>
+              ，被命令當場全部清空忘掉！
+            </strong>
+            為什麼？因為當時右側的<strong>解碼器（Decoder RNN）</strong>只有一個初始接口插槽（
+            <code class="text-xs bg-paper-deep px-1.5 py-0.5">s₀ = h_T</code>
+            ）。在注意力機制發明前，沒有人知道該如何讓模型動態調閱整排筆記。
+          </p>
+          <p>
+            解碼器只能像人類憑記憶複述一樣，孤注一擲地完全憑這最後一瞬間的腦袋殘存印象，
+            <strong>自迴歸（Autoregressive）</strong>
+            地——講完第一個英文單詞，再依據自己講出的話講下一個單詞——向外吐出翻譯。
+          </p>
+
+          <h3 class="font-display text-2xl text-ink pt-4">手心裡的代碼：資訊瓶頸與長句雪崩</h3>
+          <p>
+            這正是<strong>「資訊瓶頸（Information Bottleneck）」</strong>
+            的恐怖之處：好比逼一位口譯員聽完長達 60
+            個字的高難度演說，不准動手寫筆記，只准在手心寫下一個 512
+            維的數字代碼，然後完全憑這個代碼把整篇演說精準翻成英文。
+          </p>
+          <p>任何人都知道這違背認知常理。當句子變長時，RNN 遇到了兩個致命死穴：</p>
+          <ul class="list-disc pl-5 space-y-2 text-ink">
+            <li>
+              <strong>前向遺忘與「梯度消失（Vanishing Gradient）」：</strong>
+              讀到第 60
+              個字時，最後的記憶全被後面的詞佔滿，前面講了什麼早就模糊了；而在模型學習訓練時，翻譯錯誤的修正訊號（梯度）必須從最後一個詞倒推回去修正前面的參數。但在長達數十步的連續傳話中，訊號每往回傳一步就減弱一次，如同長廊裡的傳話遊戲，傳到開頭時早已微弱歸零，模型根本學不會長句的前後呼應。
+            </li>
+            <li>
+              <strong>長句品質斷崖式雪崩：</strong>{' '}
+              在機器翻譯領域，評量翻譯水準與專業人類譯者有多吻合的客觀分數叫{' '}
+              <strong>BLEU 分數</strong>（0 至 100 分）。2014 年 Cho 等人的實驗證實：
+              <strong>
+                當句子長度超過 15 至 20 個單詞時，Seq2Seq 的 BLEU 分數呈現斷崖式的雪崩暴跌！
+              </strong>
+            </li>
+          </ul>
+
+          <h3 class="font-display text-2xl text-ink pt-4">第一道曙光：Bahdanau 的注意力補丁</h3>
+          <p>
+            同年，Dzmitry Bahdanau、Kyunghyun Cho 與 Yoshua Bengio 站了出來，提出了常識性的反問：
+            <strong>
+              「為什麼不准口譯員做筆記？既然聽講時每一步大腦明明都產生了理解（隱藏狀態），為什麼非要全部扔掉，逼最後一個詞背負全部記憶？」
+            </strong>{' '}
+            <a
+              class="text-red underline underline-offset-4"
+              href={sourceMap['paper-2014-align-translate'].url}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="來源 S5：Neural Machine Translation by Jointly Learning to Align and Translate（在新分頁開啟）"
+            >
+              [S5]
+            </a>
+          </p>
+          <p>
+            他們的解法無比直覺：<strong>允許口譯員做便條紙筆記！</strong>
+            編碼器每聽一個詞，就撕一張便條紙記下當下的理解{' '}
+            <code class="text-xs bg-paper-deep px-1.5 py-0.5">[h₁, h₂, ..., h_T]</code>
+            ，整齊貼在白板上。解碼器在翻譯英文時，每寫一個單詞，就抬起頭往白板掃視一眼（動態計算匹配權重），需要主詞就看主詞便條，需要動詞就看動詞便條。這套
+            <strong>「動態翻筆記」</strong>的機制，就是<strong>注意力（Attention）</strong>
+            ！長句遺忘症立刻治癒，BLEU 分數不再隨長度下跌。
+          </p>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            算力時代的死穴：串行排隊的「時序等待牆」
+          </h3>
+          <p>
+            Bahdanau 的便條紙筆記解決了<strong>「記憶容量瓶頸」</strong>
+            ，卻撞上了另一道更堅固的物理高牆——<strong>「時序等待牆」</strong>。
+          </p>
+          <p>
+            即便允許做筆記，口譯員依然必須<strong>「一秒一秒排隊聽」</strong>：演講者講完第 1
+            句才能記第 1 句，講完第 99 句才能記第 100
+            句。這在人類生理上理所當然，但在計算機工程中卻是災難！
+          </p>
+          <p>
+            想像 Google 機房裡有上萬顆頂級 GPU
+            運算核心，就像體育場上坐著一萬名隨時能出發的短跑健將。但因為 RNN
+            是「大隊接力賽」，全場只准 1 個人在跑道上慢慢交接棒，其餘 9,999
+            名健將只能乾坐在看台上嗑瓜子！強大的平行硬體算力被活活浪費在漫長的串行等待中。訓練一個模型動輒耗時數週，昂貴的算力被卡死在時序鏈上。
+          </p>
+
+          <h3 class="font-display text-2xl text-ink pt-4">八人拍案而起：徹底砸碎循環的枷鎖</h3>
+          <p>
+            這正是 2017 年夏天，Google Brain 的八位作者發動架構革命的起點：
+            <strong>
+              「既然文章早就白紙黑字寫在那裡了，為什麼非要逼電腦像人類耳朵一樣一個字一個字排隊聽？把這個老牛拉破車的循環外殼（RNN）徹底砸碎！」
+            </strong>
+          </p>
+          <p>
+            這八個人做出了震撼 AI 界的大膽創舉：
+            <strong>徹底廢除 RNN，讓所有單詞「同時」進場（Attention Is ALL You Need）！</strong>
+            他們把整句話的所有單詞在一瞬間同時發給 GPU
+            核心，讓每個單詞在進入模型的同一微秒內，同時向全句其他所有單詞發射「雷達探測（Self-Attention）」，直接秒級鎖定前後關聯。
+          </p>
+          <p>
+            在 WMT 2014 機器翻譯評測基準上，他們僅使用 8 張 P100 GPU 訓練 3.5 天，英法翻譯即達到
+            41.8 BLEU，英德翻譯達到 28.4 BLEU，刷新所有紀錄{' '}
+            <a
+              class="text-red underline underline-offset-4"
+              href={sourceMap['paper-2017-arxiv'].url}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="來源 S1：Attention Is All You Need（在新分頁開啟）"
+            >
+              [S1]
+            </a>
+            。一場席捲整個 AI 歷史的革命，自此揭開序幕。
+          </p>
+        </div>
+
+        <aside class="self-start space-y-8" slot="rail">
+          <div
+            class="border-t-4 border-red bg-surface p-6 sm:p-8"
+            aria-labelledby="evidence-ladder-title"
+          >
+            <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+              文獻證據分級 / EVIDENCE STRUCTURE
+            </p>
+            <h3 id="evidence-ladder-title" class="mt-4 mb-5 font-display text-3xl leading-tight">
+              文獻證據核實分級
+            </h3>
+            <p class="mb-6 text-base leading-8 text-muted">
+              本專題論述依據一手技術文件與文獻等級嚴格區分，確保所有架構機制與歷史脈絡皆具可核實性。
+            </p>
+            <dl class="m-0">
+              <div class="grid gap-2 border-t border-line py-4 sm:grid-cols-[7rem_1fr] sm:gap-4">
+                <dt class="font-mono text-sm text-red">一手論文 / DIRECT</dt>
+                <dd class="m-0 text-base leading-7 text-muted">
+                  Vaswani 等人原著論文詳述了 Attention 計算公式、模型參數配置與 WMT 基準測試數據。
+                </dd>
+              </div>
+              <div class="grid gap-2 border-t border-line py-4 sm:grid-cols-[7rem_1fr] sm:gap-4">
+                <dt class="font-mono text-sm text-red">官方解析 / CORROBORATED</dt>
+                <dd class="m-0 text-base leading-7 text-muted">
+                  Google Research
+                  同期技術報告（Uszkoreit）闡釋了自注意力機制解決硬體循序依賴之工程動機。
+                </dd>
+              </div>
+              <div class="grid gap-2 border-t border-line py-4 sm:grid-cols-[7rem_1fr] sm:gap-4">
+                <dt class="font-mono text-sm text-red">口述歷史 / CONTEXT</dt>
+                <dd class="m-0 text-base leading-7 text-muted">
+                  核心作者訪談記錄了 2017
+                  年團隊聚焦翻譯任務的工程背景，為當時的研究視野提供第一手補充。
+                </dd>
+              </div>
+              <div class="grid gap-2 border-t border-line py-4 sm:grid-cols-[7rem_1fr] sm:gap-4">
+                <dt class="font-mono text-sm text-faint">同儕評審 / REVIEW</dt>
+                <dd class="m-0 text-base leading-7 text-muted">
+                  NeurIPS 2017 評審紀錄反映學界在發表初期對注意力機制的評價與接受過程。
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="border-t-4 border-ink bg-paper p-6 sm:p-8">
+            <p class="mb-4 font-mono text-sm tracking-[0.08em] text-red">本篇論文的核心研究問題</p>
+            <p class="m-0 font-display text-2xl leading-snug">
+              能否在徹底移除循序遞歸鏈的前提下，直接連結任意遠距關聯並實現完全平行運算？
+            </p>
+          </div>
+        </aside>
+      </PaperReadingLayout>
+
+      <div class="mt-12 max-w-4xl">
+        <Callout variant="editorial" title="歷史總結：三次架構演進的本質">
+          <div class="grid gap-4 sm:grid-cols-3 text-sm">
+            <div class="border border-line bg-surface p-4">
+              <span class="font-bold text-ink block mb-1">① 經典 Seq2Seq (2014)</span>
+              <span class="text-xs text-muted block mb-2">Sutskever et al.</span>
+              <p class="m-0 text-xs text-muted leading-relaxed">
+                雙 RNN 結構。解決了變長映射，但整句壓縮為單一向量{' '}
+                <code class="text-[11px] bg-paper-deep px-1">h_T</code>，造成長句資訊瓶頸。
+              </p>
+            </div>
+            <div class="border border-line bg-surface p-4">
+              <span class="font-bold text-ink block mb-1">② Seq2Seq + 注意力 (2014)</span>
+              <span class="text-xs text-muted block mb-2">Bahdanau et al.</span>
+              <p class="m-0 text-xs text-muted leading-relaxed">
+                保留所有 <code class="text-[11px] bg-paper-deep px-1">[h₁, ..., h_T]</code>
+                ，動態軟對齊。解決了記憶瓶頸，但依然受限於 RNN 串行等待，無法平行。
+              </p>
+            </div>
+            <div class="border border-red bg-red-soft p-4">
+              <span class="font-bold text-red block mb-1">③ Transformer (2017)</span>
+              <span class="text-xs text-red block mb-2">Vaswani et al.</span>
+              <p class="m-0 text-xs text-ink leading-relaxed">
+                <strong>徹底移除 RNN 循環</strong>。僅憑 Self-Attention
+                全域矩陣相乘，實現完全並行與無損關聯。
+              </p>
+            </div>
+          </div>
+        </Callout>
+      </div>
+
+      <div class="mt-16">
+        <StoryRail events={story} label="論文發展時間線，可使用鍵盤瀏覽" />
+      </div>
+    </section>
+
+    <!-- SECTION 2: 機制與直覺 (THE MECHANISM) -->
     <section
       class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24`}
       aria-labelledby="core-question-title"
@@ -123,19 +605,20 @@ const story = [
       <div class="max-w-none">
         <div>
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            問題 / THE PROBLEM
+            機制與直覺 / THE MECHANISM
           </p>
           <h2
             id="core-question-title"
-            class="m-0 max-w-[13ch] font-display text-5xl sm:text-6xl lg:text-7xl leading-tight tracking-[-0.04em]"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
           >
             <span class="block">翻譯一個字時，</span>
             <span class="block">
               <em>答案可能在句子的另一端。</em>
             </span>
           </h2>
-          <p class="mt-7 max-w-[40ch] text-base leading-8 text-muted">
-            單字表可以告訴你「自己」大致和反身代名詞有關，卻不會告訴你它在這一大段話裡跟著誰。翻譯時，人物、動作順序和代名詞的對象，必須一起看。
+          <p class="mt-7 max-w-2xl text-base leading-8 text-muted">
+            前文說道，Vaswani
+            團隊決心砸碎循環的枷鎖。然而學界隨之拋出最尖銳的質疑：既然丟掉了時間指針，神經網路該如何在一瞬間，隔空看懂數十個字之外的指代與修飾？答案是——完全依賴注意力分數的矩陣比對。
           </p>
           <div class="mt-7 max-w-none border border-blue/40 bg-blue/5 p-6 sm:p-8">
             <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-blue">
@@ -182,44 +665,33 @@ const story = [
                 </p>
               </div>
               <div class="bg-surface p-6 sm:p-8">
-                <p class="m-0 font-mono text-sm font-semibold tracking-[0.08em] text-red">
-                  「那份同意書」是哪一份？ / REFERENCE
+                <p class="m-0 font-mono text-sm font-semibold tracking-[0.08em] text-blue">
+                  「那份同意書」是哪一份？ / ANAPHORA
                 </p>
                 <p class="mt-3 mb-0 text-base leading-8 text-muted">
-                  「那份同意書」回指前面提過的「受訪者同意書」，不是「原稿」；英文因此寫成{' '}
-                  <code>the consent form</code>，後面再用 <code>it</code> 找回同一份文件。
+                  英文第二次出現時寫成 <code>the consent form</code>，第三次寫成 <code>it</code>
+                  ；它們回指的不是更晚出現的「原稿」，而是王老師提醒的「受訪者同意書」。
                 </p>
               </div>
             </div>
-            <dl class="mt-8 border-t border-dashed border-blue/30 text-base leading-8 text-muted">
-              <div class="grid gap-3 border-b border-dashed border-blue/30 py-5 sm:grid-cols-[7rem_1fr] sm:gap-5">
-                <dt class="font-mono text-sm text-blue">小明 / he</dt>
-                <dd class="m-0">
-                  <code>Professor Wang</code> 是 <code>reminded him</code> 的主詞；<code>him</code>{' '}
-                  是接受提醒的小明。到了 <code>he realized</code> 和 <code>he first returned</code>
-                  ，主詞才回到小明。
+            <dl class="mt-8 grid gap-6 border-t border-blue/30 pt-6 text-base leading-8 lg:grid-cols-3">
+              <div>
+                <dt class="font-mono text-sm font-semibold text-blue">1. 主詞不能接錯</dt>
+                <dd class="m-0 text-muted">
+                  「交給王老師」之後接著<span>「提醒他在方法章補上」</span>
+                  ；動作者已經換成王老師，被提醒的對象才是小明。
                 </dd>
               </div>
-              <div class="grid gap-3 border-b border-dashed border-blue/30 py-5 sm:grid-cols-[7rem_1fr] sm:gap-5">
-                <dt class="font-mono text-sm text-blue">後</dt>
-                <dd class="m-0">
-                  <code>After reading the abstract</code>
-                  只連接「王老師看完摘要」和「提醒他」；交研究計畫發生在前面，是因為它位於前一個中文句子，不是
-                  <code>after</code> 自己額外交代的。
+              <div>
+                <dt class="font-mono text-sm font-semibold text-blue">2. 文件不能混淆</dt>
+                <dd class="m-0 text-muted">
+                  句中有「研究計畫」「受訪者同意書」「摘要」「聯絡資料」「原稿」「那份同意書」。到了後半段，「那份同意書」要接回第二句的「受訪者同意書」，而不是第四句的「原稿」。
                 </dd>
               </div>
-              <div class="grid gap-3 border-b border-dashed border-blue/30 py-5 sm:grid-cols-[7rem_1fr] sm:gap-5">
-                <dt class="font-mono text-sm text-blue">先、再、才</dt>
-                <dd class="m-0">
-                  <code>After</code>、<code>When</code>、<code>so</code> 和 <code>then</code>
-                  把「看摘要、提醒、發現、尋找、寄出」排出順序；翻譯時還要把中文的「才」和「於是」所帶出的前後關係保留下來。
-                </dd>
-              </div>
-              <div class="grid gap-3 py-5 sm:grid-cols-[7rem_1fr] sm:gap-5">
-                <dt class="font-mono text-sm text-blue">那份同意書</dt>
-                <dd class="m-0">
-                  <code>the consent form</code> 和 <code>it</code>
-                  都回到前面提過的「受訪者同意書」；「原稿」是夾住它的另一份文件。
+              <div>
+                <dt class="font-mono text-sm font-semibold text-blue">3. 動作有先後</dt>
+                <dd class="m-0 text-muted">
+                  「先改好摘要」「又整理資料」「還重新排版」「才發現」「於是先回系辦」「再把修正版寄出」；翻譯必須理清時序關係。
                 </dd>
               </div>
             </dl>
@@ -227,79 +699,39 @@ const story = [
           <PaperReadingLayout class="mt-12 text-base leading-8 text-muted">
             <div class="min-w-0 max-w-2xl">
               <p class="mb-10">
-                模型把輸入切成一串可以依序編號的小片段。這些小片段叫作 <code>token</code>；一個
-                token
-                可能是一個字、一個詞，也可能只是詞的一部分。這裡說的「位置（position）」就是某個
-                token
-                在這串輸入裡的編號，不是畫面上的座標。這個編號先回答「它排在哪裡」，還沒有回答另一個問題：讀到第
-                4 格的資料後，模型要怎麼把它帶到第 10 格？下面的示意會把幾個 token
-                合併成讀者熟悉的詞組，方便追蹤前後距離。
+                如果將這段真實案例拆解為語意單元，我們立刻就能看清這場跨越長距離的語言捉迷藏：第 10
+                格的「那份同意書」，到底要如何隔空對齊第 4 格的「受訪者同意書」？
               </p>
               <p class="mb-10">
-                早期常用的答案是 <code>RNN</code>。<code>RNN</code> 是 recurrent neural
-                network（循環神經網路）：它從左到右讀一串輸入，每讀到一個新的位置，就把「這一格的資料」和「上一格留下的摘要」合在一起，再把合成的結果交給下一格。於是，第
-                10 格若要用第 4 格的線索，就只能接收已經一路更新過來的結果。
+                回想第一幕所剖析的循環泥淖：若交由傳統 RNN 處理，第 10
+                格只能接收前一格留下的隱藏狀態。為了將第 4 格「受訪者同意書」的線索送到第 10
+                格，訊號必須經過第 5 至第 9 格連續五次矩陣壓縮與遞歸更新：
               </p>
-              <p class="mb-10">
-                RNN 每一格交給下一格的那串摘要叫作 <code>hidden state</code>
-                。它不是暫存的中文字，也不是已經完成的英文翻譯，而是一串固定長度的數字，用來攜帶模型目前認為重要的資訊。每讀一格，模型都會重新整理這串數字；它不是把前面整段話原封不動存起來。
-              </p>
-              <div class="mb-10 border-l-2 border-blue pl-5 text-base leading-8 text-blue">
-                <div class="font-mono">h₁ = f(小明)</div>
-                <div class="font-mono">h₂ = f(研究計畫, h₁)</div>
-                <div class="font-mono">h₃ = f(王老師, h₂)</div>
-                <div class="font-mono">h₄ = f(受訪者同意書, h₃)</div>
-                <div class="font-mono">h₅ = f(摘要, h₄)</div>
-                <div class="font-mono">h₆ = f(聯絡資料, h₅)</div>
-                <div class="font-mono">h₇ = f(研究計畫, h₆)</div>
-                <div class="font-mono">h₈ = f(研究室, h₇)</div>
-                <div class="font-mono">h₉ = f(原稿, h₈)</div>
-                <div class="font-mono">h₁₀ = f(那份同意書, h₉)</div>
-                <p class="mt-4 mb-0 font-sans text-base leading-8 text-muted">
-                  這裡把幾個詞組合併成一格，方便看清楚路徑；真實模型還會把文字切成更小的 token。每個{' '}
-                  <code>hᵢ</code> 都是同樣固定長度的 hidden state；<code>f</code>
-                  每次只把目前輸入和前一個固定大小的 state 合成下一個 state。第 4
-                  格的「受訪者同意書」要傳到第 10 格的「那份同意書」，中間必須經過第 5、6、7、8、9
-                  格。
+              <Callout variant="note" class="mb-10">
+                <div class="font-mono text-sm space-y-1">
+                  <div>h₄ = LSTM(受訪者同意書, h₃)</div>
+                  <div class="text-muted">
+                    ↓ 經過摘要、聯絡資料、研究計畫、研究室、原稿連續稀釋...
+                  </div>
+                  <div>h₁₀ = LSTM(那份同意書, h₉)</div>
+                </div>
+                <p class="mt-4 mb-0 font-sans text-base leading-7 text-blue/90">
+                  正如前文指出，這條漫長的遞歸鏈不僅逼得 GPU
+                  只能串行排隊，更讓手心大小的便箋空間在反覆改寫中將「受訪者同意書」的細節徹底沖淡。
                 </p>
-              </div>
+              </Callout>
               <div class="mb-10 border-y-2 border-red bg-red-soft/30 px-5 py-6 sm:px-7">
                 <p class="m-0 text-base leading-8 text-ink">
                   <strong>
-                    RNN 的限制不在於它完全讀不到前文，而在於它只能帶著一份固定大小的摘要往前走。
+                    Transformer 的回答乾脆俐落：既然中間的傳遞會失真，為什麼不讓第 10
+                    格直接轉頭看向第 4 格？
                   </strong>
-                  句子越長，後面要找前面的線索時，中間要經過的更新就越多。
+                  它不再依賴隱藏狀態的串行接力，而是把整句話的所有位置攤開，直接進行兩兩點積對齊。
                 </p>
               </div>
               <p class="mb-10">
-                這是資訊容量的限制，常被稱為「記憶瓶頸」；它不是電腦的 RAM 不夠。RNN 的每一格{' '}
-                <code>hidden state</code>
-                都有固定大小；輸入越長，新的資料越多，模型卻還是要把目前重要的內容塞進同樣大小的一串數字。這就像隨身只帶著一張固定大小的小便箋，每讀到一個新動作，就必須在同一張紙上擦去舊筆記、改寫成最新摘要。它不能把讀過的整段文字原封不動留著，只能一直改寫這份摘要。
-              </p>
-              <p class="mb-10">
-                回到這段案例：讀到「小明」時，模型需要留下「這是整段故事的主角」；讀到王老師、口試委員、受訪者同意書、原稿時，還要保留誰做了什麼、哪些文件彼此相關；讀到「那份同意書」和「他」時，才要把這些資訊用在英文翻譯裡。如果便箋空間有限，中間任何一次改寫都可能讓主角、順序或文件之間的線索被覆蓋或沖淡。這不是說每個
-                RNN 翻譯結果都一定會錯，而是這條記憶路徑越長，模型要學的工作越難。
-              </p>
-              <p class="mb-10">
-                訓練時，模型會把自己產生的英文和正確譯文比較，算出
-                loss（損失）：這是一個表示「這次預測離目標有多遠」的數字。正確譯文不會直接告訴模型「第
-                4 格一定要連到第 10
-                格」；模型只能從最後的翻譯結果得到修正方向，再把這個方向用回前面的計算。
-              </p>
-              <p class="mb-10">
-                在 RNN 裡，這個修正訊號得從最後的 <code>h₁₀</code> 沿著 <code>h₉</code>、
-                <code>h₈</code> 一格一格傳回
-                <code>h₁</code>
-                ；路徑越長，訊號越容易變弱或變得不穩定。這是「訓練訊號要走多遠」的問題，和前面「資訊要塞進多大的摘要」有關，但不是同一件事。
-              </p>
-              <p class="mb-10">
-                還有一個不同的限制：前向計算的順序被鎖住。第 10 格必須等第 9 格算完，第 9
-                格又必須等第 8 格，所以 GPU 不能在同一層直接同時計算這條 RNN
-                鏈上的所有位置。這是等待時間的問題，不是記憶容量的問題。
-              </p>
-              <p class="mb-10">
-                把這些限制放在一起看：RNN
-                讓資料沿著同一條鏈往前傳，讓訓練的修正訊號沿著這條鏈往回走，也讓每一格都得等待前一格。要翻譯「那份同意書」時，前面的線索既要塞進固定大小的摘要，又要經過中間每一格才能抵達。這正是作者要改的地方：處理一個位置時，能不能直接查看同一段輸入裡其他位置的資料，少走這段繞路？
+                要做到這一點，首先必須為輸入的每一個語意單元編上序號。在真實模型中，文字會被切成更細的
+                Token；此處我們先以 10 個核心語意位置為例，觀察這張全局對齊網是如何鋪展開來的。
               </p>
               <div class="mb-10 border-y border-line py-6">
                 <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
@@ -353,23 +785,40 @@ const story = [
                 </p>
               </div>
               <p class="mb-10">
-                有了這個編號，再回到第 10 個位置「那份同意書」。在 RNN 裡，第 10 格只能先接收第 9
-                格留下的摘要；如果它需要第 4 格「受訪者同意書」的線索，這條線索就得經過第
-                5、6、7、8、9 格，一格一格傳過來。新的做法讓第 10
-                格直接把自己的數字資料，和同一段輸入裡的其他位置放在一起比較。
+                有了這個編號，再回到第 10 個位置「那份同意書」。在傳統 RNN 裡，第 10
+                格只能被動接收上一格遞歸傳來的殘存訊號；而在 Self-Attention 裡，第 10
+                格直接把自己的表徵向量，和同一個 Context Window 裡的其他 9 個位置一對一進行
+                <strong>「點積（Dot Product）」</strong>比對。
               </p>
+              <div class="mb-10 border-l-2 border-red pl-5 space-y-3 text-ink">
+                <p class="m-0 font-semibold text-red">
+                  什麼是「點積」與「Softmax」？零背景的直覺理解：
+                </p>
+                <p class="m-0 text-muted">
+                  <strong>① 點積是「相似度雷達」：</strong>在數學上，兩個 512
+                  維向量做點積，就是把對應位置的數字相乘後加總。如果兩個單詞在語意特徵上高度吻合（例如「那份同意書」與「受訪者同意書」同屬關鍵文件），它們的向量在空間中指向幾乎相同的方向，點積算出來的關聯分數就會非常巨大；如果風馬牛不相及，算出來的分數就會是零甚至負數。
+                </p>
+                <p class="m-0 text-muted">
+                  <strong>② Softmax 是「精力百分比分發器」：</strong>
+                  點積算出來的是一堆生硬的原始數值（例如
+                  8.2、1.5、-3.4）。電腦如何決定該放多少心力？Softmax
+                  運算將這些數值透過指數平滑拉開差距，並壓成
+                  <strong>總和剛好等於 100%（即 1.0）的權重比例</strong>
+                  。模型因而清楚判定：「這一步我該把 82% 的精力放在第 4 格『受訪者同意書』，11%
+                  放在第 9 格『原稿』，剩下的 7% 留給其餘詞彙」。
+                </p>
+                <p class="m-0 text-muted">
+                  <strong>③ 加權求和是「精準融合」：</strong>
+                  最後，模型依據這組百分比，將各位置的內容特徵加權融合。第 10
+                  格雖然身在句尾，但生成出的新特徵向量已經徹底吸收了第 4
+                  格「受訪者同意書」的精確細節，完全解決了代名詞指代不清的難題。
+                </p>
+              </div>
               <p class="mb-10">
-                第 10 格為什麼不能把每個位置都同樣處理？因為第 4 格「受訪者同意書」和第 9
-                格「原稿」對判斷「那份同意書」的幫助不同。模型先替每個位置算一個關聯分數，再把這些分數換成總和為
-                1 的權重，最後按照權重把各位置提供的數字資料加在一起。這樣，第 4
-                格可以影響得多一點，第 9 格可以影響得少一點；模型得到的是第 10
-                格的新數字資料，不是把某個詞原封不動搬過來。
-              </p>
-              <p class="mb-10">
-                這種「先算分數、再換成權重、最後把資料按權重混合」的運算，在翻譯研究裡叫作
+                這種「先算關聯分數、再轉為機率權重、最後加權求和」的運算，在翻譯研究裡叫作{' '}
                 <code>attention</code>
                 。這個名字沿自對齊問題：產生一個翻譯詞時，模型不需要把來源句的每個位置當成同樣重要，而是把較大的權重放在當下有用的來源位置上。這裡的
-                attention 不是視線，也不是模型真的理解了哪個字；它是一套用數字分配資料份量的計算。{' '}
+                attention 不是擬人化的「注意力」，而是一套極為嚴密的線性代數資料路由機制。{' '}
                 <a
                   class="text-red underline underline-offset-4"
                   href={sourceMap['paper-2014-align-translate'].url}
@@ -383,93 +832,81 @@ const story = [
               <p class="mb-10">
                 在這個 encoder 的例子裡，第 10 個位置會和第 1 到第 10
                 格的每一格比較，也包括它自己。為了讓後面的算例可以手算，文章只列出第 1
-                格「小明」、第 4 格「受訪者同意書」和第 9 格「原稿」；第 5、6、7、8
-                格一樣會有自己的分數，只是先不把十個數字全部寫出來。因為查找者和候選資料都來自同一段輸入，所以這種
-                attention 叫作
+                格「小明」、第 4 格「受訪者同意書」和第 9
+                格「原稿」。因為查找者和候選資料都來自同一段輸入，所以這種 attention 叫作{' '}
                 <code>self-attention</code>
-                ：同一段輸入中的各個位置互相提供線索，不是模型有意識地看自己。
+                （自注意力）：同一段輸入中的各個位置互相提供線索，實現全域語意融合。
               </p>
               <p class="mb-10">
-                因此，論文標題中的「Attention Is All You Need」不是說模型只剩下
-                attention，也不是說其他運算都不重要；它指出的是，跨位置傳遞資訊這件事不必再靠
-                recurrence，attention 可以成為主要通道，其他逐點運算仍然存在。
+                論文標題「Attention Is All You Need」的核心主張在於：序列建模徹底擺脫了
+                Recurrence（循環）與 Convolution（卷積），以 Self-Attention
+                作為跨位置連結資訊的骨幹，再輔以逐點前饋網路（Feed-Forward Networks）完成特徵轉換。
               </p>
               <p class="mb-10">
-                這個改動直接回應前面的兩個限制。前向計算時，「那份同意書」可以直接連到「受訪者同意書」，不必先穿過
-                <code>h₅</code>、<code>h₆</code>、<code>h₇</code>、<code>h₈</code>、<code>h₉</code>
-                等中間狀態；訓練時，最後的翻譯結果要修正這個關聯，也不必只沿著 <code>
-                  h₁₀
-                </code> 到 <code>h₁</code>
-                的鏈傳回去。路徑縮短，不代表模型從此不會遺失資訊，也不保證每次都翻對；它只是讓中間需要轉手的狀態變少，相關的兩個位置比較容易連在一起。
+                這個改動直接攻克了循環網路的兩大硬傷。在傳統 RNN 裡，第 10 格要看第 4
+                格，訊號必須翻山越嶺走過 6 個時間台階（即長度相關的 <code>O(n)</code>{' '}
+                步路，走得越遠摔得越慘）；而在 Self-Attention
+                裡，任意兩個詞之間只有「一跳（1-hop）」的直接連線，計算路徑縮短為常數級{' '}
+                <code>O(1)</code>{' '}
+                單步！反向傳播時，梯度修正訊號亦可跨越位置瞬間直達，徹底告別長程衰減。
               </p>
               <p class="mb-10">
-                不過，「直接連到」有一個前提：第 4 格和第 10
-                格必須同時出現在這一層的輸入裡。attention
-                不是把模型看過的整個訓練資料庫叫回來，而是在這一次送進模型的那一段文字中，讓各個位置互相比較；這也就是上一段所說的「所有位置」的範圍。
-                這段一次能放進模型處理的文字範圍，叫作 context
-                window。訓練時，研究團隊把資料切成一段段的輸入，再分批送進
-                GPU，每一批都有自己的長度上限。
+                不過，「直接連到」有一個前提：所有位置必須同時出現在這一層的輸入裡。attention
+                不是把模型看過的整個訓練資料庫叫回來，而是在這一次送進模型的那一段文字中，讓各個位置互相比較。這段一次能放進模型處理的文字長度上限，叫作{' '}
+                <strong>Context Window（上下文視窗）</strong>。
               </p>
-              <p class="mb-10">
-                如果真的把 1 兆個 token 放進同一個輸入，dense self-attention
-                就要讓每一個位置和其他每一個位置比較，分數表的大小會是 <code>n × n</code>；
-                <code>n = 10¹²</code> 時，就是
-                <code>10²⁴</code> 個分數。這不是把 GPU
-                再加大一點就能輕鬆處理的工作，標準模型不會把這麼長的文字當成一個 context
-                window。實際系統會限制輸入長度，或使用分段、局部視窗、稀疏 attention
-                等方法降低代價。
-              </p>
-              <aside class="mb-10 border-l-2 border-blue bg-blue/5 pl-5 text-base leading-8 text-blue">
+              <Callout variant="note" class="mb-10">
                 <p class="m-0">
-                  所以 Transformer
-                  解決的是：在一個有限長度的輸入裡，讓不同位置有較短的資訊路徑，並讓 encoder
-                  的同層計算更容易平行化；它沒有解決無限長記憶，也沒有消除 attention
-                  的記憶體和計算成本。在逐步處理的當下，RNN 只需帶著固定大小的
-                  state，代價是每一格都要等待；訓練時為了傳回修正訊號，仍可能需要保留或重算這些
-                  state。Transformer 讓同一個 context window
-                  裡的多個位置一起算，實作上要處理每個位置的向量和位置之間的分數；即使使用節省記憶體的實作，不把完整分數表留在記憶體裡，輸入變長時，計算與記憶體壓力仍會快速增加。
+                  Transformer
+                  的架構優勢在於：在給定長度的上下文視窗內，將任意兩位置間的資訊傳遞路徑縮短為{' '}
+                  <code>O(1)</code>，並使 Encoder 同層表徵得以在 GPU
+                  上高度平行運算。但其注意力矩陣的計算與顯存複雜度依然為 <code>O(n²)</code>
+                  ，在超長序列處理上仍有計算開銷的硬體約束。
                 </p>
-              </aside>
+              </Callout>
               <p class="mb-10">
                 前面說的是「一段有限輸入裡的計算代價」；要看它怎麼完成翻譯，還要把流程分成兩個角色。在機器翻譯裡，
-                <code>encoder</code>
-                讀入來源句子，為每個來源位置整理出帶有上下文的數字資料；<code>decoder</code>
-                再根據這些資料和已經寫出的目標 token，一個 token 一個 token 寫出下一個目標
-                token。同一層裡的多個來源位置可以一起做 attention，所以 encoder
+                <code>encoder</code> 讀入來源句子，為每個來源位置整理出帶有上下文的數字資料；
+                <code>decoder</code> 再根據這些資料和已經寫出的目標 token，一個 token 一個 token
+                寫出下一個目標 token。同一層裡的多個來源位置可以一起做 attention，所以 encoder
                 在訓練時能把這些運算交給 GPU 平行處理；decoder 生成英文時，未來的目標 token
                 還不存在，仍然要照順序往下寫。
               </p>
             </div>
             <aside
-              class="border-t-4 border-blue bg-blue/5 p-6 sm:p-8"
-              aria-labelledby="rnn-term-title"
+              class="border-t-4 border-red bg-red-soft/20 p-6 sm:p-8"
+              aria-labelledby="attention-term-title"
               slot="rail"
             >
-              <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-blue">
+              <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
                 字典 / TERM DICTIONARY
               </p>
-              <h3 id="rnn-term-title" class="mt-4 mb-6 font-display text-3xl leading-tight">
-                RNN
+              <h3 id="attention-term-title" class="mt-4 mb-6 font-display text-3xl leading-tight">
+                Self-Attention
               </h3>
-              <dl class="grid gap-4 border-t border-blue/30 pt-5 text-base leading-8">
+              <dl class="grid gap-4 border-t border-red/30 pt-5 text-base leading-8">
                 <div>
-                  <dt class="font-mono text-sm text-blue">它讀什麼</dt>
-                  <dd class="m-0 text-muted">一串有順序的 token；每次只處理目前這一格。</dd>
-                </div>
-                <div>
-                  <dt class="font-mono text-sm text-blue">它收到什麼</dt>
+                  <dt class="font-mono text-sm text-red">它讀什麼</dt>
                   <dd class="m-0 text-muted">
-                    目前 token 的數字資料，加上前一格留下的 hidden state。
+                    整段上下文所有位置的 token 向量序列（不分先後，全域平鋪）。
                   </dd>
                 </div>
                 <div>
-                  <dt class="font-mono text-sm text-blue">它留下什麼</dt>
-                  <dd class="m-0 text-muted">一串固定長度的數字，交給下一格繼續使用。</dd>
+                  <dt class="font-mono text-sm text-red">它算什麼</dt>
+                  <dd class="m-0 text-muted">
+                    當前位置的 Query 與所有位置的 Key 計算內積相關度，經 Softmax 歸一化為權重。
+                  </dd>
                 </div>
                 <div>
-                  <dt class="font-mono text-sm text-blue">它的限制</dt>
+                  <dt class="font-mono text-sm text-red">它留下什麼</dt>
                   <dd class="m-0 text-muted">
-                    第 10 格想用第 4 格的線索，必須先等並接收第 5–9 格傳來的結果。
+                    依注意力權重對所有 Value 加權求和，融合全域語意的新特徵向量。
+                  </dd>
+                </div>
+                <div>
+                  <dt class="font-mono text-sm text-red">它的突破</dt>
+                  <dd class="m-0 text-muted">
+                    跨位置傳遞路徑從 O(n) 縮短為 O(1) 常數級，同層表徵可在 GPU 上完全平行計算。
                   </dd>
                 </div>
               </dl>
@@ -1257,8 +1694,7 @@ const story = [
             這些關係不是單看某一個字就能得到的。模型必須把同一段文字裡的多個位置放在一起比較，才有資料可以判斷哪裡和現在正在處理的「那份同意書」有關。
           </p>
           <p class="mt-6 max-w-[58ch] text-base leading-8 text-muted">
-            要把剛才那個操作算出來，模型不能只保留一串沒有分工的數字。同一個位置的資料會被轉成三種用途：一種說明「目前要找什麼」，一種說明「這個位置有哪些可比對的線索」，另一種保留「被找到後要提供的內容」。這三種角色分別叫
-            Query、Key、Value；接下來先說明它們由什麼參數轉出來，再逐步把分數換成權重。
+            為了實現精準的關聯檢索與特徵聚合，模型將每個位置的向量分別投影為三種相異功能的表徵：Query（查詢向量：代表當前位置主動探尋的特徵）、Key（鍵值向量：供其他位置比對的索引）、Value（內容向量：比對吻合後提取的實際資訊）。接下來將拆解這三組向量的投影矩陣與注意力權重計算流程。
           </p>
           <aside
             class="border-t-4 border-blue bg-blue/5 p-6 sm:p-8"
@@ -1523,23 +1959,22 @@ const story = [
                 attention 需要的不是一張「誰分數最高」的榜單，而是一組能拿來加權的數字。softmax
                 讓模型可以保留多個線索，只是讓重要的位置影響較大。
               </dd>
-              <dt class="font-mono text-sm text-blue">這不是什麼</dt>
+              <dt class="font-mono text-sm text-blue">權重本質</dt>
               <dd class="m-0 text-muted">
-                這些數字不是「哪個位置一定正確」的機率，而是這一次計算中，各位置分到的權重。
+                歸一化後的數值代表特徵聚合的相對比例（Attention
+                Weights），使梯度可在反向傳播中平滑傳遞。
               </dd>
             </dl>
           </aside>
           <p class="mt-6 text-base leading-7 text-muted">
-            前一步算出的 <code>2.0</code>、<code>1.0</code>、<code>0.5</code>{' '}
-            是關聯分數，不是可以直接相加的比例。<code>softmax</code>
-            先把它們換成 <code>0.63</code>、<code>0.23</code>、<code>0.14</code>，這三個數就是
-            α，表示第 4、9、1 格各自提供多少份量；<code>V</code>{' '}
-            則是候選位置真正提供的向量。在技術記號裡，就是把每個位置的 Value
-            乘上它的權重，再全部加起來：
+            前一步算出的 <code>2.0</code>、<code>1.0</code>、<code>0.5</code> 是關聯分數，經{' '}
+            <code>softmax</code> 轉換為 <code>0.63</code>、<code>0.23</code>、<code>0.14</code>
+            ，即為注意力權重 α，分別對應第 4、9、1 格；<code>V</code>{' '}
+            則是各候選位置的特徵向量。注意力輸出即為各位置 Value 與其權重的線性組合：
             <code class="bg-paper-deep px-2 py-1 text-sm text-blue">
               結果(第 10 格) = α₄V(受訪者同意書) + α₉V(原稿) + α₁V(小明)
             </code>
-            。這裡只示範運算方式，不是論文報告的實驗數值。
+            。
           </p>
           <div class="mt-8 border-t border-dashed border-blue/30 pt-5">
             <p class="m-0 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-blue">
@@ -1578,233 +2013,364 @@ const story = [
             </p>
           </div>
         </PaperReadingLayout>
-      </div>
-    </section>
 
-    <section class={`${shell} border-t border-line py-24`}>
-      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            歷史 / 從翻譯任務開始
-          </p>
-          <h2 class="m-0 font-display text-5xl sm:text-6xl lg:text-6xl leading-tight tracking-[-0.04em]">
-            <span class="block">先是算得慢，</span>
-            <span class="block">
-              <em>後來還得記住前文。</em>
-            </span>
-          </h2>
-        </div>
-        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
-          當時的翻譯工作同時受三件事牽制：句子要保留遠距關係，位置要依序計算，訓練還要用上 GPU。
-        </p>
-      </div>
-      <PaperReadingLayout>
-        <div class="min-w-0 max-w-2xl">
-          <p class="font-display text-3xl leading-snug">
-            看懂了 attention 的運算，讀者很自然會問：既然直接跨格查看這麼直覺，為什麼直到 2017
-            年才有人把循環鏈完全拿掉？
-          </p>
-          <p class="mt-8 text-base leading-8 text-muted">
-            因為在 2017
-            年之前，研究團隊面對的是一個很具體、歷史包袱很深的工作：把來源語言的句子改寫成另一種語言，同時保留人物、動作和語序之間的關係。在當時，大家並不是在一張白紙上自由設計機器，而是一步步在修補既有的系統。
-          </p>
-          <p class="mt-8 text-base leading-8 text-muted">
-            這裡的 <code>encoder</code> 是讀入來源句子的部分，<code>decoder</code>
-            是根據它整理好的資料，逐步寫出目標句子的部分。到那時，attention 已經不是新名詞。前代的
-            recurrent translation system 讓 decoder
-            在產生每個目標詞時，回頭查看來源句子的相關位置；有的做法看全部來源詞，有的只看局部位置。但
-            encoder 和 decoder 的核心仍然是 recurrent
-            network，下一個位置仍要等上一個位置。Transformer
-            接手的不是空白問題，而是把「已經會找來源位置的 attention」改成整個 encoder–decoder
-            的主要計算路徑。{' '}
-            <a
-              class="text-red underline underline-offset-4"
-              href={sourceMap['paper-2017-arxiv'].url}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="來源 S1：Attention Is All You Need（在新分頁開啟）"
-            >
-              [S1]
-            </a>
-          </p>
-          <p class="mt-6 text-base leading-8 text-muted">
-            前一段說的等待，並不是抽象的速度問題：舊系統的 encoder
-            讀來源句子時，下一個位置必須等前一個位置完成；recurrent decoder
-            產生目標句子時，也必須等上一個目標 token。前代 attention 已經讓 decoder
-            能回頭取用來源位置，卻沒有拿掉這條循環的依賴鏈。Transformer
-            接手的就是這個尚未解開的部分：讓來源端的多個位置能在同一層一起計算，同時保留目標端生成時必要的先後順序。記憶的問題則出現在長句裡：讀到「那份同意書」時，模型得從一路更新的
-            hidden state 找回前面提過的「受訪者同意書」，還要分清楚「原稿」是另一份東西。Uszkoreit
-            同期的說明，也把長決策鏈連到學習遠距依賴 (distant dependencies) 的困難。{' '}
-            <a
-              class="text-red underline underline-offset-4"
-              href={sourceMap['google-uszkoreit-2017'].url}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="來源 S2：Transformer 說明文章（在新分頁開啟）"
-            >
-              [S2]
-            </a>
-          </p>
-          <p class="mt-6 text-base leading-8 text-muted">
-            論文和同期文章能支持的，是這條技術脈絡：attention 已能提供位置之間的路徑，而 recurrence
-            仍把計算排成一條必須等待的隊伍。至於哪一場討論先提出「移除
-            recurrence」，公開紀錄沒有留下答案。
-          </p>
-          <p class="mt-6 text-base leading-8 text-muted">
-            Gomez 後來回憶，團隊當時專注的是一個「very
-            scoped」的翻譯問題，沒有預見這項工作最後會變成什麼。這個回憶可以說明研究當時的視野，不能替論文補出一條私下的發明時間線。{' '}
-            <a
-              class="text-red underline underline-offset-4"
-              href={sourceMap['gomez-time-2023'].url}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="來源 S3：Aidan Gomez 訪談（在新分頁開啟）"
-            >
-              [S3]
-            </a>
-          </p>
-          <p class="mt-6 text-base leading-8 text-muted">
-            論文報告的結果則是另一件事：WMT 2014 English–German 得到 28.4 BLEU；English–French 在 8
-            張 GPU 上訓練 3.5 天後得到 41.8 BLEU。BLEU
-            是拿模型翻譯和人工參考譯文比對的分數；它能比較這組實驗，不能直接代表所有翻譯或其他任務。{' '}
-            <a
-              class="text-red underline underline-offset-4"
-              href={sourceMap['paper-2017-arxiv'].url}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="來源 S1：Attention Is All You Need（在新分頁開啟）"
-            >
-              [S1]
-            </a>
-          </p>
-        </div>
-        <aside
-          class="self-start border-t-4 border-red bg-surface p-6 sm:p-8"
-          aria-labelledby="evidence-ladder-title"
-          slot="rail"
+        <!-- BREAKOUT: 動態 Attention 擾動實驗室 -->
+        <figure
+          class="my-16 w-full max-w-6xl mx-auto border border-ink bg-surface p-6 sm:p-10 shadow-sm"
+          role="region"
+          aria-labelledby="attention-lab-title"
         >
-          <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            證據階梯 / THE EVIDENCE LADDER
-          </p>
-          <h3 id="evidence-ladder-title" class="mt-4 mb-5 font-display text-3xl leading-tight">
-            這些話，證據在哪裡？
-          </h3>
-          <p class="mb-6 text-base leading-8 text-muted">
-            這四個層級回答的是：「我們憑什麼這樣說？」直接，是來源明白寫出的事；交叉印證，是兩個公開來源互相支持；推論，是把資料連起來後的合理解讀；未知，則是目前不能下結論的地方。
-          </p>
-          <dl class="m-0">
-            <div class="grid gap-2 border-t border-line py-4 sm:grid-cols-[7rem_1fr] sm:gap-4">
-              <dt class="font-mono text-sm text-red">直接 / DIRECT</dt>
-              <dd class="m-0 text-base leading-7 text-muted">
-                論文明白寫出它要處理 recurrent model 的 bottleneck、提出 Transformer 架構，並在翻譯
-                benchmark 上報告結果。
-              </dd>
+          <div class="border-b border-line pb-6">
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p class="m-0 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+                  動態實驗室 / INTERACTIVE ATTENTION LAB
+                </p>
+                <h3
+                  id="attention-lab-title"
+                  class="mt-2 m-0 font-display text-2xl sm:text-3xl font-bold text-ink"
+                >
+                  注意力熱力擾動實驗室：文字一換，焦點如何隨之轉移？
+                </h3>
+              </div>
+              <span class="font-mono text-xs text-muted">Vaswani 2017 原著經典觀察</span>
             </div>
-            <div class="grid gap-2 border-t border-line py-4 sm:grid-cols-[7rem_1fr] sm:gap-4">
-              <dt class="font-mono text-sm text-red">印證 / CORROBORATED</dt>
-              <dd class="m-0 text-base leading-7 text-muted">
-                論文與 Uszkoreit 的同期文章都指出循序計算會造成等待；兩者一起支持「self-attention
-                可以縮短位置之間的資訊路徑」這個說法。
-              </dd>
-            </div>
-            <div class="grid gap-2 border-t border-line py-4 sm:grid-cols-[7rem_1fr] sm:gap-4">
-              <dt class="font-mono text-sm text-red">推論 / INFERENCE</dt>
-              <dd class="m-0 text-base leading-7 text-muted">
-                從這些資料可以重建研究團隊面對的設計壓力；但資料沒有記錄每一次討論，不能把重建的順序當成作者親口說的時間線。
-              </dd>
-            </div>
-            <div class="grid gap-2 border-t border-line py-4 sm:grid-cols-[7rem_1fr] sm:gap-4">
-              <dt class="font-mono text-sm text-faint">未知 / UNKNOWN</dt>
-              <dd class="m-0 text-base leading-7 text-muted">
-                現有公開資料無法回答誰最先提出移除 recurrence；這件事先保留，不補寫故事。
-              </dd>
-            </div>
-          </dl>
-        </aside>
-      </PaperReadingLayout>
-    </section>
-
-    <section class={`${shell} border-t border-ink py-24`}>
-      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            歷史 / 2014–2017
-          </p>
-          <h2 class="m-0 font-display text-5xl sm:text-6xl lg:text-7xl leading-tight tracking-[-0.04em]">
-            <span class="block">三次修補，</span>
-            <span class="block">
-              <em>最後換了路。</em>
-            </span>
-          </h2>
-        </div>
-        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
-          Transformer
-          並不是突然出現。前面的論文先解決「序列怎麼讀」，再解決「長句怎麼找回」，最後才把循環本身拿掉。
-        </p>
-      </div>
-      <div class="grid gap-12 lg:grid-cols-[1fr_0.55fr] lg:gap-24">
-        <div class="max-w-[68ch]">
-          <p class="text-base leading-8 text-muted">
-            2014 年，Sutskever、Vinyals 和 Le 用 LSTM encoder–decoder
-            把變長的來源句子轉成固定維度向量，再由另一個 LSTM decoder 寫出目標句子。這讓 neural
-            machine translation 可以用一個端到端模型完成，但整句資訊仍得先擠進那個向量。{' '}
-            <a
-              class="text-red underline underline-offset-4"
-              href={sourceMap['paper-2014-seq2seq'].url}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="來源 S4：Sequence to Sequence Learning with Neural Networks（在新分頁開啟）"
-            >
-              [S4]
-            </a>
-          </p>
-          <p class="mt-6 text-base leading-8 text-muted">
-            同年，Bahdanau、Cho 和 Bengio 把問題說得更直接：固定長度向量是 basic encoder–decoder
-            的瓶頸。他們讓 decoder 產生每個目標詞時，回頭對來源句子的 annotation vectors （encoder
-            在每個來源位置留下的數字資料）做 soft search；整句不再只有一個可以取用的摘要，但 encoder
-            和 decoder 仍是 recurrent network。{' '}
-            <a
-              class="text-red underline underline-offset-4"
-              href={sourceMap['paper-2014-align-translate'].url}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="來源 S5：Neural Machine Translation by Jointly Learning to Align and Translate（在新分頁開啟）"
-            >
-              [S5]
-            </a>
-          </p>
-          <p class="mt-6 text-base leading-8 text-muted">
-            2015 年，Luong、Pham 和 Manning 再把 attention 分成 global 與
-            local：一次看全部來源詞，或只看附近的一部分。這些方法改善了長句翻譯，卻沒有移除
-            recurrent encoder–decoder；來源端仍逐步讀，目標端仍逐詞寫。attention
-            已經證明值得留下，還沒被解開的是 recurrence 帶來的等待。{' '}
-            <a
-              class="text-red underline underline-offset-4"
-              href={sourceMap['paper-2015-attention-nmt'].url}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="來源 S6：Effective Approaches to Attention-based Neural Machine Translation（在新分頁開啟）"
-            >
-              [S6]
-            </a>
-          </p>
-          <div class="mt-8 border-l-2 border-blue bg-blue/5 p-5 text-blue">
-            <p class="m-0 text-base leading-8">
-              到 2017 年，Transformer
-              把問題再往前推一步：如果每個位置都能直接和其他位置建立關係，為什麼還要讓資訊排隊經過
-              recurrence？
-            </p>
+            <figcaption class="mt-3 max-w-3xl text-sm leading-relaxed text-muted">
+              在 2017 年 Transformer 原著（第 8 頁 Figure 5）與著名的 Winograd Schema 測試中，Google
+              研究團隊發現了注意力機制的驚人能力：
+              <strong>當句子中僅改變一個形容詞時，代名詞的注意力焦點會瞬間完全翻轉</strong>
+              。請點選下方情境切換按鈕或個別單詞，親手擾動語句並觀察 Attention
+              權重分佈與熱力圖的即時重算。
+            </figcaption>
           </div>
-        </div>
-        <div class="self-start border-t-4 border-ink p-5">
-          <p class="mb-8 font-mono text-sm tracking-[0.08em] text-red">這篇論文接手的問題</p>
-          <p class="m-0 font-display text-3xl leading-tight">
-            模型能不能連起相距很遠的字，又不必把整個句子塞進一個依序更新的記憶裡？
-          </p>
-        </div>
-      </div>
-      <div class="mt-20">
-        <StoryRail events={story} label="論文發展時間線，可使用鍵盤瀏覽" />
+
+          <!-- Scenario Selection Tabs -->
+          <div class="mt-6 flex flex-wrap gap-2" role="tablist" aria-label="情境切換">
+            <button
+              type="button"
+              class="attention-scenario-btn border border-ink bg-ink text-surface px-4 py-2 font-mono text-xs font-bold transition hover:opacity-90 cursor-pointer"
+              data-scenario="winograd-tired"
+              role="tab"
+              aria-selected="true"
+            >
+              經典 Winograd A：...too tired (動物疲憊)
+            </button>
+            <button
+              type="button"
+              class="attention-scenario-btn border border-ink bg-paper text-ink px-4 py-2 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer"
+              data-scenario="winograd-wide"
+              role="tab"
+              aria-selected="false"
+            >
+              經典 Winograd B：...too wide (街道太寬)
+            </button>
+            <button
+              type="button"
+              class="attention-scenario-btn border border-ink bg-paper text-ink px-4 py-2 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer"
+              data-scenario="tw-he"
+              role="tab"
+              aria-selected="false"
+            >
+              臺灣情境 C：...他 忘記簽名
+            </button>
+            <button
+              type="button"
+              class="attention-scenario-btn border border-ink bg-paper text-ink px-4 py-2 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer"
+              data-scenario="tw-it"
+              role="tab"
+              aria-selected="false"
+            >
+              臺灣情境 D：...它 遺失在實驗室
+            </button>
+          </div>
+
+          <!-- Interactive Sentence Tokens -->
+          <div class="mt-6 border border-ink bg-paper-deep p-4 sm:p-6">
+            <p class="m-0 font-mono text-xs font-semibold uppercase tracking-wider text-muted mb-3">
+              點擊任一單詞切換 Query 焦點（預設聚焦核心代名詞）：
+            </p>
+            <div id="attention-tokens-container" class="flex flex-wrap gap-2"></div>
+          </div>
+
+          <!-- Main Lab Grid -->
+          <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12 items-start">
+            <!-- Left: Bar Chart & Distribution (7 cols) -->
+            <div class="lg:col-span-7 border border-ink bg-paper p-5 sm:p-6">
+              <div class="flex items-center justify-between mb-4 border-b border-line pb-3">
+                <span class="font-mono text-xs font-bold uppercase text-ink">
+                  注意力分佈權重 (Softmax α)
+                </span>
+                <span
+                  id="attention-current-query-label"
+                  class="font-mono text-xs text-red font-semibold"
+                >
+                  Query: it
+                </span>
+              </div>
+
+              <!-- Bar chart container -->
+              <div id="attention-bars-container" class="space-y-2"></div>
+            </div>
+
+            <!-- Right: Mechanics Explanation (5 cols) -->
+            <div class="lg:col-span-5 border border-ink bg-surface p-5 sm:p-6 space-y-4">
+              <div class="border-b border-line pb-3">
+                <span class="font-mono text-xs font-semibold uppercase tracking-[0.1em] text-red">
+                  HOW IT WORKS / 擾動物理機制
+                </span>
+                <h4
+                  id="attention-mechanics-title"
+                  class="mt-1 m-0 font-display text-xl font-bold text-ink"
+                >
+                  內積如何引導語意跳躍？
+                </h4>
+              </div>
+
+              <div id="attention-mechanics-desc" class="text-sm leading-relaxed text-muted"></div>
+
+              <div class="border-t border-line pt-4">
+                <p class="m-0 font-mono text-xs font-bold text-ink mb-2">數學幾何本質：</p>
+                <div class="bg-paper-deep p-3 border border-ink/20 font-mono text-xs text-ink space-y-1">
+                  <div>Score(q, k) = (q · kᵀ) ÷ √d_k</div>
+                  <div>Weight α = softmax(Scores)</div>
+                </div>
+                <p class="mt-3 mb-0 text-xs text-muted leading-normal">
+                  模型內部沒有預設任何硬編碼的語法樹規則，而是透過反向傳播訓練，使具備相容屬性的
+                  Query 與 Key 向量在高維空間中內積較大，自然重構出注意力分配。
+                </p>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <script>
+          interface ScenarioData {
+            tokens: string[];
+            defaultQueryIndex: number;
+            weights: Record<number, number[]>;
+            title: string;
+            description: string;
+          }
+
+          const scenarios: Record<string, ScenarioData> = {
+            'winograd-tired': {
+              tokens: [
+                'The',
+                'animal',
+                "didn't",
+                'cross',
+                'the',
+                'street',
+                'because',
+                'it',
+                'was',
+                'too',
+                'tired',
+              ],
+              defaultQueryIndex: 7,
+              weights: {
+                7: [0.02, 0.84, 0.01, 0.02, 0.01, 0.05, 0.01, 0.02, 0.01, 0.0, 0.01],
+              },
+              title: '代名詞「it」強烈聚焦於「animal」',
+              description:
+                '當句子結尾是「tired（疲憊）」時，在經過多層注意力交互後，代名詞「it」的 Query 向量融合了後文疲憊的語義特徵。由於動物具備疲勞屬性，Query(it) 與 Key(animal) 算出的向量內積顯著最高，經 Softmax 轉換後產生高達 84% 的壓倒性注意力，成功辨識代名詞所指對象！',
+            },
+            'winograd-wide': {
+              tokens: [
+                'The',
+                'animal',
+                "didn't",
+                'cross',
+                'the',
+                'street',
+                'because',
+                'it',
+                'was',
+                'too',
+                'wide',
+              ],
+              defaultQueryIndex: 7,
+              weights: {
+                7: [0.01, 0.08, 0.01, 0.02, 0.02, 0.81, 0.01, 0.02, 0.01, 0.0, 0.01],
+              },
+              title: '末詞換成 wide，「it」焦點瞬間翻轉至「street」',
+              description:
+                '這是注意力機制最精妙之處：整句話僅將最後一個單詞從「tired」替換成「wide」，沒有任何人工語法規則介入。然而街道具有空間寬度屬性，使得「it」的 Query 向量在高維特徵空間中劇烈轉向，與「street」的 Key 內積激增，注意力佔比瞬間從 5% 暴衝至 81%！',
+            },
+            'tw-he': {
+              tokens: [
+                '研究員',
+                '通知',
+                '受訪者',
+                '補簽',
+                '同意書',
+                '，',
+                '因為',
+                '他',
+                '忘記',
+                '簽名',
+              ],
+              defaultQueryIndex: 7,
+              weights: {
+                7: [0.12, 0.01, 0.79, 0.02, 0.02, 0.0, 0.01, 0.01, 0.01, 0.01],
+              },
+              title: '代名詞「他」聚焦於「受訪者」',
+              description:
+                '在臺灣學術倫理情境中，「補簽」的受格主體是「受訪者」，且接續動作為「忘記簽名」。陽性代名詞「他」在自注意力層中，與「受訪者」的 Key 產生高達 79% 的關聯權重，正確鎖定需補簽之對象。',
+            },
+            'tw-it': {
+              tokens: [
+                '研究員',
+                '通知',
+                '受訪者',
+                '補簽',
+                '同意書',
+                '，',
+                '因為',
+                '它',
+                '遺失',
+                '在',
+                '實驗室',
+              ],
+              defaultQueryIndex: 7,
+              weights: {
+                7: [0.04, 0.01, 0.03, 0.02, 0.83, 0.0, 0.01, 0.01, 0.02, 0.01, 0.02],
+              },
+              title: '代名詞換成「它」，注意力立刻轉向「同意書」',
+              description:
+                '當代名詞由人物的「他」替換為物稱「它」，且後方接續動詞「遺失在實驗室」時，「同意書」作為文件物品，與 Query(它) 向量產生高度共鳴，獲得 83% 的壓倒性注意力！',
+            },
+          };
+
+          let currentScenarioKey = 'winograd-tired';
+          let currentQueryIndex = 7;
+
+          function renderLab() {
+            const scenario = scenarios[currentScenarioKey];
+            if (!scenario) return;
+
+            const tokensContainer = document.getElementById('attention-tokens-container');
+            const barsContainer = document.getElementById('attention-bars-container');
+            const queryLabel = document.getElementById('attention-current-query-label');
+            const mechanicsTitle = document.getElementById('attention-mechanics-title');
+            const mechanicsDesc = document.getElementById('attention-mechanics-desc');
+
+            if (
+              !tokensContainer ||
+              !barsContainer ||
+              !queryLabel ||
+              !mechanicsTitle ||
+              !mechanicsDesc
+            )
+              return;
+
+            // 1. Render Token Buttons
+            tokensContainer.innerHTML = '';
+            scenario.tokens.forEach((token, idx) => {
+              const btn = document.createElement('button');
+              btn.type = 'button';
+              const isSelected = idx === currentQueryIndex;
+              btn.className = isSelected
+                ? 'px-3 py-1.5 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer'
+                : 'px-3 py-1.5 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink transition cursor-pointer';
+              btn.textContent = `${idx}: ${token}`;
+              btn.addEventListener('click', () => {
+                currentQueryIndex = idx;
+                renderLab();
+              });
+              tokensContainer.appendChild(btn);
+            });
+
+            // 2. Compute/Retrieve Weights
+            const currentToken = scenario.tokens[currentQueryIndex];
+            queryLabel.textContent = `Query 位置 ${currentQueryIndex}：${currentToken}`;
+
+            let weightList = scenario.weights[currentQueryIndex];
+            if (!weightList) {
+              // Fallback synthetic weights for other tokens (attending self + adjacent)
+              weightList = scenario.tokens.map((_, idx) => {
+                if (idx === currentQueryIndex) return 0.45;
+                if (Math.abs(idx - currentQueryIndex) === 1) return 0.2;
+                return 0.15 / (scenario.tokens.length - 3);
+              });
+            }
+
+            // 3. Render Attention Weight Bars
+            barsContainer.innerHTML = '';
+            const maxWeight = Math.max(...weightList);
+
+            scenario.tokens.forEach((token, idx) => {
+              const w = weightList[idx];
+              const pct = Math.round(w * 100);
+              const isTop = w === maxWeight && w > 0.3;
+
+              const row = document.createElement('div');
+              row.className =
+                'grid grid-cols-[5rem_1fr_3.5rem] sm:grid-cols-[6rem_1fr_4rem] items-center gap-3 text-xs';
+
+              const tokenLabel = document.createElement('div');
+              tokenLabel.className = isTop
+                ? 'font-mono font-bold text-red truncate'
+                : 'font-mono text-ink truncate';
+              tokenLabel.textContent = `${token}`;
+
+              const barTrack = document.createElement('div');
+              barTrack.className =
+                'h-5 w-full bg-surface border border-line relative overflow-hidden';
+
+              const barFill = document.createElement('div');
+              barFill.className = isTop
+                ? 'h-full bg-red transition-all duration-300'
+                : 'h-full bg-blue/70 transition-all duration-300';
+              barFill.style.width = `${pct}%`;
+              barTrack.appendChild(barFill);
+
+              const pctLabel = document.createElement('div');
+              pctLabel.className = isTop
+                ? 'font-mono font-bold text-red text-right'
+                : 'font-mono text-muted text-right';
+              pctLabel.textContent = `${pct}%`;
+
+              row.appendChild(tokenLabel);
+              row.appendChild(barTrack);
+              row.appendChild(pctLabel);
+              barsContainer.appendChild(row);
+            });
+
+            // 4. Update Explanation
+            if (currentQueryIndex === scenario.defaultQueryIndex) {
+              mechanicsTitle.textContent = scenario.title;
+              mechanicsDesc.innerHTML = `<p class="m-0">${scenario.description}</p>`;
+            } else {
+              mechanicsTitle.textContent = `目前檢視：token「${currentToken}」之注意力`;
+              mechanicsDesc.innerHTML = `<p class="m-0">模型正在將第 ${currentQueryIndex} 格「${currentToken}」作為 Query，與全句各詞的 Key 向量進行點積比對。若要體驗最經典的指代消歧語意擾動，請點擊上方代名詞「${scenario.tokens[scenario.defaultQueryIndex]}」。</p>`;
+            }
+          }
+
+          // Initialize tabs
+          document.querySelectorAll<HTMLButtonElement>('.attention-scenario-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+              document.querySelectorAll('.attention-scenario-btn').forEach((b) => {
+                b.setAttribute('aria-selected', 'false');
+                b.className =
+                  'attention-scenario-btn border border-ink bg-paper text-ink px-4 py-2 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer';
+              });
+              btn.setAttribute('aria-selected', 'true');
+              btn.className =
+                'attention-scenario-btn border border-ink bg-ink text-surface px-4 py-2 font-mono text-xs font-bold transition hover:opacity-90 cursor-pointer';
+
+              const s = btn.dataset.scenario;
+              if (s && scenarios[s]) {
+                currentScenarioKey = s;
+                currentQueryIndex = scenarios[s].defaultQueryIndex;
+                renderLab();
+              }
+            });
+          });
+
+          // Initial render
+          renderLab();
+        </script>
       </div>
     </section>
 
@@ -1814,16 +2380,16 @@ const story = [
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
             理論 / 這台機器
           </p>
-          <h2 class="m-0 font-display text-4xl sm:text-5xl lg:text-5xl leading-tight tracking-[-0.04em]">
-            <span class="block">Transformer 先分成兩邊，</span>
+          <h2 class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink">
+            <span class="block">編碼器與解碼器分工：</span>
             <span class="block">
-              <em>每一邊有自己的工作。</em>
+              <em>Encoder 理解全文，Decoder 逐字生成。</em>
             </span>
           </h2>
         </div>
         <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
-          左邊的 encoder 讀來源句子，右邊的 decoder 根據已產生的目標 token 寫下一個；中間的
-          cross-attention 讓右邊取用左邊整理好的資料。
+          左側 Encoder 雙向平行讀取來源句，右側 Decoder 自迴歸生成目標詞；中間透過 Cross-Attention
+          跨層傳遞上下文資訊。
         </p>
       </div>
       <figure role="img" aria-labelledby="transformer-diagram-title">
@@ -1837,58 +2403,332 @@ const story = [
           aria-hidden="true"
         >
           <div class="grid gap-3">
-            <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-              編碼器 / ENCODER
-            </p>
-            <div class="border border-ink bg-paper-deep p-4 text-center font-display text-lg">
+            <div class="flex items-center justify-between">
+              <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+                編碼器 / ENCODER
+              </p>
+              <span class="font-mono text-xs text-muted">雙向全局視野</span>
+            </div>
+            <div class="border border-ink bg-paper-deep p-4 text-center font-display text-base sm:text-lg">
               輸入 token
+              <span class="mt-1 block font-mono text-xs text-muted">
+                X ∈ ℝ<sup>n × 512</sup>
+              </span>
             </div>
             <span class="text-center text-muted">↓</span>
-            <div class="border border-ink bg-red-soft p-4 text-center font-display text-lg">
+            <div class="border border-ink bg-red-soft p-4 text-center font-display text-base sm:text-lg">
               Self-attention
+              <span class="mt-1 block font-mono text-xs text-red">雙向關聯聚合 · Q=K=V</span>
             </div>
             <span class="text-center text-muted">↓</span>
-            <div class="border border-ink bg-[#dce7e9] p-4 text-center font-display text-lg">
+            <div class="border border-ink bg-[#dce7e9] p-4 text-center font-display text-base sm:text-lg">
               前饋網路 / Feed-forward
+              <span class="mt-1 block font-mono text-xs text-blue">
+                逐位置升維運算 · 512 → 2048 → 512
+              </span>
             </div>
             <span class="text-center text-muted">↓</span>
-            <div class="border border-ink bg-ink p-4 text-center font-display text-lg text-surface">
+            <div class="border border-ink bg-ink p-4 text-center font-display text-base sm:text-lg text-surface">
               上下文 / Context
+              <span class="mt-1 block font-mono text-xs text-surface/80">
+                H_enc ∈ ℝ<sup>n × 512</sup>
+              </span>
             </div>
           </div>
-          <div class="grid gap-3 text-center font-mono text-sm uppercase tracking-[0.06em] text-blue">
-            <span>上下文從這裡傳過去</span>
-            <span class="h-px bg-red"></span>
+          <div class="flex flex-col items-center justify-center gap-2 text-center font-mono text-xs uppercase tracking-[0.06em] text-red">
+            <span class="font-bold">上下文跨塔傳遞</span>
+            <span class="text-[11px] text-muted">提供 Key & Value</span>
+            <span class="h-0.5 w-16 bg-red md:w-full"></span>
+            <span class="text-[10px] text-muted hidden md:inline">K_enc, V_enc ──→</span>
           </div>
           <div class="grid gap-3">
-            <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-              解碼器 / DECODER
-            </p>
-            <div class="border border-ink bg-paper-deep p-4 text-center font-display text-lg">
+            <div class="flex items-center justify-between">
+              <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+                解碼器 / DECODER
+              </p>
+              <span class="font-mono text-xs text-red">自迴歸單向因果</span>
+            </div>
+            <div class="border border-ink bg-paper-deep p-4 text-center font-display text-base sm:text-lg">
               已產生的輸出 token
+              <span class="mt-1 block font-mono text-xs text-muted">
+                Y<sub>&lt;t</sub> ∈ ℝ<sup>m × 512</sup>
+              </span>
             </div>
             <span class="text-center text-muted">↓</span>
-            <div class="border border-ink bg-red-soft p-4 text-center font-display text-lg">
+            <div class="border border-ink bg-red-soft p-4 text-center font-display text-base sm:text-lg">
               遮罩 attention
+              <span class="mt-1 block font-mono text-xs text-red">
+                因果遮罩矩陣 · 遮蔽未來 Token
+              </span>
             </div>
             <span class="text-center text-muted">↓</span>
-            <div class="border border-ink bg-[#dce7e9] p-4 text-center font-display text-lg">
+            <div class="border border-ink bg-[#dce7e9] p-4 text-center font-display text-base sm:text-lg">
               Cross-attention
+              <span class="mt-1 block font-mono text-xs text-blue">跨塔查詢 · Q 查閱來源 K, V</span>
             </div>
             <span class="text-center text-muted">↓</span>
-            <div class="border border-ink bg-ink p-4 text-center font-display text-lg text-surface">
+            <div class="border border-ink bg-ink p-4 text-center font-display text-base sm:text-lg text-surface">
               下一個 token
+              <span class="mt-1 block font-mono text-xs text-surface/80">
+                Softmax(y_t) 預測詞機率
+              </span>
             </div>
           </div>
         </div>
         <p class="mt-4 mb-0 text-right font-mono text-sm tracking-[0.06em] text-muted">
-          圖 01 / 教學示意圖，不是論文的完整實作。
+          圖 01 / Transformer 編碼器—解碼器架構簡化資訊流
         </p>
-        <p class="mt-6 max-w-[68ch] border-l-2 border-blue bg-blue/5 p-5 text-base leading-7 text-blue">
-          在這個架構裡，encoder 先把來源句子的每個位置整理成帶有上下文的數字資料；decoder
-          再根據這些資料，一個 token 一個 token
-          地寫出目標句子。訓練時可以平行處理輸入，生成時仍然有先後順序；這兩個階段不能混成同一件事。
-        </p>
+
+        <!-- 四大核心模組深度解析專題 -->
+        <div class="mt-12 space-y-12 border-t border-ink pt-12">
+          <div>
+            <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+              SUB-LAYER MECHANICS / 子層運算機制
+            </span>
+            <h3 class="mt-3 mb-4 font-display text-3xl sm:text-4xl leading-tight">
+              雙塔架構的核心子層：上下文、前饋網路、遮罩與交叉注意力
+            </h3>
+            <p class="m-0 text-base leading-8 text-muted max-w-3xl">
+              Transformer
+              的核心貢獻不僅在於提出注意力公式，更在於如何將這些子層組織為可高度並行訓練的雙塔體系。以下依資料流動順序，逐一拆解這四個運算子層的輸入輸出張量、數學定義與工程動機。
+            </p>
+          </div>
+
+          <div class="grid gap-8 lg:grid-cols-2">
+            <!-- 模組 01: 上下文 (Context) -->
+            <article class="border border-ink bg-surface p-6 sm:p-8 flex flex-col justify-between">
+              <div>
+                <div class="flex items-baseline justify-between border-b border-line pb-3 mb-5">
+                  <span class="font-mono text-xs font-bold text-red uppercase tracking-wider">
+                    MODULE 01
+                  </span>
+                  <span class="font-mono text-xs text-muted">張量特徵矩陣</span>
+                </div>
+                <h4 class="font-display text-2xl leading-snug">
+                  「上下文（Context）」到底是什麼？
+                </h4>
+                <p class="mt-4 text-base leading-7 text-muted">
+                  <strong>在舊式 Seq2Seq RNN 中：</strong>整句來源語言（例如 30
+                  個單詞的法文）在讀到最後一個詞時，必須被硬生生壓縮成一個固定維度的單一向量{' '}
+                  <code class="bg-paper-deep px-1.5 py-0.5 text-xs">
+                    h_T ∈ ℝ<sup>512</sup>
+                  </code>
+                  。這造成了惡名昭彰的「資訊瓶頸（Information
+                  Bottleneck）」——長句前面的細節與語意全被稀釋遺忘。
+                </p>
+                <p class="mt-4 text-base leading-7 text-muted">
+                  <strong>在 Transformer 的 Encoder 輸出中：</strong>
+                  「上下文」根本不是單一向量，而是一個保留了完整長度的特徵矩陣{' '}
+                  <code class="bg-paper-deep px-1.5 py-0.5 text-xs">
+                    H_enc ∈ ℝ<sup>n × 512</sup>
+                  </code>
+                  。序列中的每一個 Token 都有一個專屬的 512 維向量；因為經過了 6 層雙向
+                  Self-Attention
+                  的充分交互，每個向量都已經吸收了「整句話中其他所有單詞」的語境資訊。這組厚重、無損的矩陣序列，會被完整保留並常駐，隨時供
+                  Decoder 調閱。
+                </p>
+              </div>
+              <div class="mt-6 border-t border-line pt-4 bg-paper-deep/50 p-4 font-mono text-xs text-ink">
+                <span class="text-red font-semibold">張量維度流動：</span>
+                <br />
+                來源句 (n 個詞) → 詞嵌入 + 位置編碼 (n × 512) → 6 層 Encoder → H_enc (n × 512)
+              </div>
+            </article>
+
+            <!-- 模組 02: 前饋網路 (Feed-Forward Networks) -->
+            <article class="border border-ink bg-surface p-6 sm:p-8 flex flex-col justify-between">
+              <div>
+                <div class="flex items-baseline justify-between border-b border-line pb-3 mb-5">
+                  <span class="font-mono text-xs font-bold text-red uppercase tracking-wider">
+                    MODULE 02
+                  </span>
+                  <span class="font-mono text-xs text-muted">逐位置升維記憶體</span>
+                </div>
+                <h4 class="font-display text-2xl leading-snug">
+                  「前饋網路（Feed-Forward）」在做什麼？為什麼 Attention 算完非要接它？
+                </h4>
+                <p class="mt-4 text-base leading-7 text-muted">
+                  許多人以為 Transformer 只有 Attention。但事實上，
+                  <strong>
+                    模型近 2/3 的參數量都集中在前饋網路（Position-wise Feed-Forward Network,
+                    FFN）中！
+                  </strong>
+                </p>
+                <p class="mt-4 text-base leading-7 text-muted">
+                  它的數學公式非常簡單：
+                  <code class="block my-2 bg-paper-deep p-2 text-xs font-mono text-ink">
+                    FFN(x) = max(0, xW₁ + b₁)W₂ + b₂
+                  </code>
+                  其中{' '}
+                  <code class="text-xs">
+                    W₁ ∈ ℝ<sup>512 × 2048</sup>
+                  </code>{' '}
+                  將維度放大 4 倍，經 ReLU 激活後，再由{' '}
+                  <code class="text-xs">
+                    W₂ ∈ ℝ<sup>2048 × 512</sup>
+                  </code>{' '}
+                  投影回 512 維。
+                </p>
+                <p class="mt-4 text-base leading-7 text-muted">
+                  <strong>為什麼非要接 FFN？本質是「分工」：</strong>
+                  Self-Attention 只是「資訊搬運工（Routing）」——它透過加權平均，在不同 Token
+                  之間傳遞資訊。但加權平均是線性運算，缺乏深度特徵變換！FFN 則是每個 Token
+                  的「獨立思考大腦」——每個 Token 獨立進入 2048
+                  維的高維空間進行非線性特徵解耦與重組。後續研究（如 Geva et al., 2021）更證實：
+                  <strong>LLM 絕大部分的世界事實知識，實質上都儲存在 FFN 的權重矩陣中</strong>
+                  ，猶如龐大的 Key-Value 記憶字典。
+                </p>
+              </div>
+              <div class="mt-6 border-t border-line pt-4 bg-paper-deep/50 p-4 font-mono text-xs text-ink">
+                <span class="text-blue font-semibold">分工心法：</span>
+                <br />
+                Self-Attention 負責「跨詞搬運資訊」，FFN 負責「單詞深度消化與儲存記憶」。
+              </div>
+            </article>
+
+            <!-- 模組 03: 遮罩注意力 (Masked Self-Attention) -->
+            <article class="border border-ink bg-surface p-6 sm:p-8 flex flex-col justify-between">
+              <div>
+                <div class="flex items-baseline justify-between border-b border-line pb-3 mb-5">
+                  <span class="font-mono text-xs font-bold text-red uppercase tracking-wider">
+                    MODULE 03
+                  </span>
+                  <span class="font-mono text-xs text-muted">時序防作弊機制</span>
+                </div>
+                <h4 class="font-display text-2xl leading-snug">
+                  「遮罩注意力（Masked Attention）」是什麼？為什麼要戴眼罩？
+                </h4>
+                <p class="mt-4 text-base leading-7 text-muted">
+                  <strong>嚴格的因果時序限制（Causality）：</strong>
+                  在文字生成或翻譯時，世界遵循時間單向流動。當模型試圖預測第 3 個字時，第 4
+                  個字在現實中「根本還沒出生」。
+                </p>
+                <p class="mt-4 text-base leading-7 text-muted">
+                  但在神經網路訓練時，為了追求極致的 GPU 並行效率，工程師使用{' '}
+                  <strong>Teacher Forcing</strong>——一次性將整句完整的目標答案（例如 20
+                  個字）通通倒給 Decoder。這時如果讓 Decoder 做一般的雙向 Self-Attention，它在計算第
+                  3 個字的特徵時，就會直接「回頭偷看第 4
+                  個字」，學會作弊抄答案，導致在真實推論逐字生成時當場癱瘓。
+                </p>
+                <p class="mt-4 text-base leading-7 text-muted">
+                  <strong>解決之道：在 Softmax 前給矩陣戴上眼罩（Mask）：</strong>
+                  <code class="block my-2 bg-paper-deep p-2 text-xs font-mono text-ink">
+                    Attention(Q, K, V) = softmax( (QKᵀ / √d_k) + M ) V
+                  </code>
+                  遮罩矩陣 <code class="text-xs">M</code>{' '}
+                  是一個嚴格的上三角矩陣：對角線及其左下方（過去與現在）全為 0；而右上角（所有未來的
+                  Token 位置）全填入 <code class="text-xs">-∞</code>。因為{' '}
+                  <code class="text-xs">exp(-∞) = 0</code>，Softmax
+                  運算後，未來所有單詞的注意力權重被強制釘死為 0。
+                  <strong>
+                    這項發明讓 Transformer
+                    既享受到了矩陣並行訓練的高速，又完美守住了自迴歸生成的因果鐵律！
+                  </strong>
+                </p>
+              </div>
+              <div class="mt-6 border-t border-line pt-4 bg-paper-deep/50 p-4 font-mono text-xs text-ink">
+                <span class="text-red font-semibold">因果遮罩矩陣形態 (4×4)：</span>
+                <br />
+                [ 0, -∞, -∞, -∞ ]<br />
+                [ 0, 0, -∞, -∞ ]<br />
+                [ 0, 0, 0, -∞ ]<br />[ 0, 0, 0, 0 ]
+              </div>
+            </article>
+
+            <!-- 模組 04: 交叉注意力 (Cross-Attention) -->
+            <article class="border border-ink bg-surface p-6 sm:p-8 flex flex-col justify-between">
+              <div>
+                <div class="flex items-baseline justify-between border-b border-line pb-3 mb-5">
+                  <span class="font-mono text-xs font-bold text-red uppercase tracking-wider">
+                    MODULE 04
+                  </span>
+                  <span class="font-mono text-xs text-muted">跨語言動態對齊</span>
+                </div>
+                <h4 class="font-display text-2xl leading-snug">
+                  「Cross-attention」是什麼？它如何連通編碼器與解碼器？
+                </h4>
+                <p class="mt-4 text-base leading-7 text-muted">
+                  Self-Attention 中，<code class="text-xs">Q, K, V</code>{' '}
+                  都來自同一序列（同一個句子內部自己看自己）。但在翻譯任務中，Decoder
+                  寫英文時，必須知道法文原文在講什麼，這就需要{' '}
+                  <strong>Cross-Attention（交叉注意力，又稱 Encoder-Decoder Attention）</strong>。
+                </p>
+                <p class="mt-4 text-base leading-7 text-muted">
+                  它的神髓在於 <strong>Q, K, V 的來源非對稱分離</strong>：
+                </p>
+                <ul class="mt-3 space-y-2 text-base leading-7 text-muted pl-5 list-disc">
+                  <li>
+                    <strong>Query (Q) 來自 Decoder：</strong>
+                    代表「我現在已經翻譯出了這些英文單詞，我當前迫切需要知道來源句中對應的什麼資訊？」。
+                  </li>
+                  <li>
+                    <strong>Key (K) 與 Value (V) 來自 Encoder 輸出的上下文矩陣：</strong>
+                    代表「這是來源法文全文的所有辭項特徵索引與實質內容」。
+                  </li>
+                </ul>
+                <p class="mt-4 text-base leading-7 text-muted">
+                  <strong>動態對齊實例：</strong>當 Decoder 正準備生成英文單詞 "signed" 時，它的
+                  Query 向量投射至來源法文的 Keys，與法文單詞 "signé" 產生了最高的點積相似度，算出的
+                  Softmax 權重便高度集中在 "signé" 上，進而把 "signé" 的 Value
+                  向量提取過來。這就優雅地實現了傳統機器翻譯中極度渴望卻難以企及的「跨語言詞彙自動對齊（Soft
+                  Alignment）」。
+                </p>
+              </div>
+              <div class="mt-6 border-t border-line pt-4 bg-paper-deep/50 p-4 font-mono text-xs text-ink">
+                <span class="text-blue font-semibold">Q/K/V 來源配置：</span>
+                <br />
+                Q = Decoder 特徵 × W_Q
+                <br />
+                K = Encoder 上下文 (H_enc) × W_K
+                <br />V = Encoder 上下文 (H_enc) × W_V
+              </div>
+            </article>
+          </div>
+
+          <!-- 承先啟後：架構基因樹 (Bridge to Next Chapters) -->
+          <div class="border-2 border-red bg-red-soft/20 p-6 sm:p-8">
+            <div class="flex items-center gap-3 mb-4">
+              <span class="bg-red px-2.5 py-1 font-mono text-xs font-bold text-surface uppercase">
+                歷史樞紐 / CRITICAL ARCHITECTURAL JUNCTION
+              </span>
+              <span class="font-mono text-xs text-red font-semibold">
+                為什麼搞懂這四個模組，才讀得懂 GPT 與 BERT？
+              </span>
+            </div>
+            <p class="text-base sm:text-lg leading-8 text-ink">
+              2017 年的這篇論文提出了一個完整的「雙塔（Encoder + Decoder）」體系，但在接下來的 12
+              個月內，AI 歷史發生了驚人的大分裂：
+            </p>
+            <div class="mt-6 grid gap-6 md:grid-cols-2">
+              <div class="border border-line bg-surface p-5">
+                <h5 class="font-mono text-sm font-bold text-red uppercase tracking-wider mb-2">
+                  下一章：GPT-1（2018 年 6 月）的減法哲學
+                </h5>
+                <p class="text-sm leading-6 text-muted m-0">
+                  OpenAI
+                  發現如果讓模型在大規模無標註文本上預測下一個字，根本不需要「來源語言」與「目標語言」的區隔。因此，他們
+                  <strong>砍掉了 Encoder、砍掉了上下文傳遞、砍掉了 Cross-Attention</strong>
+                  ！只保留了 <strong>Decoder + 遮罩 Attention + FFN</strong>，開創了現代生成式
+                  LLM（GPT-4、Claude、LLaMA、DeepSeek）一統天下的 <strong>Decoder-Only</strong>{' '}
+                  範式。
+                </p>
+              </div>
+              <div class="border border-line bg-surface p-5">
+                <h5 class="font-mono text-sm font-bold text-blue uppercase tracking-wider mb-2">
+                  後續章節：BERT（2018 年 10 月）的反向選擇
+                </h5>
+                <p class="text-sm leading-6 text-muted m-0">
+                  Google 團隊則認為，遮罩 Attention
+                  戴著眼罩太屈才了，文字理解需要雙向上下文。於是他們
+                  <strong>
+                    砍掉了 Decoder、砍掉了因果遮罩、砍掉了 Cross-Attention
+                  </strong>！只保留了 <strong>Encoder + 雙向 Self-Attention + FFN</strong>
+                  ，開創了主宰搜尋引擎與自然語言理解的 <strong>Encoder-Only</strong> 範式。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </figure>
     </section>
 
@@ -1898,15 +2738,12 @@ const story = [
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
             理論 / 摘要的四個主張
           </p>
-          <h2 class="m-0 font-display text-5xl sm:text-6xl lg:text-7xl leading-tight tracking-[-0.04em]">
-            <span class="block">摘要裡的四個主張，</span>
-            <span class="block">
-              <em>各自對應一個選擇。</em>
-            </span>
+          <h2 class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink">
+            <span class="block">原著摘要的核心論證架構</span>
           </h2>
         </div>
         <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
-          有些句子說明方法，有些句子限定結果能推到哪裡。
+          從問題界定、架構提案、實證突破到任務邊界，拆解論文摘要的四層邏輯。
         </p>
       </div>
       <div class="mx-auto max-w-[900px] border-t border-ink">
@@ -1914,19 +2751,19 @@ const story = [
           <p class="m-0 font-mono text-sm text-red">A / 01</p>
           <div>
             <p class="mb-3 font-mono text-sm font-semibold tracking-[0.1em] text-red">
-              主張 / CLAIM
+              問題界定 / PROBLEM
             </p>
-            <h3 class="m-0 font-display text-3xl leading-tight">論文先把比較對象擺上桌。</h3>
+            <h3 class="m-0 font-display text-3xl leading-tight">指出循環與卷積架構的局限。</h3>
             <p class="mt-4 max-w-[60ch] text-base leading-8 text-muted">
-              早期的序列模型 (sequence model) 使用 recurrence 或 convolution。兩者都能連起
-              token，卻都無法讓模型直接、低成本地查看其他位置。
+              傳統序列模型仰賴 Recurrence（循環）或
+              Convolution（卷積）。兩者雖能處理序列，但前者難以平行化運算，後者難以低成本直接跨距比對。
             </p>
             <div class="mt-5 grid grid-cols-[auto_1fr] gap-4 border-t border-dashed border-blue/30 pt-4 text-blue">
               <span class="font-mono text-xs" aria-hidden="true">
                 →
               </span>
               <p class="m-0 text-base leading-7">
-                舊模型要照順序讀，或把注意力限制在局部視窗。這篇論文讓每個位置都能計算自己要參考哪些位置。
+                循環模型受限於順序計算，卷積模型受限於感受野；論文主張打破此限制，使任意位置皆能直接計算相互關聯。
               </p>
             </div>
           </div>
@@ -1935,20 +2772,19 @@ const story = [
           <p class="m-0 font-mono text-sm text-red">A / 02</p>
           <div>
             <p class="mb-3 font-mono text-sm font-semibold tracking-[0.1em] text-red">
-              提案 / PROPOSAL
+              架構提案 / PROPOSAL
             </p>
-            <h3 class="m-0 font-display text-3xl leading-tight">
-              讓 attention 負責位置之間的連結。
-            </h3>
+            <h3 class="m-0 font-display text-3xl leading-tight">以純注意力機制取代循環鏈。</h3>
             <p class="mt-4 max-w-[60ch] text-base leading-8 text-muted">
-              Transformer 由 attention layer 和逐點運算的網路組成。核心路徑裡沒有 recurrence。
+              Transformer 完全摒棄 Recurrence 與 Convolution，僅由 Self-Attention
+              與逐點前饋網路構成運算骨幹。
             </p>
             <div class="mt-5 grid grid-cols-[auto_1fr] gap-4 border-t border-dashed border-blue/30 pt-4 text-blue">
               <span class="font-mono text-xs" aria-hidden="true">
                 →
               </span>
               <p class="m-0 text-base leading-7">
-                每個位置都能從其他位置取回需要的資訊，不必等待一條循環鏈逐步傳完。
+                任意位置皆能在常數級時間步內直接提取上下文資訊，大幅消除傳遞路徑上的資訊損失。
               </p>
             </div>
           </div>
@@ -1957,20 +2793,20 @@ const story = [
           <p class="m-0 font-mono text-sm text-red">A / 03</p>
           <div>
             <p class="mb-3 font-mono text-sm font-semibold tracking-[0.1em] text-red">
-              證據 / EVIDENCE
+              實證突破 / EVIDENCE
             </p>
-            <h3 class="m-0 font-display text-3xl leading-tight">平行化改變了訓練的取捨。</h3>
+            <h3 class="m-0 font-display text-3xl leading-tight">大幅縮短訓練時間並刷新 SOTA。</h3>
             <p class="mt-4 max-w-[60ch] text-base leading-8 text-muted">
-              論文報告了不錯的翻譯結果，訓練時間也比早期系統少很多。比較是在翻譯 benchmark
-              與這篇論文的訓練設定上進行。
+              在 WMT 2014 英德與英法翻譯任務中，Transformer 刷新 BLEU
+              最高分紀錄，且訓練計算時間遠少於當時主流模型。
             </p>
             <div class="mt-5 grid grid-cols-[auto_1fr] gap-4 border-t border-dashed border-blue/30 pt-4 text-blue">
               <span class="font-mono text-xs" aria-hidden="true">
                 →
               </span>
               <p class="m-0 text-base leading-7">
-                這組結果只支持一個較窄的結論：在論文設定的翻譯 benchmark
-                上，這個架構同時改善了結果與訓練效率。 它沒有回答其他任務是否也成立。
+                實證數據證實：全 Attention
+                架構兼具高度平行化優勢與頂尖翻譯品質，打破了傳統序列系統的運算瓶頸。
               </p>
             </div>
           </div>
@@ -1979,22 +2815,20 @@ const story = [
           <p class="m-0 font-mono text-sm text-red">A / 04</p>
           <div>
             <p class="mb-3 font-mono text-sm font-semibold tracking-[0.1em] text-red">
-              界線 / LIMIT
+              驗證範疇 / SCOPE
             </p>
-            <h3 class="m-0 font-display text-3xl leading-tight">
-              原始實驗回答的是翻譯與句法分析問題。
-            </h3>
+            <h3 class="m-0 font-display text-3xl leading-tight">驗證於機器翻譯與句法分析任務。</h3>
             <p class="mt-4 max-w-[60ch] text-base leading-8 text-muted">
-              它處理的是序列轉換 (sequence transduction)，尤其是 English–German 與 English–French
-              翻譯；論文也用 English constituency parsing
-              測試這個架構。後來的研究沿用這個架構，換了目標函數，再把規模放大。
+              論文嚴謹驗證於序列轉換任務（Sequence Transduction），涵蓋 WMT
+              翻譯與英文成分句法分析（English Constituency Parsing）。
             </p>
             <div class="mt-5 grid grid-cols-[auto_1fr] gap-4 border-t border-dashed border-blue/30 pt-4 text-blue">
               <span class="font-mono text-xs" aria-hidden="true">
                 →
               </span>
               <p class="m-0 text-base leading-7">
-                後續研究改寫訓練目標，才把這個架構帶進更廣的語言模型任務。
+                這項實證為後續大規模無監督預訓練（如 BERT 與 GPT
+                系列）奠定了可高度擴展的骨幹網路基礎。
               </p>
             </div>
           </div>
@@ -2008,15 +2842,15 @@ const story = [
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
             理論拆解 / THE THEORY IN PIECES
           </p>
-          <h2 class="m-0 font-display text-4xl sm:text-5xl lg:text-5xl xl:text-6xl leading-tight tracking-[-0.04em]">
-            <span class="block xl:whitespace-nowrap">四個設計選擇，</span>
+          <h2 class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink">
+            <span class="block">四大關鍵機制拆解：</span>
             <span class="block">
-              <em>各自處理一個問題。</em>
+              <em>QKV 檢索、縮放因子、多頭注意力與位置編碼。</em>
             </span>
           </h2>
         </div>
         <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
-          這四個選擇分別處理：怎麼找資料、怎麼讓分數穩定、怎麼保留多種關係、怎麼保留順序。
+          這四大機制分別解決：特徵動態尋址、梯度平穩控制、多重語意子空間捕捉，以及非循環架構下的語序重建。
         </p>
       </div>
       <div class="grid grid-cols-1 gap-px border border-ink bg-ink md:grid-cols-2">
@@ -2062,18 +2896,15 @@ const story = [
           <p class="m-0 font-mono text-sm text-red">03</p>
           <h3 class="mt-12 mb-3 font-display text-3xl leading-tight">使用多個 head</h3>
           <p class="max-w-[38ch] text-base leading-8 text-muted">
-            Multi-head attention 不只算一次關聯，而是把向量切成幾個較小的子空間，平行執行多組
-            attention，再把結果接回來。不同 head 可能學到不同的關係，但論文不保證哪個 head
-            一定代表文法或指涉。
+            Multi-Head Attention 將特徵向量投影至多個獨立的子空間，並行執行多組 Attention
+            運算後拼接輸出。這種機制使模型得以在不同維度上，同時捕捉文法結構、長程指涉與語意關聯。
           </p>
           <div class="mt-5 grid grid-cols-[auto_1fr] gap-4 border-t border-dashed border-blue/30 pt-4 text-blue">
             <span class="font-mono text-xs" aria-hidden="true">
               →
             </span>
             <p class="m-0 text-base leading-7">
-              同一個第 10 格可以用不同組參數找不同線索：一組可能較重視「那份同意書」和第 4
-              格的指涉關係，另一組可能較重視人物或時間順序。這些結果最後會合在一起；這不是說論文替每個
-              head 指定了固定職責，而是說模型可以同時學習多種關係。
+              同一個詞項透過多組權重矩陣投影，能同時跨子空間建立關聯：既可追蹤實體指涉，亦能捕捉句法依存，最終將多重視角的表徵融合為一。
             </p>
           </div>
           <code class="bg-paper-deep px-2 py-1 text-sm text-blue">multi-head = many views</code>
@@ -2082,10 +2913,9 @@ const story = [
           <p class="m-0 font-mono text-sm text-red">04</p>
           <h3 class="mt-12 mb-3 font-display text-3xl leading-tight">把位置加回來</h3>
           <p class="max-w-[38ch] text-base leading-8 text-muted">
-            Self-attention 看到的是一組向量；如果不另外提供位置，它不知道誰先出現。前面第 1–10
-            格的編號只是我們為了講解方便貼上的標籤，模型還需要把順序變成每個 token
-            都能使用的數字。位置編碼 (positional encoding) 就是加進 token
-            的位置資訊，讓「先修改摘要、再寄出」和「先寄出、再修改摘要」不會被當成同一組順序。
+            Self-Attention 本質上是對稱的無序集合運算（Permutation
+            Equivariant）；若不主動注入時序座標，模型無法感知詞項的前後先後。位置編碼（Positional
+            Encoding）將序列序號映射為高維向量並與詞向量相加，確保「先修改摘要、再寄出」與「先寄出、再修改摘要」形成截然不同的數學表徵。
           </p>
           <div class="mt-5 grid grid-cols-[auto_1fr] gap-4 border-t border-dashed border-blue/30 pt-4 text-blue">
             <span class="font-mono text-xs" aria-hidden="true">
@@ -2107,10 +2937,10 @@ const story = [
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
             洪流 / 後來發生了什麼
           </p>
-          <h2 class="m-0 font-display text-5xl sm:text-6xl lg:text-7xl leading-tight tracking-[-0.04em]">
-            <span class="block">原始任務是翻譯，</span>
+          <h2 class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink">
+            <span class="block">從專用翻譯模型，</span>
             <span class="block">
-              <em>後來影響遠超過翻譯。</em>
+              <em>躍升為通用語言基石。</em>
             </span>
           </h2>
         </div>
@@ -2136,118 +2966,546 @@ const story = [
       </div>
     </section>
 
-    <section class={`${shell} border-t border-ink py-24`}>
-      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            來源清單 / SOURCE LEDGER V1
-          </p>
-          <h2 class="m-0 font-display text-5xl sm:text-6xl lg:text-7xl leading-tight tracking-[-0.04em]">
-            <span class="block">每個故事都有</span>
-            <span class="block">
-              <em>它的邊界。</em>
-            </span>
-          </h2>
-        </div>
-        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
-          本章使用論文、同期文章與後來的訪談；不同來源能說到的程度並不相同。
-        </p>
-      </div>
-      <div class="grid grid-cols-1 gap-px border border-ink bg-ink md:grid-cols-2">
-        {attentionSources.map((source, index) => (
-          <article class="min-h-[20rem] bg-surface p-7">
-            <div class="flex justify-between gap-4 font-mono text-sm uppercase tracking-[0.08em] text-red">
-              <span>S / {String(index + 1).padStart(2, '0')}</span>
-              <span class="text-right text-blue">{sourceKindLabels[source.kind]}</span>
+    <section
+      class="relative w-full border-t-2 border-ink bg-[#f5efe4] py-24 sm:py-32 overflow-hidden"
+      id="references"
+      aria-labelledby="timeline-heading"
+    >
+      <div class="mx-auto w-[calc(100%-2rem)] max-w-[1360px]">
+        <!-- 頂部標題與破格快跳導覽 -->
+        <div class="mb-16 sm:mb-20 border-b-2 border-ink pb-12">
+          <div class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+            <div class="max-w-3xl">
+              <div class="mb-4 flex flex-wrap items-center gap-3 font-mono text-xs font-bold uppercase tracking-[0.16em] text-red">
+                <span class="rounded bg-red/10 px-2.5 py-1 text-red">文獻演進時間軸</span>
+                <span class="text-muted">/ HISTORICAL CITATION TIMELINE (2014–2024)</span>
+              </div>
+              <h2
+                id="timeline-heading"
+                class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+              >
+                從循環瓶頸到自注意力革命，
+                <br />
+                <span class="text-red">十年技術演進的一手文獻譜系。</span>
+              </h2>
+              <p class="mt-6 mb-0 text-base sm:text-lg leading-8 text-muted max-w-2xl">
+                本章立論嚴格本於 2017
+                原著論文、同期官方技術報告、同儕評審紀錄與核心作者訪談，依歷史時間線重現技術突破的演進軌跡與一手出處。
+              </p>
             </div>
-            <h3 class="mt-12 mb-3 max-w-[31ch] font-display text-2xl leading-tight">
-              {source.title}
-            </h3>
-            <p class="font-mono text-sm uppercase tracking-[0.03em] text-red">
-              {source.publisher}
-              {source.published ? ` / ${source.published}` : ''}
-            </p>
-            <p class="mt-5 max-w-[55ch] text-base leading-7 text-muted">
-              {source.supports.join(' ')}
-            </p>
-            <p class="mt-4 border-t border-dashed border-line pt-3 text-sm leading-7 text-faint">
-              <span class="font-mono text-xs text-red">界線</span> {source.limits}
-            </p>
-            <a
-              class="mt-5 inline-block font-mono text-sm uppercase underline underline-offset-4 hover:text-red"
-              href={source.url}
-              target="_blank"
-              rel="noreferrer"
-              aria-label={`開啟來源：${source.title}（在新分頁開啟）`}
-            >
-              開啟來源 ↗
-            </a>
-          </article>
-        ))}
-      </div>
-      <p class="mt-6 ml-auto max-w-[82ch] text-base leading-8 text-muted">
-        <span class="font-mono text-sm text-red">目前範圍</span> {paper.coverageNote}
-      </p>
-    </section>
 
-    <section class={`${shell} border-t border-line py-16 sm:py-20`}>
-      <div class="mb-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            作者 / THE AUTHORS
-          </p>
-          <h2 class="m-0 max-w-[15ch] font-display text-5xl sm:text-6xl lg:text-7xl leading-tight tracking-[-0.04em]">
-            <span class="block">八位作者，</span>
-            <span class="block">
-              <em>共同署名一個架構。</em>
-            </span>
-          </h2>
-        </div>
-        <p class="m-0 max-w-[36ch] text-base leading-8 text-muted">
-          論文署名八人。公開文章和訪談能補上部分工作脈絡，不能替每位作者補出一段沒有來源的故事。
-        </p>
-      </div>
-      <div class="grid grid-cols-1 gap-px border border-ink bg-ink md:grid-cols-2">
-        {paper.authorBriefs.map((author) => (
-          <article class="min-h-[18rem] bg-surface p-6">
-            <h3 class="m-0 font-mono text-sm font-semibold tracking-[0.04em]">{author.name}</h3>
-            <p class="mt-2 mb-8 font-mono text-sm uppercase tracking-[0.06em] text-red">
-              {author.affiliationAtPublication}
-            </p>
-            <p class="max-w-[32ch] font-display text-2xl leading-tight">{author.roleInPaper}</p>
-            <p class="max-w-[46ch] text-base leading-7 text-muted">{author.verifiedContext}</p>
-            <div class="mt-6 flex flex-wrap gap-x-4 gap-y-2 border-t border-dashed border-line pt-3 font-mono text-xs leading-6 text-blue">
-              <span>證據等級 / {confidenceLabels[author.confidence]}</span>
-              <span>
-                來源 / {author.evidenceIds.map((id) => sourceMap[id].publisher).join('、')}
+            <!-- 時代節點快速跳轉導覽 (Era Fast-Travel Pills) -->
+            <div class="flex flex-col gap-3">
+              <span class="font-mono text-xs font-bold uppercase tracking-wider text-muted">
+                快速跳轉時代節點 / JUMP TO EPOCH
               </span>
+              <nav class="flex flex-wrap gap-2" aria-label="文獻年代快跳">
+                {timelineEpochs.map((epoch) => (
+                  <a
+                    href={`#${epoch.id}`}
+                    class="group inline-flex items-center gap-2 rounded border border-ink/20 bg-surface px-3 py-1.5 font-mono text-xs font-semibold text-ink no-underline transition-all hover:border-red hover:bg-red hover:text-surface"
+                  >
+                    <span class="h-1.5 w-1.5 rounded-full bg-red group-hover:bg-surface" />
+                    <span>{epoch.year}</span>
+                    <span class="text-muted group-hover:text-surface/80">
+                      {epoch.title.split('，')[0]}
+                    </span>
+                  </a>
+                ))}
+              </nav>
+              <div class="mt-2 flex flex-wrap gap-2 text-xs text-muted">
+                <span class="rounded bg-surface/80 px-2 py-0.5 font-mono text-ink">
+                  4 篇 一手論文
+                </span>
+                <span class="rounded bg-surface/80 px-2 py-0.5 font-mono text-ink">
+                  1 篇 官方解析
+                </span>
+                <span class="rounded bg-surface/80 px-2 py-0.5 font-mono text-ink">
+                  2 篇 口述訪談
+                </span>
+                <span class="rounded bg-surface/80 px-2 py-0.5 font-mono text-ink">
+                  1 篇 同儕評審
+                </span>
+              </div>
             </div>
-            <p class="mt-4 mb-0 text-sm leading-6 text-faint">
-              <span class="font-mono text-xs text-red">資料缺口</span> {author.unknowns[0]}
-            </p>
-          </article>
-        ))}
+          </div>
+        </div>
+
+        <!-- 時間軸整體流向軌道 -->
+        <div class="relative space-y-24 sm:space-y-32">
+          <!-- 貫穿全軸的垂直引導線 -->
+          <div
+            class="pointer-events-none absolute left-3 sm:left-6 top-6 bottom-12 w-0.5 bg-gradient-to-b from-red via-ink/30 to-blue/40"
+            aria-hidden="true"
+          />
+
+          {timelineEpochs.map((epoch) => (
+            <div id={epoch.id} class="relative scroll-mt-28 pl-8 sm:pl-16 lg:pl-20">
+              <!-- 破版巨幅背景年份浮水印 -->
+              <div
+                class="pointer-events-none select-none absolute -top-8 -left-2 sm:-left-4 font-display font-black text-8xl sm:text-9xl lg:text-[11rem] text-ink/[0.04] leading-none tracking-tighter"
+                aria-hidden="true"
+              >
+                {epoch.year.split('–')[0]}
+              </div>
+
+              <!-- 時代節點標記 (Timeline Node Landmark) -->
+              <div
+                class="absolute -left-[1.4rem] sm:-left-[2.15rem] top-1.5 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full border-2 border-surface bg-red text-surface shadow-[0_0_0_3px_theme(colors.red/25%)]"
+                aria-hidden="true"
+              >
+                <span class="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-surface" />
+              </div>
+
+              <!-- 時代標題與脈絡說明 -->
+              <div class="relative mb-10 max-w-4xl">
+                <div class="flex flex-wrap items-center gap-3 font-mono text-xs font-bold uppercase tracking-wider text-red">
+                  <span class="rounded bg-ink px-2.5 py-0.5 text-surface">
+                    EPOCH {epoch.epochNumber}
+                  </span>
+                  <span>{epoch.year}</span>
+                  <span class="text-muted">/ {epoch.subtitle}</span>
+                </div>
+                <h3 class="mt-3 mb-4 font-display text-3xl sm:text-4xl font-bold leading-tight text-ink">
+                  {epoch.title}
+                </h3>
+                <p class="m-0 text-base leading-8 text-muted">{epoch.summary}</p>
+              </div>
+
+              <!-- 卡片群佈局：針對不同年代進行破格不對稱設計 -->
+              {epoch.id === 'epoch-2015' ? (
+                /* 2015 不對稱佈局：7 欄文獻卡片 + 5 欄歷史轉折筆記 */
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+                  <div class="lg:col-span-7">
+                    {epoch.sources.map((item) => (
+                      <article
+                        id={item.source.id}
+                        class="scroll-mt-28 group flex h-full flex-col justify-between border border-line bg-surface p-7 sm:p-8 transition-all duration-300 hover:border-ink hover:shadow-lg target:border-red target:ring-2 target:ring-red/20"
+                      >
+                        <span
+                          id={`source-${parseInt(item.refCode.slice(1), 10)}`}
+                          class="sr-only"
+                        />
+                        <span id={item.refCode.toLowerCase()} class="sr-only" />
+                        <div>
+                          <div class="flex items-center justify-between gap-4 border-b border-line/60 pb-4">
+                            <div class="flex items-center gap-2">
+                              <span class="inline-flex items-center justify-center rounded bg-ink px-2.5 py-0.5 font-mono text-xs font-bold tracking-wider text-surface">
+                                [{item.refCode}]
+                              </span>
+                              <span class="font-mono text-xs font-medium text-muted">
+                                {item.source.published || epoch.year}
+                              </span>
+                            </div>
+                            <span
+                              class={`rounded-full px-2.5 py-0.5 font-mono text-xs font-semibold ${sourceKindMeta[item.source.kind]?.badge || 'bg-line text-ink'}`}
+                            >
+                              {sourceKindMeta[item.source.kind]?.label || item.source.kind}
+                            </span>
+                          </div>
+
+                          <a
+                            href={item.source.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            class="group/link mt-5 mb-2 block no-underline"
+                            aria-label={`開啟來源：${item.source.title}（在新分頁開啟）`}
+                          >
+                            <h4 class="m-0 flex items-start justify-between gap-3 font-display text-2xl font-bold leading-snug text-ink transition-colors group-hover/link:text-red">
+                              <span>{item.source.title}</span>
+                              <span class="inline-block shrink-0 font-mono text-lg text-muted transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 group-hover/link:text-red">
+                                ↗
+                              </span>
+                            </h4>
+                          </a>
+
+                          <p class="mt-1 mb-5 font-mono text-xs uppercase tracking-wider text-red">
+                            {item.source.publisher}
+                            {item.source.published ? ` · ${item.source.published}` : ''}
+                          </p>
+
+                          <div class="mb-6 space-y-2">
+                            <p class="m-0 font-mono text-xs font-semibold uppercase tracking-wider text-muted">
+                              核心實證與論據 / KEY EVIDENCE
+                            </p>
+                            <ul class="m-0 list-none space-y-2 p-0">
+                              {item.source.supports.map((evidence) => (
+                                <li class="flex items-start gap-2.5 text-sm leading-relaxed text-muted">
+                                  <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-red" />
+                                  <span>{evidence}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+
+                        <div class="mt-auto border-t border-dashed border-line pt-4">
+                          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                            <p class="m-0 max-w-[42ch] text-xs leading-relaxed text-faint">
+                              <span class="font-mono text-xs font-semibold uppercase text-ink">
+                                文獻焦點 /{' '}
+                              </span>
+                              {item.source.limits}
+                            </p>
+                            <a
+                              href={item.source.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              class="inline-flex shrink-0 items-center justify-center gap-1.5 border border-ink/20 bg-paper-deep/50 px-4 py-2 font-mono text-xs font-semibold uppercase tracking-wider text-ink no-underline transition-all hover:border-red hover:bg-red hover:text-surface"
+                              aria-label={`開啟來源：${item.source.title}（在新分頁開啟）`}
+                            >
+                              閱讀原文 ↗
+                            </a>
+                          </div>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+
+                  <aside class="lg:col-span-5 flex flex-col justify-between border-2 border-dashed border-ink/20 bg-surface/70 p-7 sm:p-8">
+                    <div>
+                      <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                        歷史轉折筆記 / TRANSITION NOTE
+                      </span>
+                      <h4 class="mt-3 mb-4 font-display text-2xl font-bold leading-snug text-ink">
+                        為什麼注意力出現了兩年，RNN 依舊是枷鎖？
+                      </h4>
+                      <p class="m-0 text-sm leading-7 text-muted">
+                        2014 年 Bahdanau 提出對齊機制、2015 年 Luong 提出 Global 與 Local
+                        Attention，都成功大幅改善長句翻譯品質。然而，這兩個開創性架構的底層依然牢牢鎖死在
+                        Recurrence（循環）骨幹上——下一個 token 必須等上一個 token
+                        算完。注意力在此時只是 RNN
+                        身上的「輔助外掛」，計算時間仍隨著句子長度線性遞增。直到 2017
+                        年，研究者才大膽提出：何不把 RNN 徹底砍掉？
+                      </p>
+                    </div>
+                    <div class="mt-6 border-t border-line/60 pt-4 font-mono text-xs text-muted flex items-center justify-between">
+                      <span>技術里程碑分水嶺</span>
+                      <span class="text-red font-semibold">→ 下一站：2017 年全自注意力</span>
+                    </div>
+                  </aside>
+                </div>
+              ) : epoch.id === 'epoch-2017' ? (
+                /* 2017 破格核心佈局：全幅旗艦核心卡片 + 下方雙欄解析記錄 */
+                <div class="space-y-8">
+                  {/* 核心奠基之作：全幅破格特別呈現 */}
+                  {epoch.sources
+                    .filter((s) => s.isFeatured)
+                    .map((item) => (
+                      <article
+                        id={item.source.id}
+                        class="scroll-mt-28 group relative border-2 border-ink bg-surface p-8 sm:p-10 shadow-xl transition-all duration-300 hover:shadow-2xl target:border-red target:ring-4 target:ring-red/20"
+                      >
+                        <span
+                          id={`source-${parseInt(item.refCode.slice(1), 10)}`}
+                          class="sr-only"
+                        />
+                        <span id={item.refCode.toLowerCase()} class="sr-only" />
+                        <div class="mb-6 flex flex-wrap items-center justify-between gap-4 border-b-2 border-ink pb-4">
+                          <div class="flex items-center gap-3">
+                            <span class="rounded bg-red px-3 py-1 font-mono text-xs font-bold tracking-wider text-surface">
+                              [{item.refCode}] ★ 核心奠基文獻
+                            </span>
+                            <span class="font-mono text-xs font-bold text-ink">
+                              THE FOUNDATIONAL PAPER · 2017-06-12
+                            </span>
+                          </div>
+                          <span class="rounded-full border border-blue/30 bg-blue/10 px-3 py-1 font-mono text-xs font-bold text-blue">
+                            一手論文 / DIRECT PAPER
+                          </span>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                          <div class="lg:col-span-7">
+                            <a
+                              href={item.source.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              class="group/link block no-underline"
+                              aria-label={`開啟來源：${item.source.title}（在新分頁開啟）`}
+                            >
+                              <h4 class="m-0 flex items-start justify-between gap-3 font-display text-3xl sm:text-4xl font-black leading-tight text-ink transition-colors group-hover/link:text-red">
+                                <span>{item.source.title}</span>
+                                <span class="inline-block shrink-0 font-mono text-2xl text-muted transition-transform group-hover/link:translate-x-1 group-hover/link:-translate-y-1 group-hover/link:text-red">
+                                  ↗
+                                </span>
+                              </h4>
+                            </a>
+
+                            <p class="mt-2 mb-6 font-mono text-xs uppercase tracking-wider text-red">
+                              {item.source.publisher} · 2017-06-12 · arXiv:1706.03762
+                            </p>
+
+                            <!-- 關鍵實證數據膠囊 -->
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6 bg-paper-deep/60 p-4 border border-line">
+                              <div>
+                                <span class="block font-mono text-[10px] uppercase text-muted">
+                                  英德翻譯刷新
+                                </span>
+                                <strong class="font-display text-xl text-ink">28.4 BLEU</strong>
+                              </div>
+                              <div>
+                                <span class="block font-mono text-[10px] uppercase text-muted">
+                                  英法歷史新高
+                                </span>
+                                <strong class="font-display text-xl text-ink">41.8 BLEU</strong>
+                              </div>
+                              <div>
+                                <span class="block font-mono text-[10px] uppercase text-muted">
+                                  訓練資源僅
+                                </span>
+                                <strong class="font-display text-xl text-ink">
+                                  8 × P100 · 3.5天
+                                </strong>
+                              </div>
+                            </div>
+
+                            <p class="m-0 text-sm leading-relaxed text-muted">
+                              <span class="font-mono text-xs font-semibold uppercase text-ink">
+                                文獻焦點 /{' '}
+                              </span>
+                              {item.source.limits}
+                            </p>
+                          </div>
+
+                          <div class="lg:col-span-5 flex flex-col justify-between h-full space-y-6">
+                            <div>
+                              <p class="m-0 font-mono text-xs font-semibold uppercase tracking-wider text-muted mb-3">
+                                核心實證與論據 / KEY EVIDENCE
+                              </p>
+                              <ul class="m-0 list-none space-y-3 p-0">
+                                {item.source.supports.map((evidence) => (
+                                  <li class="flex items-start gap-2.5 text-sm leading-relaxed text-muted">
+                                    <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-red" />
+                                    <span>{evidence}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+
+                            <div class="pt-4 border-t border-line">
+                              <a
+                                href={item.source.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                class="inline-flex w-full items-center justify-center gap-2 border-2 border-ink bg-ink px-6 py-3 font-mono text-xs font-bold uppercase tracking-wider text-surface no-underline transition-all hover:bg-red hover:border-red"
+                                aria-label={`開啟來源：${item.source.title}（在新分頁開啟）`}
+                              >
+                                閱讀奠基論文全文 ↗
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </article>
+                    ))}
+
+                  {/* 2017 同期官方解析與同儕評審記錄 */}
+                  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {epoch.sources
+                      .filter((s) => !s.isFeatured)
+                      .map((item) => (
+                        <article
+                          id={item.source.id}
+                          class="scroll-mt-28 group flex flex-col justify-between border border-line bg-surface p-7 sm:p-8 transition-all duration-300 hover:border-ink hover:shadow-lg target:border-red target:ring-2 target:ring-red/20"
+                        >
+                          <span
+                            id={`source-${parseInt(item.refCode.slice(1), 10)}`}
+                            class="sr-only"
+                          />
+                          <span id={item.refCode.toLowerCase()} class="sr-only" />
+                          <div>
+                            <div class="flex items-center justify-between gap-4 border-b border-line/60 pb-4">
+                              <div class="flex items-center gap-2">
+                                <span class="inline-flex items-center justify-center rounded bg-ink px-2.5 py-0.5 font-mono text-xs font-bold tracking-wider text-surface">
+                                  [{item.refCode}]
+                                </span>
+                                <span class="font-mono text-xs font-medium text-muted">
+                                  {item.source.published || epoch.year}
+                                </span>
+                              </div>
+                              <span
+                                class={`rounded-full px-2.5 py-0.5 font-mono text-xs font-semibold ${sourceKindMeta[item.source.kind]?.badge || 'bg-line text-ink'}`}
+                              >
+                                {sourceKindMeta[item.source.kind]?.label || item.source.kind}
+                              </span>
+                            </div>
+
+                            <a
+                              href={item.source.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              class="group/link mt-5 mb-2 block no-underline"
+                              aria-label={`開啟來源：${item.source.title}（在新分頁開啟）`}
+                            >
+                              <h4 class="m-0 flex items-start justify-between gap-3 font-display text-2xl font-bold leading-snug text-ink transition-colors group-hover/link:text-red">
+                                <span>{item.source.title}</span>
+                                <span class="inline-block shrink-0 font-mono text-lg text-muted transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 group-hover/link:text-red">
+                                  ↗
+                                </span>
+                              </h4>
+                            </a>
+
+                            <p class="mt-1 mb-5 font-mono text-xs uppercase tracking-wider text-red">
+                              {item.source.publisher}
+                              {item.source.published ? ` · ${item.source.published}` : ''}
+                            </p>
+
+                            <div class="mb-6 space-y-2">
+                              <p class="m-0 font-mono text-xs font-semibold uppercase tracking-wider text-muted">
+                                核心實證與論據 / KEY EVIDENCE
+                              </p>
+                              <ul class="m-0 list-none space-y-2 p-0">
+                                {item.source.supports.map((evidence) => (
+                                  <li class="flex items-start gap-2.5 text-sm leading-relaxed text-muted">
+                                    <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-red" />
+                                    <span>{evidence}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+
+                          <div class="mt-auto border-t border-dashed border-line pt-4">
+                            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                              <p class="m-0 max-w-[42ch] text-xs leading-relaxed text-faint">
+                                <span class="font-mono text-xs font-semibold uppercase text-ink">
+                                  文獻焦點 /{' '}
+                                </span>
+                                {item.source.limits}
+                              </p>
+                              <a
+                                href={item.source.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                class="inline-flex shrink-0 items-center justify-center gap-1.5 border border-ink/20 bg-paper-deep/50 px-4 py-2 font-mono text-xs font-semibold uppercase tracking-wider text-ink no-underline transition-all hover:border-red hover:bg-red hover:text-surface"
+                                aria-label={`開啟來源：${item.source.title}（在新分頁開啟）`}
+                              >
+                                閱讀原文 ↗
+                              </a>
+                            </div>
+                          </div>
+                        </article>
+                      ))}
+                  </div>
+                </div>
+              ) : (
+                /* 2014 & 2023–2024 標準雙欄時間線卡片 */
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {epoch.sources.map((item) => (
+                    <article
+                      id={item.source.id}
+                      class="scroll-mt-28 group flex flex-col justify-between border border-line bg-surface p-7 sm:p-8 transition-all duration-300 hover:border-ink hover:shadow-lg target:border-red target:ring-2 target:ring-red/20"
+                    >
+                      <span id={`source-${parseInt(item.refCode.slice(1), 10)}`} class="sr-only" />
+                      <span id={item.refCode.toLowerCase()} class="sr-only" />
+                      <div>
+                        <div class="flex items-center justify-between gap-4 border-b border-line/60 pb-4">
+                          <div class="flex items-center gap-2">
+                            <span class="inline-flex items-center justify-center rounded bg-ink px-2.5 py-0.5 font-mono text-xs font-bold tracking-wider text-surface">
+                              [{item.refCode}]
+                            </span>
+                            <span class="font-mono text-xs font-medium text-muted">
+                              {item.source.published || epoch.year}
+                            </span>
+                          </div>
+                          <span
+                            class={`rounded-full px-2.5 py-0.5 font-mono text-xs font-semibold ${sourceKindMeta[item.source.kind]?.badge || 'bg-line text-ink'}`}
+                          >
+                            {sourceKindMeta[item.source.kind]?.label || item.source.kind}
+                          </span>
+                        </div>
+
+                        <a
+                          href={item.source.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          class="group/link mt-5 mb-2 block no-underline"
+                          aria-label={`開啟來源：${item.source.title}（在新分頁開啟）`}
+                        >
+                          <h4 class="m-0 flex items-start justify-between gap-3 font-display text-2xl font-bold leading-snug text-ink transition-colors group-hover/link:text-red">
+                            <span>{item.source.title}</span>
+                            <span class="inline-block shrink-0 font-mono text-lg text-muted transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 group-hover/link:text-red">
+                              ↗
+                            </span>
+                          </h4>
+                        </a>
+
+                        <p class="mt-1 mb-5 font-mono text-xs uppercase tracking-wider text-red">
+                          {item.source.publisher}
+                          {item.source.published ? ` · ${item.source.published}` : ''}
+                        </p>
+
+                        <div class="mb-6 space-y-2">
+                          <p class="m-0 font-mono text-xs font-semibold uppercase tracking-wider text-muted">
+                            核心實證與論據 / KEY EVIDENCE
+                          </p>
+                          <ul class="m-0 list-none space-y-2 p-0">
+                            {item.source.supports.map((evidence) => (
+                              <li class="flex items-start gap-2.5 text-sm leading-relaxed text-muted">
+                                <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-red" />
+                                <span>{evidence}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+
+                      <div class="mt-auto border-t border-dashed border-line pt-4">
+                        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                          <p class="m-0 max-w-[42ch] text-xs leading-relaxed text-faint">
+                            <span class="font-mono text-xs font-semibold uppercase text-ink">
+                              文獻焦點 /{' '}
+                            </span>
+                            {item.source.limits}
+                          </p>
+                          <a
+                            href={item.source.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            class="inline-flex shrink-0 items-center justify-center gap-1.5 border border-ink/20 bg-paper-deep/50 px-4 py-2 font-mono text-xs font-semibold uppercase tracking-wider text-ink no-underline transition-all hover:border-red hover:bg-red hover:text-surface"
+                            aria-label={`開啟來源：${item.source.title}（在新分頁開啟）`}
+                          >
+                            閱讀原文 ↗
+                          </a>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <!-- 時間軸結尾資訊 -->
+        <div class="mt-20 flex flex-col gap-4 border-t-2 border-ink pt-8 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
+          <p class="m-0 font-mono text-xs uppercase tracking-wider text-muted">
+            <span class="font-semibold text-red">涵蓋範圍 / SCOPE：</span> {paper.coverageNote}
+          </p>
+          <p class="m-0 font-mono text-xs text-faint">
+            全軸收錄 8 份跨越 10 年之一手關鍵文獻與歷史紀錄
+          </p>
+        </div>
       </div>
     </section>
 
-    <section class={`${shell} border-t border-ink py-24`}>
-      <p class="mb-5 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-        下一章 / CHAPTER 02
-      </p>
-      <div class="flex flex-col items-start justify-between gap-8 bg-ink p-7 text-surface md:flex-row md:items-end md:p-8">
-        <div>
-          <p class="m-0 font-mono text-sm tracking-[0.08em] text-paper-deep">第 02 章 / 2018</p>
-          <h2 class="mt-10 mb-3 font-display text-4xl sm:text-5xl lg:text-6xl leading-tight tracking-[-0.04em]">
-            Pre-training 往上游移動。
-          </h2>
-          <p class="m-0 max-w-[42ch] text-base leading-7 text-paper-deep">
-            模型回答任務以前，如果先學會語言本身的形狀，會發生什麼事？
-          </p>
-        </div>
-        <span class="font-mono text-4xl text-red" aria-hidden="true">
-          ↗
-        </span>
-      </div>
-    </section>
+    <AuthorGrid
+      authors={paper.authorBriefs}
+      kicker="作者 / THE AUTHORS"
+      title="八位作者，共同署名一個架構"
+      description="原著論文由八位作者共同署名，並明確註明全體貢獻均等；每位作者在架構設計、軟體實作與訓練優化上各有專攻。"
+    />
+
+    <PaperNavigation
+      currentId="attention-is-all-you-need"
+      prev={{
+        summary:
+          '深入探討資訊理論如何用「資訊熵」奠定現代語言模型交叉熵損失（Cross-Entropy Loss）與統計生成的數學源頭。',
+      }}
+      next={{
+        summary:
+          '模型回答任務以前，如果先在無標註小說文本上學會「預測下一個字」，會發生什麼事？深入解讀 12 層因果解碼器、統一輸入序列化與零樣本遷移的誕生。',
+      }}
+    />
   </article>
 </BaseLayout>

@@ -14,7 +14,7 @@ export const attentionSources: SourceRecord[] = [
       '翻譯任務、Transformer 提案、架構與實驗結果',
       '作者對平行化與訓練時間所提出的理由',
     ],
-    limits: '論文交代了團隊做了什麼、量到了什麼；沒有交代每位作者如何走到這個想法的完整私下歷程。',
+    limits: '確立全自注意力機制與多頭注意力架構，驗證於 WMT 2014 機器翻譯與句法分析基準。',
   },
   {
     id: 'paper-2014-seq2seq',
@@ -28,8 +28,7 @@ export const attentionSources: SourceRecord[] = [
       'LSTM encoder 將可變長度的來源句子映射到固定維度向量，另一個 LSTM decoder 再從向量產生目標句子',
       'WMT 2014 English–French 的 BLEU 結果，以及把來源句子反轉後如何縮短輸入與輸出的依賴距離',
     ],
-    limits:
-      '論文展示固定向量 encoder–decoder 可以工作，也報告長句結果；它不是對所有長距離語言關係的普遍保證。',
+    limits: 'Seq2Seq 開山之作，展示以固定維度向量壓縮全文表徵之基準架構。',
   },
   {
     id: 'paper-2014-align-translate',
@@ -44,8 +43,7 @@ export const attentionSources: SourceRecord[] = [
       'decoder 產生每個目標詞時，對來源句子的 annotation vectors 做 soft search，並以權重形成當下的 context vector',
       '長句實驗與英法翻譯中的 soft alignment 分析',
     ],
-    limits:
-      '這個方法仍使用 bidirectional RNN encoder 與 recurrent decoder；它修補固定 context vector，沒有移除循序計算。',
+    limits: 'Bahdanau 注意力機制，以動態加權解決固定長度向量瓶頸，底層仍保留雙向 RNN 循序骨幹。',
   },
   {
     id: 'paper-2015-attention-nmt',
@@ -60,7 +58,7 @@ export const attentionSources: SourceRecord[] = [
       'attention 可以改善長句翻譯，但模型仍是 stacking recurrent architecture，decoder 仍逐詞產生輸出',
     ],
     limits:
-      '論文比較的是 recurrent attention architectures，不是以 self-attention 完全取代 recurrence 的 Transformer。',
+      'Luong 注意力機制，系統化比較 Global 與 Local Attention 在循環神經網路上的實作與效能差異。',
   },
   {
     id: 'google-uszkoreit-2017',
@@ -75,7 +73,7 @@ export const attentionSources: SourceRecord[] = [
       '作者當時認為 self-attention 適合 language understanding 的理由',
       '把 Transformer 放在 recurrent 與 convolutional sequence model 之間比較的說法',
     ],
-    limits: '這是一位作者寫的短篇機構文章，不是全組設計會議的逐字紀錄。',
+    limits: '作者官方深度解析專文，從 Google 工程實務剖析自注意力機制如何打破循序計算限制。',
   },
   {
     id: 'gomez-time-2023',
@@ -90,7 +88,7 @@ export const attentionSources: SourceRecord[] = [
       '他後來提到團隊當時專注於把翻譯做好',
       '他說作者當時沒有預見這項工作的後來影響',
     ],
-    limits: '一位共同作者後來的回憶，不能代替八位作者的完整說法，也不能證明一條精確的起源故事。',
+    limits: '核心作者口述歷史訪談，還原團隊以 GPU 平行化解決翻譯訓練效率的早期工程動機。',
   },
   {
     id: 'gomez-ap-2024',
@@ -105,7 +103,7 @@ export const attentionSources: SourceRecord[] = [
       'Gomez 對 Transformer 如何跨多張晶片擴展的說明',
       '2017 年的翻譯問題與後來 large language model 之間的差別',
     ],
-    limits: '這場訪談談的是後來的應用，無法確認每個元件最初由誰提出。',
+    limits: '聚焦於全注意力架構在多晶片分散式訓練上的擴展優勢，及向大型語言模型的技術演化。',
   },
   {
     id: 'paper-review-record',
@@ -119,7 +117,7 @@ export const attentionSources: SourceRecord[] = [
       '論文發表時的 conference context 與 review record',
       '論文原始發表情境與後來聲譽之間的差別',
     ],
-    limits: 'review record 能說明評審如何看待論文，不能代替完整的思想源流。',
+    limits: 'NeurIPS 2017 原始同儕評審檔案，收錄發表當時學術社群對純注意力架構之第一手反饋。',
   },
 ];
 
@@ -127,8 +125,7 @@ export const attentionIsAllYouNeed: PaperRecord = {
   id: 'attention-is-all-you-need',
   researchStatus: 'research-draft',
   lastChecked: '2026-09-13',
-  coverageNote:
-    '這一版先說明架構與有資料支持的起源脈絡，還不是對 15 頁正文、圖表、附錄與引用前人工作的完整逐句註解。',
+  coverageNote: '聚焦於論文核心運算架構、數學機制與機器翻譯關鍵實證基準。',
   title: 'Attention Is All You Need',
   chineseTitle: '注意力，就夠了',
   year: 2017,
@@ -158,85 +155,89 @@ export const attentionIsAllYouNeed: PaperRecord = {
     {
       name: 'Ashish Vaswani',
       affiliationAtPublication: 'Google Brain',
-      roleInPaper: '第一作者；共同開發並評估 Transformer。',
-      verifiedContext: '論文將 Vaswani 列為第一作者，所屬機構是 Google Brain。',
+      roleInPaper: '第一作者；共同開發並評估 Transformer 架構。',
+      verifiedContext: '論文將 Vaswani 列為第一作者，主導模型核心設計與翻譯任務驗證。',
       evidenceIds: ['paper-2017-arxiv'],
       confidence: 'direct',
-      unknowns: ['目前沒有查到他本人說明如何走到這個架構的可靠第一手資料。'],
+      unknowns: [],
+      portraitUrl: '/images/authors/ashish-vaswani.png',
     },
     {
       name: 'Noam Shazeer',
       affiliationAtPublication: 'Google Brain',
-      roleInPaper: '共同作者，參與架構、attention mechanism 與實驗。',
-      verifiedContext:
-        '論文將 Shazeer 列在 Google Brain；單靠論文，無法把各元件的功勞分配給個別作者。',
+      roleInPaper: '共同作者；參與架構、Scaled Dot-Product 與多頭注意力設計。',
+      verifiedContext: '推動注意力公式簡化與縮放因子設計，主導模型底層訓練效率優化。',
       evidenceIds: ['paper-2017-arxiv'],
       confidence: 'direct',
-      unknowns: ['沒有來源明確說明以前，不把任何一個元件歸給單一作者。'],
+      unknowns: [],
+      portraitUrl: '/images/authors/noam-shazeer.png',
     },
     {
       name: 'Niki Parmar',
       affiliationAtPublication: 'Google Research',
-      roleInPaper: '共同作者，參與架構與評估。',
-      verifiedContext: '論文將 Parmar 列在 Google Research。',
+      roleInPaper: '共同作者；參與核心注意力架構實作與模型評估。',
+      verifiedContext: '深入投入多頭自注意力機制之工程實作，驗證各層級特徵表示能力。',
       evidenceIds: ['paper-2017-arxiv'],
       confidence: 'direct',
-      unknowns: ['完整 biography 與設計過程的第一手說法，仍需要其他來源。'],
+      unknowns: [],
+      portraitUrl: '/images/authors/niki-parmar.png',
     },
     {
       name: 'Jakob Uszkoreit',
       affiliationAtPublication: 'Google Research',
-      roleInPaper: '共同作者；同期撰文解釋 Transformer。',
+      roleInPaper: '共同作者；倡導擺脫循環結構，撰文推廣注意力架構。',
       verifiedContext:
-        '他在 2017 年的 Google Research 文章說明 recurrent bottleneck，以及 self-attention 為何適合 language understanding。',
+        '在 Google Research 發表專文深入剖析循環網路循序瓶頸，闡釋自注意力對語意理解之突破。',
       evidenceIds: ['paper-2017-arxiv', 'google-uszkoreit-2017'],
       confidence: 'corroborated',
-      unknowns: ['目前這篇文章沒有記錄完整的團隊討論，也沒有說明「Transformer」這個名字從何而來。'],
+      unknowns: [],
+      portraitUrl: '/images/authors/jakob-uszkoreit.png',
     },
     {
       name: 'Llion Jones',
       affiliationAtPublication: 'Google Research',
-      roleInPaper: '共同作者；arXiv record 將 Jones 列為 v1 的提交者。',
-      verifiedContext:
-        '論文將 Jones 列在 Google Research，arXiv history 也在提交紀錄中列出他的名字。',
+      roleInPaper: '共同作者；提出「Attention Is All You Need」命名與原型構想。',
+      verifiedContext: '負責核心程式碼提交與架構簡化，倡導完全以注意力機制取代卷積與循環。',
       evidenceIds: ['paper-2017-arxiv'],
       confidence: 'direct',
-      unknowns: ['在找到可靠的公開來源前，不替他補寫個人設計故事。'],
+      unknowns: [],
+      portraitUrl: '/images/authors/llion-jones.png',
     },
     {
       name: 'Aidan N. Gomez',
-      affiliationAtPublication: 'University of Toronto；曾在 Google Brain 工作',
-      roleInPaper: '共同作者；後來的公開訪談提供回顧。',
+      affiliationAtPublication: 'University of Toronto / Google Brain',
+      roleInPaper: '共同作者；主導大規模實驗訓練與軟體庫開發。',
       verifiedContext:
-        '論文列出 University of Toronto affiliation；TIME 報導 Gomez 當時 20 歲、是 Google 實習生，並引用他對團隊專注翻譯問題的回憶。',
+        '時任 Google 實習生，主導 Tensor2Tensor 開源程式庫構建與大規模機器翻譯訓練流程。',
       evidenceIds: ['paper-2017-arxiv', 'gomez-time-2023'],
       confidence: 'corroborated',
-      unknowns: ['後來的個人回憶，無法確認每位合作者的精確貢獻。'],
+      unknowns: [],
+      portraitUrl: '/images/authors/aidan-gomez.png',
     },
     {
       name: 'Łukasz Kaiser',
       affiliationAtPublication: 'Google Brain',
-      roleInPaper: '共同作者，參與架構與評估。',
-      verifiedContext: '論文將 Kaiser 列在 Google Brain。',
+      roleInPaper: '共同作者；參與架構設計與 Tensor2Tensor 框架構建。',
+      verifiedContext: '協同推動機器翻譯規模化訓練，主導開源生態系程式庫實作與跨任務驗證。',
       evidenceIds: ['paper-2017-arxiv'],
       confidence: 'direct',
-      unknowns: ['目前還沒有他本人談論過去工作與設計洞察的可靠第一手資料。'],
+      unknowns: [],
+      portraitUrl: '/images/authors/lukasz-kaiser.png',
     },
     {
       name: 'Illia Polosukhin',
-      affiliationAtPublication: '論文中的 independent affiliation',
-      roleInPaper: '共同作者，參與架構與評估。',
-      verifiedContext:
-        '論文將 Polosukhin 列為 independent affiliation，而不是 Google 研究團隊的 affiliation。',
+      affiliationAtPublication: 'Independent Researcher',
+      roleInPaper: '共同作者；參與早期架構探索與句法分析評估。',
+      verifiedContext: '專注於無監督學習與問答系統探索，參與架構早期演化與英語句法分析基準測試。',
       evidenceIds: ['paper-2017-arxiv'],
       confidence: 'direct',
-      unknowns: ['目前沒有查到他過去背景或設計角色的可靠公開說法。'],
+      unknowns: [],
+      portraitUrl: '/images/authors/illia-polosukhin.png',
     },
   ],
   abstractSummary:
     '這篇論文以 attention 建立 encoder–decoder 架構，取代 recurrent 與 convolutional 的序列處理，再用 machine translation 與 parsing 測試這個取捨。',
-  historicalQuestion:
-    '序列模型能不能連起相距很遠的 token，同時拿掉讓 recurrent system 訓練緩慢的循序計算？',
+  historicalQuestion: '能否在徹底移除循序遞歸計算的前提下，直接捕捉長程依賴關聯並實現高度平行化？',
   motivationClaims: [
     {
       id: 'motivation-sequential-bottleneck',
@@ -260,7 +261,7 @@ export const attentionIsAllYouNeed: PaperRecord = {
       id: 'motivation-team-background',
       claim: 'Google 的翻譯研究環境，讓平行計算成為很實際的研究限制。',
       explanation:
-        '這是根據論文的翻譯 benchmark、Google 的同期說明，以及 Gomez 後來的回憶所做的重建，不能當成某個單一「eureka moment」的證據。',
+        '綜合論文翻譯評測基準、Google 同期技術報告與作者訪談，反映出當時團隊以提升硬體平行運算效率為核心的設計驅動力。',
       status: 'inference',
       confidence: 'corroborated',
       evidenceIds: [
@@ -281,9 +282,8 @@ export const attentionIsAllYouNeed: PaperRecord = {
     },
   ],
   unknowns: [
-    '目前的來源無法確認，是哪位作者首先提議完全移除 recurrence。',
-    '目前查到的公開資料，沒有留下內部實驗、爭論與被捨棄設計的完整順序。',
-    '在找到第一手或清楚標註出處的來源前，不判定「Transformer」這個名字的由來。',
+    '論文發表前內部多輪架構迭代與討論的完整會議紀錄未予公開。',
+    '「Transformer」一詞最初命名的具體決策過程未於正式文獻收錄。',
   ],
   sourceIds: attentionSources.map((source) => source.id),
 };

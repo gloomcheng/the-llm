@@ -1,0 +1,151 @@
+---
+import { milestonePapers } from '../content/papers/milestones';
+
+export interface NavItem {
+  vol: string;
+  year: number | string;
+  title: string;
+  chineseTitle?: string;
+  url: string;
+  statusText?: string;
+  summary?: string;
+}
+
+interface Props {
+  currentId?: string;
+  prev?: Partial<NavItem>;
+  next?: Partial<NavItem>;
+  class?: string;
+}
+
+const { currentId, prev: propPrev, next: propNext, class: className = '' } = Astro.props;
+const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
+
+let autoPrev: NavItem | undefined;
+let autoNext: NavItem | undefined;
+
+if (currentId) {
+  const currentIndex = milestonePapers.findIndex((p) => p.id === currentId);
+  if (currentIndex > 0) {
+    const p = milestonePapers[currentIndex - 1];
+    autoPrev = {
+      vol: p.vol,
+      year: p.year,
+      title: p.title,
+      chineseTitle: p.chineseTitle,
+      url: p.url,
+      statusText: p.status === 'published' ? undefined : '大綱規劃中',
+      summary: p.why,
+    };
+  }
+  if (currentIndex >= 0 && currentIndex < milestonePapers.length - 1) {
+    const n = milestonePapers[currentIndex + 1];
+    autoNext = {
+      vol: n.vol,
+      year: n.year,
+      title: n.title,
+      chineseTitle: n.chineseTitle,
+      url: n.url,
+      statusText: n.status === 'published' ? undefined : '大綱規劃中',
+      summary: n.why,
+    };
+  }
+}
+
+const prev: NavItem | undefined =
+  propPrev || autoPrev ? ({ ...autoPrev, ...propPrev } as NavItem) : undefined;
+const next: NavItem | undefined =
+  propNext || autoNext ? ({ ...autoNext, ...propNext } as NavItem) : undefined;
+---
+
+<section
+  class:list={[shell, 'border-t border-ink py-16 sm:py-24', className]}
+  data-slot="paper-navigation"
+  aria-label="章節導航"
+>
+  <div class="mb-8">
+    <p class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-red mb-1">
+      延伸閱讀 / CONTINUITY
+    </p>
+    <h2 class="m-0 font-display text-2xl sm:text-3xl text-ink">沿著技術脈絡，探索前後里程碑</h2>
+  </div>
+
+  <div class:list={['grid gap-8', prev && next ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1']}>
+    {prev && (
+      <a
+        href={prev.url}
+        class="group flex flex-col justify-between border-2 border-line bg-surface p-7 sm:p-9 text-ink no-underline transition-all hover:border-ink hover:shadow-editorial"
+        aria-label={`返回${prev.vol === '00' ? '序章' : `上一章：第 ${prev.vol} 章`} ${prev.title}`}
+      >
+        <div>
+          <div class="flex items-center justify-between font-mono text-xs uppercase tracking-wider text-muted mb-3">
+            <span class="text-ink">
+              {prev.vol === '00' ? '← 序章 / PROLOGUE 00' : `← 上一章 / CHAPTER ${prev.vol}`} ·{' '}
+              {prev.year}
+            </span>
+            {prev.statusText && (
+              <span class="px-2 py-0.5 text-[11px] font-bold border bg-muted/10 border-muted/20 text-muted">
+                {prev.statusText}
+              </span>
+            )}
+          </div>
+
+          {prev.chineseTitle && (
+            <p class="m-0 mb-2 font-display text-base sm:text-lg text-red font-medium leading-snug">
+              {prev.chineseTitle}
+            </p>
+          )}
+
+          <h3 class="m-0 mb-4 font-display text-xl sm:text-2xl text-ink group-hover:text-red transition-colors leading-snug">
+            {prev.title}
+          </h3>
+
+          {prev.summary && <p class="m-0 text-sm text-muted leading-relaxed">{prev.summary}</p>}
+        </div>
+
+        <div class="mt-8 flex items-center gap-1.5 font-mono text-xs font-bold text-red uppercase">
+          <span class="text-sm">←</span>
+          <span>{prev.vol === '00' ? '閱讀序章' : '閱讀上一章'}</span>
+        </div>
+      </a>
+    )}
+
+    {next && (
+      <a
+        href={next.url}
+        class="group flex flex-col justify-between border-2 border-ink bg-paper-deep/40 p-7 sm:p-9 text-ink no-underline transition-all hover:border-red hover:shadow-editorial"
+        aria-label={`前往下一章：第 ${next.vol} 章 ${next.title}`}
+      >
+        <div>
+          <div class="flex items-center justify-between font-mono text-xs uppercase tracking-wider mb-3">
+            <span class="text-red">
+              下一章 / CHAPTER {next.vol} · {next.year}
+            </span>
+            {next.statusText && (
+              <span class="px-2 py-0.5 text-[11px] font-bold border bg-muted/10 border-muted/20 text-muted">
+                {next.statusText}
+              </span>
+            )}
+          </div>
+
+          {next.chineseTitle && (
+            <p class="m-0 mb-2 font-display text-base sm:text-lg text-red font-medium leading-snug">
+              {next.chineseTitle}
+            </p>
+          )}
+
+          <h3 class="m-0 mb-4 font-display text-xl sm:text-2xl text-ink group-hover:text-red transition-colors leading-snug">
+            {next.title}
+          </h3>
+
+          {next.summary && <p class="m-0 text-sm text-muted leading-relaxed">{next.summary}</p>}
+        </div>
+
+        <div class="mt-8 flex items-center justify-end gap-1.5 font-mono text-xs font-bold text-red uppercase">
+          <span>閱讀下一章</span>
+          <span class="text-sm">↗</span>
+        </div>
+      </a>
+    )}
+  </div>
+</section>

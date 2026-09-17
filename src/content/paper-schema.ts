@@ -24,6 +24,7 @@ export interface AuthorBrief {
   evidenceIds: string[];
   confidence: Confidence;
   unknowns: string[];
+  portraitUrl?: string;
 }
 
 export interface MotivationClaim {

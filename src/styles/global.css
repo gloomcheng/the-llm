@@ -12,7 +12,10 @@
   --color-red-soft: #f0d8cf;
   --color-blue: #355b70;
   --font-display:
-    'Noto Serif CJK TC', 'Noto Serif TC', 'Jigmo', 'Iowan Old Style', 'Baskerville', Georgia, serif;
+    'Hiragino Mincho ProN', 'Hiragino Mincho Pro', 'ヒラギノ明朝 ProN W3', 'ヒラギノ明朝 ProN W6',
+    'HiraMinProN-W3', 'HiraMinProN-W6', 'Yu Mincho', 'YuMincho', 'Shippori Mincho',
+    'Zen Old Mincho', 'BIZ UDPMincho', 'Noto Serif CJK TC', 'Noto Serif TC', 'Jigmo',
+    'Iowan Old Style', 'Baskerville', Georgia, serif;
   --font-sans: 'LINE Seed TW', 'LINE Seed', 'Noto Sans TC', 'Helvetica Neue', Arial, sans-serif;
   --font-mono: 'SFMono-Regular', 'Roboto Mono', 'Noto Sans Mono', Consolas, monospace;
   --shadow-editorial: 0 16px 36px rgb(42 35 24 / 7%);

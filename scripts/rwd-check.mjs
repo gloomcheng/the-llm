@@ -10,6 +10,14 @@ const pages = [
     path: 'src/pages/papers/attention-is-all-you-need.astro',
     required: ['grid-cols-1', 'md:grid-cols-', 'w-[calc(100%-2rem)]', 'max-w-[1120px]'],
   },
+  {
+    path: 'src/pages/papers/a-mathematical-theory-of-communication.astro',
+    required: ['grid-cols-1', 'lg:grid-cols-', 'w-[calc(100%-2rem)]', 'max-w-[1120px]'],
+  },
+  {
+    path: 'src/pages/papers/improving-language-understanding-by-generative-pre-training.astro',
+    required: ['grid-cols-1', 'md:grid-cols-', 'w-[calc(100%-2rem)]', 'max-w-[1120px]'],
+  },
 ];
 const failures = [];
 

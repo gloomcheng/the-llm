@@ -3,8 +3,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { milestonePapers, type MilestonePaper } from '../../content/papers/milestones';
 
 export function getStaticPaths() {
+  // papers with status:'published' have their own dedicated static page files
+  // and must be excluded here to avoid route conflicts
   return milestonePapers
-    .filter((paper) => paper.id !== 'attention-is-all-you-need')
+    .filter((paper) => paper.status !== 'published')
     .map((paper) => ({
       params: { slug: paper.id },
       props: { paper },
@@ -78,8 +80,7 @@ const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
             </p>
           </div>
           <p class="mt-4 mb-0 text-sm leading-6 text-muted">
-            本章遵循嚴謹的史實考證與「Start with
-            Why」科普架構，正在整理第一手原始文獻與交互印證資料。
+            本章正進行第一手原始文獻考證、同儕評審紀錄與核心作者訪談編纂。
           </p>
           {paper.arxivId && (
             <div class="mt-5 border-t border-line pt-4">
@@ -161,10 +162,10 @@ const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
             id="draft-insights-title"
             class="m-0 font-display text-3xl sm:text-4xl text-ink leading-tight"
           >
-            讀者最想知道的「為什麼」：核心草稿初探
+            核心動機與運算機制：Why & How It Works
           </h2>
           <p class="mt-3 mb-0 text-base text-muted">
-            在正式導讀完成前，編輯團隊已將本章最關鍵的機制原理與直覺比喻整理於此：
+            收錄本篇經典論文的核心動機、運算機制與直觀範例初稿：
           </p>
         </div>
 
@@ -224,7 +225,7 @@ const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
             推薦先讀篇章 / CURRENT FEATURE
           </p>
           <h3 class="mt-2 mb-1 font-display text-2xl text-ink">
-            第 01 章〈Attention Is All You Need〉
+            第一章〈Attention Is All You Need〉
           </h3>
           <p class="m-0 text-sm text-muted">
             已完成 28 分鐘完整逐字拆解、小明生活案例、QKV 手工算例與歷史回顧。
@@ -234,7 +235,7 @@ const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
           class="mt-5 inline-block shrink-0 border border-ink bg-ink px-6 py-3 font-mono text-sm uppercase text-surface no-underline hover:bg-red hover:border-red sm:mt-0"
           href="/papers/attention-is-all-you-need"
         >
-          立即閱讀第 01 章 ↗
+          立即閱讀第一章 ↗
         </a>
       </div>
     </section>

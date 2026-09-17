@@ -1,0 +1,1805 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PaperMeta from '../../components/PaperMeta.astro';
+import StoryRail from '../../components/StoryRail.astro';
+import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
+import AsideCard from '../../components/AsideCard.astro';
+import AuthorGrid from '../../components/AuthorGrid.astro';
+import PaperNavigation from '../../components/PaperNavigation.astro';
+import Callout from '../../components/Callout.astro';
+import {
+  gpt1Paper,
+  gpt1Sources,
+} from '../../content/papers/improving-language-understanding-by-generative-pre-training';
+
+const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
+
+const story = [
+  {
+    year: '2013–2018 初',
+    label: '桎梏 / THE BOTTLENECK',
+    title: '手工標註的資料懸崖與專用網路的工程泥淖。',
+    body: '監督式學習極度依賴昂貴且有限的人工標註，換一個任務就得重新設計專用神經網路架構，深層模型極易過擬合。',
+    status: 'past' as const,
+  },
+  {
+    year: '2018.06',
+    label: '突破 / THE PAPER',
+    title: 'GPT-1：無監督生成式預訓練的黎明。',
+    body: '拋棄專用架構，僅用 12 層 Transformer 解碼器在 8 億詞小說上預測下一個字，以統一序列化適配四類任務，橫掃 9 項 SOTA。',
+    status: 'current' as const,
+  },
+  {
+    year: '之後',
+    label: '遺產 / THE EXPANSION',
+    title: '從專用模型到基礎模型，大語言模型時代降臨。',
+    body: '確立「大數據自回歸預訓練 + 提示/微調」的通用範式，引領 GPT-2、GPT-3、GPT-4 與生成式人工智慧的全面爆發。',
+    status: 'future' as const,
+  },
+];
+
+interface TimelineEpoch {
+  id: string;
+  year: string;
+  period: string;
+  title: string;
+  summary: string;
+  sources: Array<{
+    source: (typeof gpt1Sources)[number];
+    num: number;
+    refCode: string;
+    featured?: boolean;
+    role: string;
+    takeaway: string;
+  }>;
+}
+
+const timelineEpochs: TimelineEpoch[] = [
+  {
+    id: 'epoch-2013',
+    year: '2013–2015',
+    period: '2013–2015 · 靜態詞向量與長篇敘事語料庫',
+    title: '預訓練的萌芽：從單字空間到連貫小說文本',
+    summary:
+      'Mikolov 提出 Word2Vec 證明無監督學習能捕捉詞彙語義，但靜態向量無法分辨一詞多義；Zhu 等人構建 BooksCorpus，為日後深層模型提供了八億詞不中斷的長程故事上下文。',
+    sources: [
+      {
+        source: gpt1Sources.find((s) => s.id === 'paper-2013-word2vec') || {
+          id: 'paper-2013-word2vec',
+          kind: 'paper',
+          title: 'Distributed Representations of Words and Phrases and their Compositionality',
+          publisher: 'NeurIPS / arXiv',
+          published: '2013-10-16',
+          accessed: '2026-09-17',
+          url: 'https://arxiv.org/abs/1310.4546',
+          supports: ['靜態詞向量的分散式表徵', '詞彙間的線性向量平移特性'],
+          limits: '靜態向量無法反映動態上下文，且無法直接捕捉跨句長程語意相依性。',
+        },
+        num: 4,
+        refCode: 'S04',
+        role: '靜態向量開山',
+        takeaway: '證明未標註文字能訓練語意空間，但每個單詞僅能對應單一固定座標。',
+      },
+      {
+        source: gpt1Sources.find((s) => s.id === 'paper-2015-bookcorpus')!,
+        num: 5,
+        refCode: 'S05',
+        role: '預訓練語料奠基',
+        takeaway: '7,000 本未出版小說、8 億詞連續語料，提供跨段落連貫敘事結構。',
+      },
+    ],
+  },
+  {
+    id: 'epoch-2017',
+    year: '2017',
+    period: '2017.06 · 注意力架構革命',
+    title: '打破循環鏈：自注意力機制的橫空出世',
+    summary:
+      'Vaswani 等人發表 Transformer，徹底拋棄 RNN 的循序依賴，以 Self-Attention 實現常數級通訊距離與大規模平行訓練，但原始設計仍錨定在機器翻譯的雙塔架構。',
+    sources: [
+      {
+        source: gpt1Sources.find((s) => s.id === 'paper-2017-transformer')!,
+        num: 2,
+        refCode: 'S02',
+        role: '底層骨幹發明',
+        takeaway: '提供 Multi-Head Attention 與因果遮罩矩陣，成為 GPT-1 堆疊的基石。',
+      },
+    ],
+  },
+  {
+    id: 'epoch-2018-early',
+    year: '2018 初',
+    period: '2018.02–2018.04 · 特徵提取與多任務基準',
+    title: '特徵提取的巔峰與評測基準的建立',
+    summary:
+      'ELMo 利用雙向雙層 LSTM 計算上下文動態詞向量，大幅改進下游任務，但本質上仍是外掛特徵，每個下游任務依舊需要龐雜的專用神經網路；GLUE 基準則為通用語言理解確立了標準靶場。',
+    sources: [
+      {
+        source: gpt1Sources.find((s) => s.id === 'paper-2018-elmo')!,
+        num: 3,
+        refCode: 'S03',
+        role: '動態特徵代表',
+        takeaway: '證明上下文表徵的重要性，但仍受困於 LSTM 循序計算與專用架構。',
+      },
+      {
+        source: gpt1Sources.find((s) => s.id === 'paper-2018-glue')!,
+        num: 6,
+        refCode: 'S06',
+        role: '通用評測標竿',
+        takeaway: '集結推論、相似度、問答等 11 項任務，檢驗模型是否具備泛化理解力。',
+      },
+    ],
+  },
+  {
+    id: 'epoch-2018-mid',
+    year: '2018 夏',
+    period: '2018.06 · 生成式自回歸預訓練的黎明',
+    title: '典範轉移：單一解碼器與統一序列化結構',
+    summary:
+      'Alec Radford、Ilya Sutskever 等人發表 GPT-1，拋棄一切下游專用神經網路，僅用 12 層 Transformer Decoder 在小說文本上預測下一個字，以極簡線性微調橫掃 9 項 SOTA，宣告生成式預訓練時代來臨。',
+    sources: [
+      {
+        source: gpt1Sources.find((s) => s.id === 'paper-2018-gpt1')!,
+        num: 1,
+        refCode: 'S01',
+        featured: true,
+        role: '核心奠基文獻',
+        takeaway: '確立「大數據自回歸無監督預訓練 + 統一序列化輕量微調」兩階段標準範式。',
+      },
+    ],
+  },
+  {
+    id: 'epoch-2018-late',
+    year: '2018 秋',
+    period: '2018.10 · 雙向編碼器與路線分歧',
+    title: '雙向克漏字挑戰：BERT 與預訓練架構大分流',
+    summary:
+      'Google 提出 BERT，改採 Transformer Encoder 並以克漏字（MLM）實現全雙向視野，在短文本理解上超車；OpenAI 則堅持單向自回歸生成路線，為日後的開放生成與零樣本擴展埋下關鍵種子。',
+    sources: [
+      {
+        source: gpt1Sources.find((s) => s.id === 'paper-2018-bert')!,
+        num: 7,
+        refCode: 'S07',
+        role: '雙向對照陣營',
+        takeaway: '雙向編碼器雖利於判別式分類，但無法自然推導開放文字生成與自回歸推理。',
+      },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="Improving Language Understanding by Generative Pre-Training — GPT-1 (2018)"
+  section="paper"
+  description="完整拆解 OpenAI GPT-1 論文：無監督自回歸預訓練、因果遮罩機制、打破專用架構的四類統一輸入序列化、動態擾動實驗與零樣本湧現之黎明。"
+>
+  <article>
+    <!-- 頂部頁首導航 -->
+    <header class={`${shell} pt-10`}>
+      <nav class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
+        <a class="text-red underline underline-offset-4" href="/">
+          THE LLM
+        </a>
+        <span aria-hidden="true">/</span>
+        <a class="text-muted underline underline-offset-4" href="/#milestones">
+          全系列里程碑
+        </a>
+        <span aria-hidden="true">/</span>
+        <span class="text-ink font-semibold">第一卷 · 第二章</span>
+      </nav>
+
+      <div class="grid grid-cols-1 items-end gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-24">
+        <div>
+          <div class="mb-5 flex flex-wrap items-center gap-3">
+            <span class="border border-red bg-red/10 px-2.5 py-1 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+              VOL. 02 / GENERATIVE PRE-TRAINING
+            </span>
+            <span class="font-mono text-xs text-muted uppercase tracking-[0.08em]">
+              2018.06 / OpenAI Technical Report
+            </span>
+          </div>
+          <h1 class="m-0 font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-none tracking-[-0.04em]">
+            <span class="block">Improving Language Understanding</span>
+            <em class="block text-red">by Generative Pre-Training.</em>
+          </h1>
+          <p class="mt-8 max-w-[56ch] text-lg leading-8 text-muted">
+            在 2018
+            年以前，自然語言處理如同中世紀的手工作坊：每換一個任務，工程師就必須重寫一套專用神經網路，並耗資數百萬採集標註資料。OpenAI
+            在這篇論文中給出了一個顛覆常識的解答——丟掉所有專用網路，只用 12 層 Transformer
+            解碼器在八億詞的小說庫裡「預測下一個字」，便能學會全語言的結構與邏輯。
+          </p>
+        </div>
+
+        <aside
+          class="border-t-4 border-red bg-surface p-6 shadow-editorial"
+          aria-label="這篇論文的一句評語"
+        >
+          <p class="mb-4 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+            一句評語 / THE SHORT VERDICT
+          </p>
+          <p class="m-0 max-w-[22ch] font-display text-2xl sm:text-3xl leading-snug text-ink">
+            預測下一個字不是文字接龍，而是讓機器在未標註的世界裡建構常識與因果。
+          </p>
+          <p class="mt-6 mb-0 text-sm leading-relaxed text-muted">
+            GPT-1
+            首次證明：大數據自回歸預訓練搭配極簡線性微調，足以通吃分類、推論、相似度與問答等所有主流
+            NLP 任務。
+          </p>
+        </aside>
+      </div>
+
+      <PaperMeta
+        year={2018}
+        venue="OpenAI Technical Report"
+        readTime="25 分鐘"
+        difficulty="核心範式"
+        doi={{
+          value: 'N/A',
+          url: 'https://openai.com/research/language-unsupervised',
+        }}
+      />
+
+      <div class="flex flex-wrap items-center justify-between gap-y-3 py-4 font-mono text-sm uppercase tracking-[0.04em] text-muted">
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+          <span>原始文獻</span>
+          <a
+            class="underline underline-offset-4 hover:text-red transition-colors"
+            href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="閱讀 OpenAI GPT-1 原始技術論文（在新分頁開啟）"
+          >
+            閱讀原始 PDF ↗
+          </a>
+          <span aria-hidden="true">·</span>
+          <a
+            class="underline underline-offset-4 hover:text-red transition-colors"
+            href="#references"
+            aria-label="跳轉至十年文獻演進時間軸"
+          >
+            文獻時間軸 [S01–S07] ↓
+          </a>
+        </div>
+        <div class="flex items-center gap-2 text-xs sm:text-sm">
+          <span class="text-muted">上一篇章：</span>
+          <a
+            href="/papers/attention-is-all-you-need"
+            class="font-semibold text-red underline underline-offset-4 hover:text-ink"
+            aria-label="返回第一章：Attention Is All You Need"
+          >
+            ← 第一章 Transformer
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- 歷史進程 StoryRail -->
+    <section class="border-y border-line bg-surface/50 py-12" aria-label="歷史轉折總覽">
+      <div class={shell}>
+        <div class="mb-6">
+          <p class="font-mono text-xs font-bold text-red uppercase tracking-wider mb-1">
+            歷史轉折 / 2013–2018
+          </p>
+          <h2 class="m-0 font-display text-2xl sm:text-3xl text-ink">
+            從標註懸崖到生成式預訓練的歷史轉折
+          </h2>
+        </div>
+        <StoryRail events={story} />
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 第一部分：問題從哪裡來 (WHY) -->
+    <!-- ========================================== -->
+    <section
+      id="why"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="why-heading"
+    >
+      <div class="border-b border-line pb-4 mb-8">
+        <p class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-red mb-2">
+          第一部分 · 痛點根源 / WHY
+        </p>
+        <h2 id="why-heading" class="m-0 font-display text-3xl sm:text-4xl text-ink tracking-tight">
+          人工標註的資料懸崖，與專用網路的工程泥淖
+        </h2>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p class="text-lg leading-relaxed text-ink">
+            2018
+            年初的自然語言處理（NLP）領域正處於繁榮與窒息交織的奇異時刻。一方面，卷積神經網路（CNN）與長短期記憶模型（LSTM）在各類學術競賽中屢創佳績；但另一方面，所有機器學習從業者心頭都籠罩著一層揮之不去的陰霾：
+            <strong>監督式學習的資料懸崖</strong>。
+          </p>
+
+          <p>
+            在當時，如果你想讓模型辨識醫療診斷書的情緒傾向，你必須聘請昂貴的醫學專家逐字閱讀，手動為數萬筆病歷打上標籤；如果你想開發一個法律合約矛盾偵測系統，法務團隊就得花費數個月標記幾萬對句子。然而，一旦下游需求稍微改變——例如從「情緒判斷」轉移至「醫病問答」——先前花費數百萬台幣標註的資料立刻失去作用，專用的神經網路架構也必須全部推倒重來。
+          </p>
+
+          <Callout
+            variant="editorial"
+            title="語言學習的本質反思：人類是如何掌握語言的？"
+            class="my-6"
+          >
+            <p class="m-0 text-base leading-relaxed text-muted">
+              一個七歲的孩子能理解童話故事、推測書中人物的心情、甚至指出故事邏輯的矛盾。但在孩子成長的過程中，從來沒有父母或老師在每一句話後面標註「這句話是主詞」、「情緒評分是正
+              0.82」或是「這兩個句子互為矛盾關係」。人類僅憑閱讀童話、聆聽對話，在日常生活中不斷
+              <strong>「預測對方下一句要說什麼」</strong>
+              ，就自發建構出對語法、因果邏輯與真實世界物理常識的完整理解。
+            </p>
+          </Callout>
+
+          <p>
+            真實世界中，帶有高品質人工標籤的語料極其稀有，頂多數千至數萬筆；但未標註的原始文本——圖書館中的萬卷藏書、網路上的百科論壇與新聞報導——卻浩瀚無垠、取之不盡。機器學習學者長久以來的夢想，就是讓深層模型直接在這些無標註文本中自我學習。
+          </p>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            為什麼 2018 年以前的「無監督預訓練」都未竟全功？
+          </h3>
+
+          <p>
+            在 GPT-1 出現之前，學界並非沒有嘗試過無監督學習，但先驅者的路徑皆撞上了結構性的天花板：
+          </p>
+
+          <div class="space-y-4 my-6">
+            <div class="border border-line bg-surface p-5 shadow-sm">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-mono text-xs font-bold text-red uppercase">
+                  2013 · 靜態詞向量
+                </span>
+                <span class="font-mono text-xs text-muted">Word2Vec / GloVe</span>
+              </div>
+              <h4 class="m-0 font-display text-base text-ink">一詞多義的空間坍塌</h4>
+              <p class="mt-2 text-sm leading-relaxed text-muted">
+                Word2Vec 證明了預訓練能學會「國王 - 男人 + 女人 =
+                皇后」的語義向量幾何。但它最大的致命傷是<strong>靜態性</strong>
+                ：每個詞在向量空間中只有一個固定座標。「蘋果」無論是指甜脆的水果，還是市值兆元的科技巨擘，其數學表徵完全相同，模型無法根據句子動態改變理解。
+              </p>
+            </div>
+
+            <div class="border border-line bg-surface p-5 shadow-sm">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-mono text-xs font-bold text-blue uppercase">
+                  2018 初 · 動態特徵外掛
+                </span>
+                <span class="font-mono text-xs text-muted">ELMo</span>
+              </div>
+              <h4 class="m-0 font-display text-base text-ink">專用網路與循環枷鎖未解</h4>
+              <p class="mt-2 text-sm leading-relaxed text-muted">
+                ELMo 運用雙向雙層 LSTM
+                依據上下文計算動態詞向量，解決了一詞多義。但它僅作為「特徵提取器」：下游處理情緒分類時仍需額外搭建分類網路；做問答時又得另外寫一套複雜的比對層。底層
+                LSTM 不僅循序運算極慢，且模型主體無法進行端到端微調。
+              </p>
+            </div>
+          </div>
+
+          <p>
+            在第一章〈
+            <a
+              href="/papers/attention-is-all-you-need"
+              class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+            >
+              Attention Is All You Need
+            </a>
+            〉中，我們見證了 Google Brain 發表 Transformer 架構{' '}
+            <a href="#epoch-2017" class="text-red font-mono underline underline-offset-4">
+              [S02]
+            </a>
+            ，以自注意力機制（Self-Attention）徹底打破了 RNN 循序傳播的枷鎖，讓 token
+            之間能建立即時全域關聯。然而，Google
+            團隊最初的視野被牢牢鎖定在「機器翻譯」上，設計的是一套由編碼器（Encoder）與解碼器（Decoder）構成的雙塔翻譯機器，必須仰賴昂貴且平行對齊的雙語監督語料。
+          </p>
+
+          <p>
+            當時在 OpenAI 擔任研究員的 Alec Radford 與首席科學家 Ilya Sutskever
+            敏銳意識到：Transformer 的潛力遠不止於翻譯。他們提出了一個極端大膽的假設：
+            <strong>
+              如果根本不需要把 Transformer 當作雙塔翻譯機呢？如果我們把複雜的編碼器與
+              Cross-Attention
+              扔掉，只留下單向的解碼器，讓它在數千本未出版的小說中專注「預測下一個字」，它究竟能學會什麼？
+            </strong>
+          </p>
+        </div>
+
+        <aside slot="rail" class="space-y-6">
+          <AsideCard
+            kicker="前置知識 / PREREQUISITE"
+            title="尚未讀過 Transformer？"
+            variant="paper"
+          >
+            <p class="m-0 text-sm leading-relaxed text-muted">
+              本篇以 Transformer 架構為基石。若想深入了解自注意力機制（Self-Attention）的 QKV
+              矩陣運算與生活算例，建議先回溯閱讀
+              <a
+                href="/papers/attention-is-all-you-need"
+                class="font-semibold text-red underline underline-offset-4 hover:text-ink transition-colors"
+              >
+                第一章〈Attention Is All You Need〉導讀 ↗
+              </a>
+              。
+            </p>
+          </AsideCard>
+
+          <AsideCard kicker="術語辭典 / TERMINOLOGY" title="監督資料懸崖" variant="surface">
+            <p class="m-0 text-sm leading-relaxed text-muted">
+              傳統深度學習高度依賴高品質人工標籤。標註成本隨任務複雜度呈指數上升，且跨領域極難遷移，形成限制
+              AI 泛化能力的「資料懸崖」。
+            </p>
+          </AsideCard>
+
+          <AsideCard kicker="數據檔案 / CORPUS" title="BooksCorpus 語料庫" variant="paper">
+            <ul class="m-0 space-y-2 text-xs leading-relaxed text-muted list-disc list-outside pl-4">
+              <li>
+                <strong>規模：</strong>7,000+ 冊未出版小說，約 8 億單詞（5 GB 未標註文本）。
+              </li>
+              <li>
+                <strong>長程因果：</strong>
+                小說具備跨段落甚至跨章節的連貫情節，逼迫模型學會長程依賴。
+              </li>
+              <li>
+                <strong>純淨性：</strong>無新聞碎片噪音，維持完整行文節奏。
+              </li>
+            </ul>
+          </AsideCard>
+
+          <AsideCard kicker="演進對照 / LINEAGE" title="詞向量三代跨越" variant="paper">
+            <dl class="m-0 grid gap-3 text-xs leading-relaxed">
+              <div>
+                <dt class="font-mono font-bold text-red">Word2Vec (2013)</dt>
+                <dd class="m-0 text-muted">靜態詞向量，一詞多義在固定幾何座標中坍塌。</dd>
+              </div>
+              <div class="border-t border-dashed border-line pt-2">
+                <dt class="font-mono font-bold text-blue">ELMo (2018 初)</dt>
+                <dd class="m-0 text-muted">
+                  雙向 LSTM 特徵拼接外掛，下游仍需為各任務手寫專用網路。
+                </dd>
+              </div>
+              <div class="border-t border-dashed border-line pt-2">
+                <dt class="font-mono font-bold text-ink">GPT-1 (2018.06)</dt>
+                <dd class="m-0 text-muted">
+                  12 層 Transformer 解碼器端到端自回歸，徹底終結專用網路。
+                </dd>
+              </div>
+            </dl>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 第二部分：核心機制拆解 (HOW IT WORKS) -->
+    <!-- ========================================== -->
+    <section
+      id="how"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24 space-y-12`}
+      aria-labelledby="how-heading"
+    >
+      <div class="border-b border-line pb-4">
+        <p class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-red">
+          第二部分 · 運作機制 / HOW IT WORKS
+        </p>
+        <h2 id="how-heading" class="m-0 font-display text-3xl sm:text-4xl text-ink tracking-tight">
+          自回歸因果解碼，與打破專用架構的四類統一序列化
+        </h2>
+      </div>
+
+      <!-- 機制一：因果遮罩與自回歸建模 -->
+      <div class="space-y-8">
+        <PaperReadingLayout class="text-base leading-8 text-ink">
+          <div class="space-y-6">
+            <h3 class="font-display text-2xl text-ink flex items-center gap-3">
+              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-red text-white text-sm font-mono font-bold">
+                1
+              </span>
+              因果語言模型：為什麼解碼器不能「偷看未來」？
+            </h3>
+
+            <p>
+              要理解 GPT-1，首先必須回答一個結構性問題：為什麼 OpenAI 選擇拋棄雙向的
+              Encoder，而單獨採用單向因果的 Decoder？
+            </p>
+
+            <p>
+              如果在預訓練時允許神經網路「雙向」瀏覽全文，當要求它預測第 i
+              個單詞時，神經網路的自注意力頭可以直接在同一層中讀取到第 i
+              個位置的真實答案。這會導致運算退化為簡單的<strong>「字面複製」</strong>
+              ，損失函數瞬間降為零，但神經網路完全沒有學會字詞背後的語義因果推論。
+            </p>
+
+            <p>
+              因此，GPT-1 採用嚴格的<strong>因果遮罩（Causal Masking）</strong>
+              。在注意力矩陣中，任何第 i 個位置的
+              Token，其注意力分數只允許分配給自己以及排在自己前面的位置（j ≤
+              i）；所有位於未來的單詞（j &gt; i），其注意力權重在計算 Softmax
+              之前，強制填入負無窮大（-∞），使得輸出權重為精確的零。
+            </p>
+
+            <h4 class="font-display text-xl text-ink pt-2">
+              數學公式推導：自回歸預訓練的十二層流動
+            </h4>
+
+            <p>
+              給定無標註語料的文字序列 U = (u₁, ..., uₙ)，GPT-1 使用上下文滑動窗口
+              k，將最大化下列對數似然函數作為唯一的訓練目標：
+            </p>
+
+            <div class="bg-surface border border-line p-5 font-mono text-sm sm:text-base text-ink overflow-x-auto shadow-sm">
+              L₁(U) = Σᵢ log P(uᵢ | u[i-k], ..., u[i-1]; Θ)
+            </div>
+
+            <p>
+              在具體架構上，GPT-1 堆疊了 12 層標準 Transformer 解碼器區塊（768 維隱藏層，12
+              個注意力頭，前饋網路維度 3072）。前向傳播的數學表徵如下：
+            </p>
+
+            <ol class="list-decimal list-outside pl-6 space-y-3 text-base text-ink">
+              <li>
+                <strong>輸入嵌入（Token + Positional Embedding）：</strong>
+                <br />
+                <code class="bg-paper-deep px-1.5 py-0.5 text-xs text-ink font-mono">
+                  h₀ = U W_e + W_p
+                </code>
+                ，其中 <code>U = (u[-k], ..., u[-1])</code> 是前文的 context token 向量，
+                <code>W_e</code> 是詞嵌入矩陣，<code>W_p</code> 是可學習的位置編碼矩陣。
+              </li>
+              <li>
+                <strong>十二層解碼器迭代推進：</strong>
+                <br />
+                <code class="bg-paper-deep px-1.5 py-0.5 text-xs text-ink font-mono">
+                  hₗ = transformer_block(h[l-1]) ∀ l ∈ [1, 12]
+                </code>
+                。每一層內部皆包含「Masked Multi-Head Self-Attention」與「Position-wise
+                Feed-Forward」，並輔以殘差連接與 Layer Normalization。
+              </li>
+              <li>
+                <strong>詞表機率投影（Weight Tying）：</strong>
+                <br />
+                <code class="bg-paper-deep px-1.5 py-0.5 text-xs text-ink font-mono">
+                  P(u) = softmax(h₁₂ W_eᵀ)
+                </code>
+                。GPT-1 將輸入端的詞嵌入矩陣 <code>W_e</code> 與最終預測層的輸出矩陣綁定（Weight
+                Tying），不僅節省了數千萬參數，更確保了詞彙在語意輸入與生成輸出空間的高度一致性。
+              </li>
+            </ol>
+          </div>
+
+          <aside slot="rail" class="space-y-6">
+            <AsideCard kicker="核心目標 / OBJECTIVE" title="自回歸似然目標" variant="surface">
+              <p class="m-0 font-mono text-xs text-ink">
+                L₁(U) = Σᵢ log P(uᵢ | u[i-k], ..., u[i-1]; Θ)
+              </p>
+              <p class="mt-2 text-xs leading-relaxed text-muted">
+                僅依賴先前出現的詞預測下一個詞，形成無標註文本的自監督訓練閉環。
+              </p>
+            </AsideCard>
+
+            <AsideCard
+              kicker="防抄襲定理 / CAUSAL BARRIER"
+              title="為何必須遮蔽未來？"
+              variant="paper"
+            >
+              <p class="m-0 text-xs leading-relaxed text-muted">
+                若無因果遮罩，多層注意力會在較深層直接複製真實目標詞（Identity
+                Lookup），損失函數歸零但學不到因果語意。
+              </p>
+            </AsideCard>
+          </aside>
+        </PaperReadingLayout>
+
+        <!-- 互動因果遮罩視覺化 -->
+        <div class="border border-line bg-surface p-6 sm:p-8 shadow-sm">
+          <div class="flex items-center justify-between border-b border-line pb-3 mb-4">
+            <span class="font-mono text-xs font-bold text-red uppercase tracking-wider">
+              互動推演 · 因果注意力遮罩矩陣 (Causal Attention Mask)
+            </span>
+            <span class="font-mono text-xs text-muted">當前焦點 Token 視角</span>
+          </div>
+
+          <p class="text-sm text-muted mb-4">
+            觀察序列「<span class="font-semibold text-ink">科技 巨頭 在 台灣 設立 研發 中心</span>
+            」在 GPT-1 中的注意力傳播規則。當焦點位於特定 Token
+            時，未來的文字被深墨因果壁壘徹底遮蔽：
+          </p>
+
+          <div
+            class="flex flex-wrap gap-2 mb-6"
+            id="causal-token-bar"
+            role="tablist"
+            aria-label="選擇 Token 觀察因果遮罩"
+          >
+            <button
+              type="button"
+              role="tab"
+              aria-selected="true"
+              data-idx="0"
+              class="causal-btn px-3 py-1.5 font-mono text-sm border-2 border-red bg-red text-white font-semibold transition-all"
+            >
+              1. 科技
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected="false"
+              data-idx="1"
+              class="causal-btn px-3 py-1.5 font-mono text-sm border-2 border-line bg-canvas text-ink hover:border-ink transition-all"
+            >
+              2. 巨頭
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected="false"
+              data-idx="2"
+              class="causal-btn px-3 py-1.5 font-mono text-sm border-2 border-line bg-canvas text-ink hover:border-ink transition-all"
+            >
+              3. 在
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected="false"
+              data-idx="3"
+              class="causal-btn px-3 py-1.5 font-mono text-sm border-2 border-line bg-canvas text-ink hover:border-ink transition-all"
+            >
+              4. 台灣
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected="false"
+              data-idx="4"
+              class="causal-btn px-3 py-1.5 font-mono text-sm border-2 border-line bg-canvas text-ink hover:border-ink transition-all"
+            >
+              5. 設立
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected="false"
+              data-idx="5"
+              class="causal-btn px-3 py-1.5 font-mono text-sm border-2 border-line bg-canvas text-ink hover:border-ink transition-all"
+            >
+              6. 研發
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected="false"
+              data-idx="6"
+              class="causal-btn px-3 py-1.5 font-mono text-sm border-2 border-line bg-canvas text-ink hover:border-ink transition-all"
+            >
+              7. 中心
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-[1.2fr_0.8fr] gap-6 items-center">
+            <div class="bg-paper-deep p-4 border border-line">
+              <div class="font-mono text-xs text-muted mb-2">下三角注意力遮罩矩陣狀態：</div>
+              <div
+                class="grid grid-cols-7 gap-1 text-center font-mono text-xs"
+                id="causal-matrix-grid"
+              >
+                <!-- 矩陣由 JS 動態更新 -->
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <div class="border-l-2 border-red pl-3">
+                <div class="font-mono text-xs text-red font-semibold uppercase">目前預測目標</div>
+                <div class="font-display text-lg text-ink" id="causal-target-text">
+                  根據「科技」預測下一個詞
+                </div>
+              </div>
+              <p class="text-xs text-muted leading-relaxed" id="causal-explanation">
+                當模型處理「科技」時，只能看見自己。未來的所有 Token
+                被遮罩隔離，強迫模型調用深層參數來推敲後續可能出現的字詞機率分佈。
+              </p>
+              <div class="bg-surface p-2.5 border border-line font-mono text-xs text-ink">
+                <div>目標損失：L₁(U) = Σᵢ log P(uᵢ | u[i-k], ..., u[i-1])</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 機制二：統一輸入序列化格式 -->
+      <div class="space-y-8 pt-6 border-t border-line">
+        <PaperReadingLayout class="text-base leading-8 text-ink">
+          <div class="space-y-6">
+            <h3 class="font-display text-2xl text-ink flex items-center gap-3">
+              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-red text-white text-sm font-mono font-bold">
+                2
+              </span>
+              統一序列化變形：Prompt 提示詞的史前始祖
+            </h3>
+
+            <p>
+              在 GPT-1
+              出現以前，學界普遍認為「不同的語言任務本質不同」：情緒分析是單句分類、自然語言推論是雙句關係、相似度需要無方向性比對、問答則需要從長文中檢索候選答案。因此每一種任務，研究者都會煞費苦心地發明一套專用的神經網路（例如樹狀
+              LSTM、孿生網路 Siamese Network）。
+            </p>
+
+            <p>
+              GPT-1 做出了極具歷史意義的簡化：
+              <strong>
+                不要為任何任務修改模型結構。相反地，把所有任務格式化為一串單一的線性序列！
+              </strong>
+            </p>
+
+            <p>
+              透過引入特殊符號——起始符號 <code>[Start]</code>、分隔符號 <code>[Delim]</code>{' '}
+              與擷取符號 <code>[Extract]</code>，GPT-1 將四類迥異的任務完全納入同一個 12 層
+              Transformer 解碼器中，最後只需要在 <code>[Extract]</code>{' '}
+              輸出的隱藏向量後接上一層極簡的線性投影層：
+            </p>
+          </div>
+
+          <aside slot="rail" class="space-y-6">
+            <AsideCard kicker="特殊符號 / DELIMITERS" title="序列分隔標記" variant="surface">
+              <ul class="m-0 space-y-2 text-xs leading-relaxed text-muted list-disc list-outside pl-4">
+                <li>
+                  <code>[Start]</code>：標記序列開端，觸發解碼起始狀態。
+                </li>
+                <li>
+                  <code>[Delim]</code>：分隔前提與假設，或問題與候選答案。
+                </li>
+                <li>
+                  <code>[Extract]</code>：末端聚合標記，輸出全局表徵向量。
+                </li>
+              </ul>
+            </AsideCard>
+
+            <AsideCard kicker="架構革命 / PARADIGM" title="打破專用網路" variant="paper">
+              <p class="m-0 text-xs leading-relaxed text-muted">
+                從此無需為不同任務設計專用拓撲，所有 NLP 任務皆化為字串遍歷（Traversal-style
+                serialization）。
+              </p>
+            </AsideCard>
+          </aside>
+        </PaperReadingLayout>
+
+        <!-- 互動任務格式切換器 -->
+        <div class="border border-line bg-surface p-6 sm:p-8 shadow-sm">
+          <div class="flex items-center justify-between border-b border-line pb-3 mb-4">
+            <span class="font-mono text-xs font-bold text-red uppercase tracking-wider">
+              四類 NLP 任務的統一序列化格式 (Traversal-Style Input Transformation)
+            </span>
+            <span class="font-mono text-xs text-muted">任務拓撲對照</span>
+          </div>
+
+          <!-- Tab 控制列 -->
+          <div class="flex flex-wrap gap-2 mb-6" role="tablist" aria-label="任務序列化模式切換">
+            <button
+              type="button"
+              role="tab"
+              aria-selected="true"
+              data-task="classification"
+              class="task-tab-btn px-3 py-1.5 font-mono text-sm border-2 border-red bg-red text-white font-semibold transition-all"
+            >
+              1. 文字分類 (Classification)
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected="false"
+              data-task="entailment"
+              class="task-tab-btn px-3 py-1.5 font-mono text-sm border-2 border-line bg-canvas text-ink hover:border-ink transition-all"
+            >
+              2. 邏輯推論 (Entailment)
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected="false"
+              data-task="similarity"
+              class="task-tab-btn px-3 py-1.5 font-mono text-sm border-2 border-line bg-canvas text-ink hover:border-ink transition-all"
+            >
+              3. 語意相似度 (Similarity)
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected="false"
+              data-task="qa"
+              class="task-tab-btn px-3 py-1.5 font-mono text-sm border-2 border-line bg-canvas text-ink hover:border-ink transition-all"
+            >
+              4. 多選問答 (Multiple Choice)
+            </button>
+          </div>
+
+          <!-- 動態展示區 -->
+          <div class="space-y-4">
+            <div class="bg-paper-deep p-4 border border-line">
+              <div class="font-mono text-xs text-muted mb-2">輸入序列 Token 排列格式：</div>
+              <div
+                class="font-mono text-sm sm:text-base text-ink flex flex-wrap items-center gap-2"
+                id="task-sequence-display"
+              >
+                <!-- JS 動態生成序列標籤 -->
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+              <div class="border-l-2 border-red pl-3">
+                <div class="font-mono text-xs text-red font-semibold uppercase">
+                  下游微調處理機制
+                </div>
+                <p class="text-sm text-ink mt-1 mb-0 leading-relaxed" id="task-mechanism-desc">
+                  讀取末尾 [Extract] 符號的最後一層隱藏狀態向量 hₗᵐ，直接傳入單一線性全連接層 W_y
+                  輸出類別 Logits。
+                </p>
+              </div>
+              <div class="border-l-2 border-blue pl-3">
+                <div class="font-mono text-xs text-blue font-semibold uppercase">
+                  典型評測基準 (Benchmark)
+                </div>
+                <p class="text-sm text-ink mt-1 mb-0 leading-relaxed" id="task-benchmark-desc">
+                  史丹佛情緒樹庫 (SST-2, Stanford Sentiment Treebank)、IMDb 電影評論分類。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 機制三：動態擾動實驗 -->
+      <div class="space-y-8 pt-6 border-t border-line">
+        <PaperReadingLayout class="text-base leading-8 text-ink">
+          <div class="space-y-6">
+            <h3 class="font-display text-2xl text-ink flex items-center gap-3">
+              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-red text-white text-sm font-mono font-bold">
+                3
+              </span>
+              動態擾動實驗：自然語言推論中的機率翻轉
+            </h3>
+
+            <p>
+              為了驗證 GPT-1
+              在統一序列化下如何運算深層語意關係，以下以氣象預警與防颱出勤情境進行「動態擾動（Dynamic
+              Perturbation）」測試。
+            </p>
+
+            <p>
+              在自然語言推論（Natural Language Inference,
+              NLI）中，模型必須判斷「前提（Premise）」與「假設（Hypothesis）」之間屬於
+              <strong>蘊含（Entailment）</strong>、<strong>矛盾（Contradiction）</strong>還是
+              <strong>中立（Neutral）</strong>。在固定前提、微調假設中的關鍵字詞時，序列後方的{' '}
+              <code>[Extract]</code> 向量輸出機率將隨之發生動態重構：
+            </p>
+          </div>
+
+          <aside slot="rail" class="space-y-6">
+            <AsideCard kicker="推論維度 / NLI LOGIC" title="語意關係三態" variant="paper">
+              <ul class="m-0 space-y-2 text-xs leading-relaxed text-muted list-disc list-outside pl-4">
+                <li>
+                  <strong>蘊含 (Entailment)：</strong>前提為真，假設必然為真。
+                </li>
+                <li>
+                  <strong>矛盾 (Contradiction)：</strong>前提與假設無法同時成立。
+                </li>
+                <li>
+                  <strong>中立 (Neutral)：</strong>前提既無法證實亦無法證偽。
+                </li>
+              </ul>
+            </AsideCard>
+          </aside>
+        </PaperReadingLayout>
+
+        <!-- 互動動態擾動沙盒 -->
+        <div class="border border-line bg-surface p-6 sm:p-8 shadow-sm">
+          <div class="flex items-center justify-between border-b border-line pb-3 mb-4">
+            <span class="font-mono text-xs font-bold text-red uppercase tracking-wider">
+              動態擾動案例 · 氣象防颱推論實驗
+            </span>
+            <span class="font-mono text-xs text-muted">切換不同假設觀察輸出機率</span>
+          </div>
+
+          <!-- 固定前提 -->
+          <div class="mb-4 bg-paper-deep p-4 border border-line">
+            <div class="font-mono text-xs font-bold text-muted uppercase">固定前提 (Premise)</div>
+            <p class="text-base sm:text-lg text-ink font-medium mt-1 mb-0">
+              「中央氣象署發布強烈颱風陸上警報，東部各縣市明日全面停止上班上課。」
+            </p>
+          </div>
+
+          <!-- 擾動假設選項按鈕 -->
+          <div class="space-y-2 mb-6" role="radiogroup" aria-label="選擇測試的假設句子">
+            <label class="flex items-center gap-3 p-3 border-2 border-red bg-red/5 cursor-pointer rounded-none transition-all">
+              <input
+                type="radio"
+                name="perturb-opt"
+                value="entailment"
+                checked
+                class="text-red focus:ring-red"
+              />
+              <div>
+                <span class="font-mono text-xs font-bold text-red">[假設 A · 蘊含]</span>
+                <span class="text-sm font-medium text-ink ml-2">
+                  「花蓮與台東明日公務機關與學校無需到班出勤。」
+                </span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-3 p-3 border-2 border-line bg-surface hover:border-ink cursor-pointer rounded-none transition-all">
+              <input
+                type="radio"
+                name="perturb-opt"
+                value="contradiction"
+                class="text-red focus:ring-red"
+              />
+              <div>
+                <span class="font-mono text-xs font-bold text-blue">[假設 B · 矛盾]</span>
+                <span class="text-sm font-medium text-ink ml-2">
+                  「明日全台灣所有行政區照常上班上課。」
+                </span>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-3 p-3 border-2 border-line bg-surface hover:border-ink cursor-pointer rounded-none transition-all">
+              <input
+                type="radio"
+                name="perturb-opt"
+                value="neutral"
+                class="text-red focus:ring-red"
+              />
+              <div>
+                <span class="font-mono text-xs font-bold text-muted">[假設 C · 中立]</span>
+                <span class="text-sm font-medium text-ink ml-2">
+                  「強烈颱風中心將於明日中午登陸宜蘭。」
+                </span>
+              </div>
+            </label>
+          </div>
+
+          <!-- 即時機率長條圖與注意力透視 -->
+          <div class="grid grid-cols-1 md:grid-cols-[1.1fr_0.9fr] gap-6 items-center">
+            <div class="space-y-3">
+              <div class="font-mono text-xs font-bold text-ink uppercase mb-2">
+                模型於 [Extract] 處的預測機率分佈：
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs font-mono mb-1">
+                  <span class="font-semibold text-red">蘊含 (Entailment)</span>
+                  <span id="prob-val-entail" class="font-bold">
+                    96.2%
+                  </span>
+                </div>
+                <div class="h-3 w-full bg-line overflow-hidden">
+                  <div
+                    id="prob-bar-entail"
+                    class="h-full bg-red transition-all duration-500"
+                    style="width: 96.2%"
+                  ></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs font-mono mb-1">
+                  <span class="font-semibold text-blue">矛盾 (Contradiction)</span>
+                  <span id="prob-val-contra" class="font-bold">
+                    1.8%
+                  </span>
+                </div>
+                <div class="h-3 w-full bg-line overflow-hidden">
+                  <div
+                    id="prob-bar-contra"
+                    class="h-full bg-blue transition-all duration-500"
+                    style="width: 1.8%"
+                  ></div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs font-mono mb-1">
+                  <span class="font-semibold text-muted">中立 (Neutral)</span>
+                  <span id="prob-val-neut" class="font-bold">
+                    2.0%
+                  </span>
+                </div>
+                <div class="h-3 w-full bg-line overflow-hidden">
+                  <div
+                    id="prob-bar-neut"
+                    class="h-full bg-muted transition-all duration-500"
+                    style="width: 2.0%"
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="border-l-2 border-line pl-4 space-y-2">
+              <div class="font-mono text-xs text-muted uppercase">內部因果機制解析</div>
+              <p class="text-xs sm:text-sm text-ink leading-relaxed" id="perturb-analysis-text">
+                「東部各縣市」與「花蓮、台東」在地理常識空間中具備高度蘊含關係，而「停止上班上課」直接對應「無需到班出勤」。在跨過
+                [Delim] 的多頭自注意力交互中，Extract Token
+                聚合了兩句的同義語意，輸出極高的蘊含信賴度。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 機制四 & 五：微調輔助損失與零樣本湧現 -->
+      <div class="space-y-8 pt-6 border-t border-line">
+        <PaperReadingLayout class="text-base leading-8 text-ink">
+          <div class="space-y-6">
+            <h3 class="font-display text-2xl text-ink flex items-center gap-3">
+              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-red text-white text-sm font-mono font-bold">
+                4
+              </span>
+              輔助損失的工程智慧：微調時為什麼不能忘記「預測下一個字」？
+            </h3>
+
+            <p>
+              當 GPT-1 進入第二階段的監督微調（Supervised Fine-Tuning）時，給定標註資料集
+              C，標準做法是將最後一個 Token 的輸出 hₗᵐ 通過線性投影矩陣
+              W_y，最大化類別標籤的對數機率：
+            </p>
+
+            <div class="bg-surface border border-line p-4 font-mono text-sm sm:text-base text-ink overflow-x-auto shadow-sm">
+              L₂(C) = Σ_(x, y) log P(y | x¹, ..., xᵐ) = Σ_(x, y) log softmax(hₗᵐ W_y)
+            </div>
+
+            <p>
+              但 Alec Radford 等人在論文中揭露了一項極為關鍵的工程實務：
+              <strong>
+                如果在微調階段只追求分類損失
+                L₂，模型在資料集較大時容易產生「災難性遺忘（Catastrophic
+                Forgetting）」，喪失預訓練階段學到的通用語言能力。
+              </strong>
+            </p>
+
+            <p>
+              因此，作者團隊引入了
+              <strong>輔助語言模型目標（Auxiliary Language Modeling Loss）</strong>
+              ，在微調時將「預測下一個字」的任務以權重 λ = 0.5 保留下來：
+            </p>
+
+            <div class="bg-surface border-2 border-red/40 p-4 font-mono text-sm sm:text-base text-ink overflow-x-auto shadow-sm">
+              L₃(C) = L₂(C) + λ · L₁(C)
+            </div>
+
+            <p>
+              消融實驗（Ablation Study）證明，加入輔助損失 λ · L₁
+              能顯著加速模型在微調階段的收斂速度，並在 MNLI、QQP 等大型數據集上為準確率帶來 0.5% 至
+              1.5%
+              的穩定增益。這項工程設計展示了預訓練表徵的強韌：即便在專門學習特定分類時，語言模型底層對語法結構的動態建模依然是維持泛化能力的防腐劑。
+            </p>
+
+            <h3 class="font-display text-2xl text-ink flex items-center gap-3 pt-6 border-t border-line">
+              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-red text-white text-sm font-mono font-bold">
+                5
+              </span>
+              零樣本湧現的黎明：預測下一個字，為何自發掌握多任務？
+            </h3>
+
+            <p>
+              在整篇論文中最具遠見的篇章，並不是那 9 項刷新紀錄的 SOTA 榜單，而是藏在第 5 節末尾的{' '}
+              <strong>Figure 5 零樣本分析（Zero-shot Analysis）</strong>。
+            </p>
+
+            <p>
+              研究團隊做了一個令人驚異的實驗：
+              <strong>
+                如果完全不使用標註數據對 GPT-1 進行任何微調，模型僅憑在 BooksCorpus
+                上預訓練的自回歸解碼能力，能不能直接解題？
+              </strong>
+            </p>
+          </div>
+
+          <aside slot="rail" class="space-y-6">
+            <AsideCard kicker="雙重目標 / OBJECTIVES" title="輔助損失公式" variant="surface">
+              <p class="m-0 font-mono text-xs text-ink">L₃(C) = L₂(C) + λ · L₁(C)</p>
+              <p class="mt-2 text-xs leading-relaxed text-muted">
+                微調目標 L₂ 負責分類標籤，輔助目標 L₁ 保留語言模型能力，防止災難性遺忘。
+              </p>
+            </AsideCard>
+
+            <AsideCard kicker="歷史前瞻 / EMERGENCE" title="零樣本湧現" variant="paper">
+              <p class="m-0 text-xs leading-relaxed text-muted">
+                自回歸預測逼迫模型在內部建構微型世界模型。這項在 2018
+                年被視為副產品的「零樣本能力」，正是 GPT-2/3 In-Context Learning 的濫觴。
+              </p>
+            </AsideCard>
+          </aside>
+        </PaperReadingLayout>
+
+        <!-- 零樣本曲線對比卡片 -->
+        <div class="border border-line bg-surface p-6 sm:p-8 shadow-sm">
+          <div class="flex items-center justify-between border-b border-line pb-3 mb-4">
+            <span class="font-mono text-xs font-bold text-red uppercase tracking-wider">
+              原創論文 Figure 5 復刻 · 預訓練步數與零樣本準確率的單調上升
+            </span>
+            <span class="font-mono text-xs text-muted">無監督預訓練自然習得多任務</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+            <div class="p-4 bg-paper-deep border border-line">
+              <span class="font-mono text-xs font-bold text-muted uppercase">
+                CoLA 語法合法性判斷
+              </span>
+              <div class="font-display text-3xl font-bold text-ink mt-2 mb-1">穩定上升</div>
+              <p class="text-xs text-muted mb-0">
+                以生成下一個詞的困惑度直接衡量句子語法是否合規，零樣本分數與訓練次數呈正相關。
+              </p>
+            </div>
+
+            <div class="p-4 bg-paper-deep border border-line">
+              <span class="font-mono text-xs font-bold text-red uppercase">SST-2 情緒二元分類</span>
+              <div class="font-display text-3xl font-bold text-red mt-2 mb-1">自發對齊</div>
+              <p class="text-xs text-muted mb-0">
+                在句子後方接上「very」，直接比較預測「good」與「bad」的機率，不經微調即超越隨機猜測。
+              </p>
+            </div>
+
+            <div class="p-4 bg-paper-deep border border-line">
+              <span class="font-mono text-xs font-bold text-blue uppercase">RACE 閱讀理解問答</span>
+              <div class="font-display text-3xl font-bold text-blue mt-2 mb-1">+45% 躍升</div>
+              <p class="text-xs text-muted mb-0">
+                比較文章拼接不同選項時的平均交叉熵損失，選擇最低者，準確率隨預訓練進程直線攀升。
+              </p>
+            </div>
+          </div>
+
+          <p class="mt-6 mb-0 text-sm text-muted leading-relaxed">
+            這一重大實驗揭露了生成式語言模型的本質：
+            <strong>
+              自回歸預測下一個字，迫使神經網路在內部建構出對物理世界常識、情感邏輯與因果關聯的微型模擬世界。
+            </strong>{' '}
+            這項在 2018 年被視為副產品的「零樣本能力」，直接孕育了隔年 GPT-2 的「Prompt」革命與 2020
+            年 GPT-3 的 In-Context Learning。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 第三部分：歷史轉折與現代遺產 (WHAT IT MEANS) -->
+    <!-- ========================================== -->
+    <section
+      id="what"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="what-heading"
+    >
+      <div class="border-b border-line pb-4 mb-8">
+        <p class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-red mb-2">
+          第三部分 · 歷史迴響 / WHAT IT MEANS TODAY
+        </p>
+        <h2 id="what-heading" class="m-0 font-display text-3xl sm:text-4xl text-ink tracking-tight">
+          2018 年的歷史分水嶺：GPT 與 BERT 的路線抉擇
+        </h2>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p class="text-lg leading-relaxed text-ink">
+            回望人工智慧史，2018 年是自然語言處理從「手工作坊」邁向「工業革命」的決定性年份。GPT-1
+            的發表，正式敲響了傳統特徵工程與專用神經網路架構的喪鐘。
+          </p>
+
+          <p>
+            然而，就在 GPT-1 發表後短短四個月（2018 年 10 月），Google AI 發布了震驚業界的{' '}
+            <strong>BERT（Bidirectional Encoder Representations from Transformers）</strong>{' '}
+            <a href="#epoch-2018-late" class="text-red font-mono underline underline-offset-4">
+              [S07]
+            </a>
+            。這引發了深度學習歷史上最著名的一場「路線之爭」：
+          </p>
+
+          <div class="space-y-4 my-6">
+            <div class="border-2 border-line bg-surface p-5">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-mono text-xs font-bold text-blue uppercase">
+                  Google 陣營 · 雙向編碼器
+                </span>
+                <span class="font-mono text-xs text-muted">BERT (2018.10)</span>
+              </div>
+              <h3 class="m-0 font-display text-lg text-ink">短文本理解的王者</h3>
+              <ul class="mt-3 space-y-1.5 text-xs text-muted list-disc list-outside pl-4">
+                <li>
+                  <strong>結構：</strong>僅使用 Transformer Encoder。
+                </li>
+                <li>
+                  <strong>訓練目標：</strong>克漏字挖空（Masked LM）與下一句預測（NSP）。
+                </li>
+                <li>
+                  <strong>優勢：</strong>單詞能同時看見前後文，在 SQuAD 問答、GLUE
+                  分類等判別式任務上以壓倒性分數超越 GPT-1。
+                </li>
+                <li>
+                  <strong>致命限制：</strong>無法自然進行自由文本生成，難以適配開放對話與寫作。
+                </li>
+              </ul>
+            </div>
+
+            <div class="border-2 border-red bg-red/5 p-5">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-mono text-xs font-bold text-red uppercase">
+                  OpenAI 陣營 · 單向解碼器
+                </span>
+                <span class="font-mono text-xs text-muted">GPT 系列 (2018.06 ~)</span>
+              </div>
+              <h3 class="m-0 font-display text-lg text-ink">通向通用智慧的寂寞長路</h3>
+              <ul class="mt-3 space-y-1.5 text-xs text-ink list-disc list-outside pl-4">
+                <li>
+                  <strong>結構：</strong>僅使用 Transformer Decoder。
+                </li>
+                <li>
+                  <strong>訓練目標：</strong>自回歸因果因果預測下一個字（Causal LM）。
+                </li>
+                <li>
+                  <strong>初局劣勢：</strong>單向視野在傳統文字分類榜單上略遜於雙向 BERT。
+                </li>
+                <li>
+                  <strong>歷史遠見：</strong>
+                  文字生成能力具備無限的尺度擴展性（Scaling），直接孕育出從零樣本對話到通用 Agent 的
+                  AGI 大道。
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <p>
+            在 2018 至 2021 年間，整個學界與產業界近乎瘋狂地追逐 BERT
+            與其衍生模型（RoBERTa、ALBERT、DeBERTa），GPT-1 似乎短暫被掩蓋在對手光芒之下。
+          </p>
+
+          <p>
+            然而，Alec Radford 與 Ilya Sutskever 展現了極其罕見的戰略定力。他們堅信：
+            <strong>
+              判別式模型（Discriminative
+              Models）只能做分類與標註，上限是成為優秀的工人；唯有生成式自回歸模型（Generative
+              Autoregressive Models），才能透過預測下一個字學會構建世界模型，無限擴展參數與算力。
+            </strong>
+          </p>
+
+          <Callout
+            variant="editorial"
+            title="本章的未竟之功：單向因果遮罩的代價，為第三章 BERT 留下破局點"
+            class="my-6"
+          >
+            <p class="mt-4 text-base leading-relaxed text-ink">
+              儘管 GPT-1 確立了「無監督預訓練 + 輕量微調」的通用範式，但它為此付出的代價同樣巨大：
+              <strong>強制的單向因果遮罩</strong>。
+            </p>
+            <p class="mt-3 text-base leading-relaxed text-muted">
+              在自然語言理解（NLU）任務中——無論是判斷合約中的代名詞指涉、句子相似度比較，或是閱讀理解問答——字詞的意涵往往被包夾在前後文之間。當
+              GPT-1
+              讀到句子前半段時，因果遮罩像眼罩一樣強制遮住了後半段，導致每個詞的向量表徵永遠「少看了一半的世界」。
+            </p>
+            <p class="mt-3 mb-0 text-base leading-relaxed text-muted">
+              這個未解之謎與性能天花板，在四個月後被 Google AI
+              敏銳捕捉：既然要追求極致的理解力，為什麼不回歸第一章〈
+              <a
+                href="/papers/attention-is-all-you-need"
+                class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+              >
+                Attention Is All You Need
+              </a>
+              〉的全雙向 Transformer 編碼器？如何既享受雙向視野又不會「偷看答案」？這正是第三章〈
+              <a
+                href="/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding"
+                class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+              >
+                BERT: Pre-training of Deep Bidirectional Transformers
+              </a>
+              〉即將上演的驚天反轉。
+            </p>
+          </Callout>
+
+          <p>
+            正是這份對無監督自迴歸學習的堅持，催生了 1.5B 參數的 GPT-2 與 175B 參數的 GPT-3，最終在
+            2022 年底引發生成式 AI
+            的全面爆發。當代生成式語言模型的預訓練範式與通用理解基因，其真正源頭正是 2018
+            年這篇名為《Improving Language Understanding by Generative Pre-Training》的技術報告。
+          </p>
+        </div>
+
+        <aside slot="rail" class="space-y-6">
+          <AsideCard
+            kicker="路線對決 / ARCHITECTURE WAR"
+            title="雙向理解 vs 生成長路"
+            variant="surface"
+          >
+            <dl class="m-0 grid gap-3 text-xs leading-relaxed">
+              <div>
+                <dt class="font-mono font-bold text-blue">BERT (Encoder)</dt>
+                <dd class="m-0 text-muted">全雙向克漏字，擅長判別與短文本理解，但無法自然生成。</dd>
+              </div>
+              <div class="border-t border-dashed border-line pt-2">
+                <dt class="font-mono font-bold text-red">GPT (Decoder)</dt>
+                <dd class="m-0 text-muted">
+                  單向自回歸因果流，擁有無限 Scaling 潛力與零樣本湧現能力。
+                </dd>
+              </div>
+            </dl>
+          </AsideCard>
+
+          <AsideCard kicker="工程檔案 / SPECIFICATIONS" title="GPT-1 訓練檔案" variant="paper">
+            <ul class="m-0 space-y-2 text-xs leading-relaxed text-muted list-disc list-outside pl-4">
+              <li>
+                <strong>參數量：</strong>117M (1.17 億)
+              </li>
+              <li>
+                <strong>架構層數：</strong>12 層 Transformer Decoder
+              </li>
+              <li>
+                <strong>隱藏維度：</strong>768 維 (12 注意力頭)
+              </li>
+              <li>
+                <strong>訓練算力：</strong>8 顆 NVIDIA Tesla P6000 GPU 訓練約 30 天
+              </li>
+              <li>
+                <strong>語料規模：</strong>BooksCorpus 約 5 GB 無標註純文本
+              </li>
+            </ul>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 第四部分：作者特寫 (THE AUTHORS) -->
+    <!-- ========================================== -->
+    <AuthorGrid
+      authors={gpt1Paper.authorBriefs}
+      kicker="第四部分 · 團隊特寫 / THE AUTHORS"
+      title="GPT 系列的四位引路人"
+      description="依原始論文署名順序排列。採用經典鋼筆線雕肖像呈現作者歷史形象與經文獻考證之關鍵貢獻。"
+    />
+
+    <!-- ========================================== -->
+    <!-- 第五部分：破版破格的十年文獻時間軸 (REFERENCES) -->
+    <!-- ========================================== -->
+    <section
+      id="references"
+      class="w-full bg-[#f5efe4] border-t-2 border-ink py-20 sm:py-28 overflow-hidden mt-20"
+      aria-labelledby="references-heading"
+    >
+      <div class="mx-auto w-[calc(100%-2rem)] max-w-[1360px]">
+        <!-- 頂部破版導言 -->
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-12 border-b border-ink/20">
+          <div>
+            <div class="flex items-center gap-3 mb-3">
+              <span class="inline-block h-2 w-2 bg-red"></span>
+              <p class="m-0 font-mono text-xs font-bold uppercase tracking-[0.16em] text-red">
+                CHRONOLOGICAL CITATION TIMELINE · 2013–2018+
+              </p>
+            </div>
+            <h2
+              id="references-heading"
+              class="m-0 font-display text-4xl sm:text-5xl lg:text-6xl text-ink tracking-tight"
+            >
+              一手文獻清單，與技術演進時間軸
+            </h2>
+            <p class="mt-4 max-w-[70ch] text-base text-ink/70 leading-relaxed">
+              從 2013 年 Word2Vec 的靜態空間、BooksCorpus 的長篇敘事庫，到 2017 年 Transformer
+              骨幹、2018 年初 ELMo 與 GLUE 的激盪，最終走向 GPT-1 生成式預訓練範式與 BERT 雙向挑戰。
+            </p>
+          </div>
+
+          <!-- 快速跳轉年代按鈕 (Fast-travel) -->
+          <div class="flex flex-wrap items-center gap-2 font-mono text-xs">
+            <span class="text-ink/50 uppercase tracking-wider mr-1">跳轉年代：</span>
+            {timelineEpochs.map((epoch) => (
+              <a
+                href={`#${epoch.id}`}
+                class="px-3 py-1.5 border border-ink/20 bg-surface/80 hover:bg-ink hover:text-surface text-ink transition-all rounded-none font-semibold"
+              >
+                {epoch.year}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <!-- 時間軸主體容器 -->
+        <div class="relative mt-16 sm:mt-24">
+          <!-- 貫穿全軸的朱紅時間線 -->
+          <div
+            class="hidden md:block absolute left-4 sm:left-8 top-4 bottom-8 w-0.5 bg-gradient-to-b from-red via-ink/30 to-blue/40"
+            aria-hidden="true"
+          ></div>
+
+          <div class="space-y-24 sm:space-y-32">
+            {timelineEpochs.map((epoch) => (
+              <div id={epoch.id} class="relative scroll-mt-28">
+                <!-- 背景超大水印年份 (破版破格字體) -->
+                <div
+                  class="pointer-events-none select-none absolute -top-12 sm:-top-20 -left-6 sm:left-4 font-display font-black text-8xl sm:text-9xl lg:text-[11rem] leading-none text-ink/[0.04] tracking-tighter"
+                  aria-hidden="true"
+                >
+                  {epoch.year.split('–')[0].replace(/[^0-9]/g, '')}
+                </div>
+
+                <!-- 紀元標題與時間標記節點 -->
+                <div class="relative flex items-start gap-4 sm:gap-8 mb-8 sm:mb-12">
+                  <div
+                    class="hidden md:flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border-2 border-red bg-surface font-mono text-xs font-bold text-red shadow-sm z-10"
+                    aria-hidden="true"
+                  >
+                    {epoch.year.slice(-2)}
+                  </div>
+
+                  <div class="flex-1">
+                    <div class="flex flex-wrap items-center gap-3">
+                      <span class="font-mono text-xs font-bold uppercase tracking-[0.12em] text-red">
+                        {epoch.period}
+                      </span>
+                    </div>
+                    <h3 class="m-0 mt-1 font-display text-2xl sm:text-3xl text-ink tracking-tight">
+                      {epoch.title}
+                    </h3>
+                    <p class="m-0 mt-2 max-w-[85ch] text-sm sm:text-base text-ink/75 leading-relaxed">
+                      {epoch.summary}
+                    </p>
+                  </div>
+                </div>
+
+                <!-- 紀元內的論文卡片 -->
+                <div class="md:ml-16">
+                  {epoch.sources.some((s) => s.featured) ? (
+                    /* 旗艦奠基之作 (Centerpiece Breakout) */
+                    epoch.sources.map((item) => (
+                      <div
+                        id={item.source.id}
+                        class="group relative border-2 border-ink bg-surface p-6 sm:p-10 shadow-editorial transition-all hover:-translate-y-1 hover:shadow-2xl"
+                      >
+                        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-ink/10 pb-6 mb-6">
+                          <div class="flex items-center gap-3">
+                            <span class="bg-red px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider text-white">
+                              ★ 核心奠基文獻 [{item.refCode}]
+                            </span>
+                            <span class="font-mono text-xs text-muted">
+                              {item.source.published} · {item.source.publisher}
+                            </span>
+                          </div>
+                          <a
+                            href={item.source.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            class="font-mono text-xs text-red font-bold underline underline-offset-4 hover:text-ink transition-colors"
+                          >
+                            開啟原始文獻 ↗
+                          </a>
+                        </div>
+
+                        <h4 class="m-0 font-display text-2xl sm:text-4xl text-ink leading-tight">
+                          {item.source.title}
+                        </h4>
+
+                        <p class="mt-4 text-base sm:text-lg text-ink font-medium leading-relaxed">
+                          {item.takeaway}
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6 p-5 bg-paper-deep border border-ink/10 font-mono text-xs">
+                          <div>
+                            <span class="font-bold text-ink uppercase block mb-1">
+                              模型規模與訓練語料：
+                            </span>
+                            <span class="text-muted">
+                              12 層 Transformer Decoder · 1.17 億參數（117M）· BooksCorpus 7,000
+                              本小說（約 8 億詞）
+                            </span>
+                          </div>
+                          <div>
+                            <span class="font-bold text-red uppercase block mb-1">歷史戰果：</span>
+                            <span class="text-muted">
+                              在 12 項 NLU 評測基準中奪得 9 項 SOTA · GLUE 總分 72.8 顯著刷新紀錄
+                            </span>
+                          </div>
+                        </div>
+
+                        <div class="space-y-2 border-t border-ink/10 pt-4">
+                          <div class="font-mono text-xs font-bold text-ink uppercase">
+                            支持之核心論據：
+                          </div>
+                          <ul class="m-0 space-y-1.5 text-xs sm:text-sm text-ink/80 list-disc list-outside pl-5">
+                            {item.source.supports.map((sup) => (
+                              <li>{sup}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    /* 一般時期卡片網格 */
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      {epoch.sources.map((item) => (
+                        <div
+                          id={item.source.id}
+                          class="group relative border border-ink/20 bg-surface p-6 shadow-sm transition-all hover:border-ink hover:shadow-md"
+                        >
+                          <div class="flex items-center justify-between border-b border-line pb-3 mb-3">
+                            <span class="font-mono text-xs font-bold text-red uppercase">
+                              [{item.refCode}] {item.role}
+                            </span>
+                            <span class="font-mono text-xs text-muted">
+                              {item.source.published}
+                            </span>
+                          </div>
+
+                          <h4 class="m-0 font-display text-lg sm:text-xl text-ink leading-snug">
+                            {item.source.title}
+                          </h4>
+
+                          <p class="mt-2 text-xs sm:text-sm text-ink/75 leading-relaxed">
+                            {item.takeaway}
+                          </p>
+
+                          <div class="mt-4 border-t border-line/60 pt-3">
+                            <p class="m-0 text-xs text-muted">
+                              <span class="font-bold text-ink">邊界限制：</span>
+                              {item.source.limits}
+                            </p>
+                          </div>
+
+                          <div class="mt-4 text-right">
+                            <a
+                              href={item.source.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              class="font-mono text-xs text-red underline underline-offset-4 hover:text-ink"
+                            >
+                              原始來源 ↗
+                            </a>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <PaperNavigation
+      currentId="improving-language-understanding-by-generative-pre-training"
+      prev={{
+        summary: '徹底廢除循環神經網絡，以自注意力機制重塑全局幾何關聯。',
+      }}
+      next={{
+        summary: '雙向遮罩克漏字語言模型，與 GPT 展開長達數年的架構大分流。',
+      }}
+    />
+  </article>
+
+  <!-- 客戶端互動腳本 -->
+  <script>
+    // ==========================================
+    // 1. 因果注意力遮罩矩陣互動腳本
+    // ==========================================
+    const tokens = ['科技', '巨頭', '在', '台灣', '設立', '研發', '中心'];
+    const matrixGrid = document.getElementById('causal-matrix-grid');
+    const targetText = document.getElementById('causal-target-text');
+    const explanation = document.getElementById('causal-explanation');
+    const buttons = document.querySelectorAll('.causal-btn');
+
+    const explanations = [
+      '當模型處理第 1 個詞「科技」時，只能看見自己。未來 6 個詞（巨頭、在、台灣…）皆被因果遮罩賦予 -∞，權重為精確的零。',
+      '處理第 2 個詞「巨頭」時，注意力僅能往前流向「科技」與「巨頭」，模型開始計算兩者之間的合成語意。',
+      '處理第 3 個詞「在」時，結合了「科技 巨頭」的主詞特徵，準備接收後續的地點受詞。',
+      '處理第 4 個詞「台灣」時，模型將主詞「科技 巨頭」與介系詞「在」進行交叉比對，鎖定在地化語義。',
+      '處理第 5 個詞「設立」時，模型注意力強烈聚焦於主詞「科技巨頭」與地點「台灣」，推斷動詞動向。',
+      '處理第 6 個詞「研發」時，模型已掌握完整的前文語境，精確預測即將出現的設施名詞。',
+      '處理第 7 個詞「中心」時，全句的歷史因果已被完整編碼，此時可用於預測句尾標點或承接下一句。',
+    ];
+
+    function updateCausalMatrix(focusIdx: number) {
+      if (!matrixGrid || !targetText || !explanation) return;
+
+      matrixGrid.innerHTML = '';
+      for (let r = 0; r < 7; r++) {
+        for (let c = 0; c < 7; c++) {
+          const cell = document.createElement('div');
+          cell.className = 'py-1 text-[11px] font-mono transition-colors';
+          if (c > r) {
+            // 未來位置：遮罩 -inf
+            cell.textContent = '-∞';
+            cell.className += ' text-muted/30 bg-ink/5';
+          } else {
+            // 合法注意力位置
+            cell.textContent = '1';
+            if (r === focusIdx) {
+              cell.className += ' text-white bg-red font-bold';
+            } else {
+              cell.className += ' text-ink bg-line/40';
+            }
+          }
+          matrixGrid.appendChild(cell);
+        }
+      }
+
+      targetText.textContent = `根據前文推演至「${tokens[focusIdx]}」`;
+      explanation.textContent = explanations[focusIdx];
+
+      buttons.forEach((btn, idx) => {
+        if (idx === focusIdx) {
+          btn.classList.add('bg-red', 'text-white', 'border-red');
+          btn.classList.remove('bg-canvas', 'text-ink', 'border-line');
+          btn.setAttribute('aria-selected', 'true');
+        } else {
+          btn.classList.remove('bg-red', 'text-white', 'border-red');
+          btn.classList.add('bg-canvas', 'text-ink', 'border-line');
+          btn.setAttribute('aria-selected', 'false');
+        }
+      });
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const idx = Number(btn.getAttribute('data-idx'));
+        updateCausalMatrix(idx);
+      });
+    });
+
+    updateCausalMatrix(0);
+
+    // ==========================================
+    // 2. 任務統一序列化格式切換腳本
+    // ==========================================
+    interface TaskConfig {
+      tokens: string[];
+      mechanism: string;
+      benchmark: string;
+    }
+
+    const taskConfigs: Record<string, TaskConfig> = {
+      classification: {
+        tokens: ['[Start]', '文本內容 (Text)', '[Extract]'],
+        mechanism:
+          '將整段文本夾在 [Start] 與 [Extract] 之間。經過 12 層 Transformer 解碼後，末尾 [Extract] 符號的隱藏狀態向量 hₗᵐ 匯聚了全文語意，直接輸入單一線性層 W_y 輸出類別分佈。',
+        benchmark: 'SST-2 情緒分類、IMDb 電影正負評分類。',
+      },
+      entailment: {
+        tokens: ['[Start]', '前提 (Premise)', '[Delim]', '假設 (Hypothesis)', '[Extract]'],
+        mechanism:
+          '以定界符 [Delim] 隔開兩句話。解碼器在計算注意力時，後方的假設可主動回溯比對前方的每個詞。最終於 [Extract] 處計算三分類（蘊含 / 矛盾 / 中立）之 Logits。',
+        benchmark: 'SNLI (史丹佛自然語言推論)、MNLI (多領域自然語言推論)。',
+      },
+      similarity: {
+        tokens: [
+          '[Start]',
+          '文本 A',
+          '[Delim]',
+          '文本 B',
+          '[Extract]',
+          '+',
+          '[Start]',
+          '文本 B',
+          '[Delim]',
+          '文本 A',
+          '[Extract]',
+        ],
+        mechanism:
+          '由於語義相似度不具方向性（A 似 B 則 B 似 A），GPT-1 將兩種順序分別送入模型，產生各自的 [Extract] 向量後進行逐元素相加（Element-wise Addition），再送入線性層評分，徹底消除順序偏見。',
+        benchmark: 'QQP (Quora 重複問題偵測)、MRPC (微軟改寫語料庫)。',
+      },
+      qa: {
+        tokens: ['[Start]', '文章與問題 (Context)', '[Delim]', '候選答案 (Answer_i)', '[Extract]'],
+        mechanism:
+          '若問題有 N 個候選答案，則將文本與問題複製 N 份，分別拼接各選項。模型計算出 N 個不同的 [Extract] 向量後，通過同一套線性層投影，並在各選項間進行 Softmax 競爭！',
+        benchmark: 'RACE 國高中英語閱讀理解多選題、Story Cloze 克漏字。',
+      },
+    };
+
+    const taskTabs = document.querySelectorAll('.task-tab-btn');
+    const seqDisplay = document.getElementById('task-sequence-display');
+    const mechDesc = document.getElementById('task-mechanism-desc');
+    const benchDesc = document.getElementById('task-benchmark-desc');
+
+    function updateTaskTab(taskKey: string) {
+      const config = taskConfigs[taskKey];
+      if (!config || !seqDisplay || !mechDesc || !benchDesc) return;
+
+      seqDisplay.innerHTML = '';
+      config.tokens.forEach((tok) => {
+        const span = document.createElement('span');
+        if (tok.startsWith('[')) {
+          span.className = 'px-2 py-1 bg-red/15 text-red border border-red/30 font-bold';
+        } else if (tok === '+') {
+          span.className = 'px-1 text-ink font-bold';
+        } else {
+          span.className = 'px-2 py-1 bg-surface border border-line text-ink';
+        }
+        span.textContent = tok;
+        seqDisplay.appendChild(span);
+      });
+
+      mechDesc.innerHTML = config.mechanism;
+      benchDesc.textContent = config.benchmark;
+
+      taskTabs.forEach((tab) => {
+        if (tab.getAttribute('data-task') === taskKey) {
+          tab.classList.add('bg-red', 'text-white', 'border-red');
+          tab.classList.remove('bg-canvas', 'text-ink', 'border-line');
+          tab.setAttribute('aria-selected', 'true');
+        } else {
+          tab.classList.remove('bg-red', 'text-white', 'border-red');
+          tab.classList.add('bg-canvas', 'text-ink', 'border-line');
+          tab.setAttribute('aria-selected', 'false');
+        }
+      });
+    }
+
+    taskTabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const key = tab.getAttribute('data-task') || 'classification';
+        updateTaskTab(key);
+      });
+    });
+
+    updateTaskTab('classification');
+
+    // ==========================================
+    // 3. 動態擾動實驗單選監聽腳本
+    // ==========================================
+    interface PerturbData {
+      entail: number;
+      contra: number;
+      neut: number;
+      desc: string;
+    }
+
+    const perturbRecords: Record<string, PerturbData> = {
+      entailment: {
+        entail: 96.2,
+        contra: 1.8,
+        neut: 2.0,
+        desc: '「東部各縣市」與「花蓮、台東」在地理常識空間中具備高度蘊含關係，而「停止上班上課」直接對應「無需到班出勤」。在跨過 [Delim] 的多頭自注意力交互中，Extract Token 聚合了兩句的同義語意，輸出極高的蘊含信賴度。',
+      },
+      contradiction: {
+        entail: 2.1,
+        contra: 95.1,
+        neut: 2.8,
+        desc: '前提明確宣告「東部停止上班上課」，但假設卻宣稱「全台灣照常上班上課」。「照常」與「停止」在自回歸注意力中發生劇烈語意衝突，Extract 向量在線性分類頭中激發出高達 95.1% 的壓倒性矛盾 Logits！',
+      },
+      neutral: {
+        entail: 11.2,
+        contra: 6.4,
+        neut: 82.4,
+        desc: '雖然強烈颱風確實可能登陸宜蘭，但前提中僅提及「發布陸上警報」與「停班停課」，完全未提及確切登陸地點。模型精確捕捉到資訊缺口，判定為中立（既不保證發生，亦非邏輯矛盾）。',
+      },
+    };
+
+    const radios = document.querySelectorAll('input[name="perturb-opt"]');
+    const barEntail = document.getElementById('prob-bar-entail');
+    const barContra = document.getElementById('prob-bar-contra');
+    const barNeut = document.getElementById('prob-bar-neut');
+    const valEntail = document.getElementById('prob-val-entail');
+    const valContra = document.getElementById('prob-val-contra');
+    const valNeut = document.getElementById('prob-val-neut');
+    const analysisText = document.getElementById('perturb-analysis-text');
+
+    radios.forEach((radio) => {
+      radio.addEventListener('change', (e) => {
+        const val = (e.target as HTMLInputElement).value;
+        const data = perturbRecords[val];
+        if (
+          !data ||
+          !barEntail ||
+          !barContra ||
+          !barNeut ||
+          !valEntail ||
+          !valContra ||
+          !valNeut ||
+          !analysisText
+        )
+          return;
+
+        barEntail.style.width = `${data.entail}%`;
+        barContra.style.width = `${data.contra}%`;
+        barNeut.style.width = `${data.neut}%`;
+
+        valEntail.textContent = `${data.entail}%`;
+        valContra.textContent = `${data.contra}%`;
+        valNeut.textContent = `${data.neut}%`;
+
+        analysisText.textContent = data.desc;
+      });
+    });
+  </script>
+</BaseLayout>

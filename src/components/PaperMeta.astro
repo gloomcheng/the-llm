@@ -4,7 +4,7 @@ interface Props {
   venue: string;
   readTime: string;
   difficulty: string;
-  doi: {
+  doi?: {
     value: string;
     url: string;
   };
@@ -33,18 +33,20 @@ const { year, venue, readTime, difficulty, doi } = Astro.props;
     <dt class="mb-1 font-mono text-xs tracking-[0.09em] text-red">難度 / LEVEL</dt>
     <dd class="m-0 text-base">{difficulty}</dd>
   </div>
-  <div class="p-3 last:border-r-0">
-    <dt class="mb-1 font-mono text-xs tracking-[0.09em] text-red">DOI</dt>
-    <dd class="m-0 break-words text-base">
-      <a
-        class="underline underline-offset-4 hover:text-red"
-        href={doi.url}
-        target="_blank"
-        rel="noreferrer"
-        aria-label={`開啟 DOI ${doi.value}（在新分頁開啟）`}
-      >
-        {doi.value}
-      </a>
-    </dd>
-  </div>
+  {doi ? (
+    <div class="p-3 last:border-r-0">
+      <dt class="mb-1 font-mono text-xs tracking-[0.09em] text-red">DOI</dt>
+      <dd class="m-0 break-words text-base">
+        <a
+          class="underline underline-offset-4 hover:text-red"
+          href={doi.url}
+          target="_blank"
+          rel="noreferrer"
+          aria-label={`開啟 DOI ${doi.value}（在新分頁開啟）`}
+        >
+          {doi.value}
+        </a>
+      </dd>
+    </div>
+  ) : null}
 </dl>

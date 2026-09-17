@@ -15,10 +15,10 @@ front page attached, not a gallery of cards.
 - Canvas: warm paper `#f6f1e7`; raised surfaces: `#fffdf8`.
 - Ink: near-black `#1e2224`; muted ink `#5e625f`.
 - Accent: vermilion `#b6412c`; cool note blue `#355b70`.
-- Type roles: the Taiwan Traditional Chinese serif stack for display moments,
-  with `Jigmo` as the rare-Han webfont fallback; `LINE Seed TW` for interface and
-  body text; the system monospace stack for dates, equations, labels, and paper
-  metadata.
+- Type roles: `Hiragino Mincho ProN` (ヒラギノ明朝 ProN) as the flagship literary
+  Mincho for display moments, with `Yu Mincho` / `Shippori Mincho` and `Jigmo` as
+  fallbacks; `LINE Seed TW` for interface and body text; the system monospace stack
+  for dates, equations, labels, and paper metadata.
 - Spacing follows a 4px base scale. Substantive paper prose uses the standard
   Tailwind `text-base leading-8` scale with a `max-w-2xl` reading measure and
   `mb-10` paragraph rhythm.
@@ -62,6 +62,15 @@ class layer around it. Keep the mobile stack free of horizontal overflow; figure
 use `w-full h-auto`, and tables or long formulas receive an explicit overflow
 treatment when needed.
 
+### Shared component primitives contract (shadcn-ui style)
+
+- `PaperReadingLayout`: Standard editorial two-column readable layout (`max-w-2xl` reading measure + fixed `20rem` right rail).
+- `AuthorGrid`: Responsive 4-column author portrait grid with verified affiliations, roles, and historical notes.
+- `PaperNavigation`: Bilateral chapter continuity navigation (`prev` and `next`) with volume badges, paper titles, reading status, and forward/backward summaries.
+- `AsideCard`: Supplemental right-rail card (`surface`, `paper`, `deep`, `alert`) with mono kicker and display title.
+- `PaperSectionHeader`: Section opener banner with volume index, kicker, and display title.
+- `Callout`: Inline editorial and architectural callout component (`variant="note" | "editorial" | "paper" | "alert"`). Enforces unified padding (`p-5 sm:p-6`), left accent border (`border-l-2`), and harmonious background opacity across all chapters.
+
 ELI5 is an editorial method, not a visible badge. The reader should encounter the
 plain explanation directly; technical names appear only after the concrete action
 they describe has been established.
@@ -83,3 +92,11 @@ quality gate if legacy project classes or class selectors return.
 The design borrows editorial discipline, not a protected publication's logo,
 wordmark, copy, or layout. Diagrams are native accessible HTML/SVG, not fake
 screenshots. All example metrics are labeled with their paper and condition.
+
+## Paper naming and routing harness contract
+
+- **Canonical Slug Rule**: Every standalone paper page under `src/pages/papers/` and content file under `src/content/papers/` MUST be named exclusively using the lowercase, hyphen-separated canonical paper title slug (e.g. `improving-language-understanding-by-generative-pre-training.astro`, `improving-language-understanding-by-generative-pre-training.ts`).
+- **Strict Prohibition of Nicknames**: Informal abbreviations or model nicknames (such as `gpt-1.astro`, `gpt-2.astro`, `bert.astro`, `llama.astro`) are strictly forbidden as file names or primary route URLs.
+- **Milestone Registry Alignment**: In `src/content/papers/milestones.ts`, every milestone entry's `id` and `url` must strictly equal `slugifyPaperTitle(paper.title)` and `/papers/${slugifyPaperTitle(paper.title)}`.
+- **Backward Compatibility**: Shorthand aliases (such as `/papers/gpt-1`) may only exist as redirects in `astro.config.mjs` to ensure incoming links do not break.
+- **Automated Harness Gate**: `scripts/paper-routing-harness.mjs` is executed as part of `npm run quality` (`npm run harness:check`). Any deviation in file names, milestone IDs, or internal links will immediately abort the quality build.

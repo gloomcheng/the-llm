@@ -1,8 +1,12 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-/** @type {string[]} */
-const pages = ['dist/index.html', 'dist/papers/attention-is-all-you-need/index.html'];
+const pages = [
+  'dist/index.html',
+  'dist/papers/attention-is-all-you-need/index.html',
+  'dist/papers/a-mathematical-theory-of-communication/index.html',
+  'dist/papers/improving-language-understanding-by-generative-pre-training/index.html',
+];
 /** @type {string[]} */
 const failures = [];
 

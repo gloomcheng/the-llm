@@ -1,0 +1,1306 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PaperMeta from '../../components/PaperMeta.astro';
+import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
+import PaperNavigation from '../../components/PaperNavigation.astro';
+import StoryRail from '../../components/StoryRail.astro';
+import { milestonePapers } from '../../content/papers/milestones';
+
+const paper = milestonePapers.find((p) => p.id === 'a-mathematical-theory-of-communication')!;
+const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
+
+const story = [
+  {
+    year: '之前',
+    label: '混沌 / THE VOID',
+    title: '資訊是哲學，不是數學。',
+    body: '「資訊」只是一個模糊的概念，沒有人知道一條電報線能承載多少「意思」，也沒有數學工具能回答這個問題。',
+    status: 'past' as const,
+  },
+  {
+    year: '1948',
+    label: '論文 / THE PAPER',
+    title: 'Shannon 把資訊變成數字。',
+    body: '用「熵」定義資訊量，用馬可夫鏈建出第一個統計語言模型，奠定整個資訊時代的數學基礎。',
+    status: 'current' as const,
+  },
+  {
+    year: '之後',
+    label: '遺產 / THE LEGACY',
+    title: 'Cross-Entropy Loss，七十年後仍是同一條公式。',
+    body: '每一個現代語言模型訓練時最佳化的目標，正是 Shannon 1948 年寫下的熵的變形。',
+    status: 'future' as const,
+  },
+];
+---
+
+<BaseLayout
+  title="A Mathematical Theory of Communication — Shannon 1948"
+  section="paper"
+  description="用繁體中文拆解 Shannon 1948 年的資訊理論論文：資訊熵、馬可夫語言模型，以及它如何成為現代大語言模型 Cross-Entropy Loss 的根源。"
+>
+  <article>
+    <header class={`${shell} pt-10`}>
+      <div class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
+        <a class="text-red underline underline-offset-4" href="/">
+          THE LLM
+        </a>
+        <span aria-hidden="true">/</span>
+        <span>序章 / VOL. 00</span>
+      </div>
+
+      <div class="grid grid-cols-1 items-end gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-24">
+        <div>
+          <p class="mb-5 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            序章 / PROLOGUE 00
+          </p>
+          <h1 class="m-0 font-display text-5xl sm:text-6xl lg:text-7xl leading-none tracking-[-0.05em]">
+            <span class="block">A Mathematical</span>
+            <em class="block">Theory of Communication.</em>
+          </h1>
+          <p class="mt-8 max-w-[52ch] text-lg leading-8 text-muted">
+            從現代網路通訊協定到大型語言模型，背後均依託於一個在 1948
+            年之前未曾被嚴格量化的核心問題：「資訊」到底是什麼？它能否被精確度量？Shannon
+            在這篇論文裡首次給出嚴謹的數學定義，奠定了現代數位文明與今日語言模型訓練損失函數的基石。
+          </p>
+        </div>
+        <aside
+          class="border-t-4 border-red bg-surface p-6 shadow-editorial"
+          aria-label="這篇論文的一句評語"
+        >
+          <p class="mb-6 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            一句評語 / THE SHORT VERDICT
+          </p>
+          <p class="m-0 max-w-[20ch] font-display text-3xl leading-tight">
+            這篇論文把「資訊」從哲學問題變成了可計算的數字。
+          </p>
+          <p class="mt-6 mb-0 text-base leading-7 text-muted">
+            Shannon 的原始任務是解決電報雜訊問題，不是設計語言模型。
+          </p>
+        </aside>
+      </div>
+
+      <PaperMeta
+        year={paper.year}
+        venue={paper.venue}
+        readTime="20 分鐘"
+        difficulty="核心概念"
+        doi={{
+          value: '10.1002/j.1538-7305.1948.tb01338.x',
+          url: 'https://doi.org/10.1002/j.1538-7305.1948.tb01338.x',
+        }}
+      />
+      <div class="flex flex-wrap items-center justify-between gap-y-3 py-4 font-mono text-sm uppercase tracking-[0.04em] text-muted">
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+          <span>原始論文</span>
+          <a
+            class="underline underline-offset-4 hover:text-red"
+            href="https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="在 Bell System Technical Journal 閱讀原始論文（在新分頁開啟）"
+          >
+            在 BSTJ 閱讀 ↗
+          </a>
+        </div>
+        <div class="flex items-center gap-2 text-xs sm:text-sm">
+          <span class="text-muted">下一篇章：</span>
+          <a
+            href="/papers/attention-is-all-you-need"
+            class="font-semibold text-red underline underline-offset-4 hover:text-ink transition-colors"
+            aria-label="跳轉至第一章：Attention Is All You Need"
+          >
+            第一章 Transformer ↗
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- WHY：問題從哪裡來 -->
+    <section
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24`}
+      aria-labelledby="why-title"
+    >
+      <div class="max-w-none">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            問題 / WHY
+          </p>
+          <h2
+            id="why-title"
+            class="m-0 font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight tracking-[-0.04em] text-balance"
+          >
+            <span class="inline-block">「資訊」</span>
+            <span class="inline-block">
+              能被<em>量化嗎？</em>
+            </span>
+          </h2>
+          <p class="mt-6 max-w-2xl font-sans text-lg sm:text-xl leading-relaxed text-muted text-pretty">
+            1948
+            年之前，這個問題沒有答案。工程師只知道電報線路會有雜訊，訊號會失真——但「一條線路到底能承載多少資訊」，從來沒有人能用數學說清楚。
+          </p>
+        </div>
+
+        <PaperReadingLayout class="mt-12 text-base leading-8 text-muted">
+          <div class="min-w-0 max-w-2xl">
+            <p class="mb-10">
+              在 1948 年，電報（Telegraph）是全世界跨越地理距離傳遞訊息的最尖端通訊技術。
+            </p>
+            <p class="mb-10">
+              電報的運作方式非常原始：它是一根跨越城市、甚至沉在大西洋底下的實體金屬銅線。你沒辦法把「文字」或「語音」直接扔進銅線裡，只能由發報員用手指敲擊電鍵開關，將直流電接通與斷開，在線路上產生長短不一的微弱電脈衝——短的叫「點（・）」，長三倍的叫「劃（—）」，這就是摩斯密碼（Morse
+              code）。
+            </p>
+            <p class="mb-10">
+              發一封電報極為昂貴，是按字計費的；更致命的難題是<strong>實體雜訊（Noise）</strong>
+              ：數百公里的長途電線暴露在雷雨、大氣電磁干擾與金屬導線本身的熱噪聲中。發報端敲出乾淨俐落的短脈衝「點」，經過數百公里衰減與雜訊干擾，傳到接收端時可能已經變成一團鋸齒毛刺。接收員的電磁鐵若稍有誤判，就會把「點」當成「劃」，全句意思徹底走樣。
+            </p>
+
+            <!-- 圖 01：電報脈衝波形與雜訊判決圖 -->
+            <figure
+              class="my-10 border border-ink bg-surface p-6 sm:p-8"
+              role="img"
+              aria-labelledby="shannon-waveform-title"
+            >
+              <div class="mb-4 flex items-center justify-between">
+                <p class="m-0 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+                  圖 01 / FIGURE 1
+                </p>
+                <span class="font-mono text-xs text-muted">實體雜訊與位元翻轉</span>
+              </div>
+              <p id="shannon-waveform-title" class="m-0 font-display text-2xl font-bold text-ink">
+                長途銅線上的雜訊干擾與位元判決
+              </p>
+              <figcaption class="mt-2 mb-6 max-w-xl text-sm leading-relaxed text-muted">
+                發報員發出的純淨高低電位方波（點與劃），在穿越數百公里銅線時受到金屬熱噪聲與大氣電磁干擾，疊加鋸齒狀毛刺。接收端電磁鐵依靠固定電壓閾值判斷，當雜訊峰值衝破閾值時，便會產生將「空」誤判為「點」的致命位元翻轉（Bit
+                Flip）。
+              </figcaption>
+              <svg class="block h-auto w-full" viewBox="0 0 680 320" role="img" aria-hidden="true">
+                <!-- Track 1: 發送端乾淨方波 -->
+                <text
+                  x="20"
+                  y="38"
+                  fill="#1e2224"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-weight="700"
+                  font-size="12"
+                >
+                  1. 發送端：純淨電壓脈衝（摩斯碼）
+                </text>
+                <line x1="20" y1="90" x2="660" y2="90" stroke="#d6cec0" stroke-width="1"></line>
+                <path
+                  d="M 20 90 L 80 90 L 80 55 L 140 55 L 140 90 L 220 90 L 220 55 L 360 55 L 360 90 L 440 90 L 440 55 L 500 55 L 500 90 L 660 90"
+                  fill="none"
+                  stroke="#1e2224"
+                  stroke-width="2.5"
+                ></path>
+                <text
+                  x="110"
+                  y="74"
+                  text-anchor="middle"
+                  fill="#b6412c"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-weight="700"
+                  font-size="11"
+                >
+                  點 (・)
+                </text>
+                <text
+                  x="290"
+                  y="74"
+                  text-anchor="middle"
+                  fill="#b6412c"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-weight="700"
+                  font-size="11"
+                >
+                  劃 (—)
+                </text>
+                <text
+                  x="470"
+                  y="74"
+                  text-anchor="middle"
+                  fill="#b6412c"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-weight="700"
+                  font-size="11"
+                >
+                  點 (・)
+                </text>
+
+                <!-- Track 2: 銅線傳輸與高斯熱雜訊 -->
+                <text
+                  x="20"
+                  y="140"
+                  fill="#355b70"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-weight="700"
+                  font-size="12"
+                >
+                  2. 銅線傳輸：衰減＋隨機熱雜訊疊加
+                </text>
+                <line x1="20" y1="190" x2="660" y2="190" stroke="#d6cec0" stroke-width="1"></line>
+                <path
+                  d="M 20 190 Q 35 188 50 192 T 80 188 L 82 165 Q 95 160 110 168 T 138 162 L 142 188 Q 160 194 180 187 T 218 191 L 222 163 Q 250 158 290 166 T 358 161 L 362 189 Q 390 193 410 186 T 438 192 L 442 165 Q 460 159 475 166 T 498 163 L 502 189 Q 530 192 560 187 T 590 158 T 620 191 L 660 190"
+                  fill="none"
+                  stroke="#355b70"
+                  stroke-width="2"
+                ></path>
+                <circle cx="590" cy="158" r="4" fill="#b6412c"></circle>
+                <text
+                  x="590"
+                  y="145"
+                  text-anchor="middle"
+                  fill="#b6412c"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-size="10"
+                >
+                  ⚠️ 突發雜訊峰值
+                </text>
+
+                <!-- Track 3: 接收端閾值判決 -->
+                <text
+                  x="20"
+                  y="235"
+                  fill="#1e2224"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-weight="700"
+                  font-size="12"
+                >
+                  3. 接收端判決：電磁鐵電壓閾值（超過虛線判定為訊號）
+                </text>
+                <line
+                  x1="20"
+                  y1="268"
+                  x2="660"
+                  y2="268"
+                  stroke="#b6412c"
+                  stroke-width="1.5"
+                  stroke-dasharray="4,4"
+                ></line>
+                <text
+                  x="655"
+                  y="262"
+                  text-anchor="end"
+                  fill="#b6412c"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-size="10"
+                >
+                  判決閾值 Vth
+                </text>
+                <rect x="80" y="278" width="60" height="26" fill="#1e2224"></rect>
+                <text
+                  x="110"
+                  y="295"
+                  text-anchor="middle"
+                  fill="#ffffff"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-size="12"
+                >
+                  判為 1 (點)
+                </text>
+
+                <rect x="220" y="278" width="140" height="26" fill="#1e2224"></rect>
+                <text
+                  x="290"
+                  y="295"
+                  text-anchor="middle"
+                  fill="#ffffff"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-size="12"
+                >
+                  判為 1 (劃)
+                </text>
+
+                <rect x="440" y="278" width="60" height="26" fill="#1e2224"></rect>
+                <text
+                  x="470"
+                  y="295"
+                  text-anchor="middle"
+                  fill="#ffffff"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-size="12"
+                >
+                  判為 1 (點)
+                </text>
+
+                <rect x="565" y="278" width="50" height="26" fill="#b6412c"></rect>
+                <text
+                  x="590"
+                  y="295"
+                  text-anchor="middle"
+                  fill="#ffffff"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-size="11"
+                >
+                  翻轉！(誤判)
+                </text>
+              </svg>
+            </figure>
+
+            <p class="mb-10">
+              這就是 Claude Shannon 當年在貝爾實驗室（AT&T Bell
+              Labs）面對的現實工程問題：若要在城市之間架設一條長途電報線，工程師的核心挑戰在於：面對不可避免的線路雜訊干擾，這條實體通道在物理極限下到底能傳輸多少真實資訊？
+            </p>
+            <p class="mb-10">
+              已知線路每秒能發送多少脈衝，也已知雜訊電壓幅度，但「資訊量」本身到底是什麼？一封通報「明天下雨」的電報，和一封通報「明天晴天」的電報，帶有一樣多的資訊嗎？在經常降雨的氣候條件下，「明天下雨」所帶來的驚喜程度極低；而若出現罕見的「晴天」，其所消除的不確定性顯然遠大於前者。
+            </p>
+            <p class="mb-10">
+              但這種「驚喜程度」要怎麼變成一個精確的數學數字？在 Shannon 之前，沒有人知道答案。
+            </p>
+
+            <div class="mb-10 border-y-2 border-red bg-red/5 px-5 py-6 sm:px-7">
+              <p class="m-0 text-base leading-8 text-ink">
+                <strong>
+                  這是 Shannon
+                  要解決的核心問題：給「資訊的多少」一個嚴謹的數學定義，讓工程師可以計算、設計、最佳化通訊系統。
+                </strong>
+              </p>
+            </div>
+          </div>
+
+          <aside
+            class="border-t-4 border-blue bg-blue/5 p-6 sm:p-8"
+            aria-labelledby="context-title"
+            slot="rail"
+          >
+            <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-blue">
+              歷史背景 / CONTEXT
+            </p>
+            <h3 id="context-title" class="mt-4 mb-6 font-display text-3xl leading-tight">
+              Bell Labs, 1948
+            </h3>
+            <dl class="grid gap-4 border-t border-blue/30 pt-5 text-base leading-8">
+              <div>
+                <dt class="font-mono text-sm text-blue">時代背景</dt>
+                <dd class="m-0 text-muted">
+                  二戰剛結束，電報與無線電通訊需求爆炸性成長，如何在有雜訊的線路上可靠傳輸資訊是最迫切的工程問題。
+                </dd>
+              </div>
+              <div>
+                <dt class="font-mono text-sm text-blue">前人工作</dt>
+                <dd class="m-0 text-muted">
+                  Nyquist（1928）與
+                  Hartley（1928）已提出通道容量的初步概念，但未考慮訊號機率分佈的影響。
+                </dd>
+              </div>
+              <div>
+                <dt class="font-mono text-sm text-blue">Shannon 的突破</dt>
+                <dd class="m-0 text-muted">
+                  把「機率」引入資訊的定義，徹底完成了前人未完成的工作，並順手建出了語言的統計模型。
+                </dd>
+              </div>
+            </dl>
+          </aside>
+        </PaperReadingLayout>
+
+        <!-- 圖 02：Shannon 通用通訊系統架構 (1948 電報 ↔ 現代 LLM 對照) -->
+        <figure
+          class="my-16 w-full border border-ink bg-surface p-6 sm:p-10 shadow-sm"
+          role="img"
+          aria-labelledby="shannon-fig2-title"
+        >
+          <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-line pb-4">
+            <div>
+              <p class="m-0 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+                圖 02 / FIGURE 2
+              </p>
+              <p
+                id="shannon-fig2-title"
+                class="mt-1 m-0 font-display text-2xl sm:text-3xl font-bold text-ink"
+              >
+                Shannon 通用通訊系統架構
+              </p>
+            </div>
+            <span class="font-mono text-xs text-muted">1948 電報銅線 ↔ 2024 LLM 運算鏈</span>
+          </div>
+
+          <figcaption class="mt-2 mb-8 max-w-3xl text-sm leading-relaxed text-muted">
+            Shannon 在論文開篇提出的經典通訊模型：全世界所有通訊系統（從 1948
+            年二戰電報銅線到今日大語言模型的 Prompt 與 Token
+            生成）均可抽象為這條五段式的數學轉換鏈。下圖將 1948
+            年實體通訊環節與現代語言模型的推論路徑逐段對照。
+          </figcaption>
+
+          <!-- 5-Column Responsive Cards -->
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-5 items-stretch">
+            <!-- Node 1: 資訊來源 -->
+            <div class="flex flex-col justify-between border border-ink bg-paper-deep p-5">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="font-mono text-xs font-bold text-muted">01 / STAGE</span>
+                  <span class="border border-ink/30 bg-surface px-1.5 py-0.5 font-mono text-xs font-semibold uppercase text-ink">
+                    Source
+                  </span>
+                </div>
+                <h4 class="mt-3 mb-2 font-display text-xl font-bold text-ink">資訊來源</h4>
+                <p class="m-0 text-xs text-muted">產生想傳遞的原始訊息</p>
+              </div>
+              <div class="mt-6 border-t border-line pt-3 space-y-2 text-xs">
+                <div>
+                  <span class="font-mono font-semibold text-blue">1948 電報：</span>
+                  <p class="m-0 text-muted">發報者大腦想說的文字（如「明天下雨」）</p>
+                </div>
+                <div>
+                  <span class="font-mono font-semibold text-red">2024 LLM：</span>
+                  <p class="m-0 text-muted">使用者輸入的 Prompt 與任務意圖</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Node 2: 發送器 -->
+            <div class="flex flex-col justify-between border border-ink bg-paper-deep p-5">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="font-mono text-xs font-bold text-muted">02 / STAGE</span>
+                  <span class="border border-ink/30 bg-surface px-1.5 py-0.5 font-mono text-xs font-semibold uppercase text-ink">
+                    Transmitter
+                  </span>
+                </div>
+                <h4 class="mt-3 mb-2 font-display text-xl font-bold text-ink">發送器</h4>
+                <p class="m-0 text-xs text-muted">將訊息編碼為通道實體訊號</p>
+              </div>
+              <div class="mt-6 border-t border-line pt-3 space-y-2 text-xs">
+                <div>
+                  <span class="font-mono font-semibold text-blue">1948 電報：</span>
+                  <p class="m-0 text-muted">電鍵開關（轉成高低電位直流脈衝）</p>
+                </div>
+                <div>
+                  <span class="font-mono font-semibold text-red">2024 LLM：</span>
+                  <p class="m-0 text-muted">Tokenizer 與 Word Embedding（轉成數值向量）</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Node 3: 通訊通道 -->
+            <div class="flex flex-col justify-between border-2 border-red bg-red-soft p-5 relative">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="font-mono text-xs font-bold text-red">03 / STAGE</span>
+                  <span class="border border-red bg-surface px-1.5 py-0.5 font-mono text-xs font-bold uppercase text-red">
+                    Channel
+                  </span>
+                </div>
+                <h4 class="mt-3 mb-2 font-display text-xl font-bold text-ink">通訊通道</h4>
+                <p class="m-0 text-xs text-muted">物理媒介，伴隨雜訊干擾</p>
+              </div>
+              <div class="mt-6 border-t border-red/30 pt-3 space-y-2 text-xs">
+                <div>
+                  <span class="font-mono font-semibold text-blue">1948 電報：</span>
+                  <p class="m-0 text-muted">長途金屬銅線（受電阻、氣候與熱噪聲干擾）</p>
+                </div>
+                <div>
+                  <span class="font-mono font-semibold text-red">2024 LLM：</span>
+                  <p class="m-0 text-muted">Transformer 運算層（受量化誤差、權重干擾）</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Node 4: 接收器 -->
+            <div class="flex flex-col justify-between border border-ink bg-paper-deep p-5">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="font-mono text-xs font-bold text-muted">04 / STAGE</span>
+                  <span class="border border-ink/30 bg-surface px-1.5 py-0.5 font-mono text-xs font-semibold uppercase text-ink">
+                    Receiver
+                  </span>
+                </div>
+                <h4 class="mt-3 mb-2 font-display text-xl font-bold text-ink">接收器</h4>
+                <p class="m-0 text-xs text-muted">從微弱失真訊號重建原始訊息</p>
+              </div>
+              <div class="mt-6 border-t border-line pt-3 space-y-2 text-xs">
+                <div>
+                  <span class="font-mono font-semibold text-blue">1948 電報：</span>
+                  <p class="m-0 text-muted">接收電磁鐵（依閾值判決還原點與劃）</p>
+                </div>
+                <div>
+                  <span class="font-mono font-semibold text-red">2024 LLM：</span>
+                  <p class="m-0 text-muted">Softmax Head & De-tokenizer（採樣輸出 Token）</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Node 5: 目的地 -->
+            <div class="flex flex-col justify-between border border-ink bg-paper-deep p-5">
+              <div>
+                <div class="flex items-center justify-between">
+                  <span class="font-mono text-xs font-bold text-muted">05 / STAGE</span>
+                  <span class="border border-ink/30 bg-surface px-1.5 py-0.5 font-mono text-xs font-semibold uppercase text-ink">
+                    Destination
+                  </span>
+                </div>
+                <h4 class="mt-3 mb-2 font-display text-xl font-bold text-ink">目的地</h4>
+                <p class="m-0 text-xs text-muted">訊息最終抵達的接收端實體</p>
+              </div>
+              <div class="mt-6 border-t border-line pt-3 space-y-2 text-xs">
+                <div>
+                  <span class="font-mono font-semibold text-blue">1948 電報：</span>
+                  <p class="m-0 text-muted">收報人拆閱電報紙帶上的字句</p>
+                </div>
+                <div>
+                  <span class="font-mono font-semibold text-red">2024 LLM：</span>
+                  <p class="m-0 text-muted">使用者螢幕呈現的完整流暢回應</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Noise Source Center-bottom Callout -->
+          <div class="mt-6 flex flex-col items-center">
+            <div class="flex items-center gap-2 font-mono text-xs font-bold text-red">
+              <span>▲</span>
+              <span>雜訊注入通訊通道（NOISE SOURCE）</span>
+              <span>▲</span>
+            </div>
+            <div class="mt-3 max-w-xl border-2 border-dashed border-red bg-red/5 p-4 text-center">
+              <p class="m-0 text-xs leading-relaxed text-muted">
+                <strong>1948 實體噪聲：</strong>長途導線熱運動（Johnson
+                Noise）與大氣雷電干擾，導致波形毛刺與位元翻轉。
+                <br />
+                <strong>2024 模型噪聲：</strong>推論階段的隨機溫度取樣（Temperature
+                Sampling）與注意力幻覺干擾。
+              </p>
+            </div>
+          </div>
+        </figure>
+
+        <PaperReadingLayout class="mt-12 text-base leading-8 text-muted">
+          <div class="min-w-0 max-w-2xl">
+            <p class="mb-10">
+              在 1940 年代，通訊工程師用的是各種經驗法則和粗略估算。Nyquist（奈奎斯特）和 Hartley
+              提出過一些初步公式，但都不完整——它們沒有考慮到「每種訊號出現的機率不同」這件事。Shannon
+              要做的，是把這個問題徹底解決。
+            </p>
+            <p class="mb-0">
+              而他解決的方式，牽連出了一個在七十六年後依然驅動所有大語言模型的數學結構。
+            </p>
+          </div>
+        </PaperReadingLayout>
+      </div>
+    </section>
+
+    <!-- HOW：Shannon 的解法 -->
+    <section class={`${shell} border-t-2 border-ink py-16 sm:py-20`} aria-labelledby="how-title">
+      <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+        解法 / HOW
+      </p>
+      <h2
+        id="how-title"
+        class="m-0 font-display text-4xl sm:text-5xl lg:text-6xl leading-tight tracking-[-0.04em] text-balance"
+      >
+        <span class="inline-block">意義不重要，</span>
+        <span class="inline-block">
+          <em>意外程度才重要。</em>
+        </span>
+      </h2>
+      <p class="mt-6 max-w-2xl font-sans text-lg sm:text-xl leading-relaxed text-muted text-pretty">
+        Shannon 做了一個反直覺的切割：他把語意從資訊定義裡完全去掉，只保留「這條訊息有多意外」。
+      </p>
+
+      <div class="mt-14 space-y-20">
+        <!-- HOW 01：抽離語意 -->
+        <PaperReadingLayout class="text-base leading-8 text-muted">
+          <div class="min-w-0 max-w-2xl">
+            <p class="mb-4 font-mono text-xs font-semibold uppercase tracking-[0.1em] text-red">
+              STEP 01 / 抽離語意
+            </p>
+            <h3 class="mb-8 font-display text-3xl leading-snug text-ink">
+              為什麼要先把「意思」丟掉？
+            </h3>
+            <p class="mb-10">
+              這是這篇論文最反直覺、也最關鍵的一步。Shannon
+              在論文開頭就宣告：「通訊的基本問題，是在接收端精確或近似地重現發送端所選擇的訊息。訊息的語意層面，與工程問題無關。」
+            </p>
+            <p class="mb-10">
+              這項劃分直指工程問題的核心本質：人類通訊的動機固然在於傳達語意，但通訊工程的使命在於訊號的精確複製——傳輸系統無須理解訊息包含的是「我愛你」或是「股市崩盤」，兩者在電磁物理上均僅是一組待重現的符號序列。
+            </p>
+            <p class="mb-10">
+              一旦把語意去掉，「資訊量」就可以被定義成一個純粹的數學量：
+              <strong>這條訊息是在多少種可能性裡被選出來的，以及每種可能性的機率是多少。</strong>
+            </p>
+
+            <div class="mb-10 border border-blue/40 bg-blue/5 p-6 sm:p-8">
+              <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-blue">
+                直覺類比 / ANALOGY
+              </p>
+              <p class="mt-6 mb-4 font-display text-xl leading-snug text-ink">
+                猜一個你朋友今天中午吃什麼。
+              </p>
+              <p class="m-0">
+                如果他每天都吃便當，「他今天吃便當」帶給你的資訊量幾乎是零——你早就知道了。但如果他突然說「我今天吃了法式料理」，這條訊息帶給你的資訊量就大很多，因為它更「意外」。Shannon
+                的核心洞見：<strong>資訊量 = 意外程度 = 事件發生機率的對數反比</strong>
+                。機率越低的事，帶的資訊越多。
+              </p>
+            </div>
+
+            <p class="mb-10">
+              形式上：如果一個事件發生的機率是 <code>p</code>，它帶的資訊量（以 bit 為單位）是：
+            </p>
+            <div class="mb-10 border-l-2 border-blue pl-5 font-mono text-lg text-blue">
+              I = −log₂(p)
+            </div>
+            <p class="mb-10">
+              機率 <code>p = 1</code>（必然發生的事）→ <code>I = 0</code>
+              ，完全不驚喜，帶零資訊。機率
+              <code>p = 0.5</code>（丟銅板）→ <code>I = 1 bit</code>。機率
+              <code>p = 0.001</code>（極罕見的事）→ <code>I ≈ 10 bits</code>，非常意外，帶很多資訊。
+            </p>
+          </div>
+
+          <aside
+            class="border-t-4 border-blue bg-blue/5 p-6 sm:p-8"
+            aria-labelledby="info-term-title"
+            slot="rail"
+          >
+            <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-blue">
+              字典 / TERM
+            </p>
+            <h3 id="info-term-title" class="mt-4 mb-6 font-display text-3xl leading-tight">
+              資訊量
+            </h3>
+            <dl class="grid gap-4 border-t border-blue/30 pt-5 text-base leading-8">
+              <div>
+                <dt class="font-mono text-sm text-blue">定義</dt>
+                <dd class="m-0 text-muted">
+                  一個事件帶來的資訊量 = <code>−log₂(p)</code>，p 是事件發生的機率。
+                </dd>
+              </div>
+              <div>
+                <dt class="font-mono text-sm text-blue">單位</dt>
+                <dd class="m-0 text-muted">
+                  以 2 為底的對數 → 單位是 bit（位元）；以自然對數 → 單位是 nat。
+                </dd>
+              </div>
+              <div>
+                <dt class="font-mono text-sm text-blue">直覺</dt>
+                <dd class="m-0 text-muted">
+                  機率越低 → 越意外 → 資訊量越大。必然發生的事帶零資訊。
+                </dd>
+              </div>
+            </dl>
+          </aside>
+        </PaperReadingLayout>
+
+        <!-- HOW 02：資訊熵 -->
+        <PaperReadingLayout class="text-base leading-8 text-muted">
+          <div class="min-w-0 max-w-2xl">
+            <p class="mb-4 font-mono text-xs font-semibold uppercase tracking-[0.1em] text-red">
+              STEP 02 / 資訊熵
+            </p>
+            <h3 class="mb-8 font-display text-3xl leading-snug text-ink">
+              Entropy：整個系統的「平均意外程度」
+            </h3>
+            <p class="mb-10">
+              光知道單一事件的資訊量還不夠。Shannon
+              需要的是：對一整個訊息來源（比如英文文字），它「平均」每個符號帶多少資訊？這就是
+              <strong>資訊熵（Entropy）</strong>的概念。
+            </p>
+            <p class="mb-10">公式很直接：把每個可能的符號，按它的機率加權後取平均：</p>
+            <div class="mb-10 border-l-2 border-red pl-5 font-mono text-lg text-red">
+              H = −∑ pᵢ · log₂(pᵢ)
+            </div>
+            <p class="mb-10">
+              這個 H
+              就是「這個系統的資訊熵」。它代表：如果你從這個系統裡隨機抽出一個符號，平均來說你需要幾個
+              bit 才能描述它。
+            </p>
+
+            <div class="mb-10 border border-blue/40 bg-blue/5 p-6 sm:p-8">
+              <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-blue">
+                具體例子 / EXAMPLE
+              </p>
+              <div class="mt-6 space-y-4">
+                <p class="m-0">
+                  <strong>偏斜的銅板</strong>（正面機率 0.9，反面機率
+                  0.1）：大部分時候都是正面，很少意外。Entropy 低。
+                </p>
+                <p class="m-0">
+                  <strong>公平的銅板</strong>（各 0.5）：每次都是懸念。Entropy = 1 bit，最高。
+                </p>
+                <p class="m-0">
+                  <strong>英文字母</strong>（各字母出現機率不同，e 最常見，z 最少）：Shannon
+                  算出英文的字母熵約 4.03 bits；若考慮前後文關係，實際約 1.0–1.5 bits/字母。
+                </p>
+              </div>
+            </div>
+
+            <!-- 圖 03：二元資訊熵曲線 -->
+            <figure
+              class="my-12 border border-ink bg-surface p-6 sm:p-8"
+              role="img"
+              aria-labelledby="shannon-fig3-title"
+            >
+              <div class="mb-4 flex items-center justify-between">
+                <p class="m-0 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+                  圖 03 / FIGURE 3
+                </p>
+                <span class="font-mono text-xs text-muted">二元資訊熵曲線 H(p)</span>
+              </div>
+              <p id="shannon-fig3-title" class="m-0 font-display text-2xl font-bold text-ink">
+                二元硬幣的意外程度曲線
+              </p>
+              <figcaption class="mt-2 mb-6 max-w-xl text-sm leading-relaxed text-muted">
+                拋硬幣出現正面的機率 p 與平均資訊量（熵）的關係。當 p =
+                0.5（公平硬幣）時，不確定性最大，熵達到峰值 1.0 bit；當 p 趨近 0 或 1
+                時，結果幾乎必然發生，系統不再帶有任何意外程度。
+              </figcaption>
+              <svg class="block h-auto w-full" viewBox="0 0 680 320" role="img" aria-hidden="true">
+                <!-- Grid lines & Axes -->
+                <line x1="80" y1="260" x2="620" y2="260" stroke="#1e2224" stroke-width="2"></line>
+                <line x1="80" y1="40" x2="80" y2="260" stroke="#1e2224" stroke-width="2"></line>
+
+                <!-- Y-axis labels -->
+                <text
+                  x="70"
+                  y="265"
+                  text-anchor="end"
+                  fill="#5e625f"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-size="12"
+                >
+                  0.0
+                </text>
+                <text
+                  x="70"
+                  y="205"
+                  text-anchor="end"
+                  fill="#5e625f"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-size="12"
+                >
+                  0.3
+                </text>
+                <text
+                  x="70"
+                  y="145"
+                  text-anchor="end"
+                  fill="#5e625f"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-size="12"
+                >
+                  0.6
+                </text>
+                <text
+                  x="70"
+                  y="85"
+                  text-anchor="end"
+                  fill="#5e625f"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-size="12"
+                >
+                  0.9
+                </text>
+                <text
+                  x="70"
+                  y="65"
+                  text-anchor="end"
+                  fill="#b6412c"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-weight="700"
+                  font-size="13"
+                >
+                  1.0 bit
+                </text>
+                <line
+                  x1="75"
+                  y1="60"
+                  x2="620"
+                  y2="60"
+                  stroke="#d6cec0"
+                  stroke-width="1"
+                  stroke-dasharray="3,3"
+                ></line>
+
+                <!-- X-axis labels -->
+                <text
+                  x="80"
+                  y="285"
+                  text-anchor="middle"
+                  fill="#5e625f"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-size="12"
+                >
+                  0.0
+                </text>
+                <text
+                  x="215"
+                  y="285"
+                  text-anchor="middle"
+                  fill="#5e625f"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-size="12"
+                >
+                  0.25
+                </text>
+                <text
+                  x="350"
+                  y="285"
+                  text-anchor="middle"
+                  fill="#b6412c"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-weight="700"
+                  font-size="13"
+                >
+                  0.5 (公平)
+                </text>
+                <line
+                  x1="350"
+                  y1="60"
+                  x2="350"
+                  y2="260"
+                  stroke="#b6412c"
+                  stroke-width="1"
+                  stroke-dasharray="3,3"
+                ></line>
+                <text
+                  x="485"
+                  y="285"
+                  text-anchor="middle"
+                  fill="#5e625f"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-size="12"
+                >
+                  0.75
+                </text>
+                <text
+                  x="620"
+                  y="285"
+                  text-anchor="middle"
+                  fill="#5e625f"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-size="12"
+                >
+                  1.0
+                </text>
+                <text
+                  x="350"
+                  y="310"
+                  text-anchor="middle"
+                  fill="#1e2224"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-size="12"
+                >
+                  正面出現機率 p
+                </text>
+
+                <!-- Entropy Curve Path -->
+                <path
+                  d="M 80 260 C 130 180 230 60 350 60 C 470 60 570 180 620 260"
+                  fill="none"
+                  stroke="#b6412c"
+                  stroke-width="3"
+                ></path>
+
+                <!-- Peak dot -->
+                <circle cx="350" cy="60" r="5" fill="#b6412c"></circle>
+                <text
+                  x="350"
+                  y="45"
+                  text-anchor="middle"
+                  fill="#b6412c"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-weight="700"
+                  font-size="12"
+                >
+                  最高懸念：H = 1.0 bit
+                </text>
+
+                <!-- Example point 0.9 -->
+                <circle cx="566" cy="166" r="4" fill="#355b70"></circle>
+                <text
+                  x="575"
+                  y="155"
+                  text-anchor="start"
+                  fill="#355b70"
+                  font-family="LINE Seed TW, sans-serif"
+                  font-size="11"
+                >
+                  p=0.9 (偏斜硬幣: 0.47 bit)
+                </text>
+              </svg>
+            </figure>
+
+            <p class="mb-10">
+              Entropy 越高 → 系統越混亂、越難預測 → 需要更多 bit 才能傳遞每個符號。Entropy 越低 →
+              訊息越規律、越可預測 →
+              可以大量壓縮。這也是現代壓縮演算法（zip、PNG、JPEG）的數學根基。
+            </p>
+          </div>
+
+          <aside
+            class="border-t-4 border-red bg-red/5 p-6 sm:p-8"
+            aria-labelledby="entropy-term-title"
+            slot="rail"
+          >
+            <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+              關鍵公式 / KEY FORMULA
+            </p>
+            <h3 id="entropy-term-title" class="mt-4 mb-6 font-display text-3xl leading-tight">
+              Shannon Entropy
+            </h3>
+            <div class="font-mono text-lg text-red border-t border-red/30 pt-5">
+              H = −∑ pᵢ · log₂(pᵢ)
+            </div>
+            <dl class="mt-5 grid gap-4 text-base leading-8">
+              <div>
+                <dt class="font-mono text-sm text-red">H 越大</dt>
+                <dd class="m-0 text-muted">系統越混亂、越難預測、傳輸需要越多 bit。</dd>
+              </div>
+              <div>
+                <dt class="font-mono text-sm text-red">H 越小</dt>
+                <dd class="m-0 text-muted">系統越規律、越可預測、越容易壓縮。</dd>
+              </div>
+              <div>
+                <dt class="font-mono text-sm text-red">H = 0</dt>
+                <dd class="m-0 text-muted">完全確定，沒有任何資訊量。</dd>
+              </div>
+            </dl>
+          </aside>
+        </PaperReadingLayout>
+
+        <!-- HOW 03：馬可夫語言模型 -->
+        <PaperReadingLayout class="text-base leading-8 text-muted">
+          <div class="min-w-0 max-w-2xl">
+            <p class="mb-4 font-mono text-xs font-semibold uppercase tracking-[0.1em] text-red">
+              STEP 03 / 語言模型雛形
+            </p>
+            <h3 class="mb-8 font-display text-3xl leading-snug text-ink">
+              1948 年的論文裡，藏著語言模型的核心邏輯
+            </h3>
+            <p class="mb-10">
+              Shannon 為了說明 Entropy
+              的概念，做了一個至今仍令人驚嘆的示範：他用英文的字母和詞彙統計機率，
+              <strong>手算</strong>建出了不同階數的「統計近似英文」。
+            </p>
+            <p class="mb-10">
+              方法很直接：先統計英文裡每個字母出現的機率，然後按機率隨機生成文字。但 Shannon
+              不只做了這一步，他做了好幾個層次：
+            </p>
+
+            <!-- 圖 04：Shannon 馬可夫語言生成逼近階梯 -->
+            <figure
+              class="my-10 border border-ink bg-surface p-6 sm:p-8"
+              role="img"
+              aria-labelledby="shannon-fig4-title"
+            >
+              <div class="mb-4 flex items-center justify-between">
+                <p class="m-0 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+                  圖 04 / FIGURE 4
+                </p>
+                <span class="font-mono text-xs text-muted">統計機率與語法湧現</span>
+              </div>
+              <p id="shannon-fig4-title" class="m-0 font-display text-2xl font-bold text-ink">
+                Shannon 馬可夫語言生成逼近階梯
+              </p>
+              <figcaption class="mt-2 mb-6 max-w-xl text-sm leading-relaxed text-muted">
+                Shannon 在 1948
+                年原著展示的統計近似實驗：當給予模型的前文條件（階數）越深，輸出的文字就從純隨機噪音奇蹟般湧現出音節、合法單詞與基礎語法。這正是今日大語言模型自迴歸生成（Next-token
+                Prediction）的最早原型。
+              </figcaption>
+
+              <div class="space-y-4">
+                <!-- Step 1 -->
+                <div class="border border-ink/40 bg-paper-deep p-4">
+                  <div class="flex items-center justify-between mb-1.5">
+                    <span class="font-mono text-xs font-bold text-ink">
+                      階梯 01 / 零階隨機（0-order Uniform）
+                    </span>
+                    <span class="font-mono text-xs text-muted">26 字母等機率 (1/26)</span>
+                  </div>
+                  <p class="font-mono text-xs sm:text-sm text-ink bg-surface p-2.5 border border-line tracking-wider break-all">
+                    XFOML RXKHRJFFJUJ ZLPWCFWKCYJ FFJEYVKCQSGHYD QPAAMKBZAACIBZLHJQD
+                  </p>
+                  <p class="mt-2 mb-0 text-xs text-muted">
+                    完全獨立同分布，無任何語法或詞頻關聯，純粹的字母雜訊。
+                  </p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="border border-blue/40 bg-blue/5 p-4">
+                  <div class="flex items-center justify-between mb-1.5">
+                    <span class="font-mono text-xs font-bold text-blue">
+                      階梯 02 / 一階字母頻率（1-order Unigram）
+                    </span>
+                    <span class="font-mono text-xs text-blue">
+                      符合真實英文單字頻率（e 最多，z 最少）
+                    </span>
+                  </div>
+                  <p class="font-mono text-xs sm:text-sm text-ink bg-surface p-2.5 border border-blue/30 tracking-wider break-all">
+                    OCRO HLI RGWR NMIELWIS EU LL NBNESEBYA TH EEI ALHENHTTPA OOBTTVA NAH BRL
+                  </p>
+                  <p class="mt-2 mb-0 text-xs text-muted">
+                    母音與常用子音出現次數增加，視覺上開始帶有英文輪廓，但依舊無合法單字。
+                  </p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="border border-red/40 bg-red-soft p-4">
+                  <div class="flex items-center justify-between mb-1.5">
+                    <span class="font-mono text-xs font-bold text-red">
+                      階梯 03 / 二階字母轉移（2-order Digram）
+                    </span>
+                    <span class="font-mono text-xs text-red">
+                      看前 1 個字母決定下一個：P(c_t | c_&#123;t-1&#125;)
+                    </span>
+                  </div>
+                  <p class="font-mono text-xs sm:text-sm text-ink bg-surface p-2.5 border border-red/30 tracking-wider break-all">
+                    ON IE ANTSOUTINYS ARE T INCTORE ST BE S DEAMY ACHIN D ILONASIVE TUCOOWE AT
+                  </p>
+                  <p class="mt-2 mb-0 text-xs text-muted">
+                    出現合法的英語發音音節與單詞片段（如 <code>ON</code>, <code>ARE</code>,{' '}
+                    <code>BE</code>）。
+                  </p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="border-2 border-red bg-surface p-4 shadow-sm">
+                  <div class="flex items-center justify-between mb-1.5">
+                    <span class="font-mono text-xs font-bold text-red">
+                      階梯 04 / 詞級雙詞轉移（Word Bigram）
+                    </span>
+                    <span class="font-mono text-xs font-bold text-red">
+                      看前 1 個詞預測下一個詞：P(w_t | w_&#123;t-1&#125;)
+                    </span>
+                  </div>
+                  <p class="font-mono text-xs sm:text-sm text-ink bg-red/5 p-2.5 border border-red/30 tracking-normal">
+                    THE HEAD AND IN FRONTAL ATTACK ON AN ENGLISH WRITER THAT THE CHARACTER OF THIS
+                    POINT IS THEREFORE ANOTHER METHOD FOR THE LETTERS...
+                  </p>
+                  <p class="mt-2 mb-0 text-xs text-muted">
+                    語法主謂與介系詞結構湧現！讀起來如同真實英語句型，僅缺乏長程邏輯一致性。
+                    <strong>這就是現代語言模型「根據前文預測下一個 token」的最早原型。</strong>
+                  </p>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="border border-dashed border-ink/40 bg-paper p-4">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="font-mono text-xs font-bold text-muted">
+                      邁向 2024 / 現代大語言模型（Transformer Attention）
+                    </span>
+                    <span class="font-mono text-xs text-muted">
+                      超長上下文條件機率：P(w_t | w_&#123;&lt;t&#125;)
+                    </span>
+                  </div>
+                  <p class="mt-2 mb-0 text-xs text-muted leading-relaxed">
+                    將 Shannon 的 2-gram 條件機率擴展至數萬 token
+                    的全局注意力機制（Self-Attention）與千億權重矩陣，徹底解決跨句子長程語義連貫難題。
+                  </p>
+                </div>
+              </div>
+            </figure>
+
+            <div class="mb-10 border-y-2 border-red bg-red/5 px-5 py-6 sm:px-7">
+              <p class="m-0 text-base leading-8 text-ink">
+                <strong>
+                  Shannon 在 1948
+                  年就示範了：語言可以被統計機率建模，而且階數越高（看越多前文），生成的文字就越像真正的語言。這正是
+                  GPT 的核心邏輯——只是規模從手算的幾個字，放大到了千億參數。
+                </strong>
+              </p>
+            </div>
+
+            <p class="mb-10">
+              值得注意的是：Shannon 做這件事，不是為了「生成語言」，而是為了
+              <strong>估算英文的資訊熵</strong>——他想知道英文每個字母平均帶多少 bit
+              的資訊，從而知道可以把英文壓縮到什麼程度。語言模型是他的測量工具，不是他的目標。
+            </p>
+          </div>
+
+          <aside
+            class="border-t-4 border-ink bg-paper p-6 sm:p-8"
+            aria-labelledby="markov-term-title"
+            slot="rail"
+          >
+            <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-blue">
+              字典 / TERM
+            </p>
+            <h3 id="markov-term-title" class="mt-4 mb-6 font-display text-3xl leading-tight">
+              馬可夫鏈
+            </h3>
+            <dl class="grid gap-4 border-t border-line pt-5 text-base leading-8">
+              <div>
+                <dt class="font-mono text-sm text-blue">是什麼</dt>
+                <dd class="m-0 text-muted">
+                  一個系統的下一個狀態，只取決於當前狀態，和更早之前的歷史無關。
+                </dd>
+              </div>
+              <div>
+                <dt class="font-mono text-sm text-blue">語言中的應用</dt>
+                <dd class="m-0 text-muted">
+                  N-gram 模型：下一個詞只看前 N 個詞。1-gram = 只看自己，2-gram =
+                  看前一個詞，依此類推。
+                </dd>
+              </div>
+              <div>
+                <dt class="font-mono text-sm text-blue">和 GPT 的關係</dt>
+                <dd class="m-0 text-muted">
+                  GPT 是更強的版本：不只看前 N 個詞，而是透過 Attention 看整段上下文的加權組合。
+                </dd>
+              </div>
+            </dl>
+          </aside>
+        </PaperReadingLayout>
+      </div>
+    </section>
+
+    <!-- WHAT：七十六年後的遺產 -->
+    <section class={`${shell} border-t-2 border-ink py-16 sm:py-20`} aria-labelledby="what-title">
+      <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+        遺產 / WHAT
+      </p>
+      <h2
+        id="what-title"
+        class="m-0 font-display text-4xl sm:text-5xl lg:text-6xl leading-tight tracking-[-0.04em] text-balance"
+      >
+        <span class="inline-block">Cross-Entropy Loss：</span>
+        <span class="inline-block">
+          <em>七十六年後，還是同一條公式。</em>
+        </span>
+      </h2>
+      <p class="mt-6 max-w-2xl font-sans text-lg sm:text-xl leading-relaxed text-muted text-pretty">
+        今天你在 Google Colab 訓練一個語言模型，Jupyter Notebook 裡那行{' '}
+        <code>loss = F.cross_entropy(...)</code>，它的數學根源就是 Shannon 1948 年寫下的 H 公式。
+      </p>
+
+      <PaperReadingLayout class="mt-14 text-base leading-8 text-muted">
+        <div class="min-w-0 max-w-2xl">
+          <h3 class="mb-8 font-display text-3xl leading-snug text-ink">
+            從 Shannon Entropy 到 Cross-Entropy Loss
+          </h3>
+          <p class="mb-10">Shannon 的資訊熵：</p>
+          <div class="mb-6 border-l-2 border-red pl-5 font-mono text-lg text-red">
+            H(p) = −∑ p(x) · log p(x)
+          </div>
+          <p class="mb-10">這描述的是「真實語言分佈 p 的平均資訊量」。</p>
+          <p class="mb-10">
+            語言模型訓練時，我們有一個真實分佈 <code>p</code>（人類寫的文字）和一個模型的預測分佈{' '}
+            <code>q</code>（模型認為下一個詞是什麼）。Cross-Entropy 衡量的是：用模型的{' '}
+            <code>q</code> 來描述真實的 <code>p</code>，需要多少額外的 bit：
+          </p>
+          <div class="mb-6 border-l-2 border-red pl-5 font-mono text-lg text-red">
+            H(p, q) = −∑ p(x) · log q(x)
+          </div>
+          <p class="mb-10">
+            Cross-Entropy 越低 → 模型的預測分佈 <code>q</code> 越接近真實分佈 <code>p</code> →
+            模型越好。這就是為什麼「最小化 Cross-Entropy
+            Loss」等同於「讓模型的語言機率分佈逼近真實人類語言的機率分佈」。
+          </p>
+
+          <div class="mb-10 border-y-2 border-red bg-red/5 px-5 py-6 sm:px-7">
+            <p class="m-0 text-base leading-8 text-ink">
+              <strong>
+                GPT、BERT、LLaMA——所有現代語言模型——訓練時每一步 backpropagation
+                最佳化的那個數字，都是 Shannon 在 1948 年寫下的 H 公式的直接延伸。這個公式比
+                transformer 架構早了 69 年。
+              </strong>
+            </p>
+          </div>
+
+          <h3 class="mb-8 mt-14 font-display text-3xl leading-snug text-ink">
+            這篇論文還留下了什麼？
+          </h3>
+          <ul class="mb-10 space-y-4 list-none p-0">
+            <li class="flex gap-4 border-b border-line pb-4">
+              <span class="font-mono text-sm text-red shrink-0 pt-1">01</span>
+              <div>
+                <p class="m-0 font-semibold text-ink">整個資訊時代的數學地基</p>
+                <p class="m-0 mt-1 text-muted">
+                  從 Wi-Fi 協議、4G/5G 的通道編碼，到 JPEG 壓縮、zip 格式，全部建立在 Shannon
+                  的通道容量定理和熵編碼理論上。
+                </p>
+              </div>
+            </li>
+            <li class="flex gap-4 border-b border-line pb-4">
+              <span class="font-mono text-sm text-red shrink-0 pt-1">02</span>
+              <div>
+                <p class="m-0 font-semibold text-ink">「語言可以被機率建模」的數學依據</p>
+                <p class="m-0 mt-1 text-muted">
+                  Shannon
+                  第一次嚴格地說：人類語言是一個有統計規律的隨機過程，可以用機率分佈來描述和生成。這讓後來所有語言模型有了合法的數學基礎。
+                </p>
+              </div>
+            </li>
+            <li class="flex gap-4 border-b border-line pb-4">
+              <span class="font-mono text-sm text-red shrink-0 pt-1">03</span>
+              <div>
+                <p class="m-0 font-semibold text-ink">Perplexity：語言模型好壞的標準評估指標</p>
+                <p class="m-0 mt-1 text-muted">
+                  Perplexity（困惑度）= 2 的 Cross-Entropy 次方，直接來自 Shannon
+                  Entropy。今天發表語言模型論文，一定要報告 perplexity，而 perplexity 就是 Shannon
+                  1948 年那條 H 公式的直接後代。
+                </p>
+              </div>
+            </li>
+            <li class="flex gap-4 pb-4">
+              <span class="font-mono text-sm text-red shrink-0 pt-1">04</span>
+              <div>
+                <p class="m-0 font-semibold text-ink">「Scaling」背後的資訊理論直覺</p>
+                <p class="m-0 mt-1 text-muted">
+                  為什麼訓練資料越多、模型越大，Cross-Entropy Loss
+                  就越低？因為更多的訓練資料讓模型能更好地估計語言的真實分佈
+                  p；更大的模型有能力逼近更複雜的 p。這個直覺直接來自 Shannon 對熵的定義。
+                </p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <aside
+          class="border-t-4 border-ink bg-paper p-6 sm:p-8"
+          aria-labelledby="legacy-title"
+          slot="rail"
+        >
+          <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-blue">
+            技術血緣 / LINEAGE
+          </p>
+          <h3 id="legacy-title" class="mt-4 mb-6 font-display text-2xl leading-tight">
+            Shannon → 現代 LLM
+          </h3>
+          <dl class="grid gap-5 border-t border-line pt-5 text-sm leading-7">
+            <div>
+              <dt class="font-mono text-xs text-red uppercase font-bold">Shannon Entropy (1948)</dt>
+              <dd class="m-0 text-muted">H = −∑ p log p</dd>
+            </div>
+            <div class="border-t border-dashed border-line pt-4">
+              <dt class="font-mono text-xs text-blue uppercase font-bold">
+                Cross-Entropy Loss (1950s–)
+              </dt>
+              <dd class="m-0 text-muted">
+                H(p,q) = −∑ p log q<br />
+                模型訓練的損失函數
+              </dd>
+            </div>
+            <div class="border-t border-dashed border-line pt-4">
+              <dt class="font-mono text-xs text-blue uppercase font-bold">Perplexity</dt>
+              <dd class="m-0 text-muted">
+                = 2^H(p,q)
+                <br />
+                語言模型標準評估指標
+              </dd>
+            </div>
+            <div class="border-t border-dashed border-line pt-4">
+              <dt class="font-mono text-xs text-ink uppercase font-bold">GPT / LLaMA / Gemini</dt>
+              <dd class="m-0 text-muted">每次訓練更新參數，最小化的就是這個 H</dd>
+            </div>
+          </dl>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- 時間線 -->
+    <section class={`${shell} border-t border-line py-16`} aria-labelledby="story-title">
+      <p class="mb-8 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+        歷史脈絡 / THE ARC
+      </p>
+      <StoryRail events={story} variant="list" label="Shannon 論文的歷史前後脈絡" />
+    </section>
+
+    <PaperNavigation
+      currentId="a-mathematical-theory-of-communication"
+      next={{
+        summary:
+          '從統計機率到幾何空間中的注意力。七十年後，Transformer 徹底廢除循環神經網絡，以自注意力機制重塑全局幾何關聯。',
+      }}
+    />
+  </article>
+</BaseLayout>

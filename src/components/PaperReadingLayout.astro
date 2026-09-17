@@ -4,11 +4,14 @@ interface Props {
 }
 
 const { class: className } = Astro.props;
+const hasRail = Astro.slots.has('rail');
 ---
 
 <div
   class:list={[
-    'grid gap-12 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-16',
+    hasRail
+      ? 'grid gap-12 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-16'
+      : 'max-w-2xl',
     className,
   ]}
   data-slot="paper-reading-layout"
@@ -16,7 +19,9 @@ const { class: className } = Astro.props;
   <div class="min-w-0 max-w-2xl">
     <slot />
   </div>
-  <div class="min-w-0 space-y-8" data-slot="paper-reading-rail">
-    <slot name="rail" />
-  </div>
+  {hasRail && (
+    <div class="min-w-0 space-y-8" data-slot="paper-reading-rail">
+      <slot name="rail" />
+    </div>
+  )}
 </div>
