@@ -652,46 +652,47 @@ const timelineEpochs: TimelineEpoch[] = [
 
             <Callout
               variant="note"
-              kicker="機制深度探索 / INTERPRETABILITY"
-              title="768 維隱藏狀態與注意力是黑盒子嗎？常識如何被幾何編碼"
+              kicker="觀念解鎖 / INTERPRETABILITY"
+              title="語言模型學到的「知識」具體是什麼？它是黑盒子嗎？"
               class="my-8"
             >
               <p class="m-0 text-base leading-relaxed text-ink">
-                許多讀者在讀到「預測下一個字就能建構常識」時，會產生一個直覺疑問：
+                許多讀者讀到「光靠預測下一個字就能學會常識」時，往往會產生一個大哉問：
                 <strong>
-                  這 12 層注意力矩陣與 768 維特徵向量（Hidden States），到底是不是不可穿透的黑盒子？
+                  GPT-1 把語言變成了 768
+                  個浮點數，但所謂的「常識與因果知識」具體到底是什麼？它是個完全看不透的黑盒子嗎？
                 </strong>
               </p>
-              <p class="text-sm leading-relaxed text-muted mt-3 mb-0">
-                答案是：
-                <strong>
-                  在數學與物理上它完全透明，但在人類語言的語意對應上，它呈現出高度交織的「分佈式特徵疊加（Superposition）」
-                </strong>
-                ：
-              </p>
-              <ul class="text-sm leading-relaxed text-muted space-y-2 mt-3 mb-0 list-disc pl-5">
-                <li>
-                  <strong class="text-ink">注意力矩陣不是黑盒（Attention Probing）：</strong>
-                  每一層的 Attention Map
-                  都可以被精確繪製。可視化研究表明，即使沒有任何人為標註，某些注意力頭自發演化成了「代名詞指涉器」（例如將{' '}
-                  <em>it</em> 高達 80% 的注意力聚焦於 7
-                  個詞前的動物名詞），另一些頭則專注於動賓搭配或引號閉合。
-                </li>
-                <li>
-                  <strong class="text-ink">隱藏狀態的線性探針（Linear Probes）：</strong>
-                  抽取出中間層的{' '}
-                  <math class="font-serif"><msub><mi>h</mi><mi>l</mi></msub><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mn>768</mn></mrow></msup></math>
-                  {' '} 向量，僅用極簡單的線性分類器（Probe），就能以超過 90%
-                  的準確率判斷句子的情感極性、時態與語法結構。這證明常識並非隨機散亂，而是以「線性超平面」的幾何形態沉澱在空間中。
-                </li>
-                <li>
-                  <strong class="text-ink">為何難以一眼讀懂（Polysemanticity）：</strong>
-                  768 維空間並不存在單一的「貓咪維度」或「因果維度」。為了用有限的 768
-                  維容納真實世界的數萬種概念，神經網路將大量概念以微小的非正交角度疊加在一起（如同全像投影）。這使得知識以暗默的、分佈式的權重條紋存在，必須透過下游微調矩陣{' '}
-                  <math class="font-serif"><msub><mi>W</mi><mi>y</mi></msub></math>{' '}
-                  才能將其明確投影為可見的預測。
-                </li>
-              </ul>
+              <div class="space-y-4 text-sm leading-relaxed text-muted mt-4">
+                <div class="border-l-2 border-ink/40 pl-3">
+                  <strong class="text-ink block mb-1">1. 具體來說，「這段知識」究竟是什麼？</strong>
+                  <p class="m-0">
+                    假設讀到一句話：「他不小心把玻璃杯推下桌子，杯子掉在地上──」人類能毫不猶豫地接出「碎了」，是因為我們見過真實世界，知道重力會讓物體下墜、玻璃質地易碎。GPT-1
+                    沒有眼睛，但它在 8
+                    億字小說裡看過無數次：只要「玻璃」與「落地」同時出現，後文高機率會跟著「破裂、碎片、打掃」。
+                    <br />
+                    <strong>「這段知識」在數學上的本質，就是「概念在高維空間裡的幾何距離」</strong>
+                    ：模型把「玻璃」與「易碎」的向量拉得很近，把「羽毛」與「飄落」拉得很近。輸入「玻璃杯落地」後，12
+                    層運算得出的 768
+                    維向量座標，在幾何空間中正好就精準停在「碎」這個字旁邊。所謂的世界常識，本質上就是被文字統計規律轉化成的空間距離地圖。
+                  </p>
+                </div>
+                <div class="border-l-2 border-ink/40 pl-3">
+                  <strong class="text-ink block mb-1">
+                    2. 那麼，這 12 層注意力與特徵向量是「黑盒子」嗎？
+                  </strong>
+                  <p class="m-0">
+                    <strong>在數學計算上，它完全不是黑盒：</strong>
+                    模型內部的每一個數字都能被印出來檢查。研究者把注意力畫成熱力圖時，驚訝地發現模型自發學會了文法結構——某些注意力頭專門把代名詞（如{' '}
+                    <em>it</em>）拉回指向前文的實體名詞，另一些頭則專注於動詞與受詞的搭配。
+                    <br />
+                    <strong>但它也不是傳統的表格資料庫：</strong>
+                    模型內部沒有一條寫著 <code>if 玻璃杯落地 then 碎了</code>{' '}
+                    的硬編碼規則。這套物理因果被拆散並燒結在 1.17
+                    億個浮點數權重的微小傾角中。你無法單指著某一個數字說「這就是重力」，但當上下文成形時，整座網路的向量流向會自然導向符合世界規律的結論。
+                  </p>
+                </div>
+              </div>
             </Callout>
           </div>
 
