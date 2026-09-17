@@ -26,6 +26,10 @@ const pages = [
     path: 'src/pages/papers/language-models-are-unsupervised-multitask-learners.astro',
     required: ['grid-cols-1', 'lg:grid-cols-', 'w-[calc(100%-2rem)]', 'max-w-[1120px]'],
   },
+  {
+    path: 'src/pages/papers/scaling-laws-for-neural-language-models.astro',
+    required: ['grid-cols-1', 'lg:grid-cols-', 'w-[calc(100%-2rem)]', 'max-w-[1120px]'],
+  },
 ];
 const failures = [];
 

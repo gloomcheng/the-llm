@@ -199,7 +199,7 @@ export const milestonePapers: MilestonePaper[] = [
     venue: 'arXiv Preprint',
     arxivId: '2001.08361',
     url: '/papers/scaling-laws-for-neural-language-models',
-    status: 'outline',
+    status: 'published',
     track: 'language',
     theme: '物理定律',
     kicker: 'VOL. 05 / THE SCALING LAWS',
@@ -211,6 +211,20 @@ export const milestonePapers: MilestonePaper[] = [
       theory: '冪律公式 $L(N, D, C)$、過擬合邊界、參數與數據分配比例推導。',
       flood: '為 GPT-3 與後續超大模型奠定理論與投資底氣，算力競爭全面爆發。',
     },
+    draftSections: [
+      {
+        heading: '傳承第四章的未竟之功：從 GPT-2 的經驗驚喜到萬卡叢林的投資恐懼',
+        body: '在第四章中，GPT-2 憑藉 15 億參數展示了零樣本多任務學習的驚人潛力。然而，這項成功卻將整個 AI 領域推向了一場巨大的心理煎熬：若要更進一步，模型是否需要 100 億、甚至 1000 億參數？每一次擴展都意味著數百萬美元的算力投入與長達數月的訓練風險。在缺乏理論指引的 2019 年底，沒有人能保證巨資打造的模型不會在中途梯度爆炸、陷入過擬合，或遭遇嚴重的效益遞減。深度學習迫切需要一套如同天體物理與熱力學般的確定性規律。',
+      },
+      {
+        heading: '統治神經網路的冪律方程式：跨越六個數量級的筆直直線',
+        body: '理論物理學家 Jared Kaplan 等人以物理學家測量自然常數的嚴謹方法，對數百個不同規模的 Transformer 進行了地毯式的跨尺度實驗。研究發現：自回歸語言模型的交叉熵損失與模型參數量（N）、數據集大小（D）和計算預算（C）之間，在對數座標下呈現近乎完美的線性關係（冪律分佈）。更令人震驚的是「形狀無關性」：模型的具體深度、寬度或注意力頭數對性能影響極微，決定智慧高度的唯有純粹的物理規模。',
+      },
+      {
+        heading: '風洞試驗的誕生與千億參數軍備競賽的發令槍',
+        body: '這套縮放定律如同航空工業中的「風洞試驗」：工程師只需在低算力下訓練一系列小型模型並擬合直線，就能精確預測數個數量級之外超大模型的收斂損失。正是這張精密的物理地圖，給予了 OpenAI 在數月後豪擲數百萬美元、打造 1750 億參數 GPT-3 的絕對科學底氣，將大語言模型正式帶入以萬卡集群與指數級算力為標誌的工業化時代。',
+      },
+    ],
   },
   {
     id: 'language-models-are-few-shot-learners',
