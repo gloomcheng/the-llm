@@ -18,21 +18,21 @@ const story = [
   {
     year: '2013–2018 初',
     label: '桎梏 / THE BOTTLENECK',
-    title: '手工標註的資料懸崖與專用網路的工程泥淖。',
+    title: '手工標註的資料懸崖與專用網路的工程泥淖',
     body: '監督式學習極度依賴昂貴且有限的人工標註，換一個任務就得重新設計專用神經網路架構，深層模型極易過擬合。',
     status: 'past' as const,
   },
   {
     year: '2018.06',
     label: '突破 / THE PAPER',
-    title: 'GPT-1：無監督生成式預訓練的黎明。',
+    title: 'GPT-1：無監督生成式預訓練的黎明',
     body: '拋棄專用架構，僅用 12 層 Transformer 解碼器在 8 億詞小說上預測下一個字，以統一序列化適配四類任務，橫掃 9 項 SOTA。',
     status: 'current' as const,
   },
   {
     year: '之後',
     label: '遺產 / THE EXPANSION',
-    title: '從專用模型到基礎模型，大語言模型時代降臨。',
+    title: '從專用模型到基礎模型，大語言模型時代降臨',
     body: '確立「大數據自回歸預訓練 + 提示/微調」的通用範式，引領 GPT-2、GPT-3、GPT-4 與生成式人工智慧的全面爆發。',
     status: 'future' as const,
   },
@@ -649,6 +649,50 @@ const timelineEpochs: TimelineEpoch[] = [
                 ，不僅節省了數千萬參數，更確保了詞彙在語意輸入與生成輸出空間的高度一致性。
               </li>
             </ol>
+
+            <Callout
+              variant="note"
+              kicker="機制深度探索 / INTERPRETABILITY"
+              title="768 維隱藏狀態與注意力是黑盒子嗎？常識如何被幾何編碼"
+              class="my-8"
+            >
+              <p class="m-0 text-base leading-relaxed text-ink">
+                許多讀者在讀到「預測下一個字就能建構常識」時，會產生一個直覺疑問：
+                <strong>
+                  這 12 層注意力矩陣與 768 維特徵向量（Hidden States），到底是不是不可穿透的黑盒子？
+                </strong>
+              </p>
+              <p class="text-sm leading-relaxed text-muted mt-3 mb-0">
+                答案是：
+                <strong>
+                  在數學與物理上它完全透明，但在人類語言的語意對應上，它呈現出高度交織的「分佈式特徵疊加（Superposition）」
+                </strong>
+                ：
+              </p>
+              <ul class="text-sm leading-relaxed text-muted space-y-2 mt-3 mb-0 list-disc pl-5">
+                <li>
+                  <strong class="text-ink">注意力矩陣不是黑盒（Attention Probing）：</strong>
+                  每一層的 Attention Map
+                  都可以被精確繪製。可視化研究表明，即使沒有任何人為標註，某些注意力頭自發演化成了「代名詞指涉器」（例如將{' '}
+                  <em>it</em> 高達 80% 的注意力聚焦於 7
+                  個詞前的動物名詞），另一些頭則專注於動賓搭配或引號閉合。
+                </li>
+                <li>
+                  <strong class="text-ink">隱藏狀態的線性探針（Linear Probes）：</strong>
+                  抽取出中間層的{' '}
+                  <math class="font-serif"><msub><mi>h</mi><mi>l</mi></msub><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mn>768</mn></mrow></msup></math>
+                  {' '} 向量，僅用極簡單的線性分類器（Probe），就能以超過 90%
+                  的準確率判斷句子的情感極性、時態與語法結構。這證明常識並非隨機散亂，而是以「線性超平面」的幾何形態沉澱在空間中。
+                </li>
+                <li>
+                  <strong class="text-ink">為何難以一眼讀懂（Polysemanticity）：</strong>
+                  768 維空間並不存在單一的「貓咪維度」或「因果維度」。為了用有限的 768
+                  維容納真實世界的數萬種概念，神經網路將大量概念以微小的非正交角度疊加在一起（如同全像投影）。這使得知識以暗默的、分佈式的權重條紋存在，必須透過下游微調矩陣{' '}
+                  <math class="font-serif"><msub><mi>W</mi><mi>y</mi></msub></math>{' '}
+                  才能將其明確投影為可見的預測。
+                </li>
+              </ul>
+            </Callout>
           </div>
 
           <aside slot="rail" class="space-y-6">
