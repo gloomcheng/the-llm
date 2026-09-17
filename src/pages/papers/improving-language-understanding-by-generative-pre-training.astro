@@ -288,21 +288,31 @@ const timelineEpochs: TimelineEpoch[] = [
       </div>
     </section>
 
-    <!-- ========================================== -->
-    <!-- 第一部分：問題從哪裡來 (WHY) -->
-    <!-- ========================================== -->
+    <!-- SECTION 1: 歷史開局 / 標註懸崖 (START WITH WHY) -->
     <section
       id="why"
       class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
-      aria-labelledby="why-heading"
+      aria-labelledby="history-genesis-title"
     >
-      <div class="border-b border-line pb-4 mb-8">
-        <p class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-red mb-2">
-          第一部分 · 痛點根源 / WHY
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            歷史開局 / 2013–2018：標註懸崖
+          </p>
+          <h2
+            id="history-genesis-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">大標註時代的絕境：</span>
+            <span class="block">
+              <em>天下苦人工標註久矣，萬卷無字之書何處安放？</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          這是一場對抗資料懸崖的破局之戰：當學界受困於昂貴的人工標籤與專用網路時，OpenAI
+          選擇讓解碼器在八億詞的小說世界裡獨自參悟語言。
         </p>
-        <h2 id="why-heading" class="m-0 font-display text-3xl sm:text-4xl text-ink tracking-tight">
-          人工標註的資料懸崖，與專用網路的工程泥淖
-        </h2>
       </div>
 
       <PaperReadingLayout class="text-base leading-8 text-ink">
@@ -467,31 +477,37 @@ const timelineEpochs: TimelineEpoch[] = [
       </PaperReadingLayout>
     </section>
 
-    <!-- ========================================== -->
-    <!-- 第二部分：核心機制拆解 (HOW IT WORKS) -->
-    <!-- ========================================== -->
+    <!-- SECTION 2: 機制與直覺 (THE MECHANISM) -->
     <section
       id="how"
       class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24 space-y-12`}
-      aria-labelledby="how-heading"
+      aria-labelledby="core-mechanism-title"
     >
-      <div class="border-b border-line pb-4">
-        <p class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-red">
-          第二部分 · 運作機制 / HOW IT WORKS
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            機制與直覺 / THE MECHANISM
+          </p>
+          <h2
+            id="core-mechanism-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">預測下一個字，不是文字接龍：</span>
+            <span class="block">
+              <em>自回歸因果解碼，與世界的因果鏡像。</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          要想在沒有答案的世界裡猜出下一個字，機器必須建立對真實世界物理、邏輯與語義的深度壓縮；而因果遮罩，正是逼它無法作弊的唯一鐵律。
         </p>
-        <h2 id="how-heading" class="m-0 font-display text-3xl sm:text-4xl text-ink tracking-tight">
-          自回歸因果解碼，與打破專用架構的四類統一序列化
-        </h2>
       </div>
 
-      <!-- 機制一：因果遮罩與自回歸建模 -->
+      <!-- 因果遮罩與自回歸建模 -->
       <div class="space-y-8">
         <PaperReadingLayout class="text-base leading-8 text-ink">
           <div class="space-y-6">
-            <h3 class="font-display text-2xl text-ink flex items-center gap-3">
-              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-red text-white text-sm font-mono font-bold">
-                1
-              </span>
+            <h3 class="font-display text-2xl text-ink pt-2">
               因果語言模型：為什麼解碼器不能「偷看未來」？
             </h3>
 
@@ -501,74 +517,160 @@ const timelineEpochs: TimelineEpoch[] = [
             </p>
 
             <p>
-              如果在預訓練時允許神經網路「雙向」瀏覽全文，當要求它預測第 i
-              個單詞時，神經網路的自注意力頭可以直接在同一層中讀取到第 i
+              如果在預訓練時允許神經網路「雙向」瀏覽全文，當要求它預測第 <em>i</em>
+              個單詞時，神經網路的自注意力頭可以直接在同一層中讀取到第 <em>i</em>
               個位置的真實答案。這會導致運算退化為簡單的<strong>「字面複製」</strong>
               ，損失函數瞬間降為零，但神經網路完全沒有學會字詞背後的語義因果推論。
             </p>
 
             <p>
               因此，GPT-1 採用嚴格的<strong>因果遮罩（Causal Masking）</strong>
-              。在注意力矩陣中，任何第 i 個位置的
-              Token，其注意力分數只允許分配給自己以及排在自己前面的位置（j ≤
-              i）；所有位於未來的單詞（j &gt; i），其注意力權重在計算 Softmax
+              。在注意力矩陣中，任何第 <em>i</em> 個位置的
+              Token，其注意力分數只允許分配給自己以及排在自己前面的位置（<em>j</em> ≤<em>i</em>
+              ）；所有位於未來的單詞（<em>j</em> &gt; <em>i</em>），其注意力權重在計算 Softmax
               之前，強制填入負無窮大（-∞），使得輸出權重為精確的零。
             </p>
 
-            <h4 class="font-display text-xl text-ink pt-2">
+            <h4 class="font-display text-xl text-ink pt-4">
               數學公式推導：自回歸預訓練的十二層流動
             </h4>
 
             <p>
-              給定無標註語料的文字序列 U = (u₁, ..., uₙ)，GPT-1 使用上下文滑動窗口
-              k，將最大化下列對數似然函數作為唯一的訓練目標：
+              給定無標註語料的文字序列{' '}
+              <math class="font-serif"><mi mathvariant="script">U</mi><mo>=</mo><mo stretchy="false">&#123;</mo><msub><mi>u</mi><mn>1</mn></msub><mo>,</mo><mo>…</mo><mo>,</mo><msub><mi>u</mi><mi>n</mi></msub><mo stretchy="false">&#125;</mo></math>
+              ，GPT-1 使用上下文滑動窗口
+              <math class="font-serif"><mi>k</mi></math>
+              ，將最大化下列對數似然函數作為唯一的無監督訓練目標：
             </p>
 
-            <div class="bg-surface border border-line p-5 font-mono text-sm sm:text-base text-ink overflow-x-auto shadow-sm">
-              L₁(U) = Σᵢ log P(uᵢ | u[i-k], ..., u[i-1]; Θ)
+            <div class="bg-surface border border-line p-6 font-mono text-sm sm:text-base text-ink overflow-x-auto shadow-sm my-4">
+              <div class="mb-2 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+                論文原始公式 (1) · 無監督自回歸對數似然目標
+              </div>
+              <math
+                display="block"
+                class="text-xl sm:text-2xl text-ink font-serif my-2"
+                aria-label="L 1 of U equals sum over i of log P of u i given u i minus k through u i minus 1 with parameter Theta"
+              >
+                <mrow>
+                  <msub><mi>L</mi><mn>1</mn></msub>
+                  <mo stretchy="false">(</mo><mi mathvariant="script">U</mi><mo stretchy="false">)</mo>
+                  <mo>=</mo>
+                  <munder>
+                    <mo>∑</mo>
+                    <mi>i</mi>
+                  </munder>
+                  <mo>log</mo>
+                  <mi>P</mi>
+                  <mo stretchy="false">(</mo>
+                  <msub><mi>u</mi><mi>i</mi></msub>
+                  <mo>∣</mo>
+                  <msub><mi>u</mi><mrow><mi>i</mi><mo>−</mo><mi>k</mi></mrow></msub>
+                  <mo>,</mo>
+                  <mo>…</mo>
+                  <mo>,</mo>
+                  <msub><mi>u</mi><mrow><mi>i</mi><mo>−</mo><mn>1</mn></mrow></msub>
+                  <mo>;</mo>
+                  <mi mathvariant="normal">Θ</mi>
+                  <mo stretchy="false">)</mo>
+                </mrow>
+              </math>
+              <p class="mt-3 mb-0 text-xs leading-relaxed text-muted font-sans">
+                其中 <math class="font-serif"><mi>k</mi><mo>=</mo><mn>512</mn></math>{' '}
+                為滑動上下文視窗大小，
+                <math class="font-serif"><mi mathvariant="normal">Θ</mi></math>{' '}
+                為全神經網路的全部可學習參數。
+              </p>
             </div>
 
             <p>
               在具體架構上，GPT-1 堆疊了 12 層標準 Transformer 解碼器區塊（768 維隱藏層，12
-              個注意力頭，前饋網路維度 3072）。前向傳播的數學表徵如下：
+              個注意力頭，前饋網路維度 3072）。前向傳播的三步數學表徵如下：
             </p>
 
-            <ol class="list-decimal list-outside pl-6 space-y-3 text-base text-ink">
+            <ol class="list-decimal list-outside pl-6 space-y-4 text-base text-ink">
               <li>
                 <strong>輸入嵌入（Token + Positional Embedding）：</strong>
-                <br />
-                <code class="bg-paper-deep px-1.5 py-0.5 text-xs text-ink font-mono">
-                  h₀ = U W_e + W_p
-                </code>
-                ，其中 <code>U = (u[-k], ..., u[-1])</code> 是前文的 context token 向量，
-                <code>W_e</code> 是詞嵌入矩陣，<code>W_p</code> 是可學習的位置編碼矩陣。
+                <div class="my-2 bg-paper-deep p-3 font-mono text-sm overflow-x-auto">
+                  <math
+                    display="block"
+                    class="text-lg text-ink font-serif"
+                    aria-label="h 0 equals U times W e plus W p"
+                  >
+                    <mrow>
+                      <msub><mi>h</mi><mn>0</mn></msub>
+                      <mo>=</mo>
+                      <mi>U</mi>
+                      <msub><mi>W</mi><mi>e</mi></msub>
+                      <mo>+</mo>
+                      <msub><mi>W</mi><mi>p</mi></msub>
+                    </mrow>
+                  </math>
+                </div>
+                其中{' '}
+                <math class="font-serif"><mi>U</mi><mo>=</mo><mo stretchy="false">(</mo><msub><mi>u</mi><mrow><mo>−</mo><mi>k</mi></mrow></msub><mo>,</mo><mo>…</mo><mo>,</mo><msub><mi>u</mi><mrow><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="false">)</mo></math>
+                {' '} 是前文 context token 序列，
+                <math class="font-serif"><msub><mi>W</mi><mi>e</mi></msub></math> 是詞嵌入矩陣，
+                <math class="font-serif"><msub><mi>W</mi><mi>p</mi></msub></math>{' '}
+                是可學習的位置編碼矩陣。
               </li>
               <li>
                 <strong>十二層解碼器迭代推進：</strong>
-                <br />
-                <code class="bg-paper-deep px-1.5 py-0.5 text-xs text-ink font-mono">
-                  hₗ = transformer_block(h[l-1]) ∀ l ∈ [1, 12]
-                </code>
-                。每一層內部皆包含「Masked Multi-Head Self-Attention」與「Position-wise
+                <div class="my-2 bg-paper-deep p-3 font-mono text-sm overflow-x-auto">
+                  <math
+                    display="block"
+                    class="text-lg text-ink font-serif"
+                    aria-label="h l equals transformer block of h l minus 1 for all l in 1 to 12"
+                  >
+                    <mrow>
+                      <msub><mi>h</mi><mi>l</mi></msub>
+                      <mo>=</mo>
+                      <mtext>transformer_block</mtext>
+                      <mo stretchy="false">(</mo><msub><mi>h</mi><mrow><mi>l</mi><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="false">)</mo>
+                      <mspace width="1em" />
+                      <mo>∀</mo><mi>l</mi><mo>∈</mo><mo stretchy="false">[</mo><mn>1</mn><mo>,</mo><mn>12</mn><mo stretchy="false">]</mo>
+                    </mrow>
+                  </math>
+                </div>
+                每一層內部皆包含「Masked Multi-Head Self-Attention」與「Position-wise
                 Feed-Forward」，並輔以殘差連接與 Layer Normalization。
               </li>
               <li>
                 <strong>詞表機率投影（Weight Tying）：</strong>
-                <br />
-                <code class="bg-paper-deep px-1.5 py-0.5 text-xs text-ink font-mono">
-                  P(u) = softmax(h₁₂ W_eᵀ)
-                </code>
-                。GPT-1 將輸入端的詞嵌入矩陣 <code>W_e</code> 與最終預測層的輸出矩陣綁定（Weight
-                Tying），不僅節省了數千萬參數，更確保了詞彙在語意輸入與生成輸出空間的高度一致性。
+                <div class="my-2 bg-paper-deep p-3 font-mono text-sm overflow-x-auto">
+                  <math
+                    display="block"
+                    class="text-lg text-ink font-serif"
+                    aria-label="P of u equals softmax of h 12 times W e transpose"
+                  >
+                    <mrow>
+                      <mi>P</mi><mo stretchy="false">(</mo><mi>u</mi><mo stretchy="false">)</mo>
+                      <mo>=</mo>
+                      <mo>softmax</mo>
+                      <mo stretchy="false">(</mo><msub><mi>h</mi><mn>12</mn></msub><msubsup><mi>W</mi><mi>e</mi><mi>T</mi></msubsup><mo stretchy="false">)</mo>
+                    </mrow>
+                  </math>
+                </div>
+                GPT-1 將輸入端的詞嵌入矩陣{' '}
+                <math class="font-serif"><msub><mi>W</mi><mi>e</mi></msub></math>{' '}
+                與最終預測層的輸出矩陣綁定（Weight Tying），直接使用其轉置{' '}
+                <math class="font-serif"><msubsup><mi>W</mi><mi>e</mi><mi>T</mi></msubsup></math>
+                ，不僅節省了數千萬參數，更確保了詞彙在語意輸入與生成輸出空間的高度一致性。
               </li>
             </ol>
           </div>
 
           <aside slot="rail" class="space-y-6">
             <AsideCard kicker="核心目標 / OBJECTIVE" title="自回歸似然目標" variant="surface">
-              <p class="m-0 font-mono text-xs text-ink">
-                L₁(U) = Σᵢ log P(uᵢ | u[i-k], ..., u[i-1]; Θ)
-              </p>
+              <div class="my-2">
+                <math display="block" class="text-sm text-ink font-serif">
+                  <mrow>
+                    <msub><mi>L</mi><mn>1</mn></msub><mo stretchy="false">(</mo><mi mathvariant="script">U</mi><mo stretchy="false">)</mo>
+                    <mo>=</mo>
+                    <mo>∑</mo><mo>log</mo><mi>P</mi><mo stretchy="false">(</mo><msub><mi>u</mi><mi>i</mi></msub><mo>∣</mo><msub><mi>u</mi><mrow><mo>&lt;</mo><mi>i</mi></mrow></msub><mo stretchy="false">)</mo>
+                  </mrow>
+                </math>
+              </div>
               <p class="mt-2 text-xs leading-relaxed text-muted">
                 僅依賴先前出現的詞預測下一個詞，形成無標註文本的自監督訓練閉環。
               </p>
@@ -702,15 +804,42 @@ const timelineEpochs: TimelineEpoch[] = [
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- 機制二：統一輸入序列化格式 -->
-      <div class="space-y-8 pt-6 border-t border-line">
+    <!-- SECTION 3: 理論 / 這台機器 (THE MACHINE) -->
+    <section
+      id="machine"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24 space-y-12`}
+      aria-labelledby="machine-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            理論 / 這台機器
+          </p>
+          <h2
+            id="machine-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">統一序列化革命：</span>
+            <span class="block">
+              <em>
+                丟掉專用網路，用一張投影矩陣 W<sub>y</sub> 通吃所有任務。
+              </em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          分類、推論、相似度與問答，無需重造專用拓撲：將結構變換全交給字串遍歷，全模型微調時唯一新增的只有一張微調投影矩陣
+          W<sub>y</sub>。
+        </p>
+      </div>
+
+      <!-- 統一輸入序列化格式 -->
+      <div class="space-y-8">
         <PaperReadingLayout class="text-base leading-8 text-ink">
           <div class="space-y-6">
-            <h3 class="font-display text-2xl text-ink flex items-center gap-3">
-              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-red text-white text-sm font-mono font-bold">
-                2
-              </span>
+            <h3 class="font-display text-2xl text-ink pt-2">
               統一序列化變形：Prompt 提示詞的史前始祖
             </h3>
 
@@ -826,8 +955,11 @@ const timelineEpochs: TimelineEpoch[] = [
                   下游微調處理機制
                 </div>
                 <p class="text-sm text-ink mt-1 mb-0 leading-relaxed" id="task-mechanism-desc">
-                  讀取末尾 [Extract] 符號的最後一層隱藏狀態向量 hₗᵐ，直接傳入單一線性全連接層 W_y
-                  輸出類別 Logits。
+                  讀取末尾 [Extract] 符號的最後一層隱藏狀態向量{' '}
+                  <math class="font-serif"><msubsup><mi>h</mi><mi>l</mi><mi>m</mi></msubsup></math>
+                  ，直接傳入單一線性全連接層{' '}
+                  <math class="font-serif"><msub><mi>W</mi><mi>y</mi></msub></math> 輸出類別
+                  Logits。
                 </p>
               </div>
               <div class="border-l-2 border-blue pl-3">
@@ -841,16 +973,165 @@ const timelineEpochs: TimelineEpoch[] = [
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- 機制三：動態擾動實驗 -->
-      <div class="space-y-8 pt-6 border-t border-line">
+        <!-- 數學表徵：有監督微調與線性投影矩陣 W_y -->
         <PaperReadingLayout class="text-base leading-8 text-ink">
           <div class="space-y-6">
-            <h3 class="font-display text-2xl text-ink flex items-center gap-3">
-              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-red text-white text-sm font-mono font-bold">
-                3
-              </span>
+            <h3 class="font-display text-2xl text-ink pt-2">
+              有監督微調數學推導：全模型唯一新增的參數 W<sub>y</sub>
+            </h3>
+
+            <p>
+              當給定帶有標註的資料集 <math class="font-serif"><mi mathvariant="script">C</mi></math>
+              ，其中每一筆樣本由輸入 token 序列{' '}
+              <math class="font-serif"><msup><mi>x</mi><mn>1</mn></msup><mo>,</mo><mo>…</mo><mo>,</mo><msup><mi>x</mi><mi>m</mi></msup></math>
+              {' '} 與類別標籤 <math class="font-serif"><mi>y</mi></math> 組成。序列經過 12 層
+              Transformer 解碼器後，在序列最後一個位置 <math class="font-serif"><mi>m</mi></math>
+              （即專門插入的{' '}
+              <code class="font-mono">[Extract]</code> 符號處）取得最後一層的活化向量{' '}
+              <math class="font-serif"><msubsup><mi>h</mi><mi>l</mi><mi>m</mi></msubsup></math>。
+            </p>
+
+            <div class="my-6 border-2 border-red/30 bg-surface p-6 sm:p-8 shadow-editorial overflow-x-auto">
+              <div class="flex items-center justify-between border-b border-line pb-3 mb-4">
+                <span class="font-mono text-xs font-bold text-red uppercase tracking-wider">
+                  論文核心公式 (2) & (3) · 有監督微調目標與線性分類投影
+                </span>
+                <span class="font-mono text-xs text-muted">Section 3.2 Supervised Fine-tuning</span>
+              </div>
+
+              <div class="space-y-6">
+                <div>
+                  <p class="font-mono text-xs text-muted mb-1">公式 (2)：下游標籤預測機率分佈</p>
+                  <math
+                    display="block"
+                    class="text-xl sm:text-2xl text-ink font-serif my-2"
+                    aria-label="P of y given x 1 through x m equals softmax of h l m times W y"
+                  >
+                    <mrow>
+                      <mi>P</mi>
+                      <mo stretchy="false">(</mo>
+                      <mi>y</mi>
+                      <mo>∣</mo>
+                      <msup><mi>x</mi><mn>1</mn></msup>
+                      <mo>,</mo>
+                      <mo>…</mo>
+                      <mo>,</mo>
+                      <msup><mi>x</mi><mi>m</mi></msup>
+                      <mo stretchy="false">)</mo>
+                      <mo>=</mo>
+                      <mo>softmax</mo>
+                      <mo stretchy="false">(</mo>
+                      <msubsup><mi>h</mi><mi>l</mi><mi>m</mi></msubsup>
+                      <msub><mi>W</mi><mi>y</mi></msub>
+                      <mo stretchy="false">)</mo>
+                    </mrow>
+                  </math>
+                </div>
+
+                <div>
+                  <p class="font-mono text-xs text-muted mb-1">
+                    公式 (3)：有監督微調極大似然損失函數
+                  </p>
+                  <math
+                    display="block"
+                    class="text-xl sm:text-2xl text-ink font-serif my-2"
+                    aria-label="L 2 of C equals sum over pair x y of log P of y given x 1 through x m equals sum over pair x y of log softmax of h l m times W y"
+                  >
+                    <mrow>
+                      <msub><mi>L</mi><mn>2</mn></msub>
+                      <mo stretchy="false">(</mo><mi mathvariant="script">C</mi><mo stretchy="false">)</mo>
+                      <mo>=</mo>
+                      <munder>
+                        <mo>∑</mo>
+                        <mrow><mo stretchy="false">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo stretchy="false">)</mo></mrow>
+                      </munder>
+                      <mo>log</mo>
+                      <mi>P</mi>
+                      <mo stretchy="false">(</mo>
+                      <mi>y</mi>
+                      <mo>∣</mo>
+                      <msup><mi>x</mi><mn>1</mn></msup><mo>,</mo><mo>…</mo><mo>,</mo><msup><mi>x</mi><mi>m</mi></msup>
+                      <mo stretchy="false">)</mo>
+                      <mo>=</mo>
+                      <munder>
+                        <mo>∑</mo>
+                        <mrow><mo stretchy="false">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo stretchy="false">)</mo></mrow>
+                      </munder>
+                      <mo>log</mo>
+                      <mo>softmax</mo>
+                      <mo stretchy="false">(</mo>
+                      <msubsup><mi>h</mi><mi>l</mi><mi>m</mi></msubsup>
+                      <msub><mi>W</mi><mi>y</mi></msub>
+                      <mo stretchy="false">)</mo>
+                    </mrow>
+                  </math>
+                </div>
+              </div>
+
+              <div class="mt-6 border-t border-line pt-4 grid gap-4 sm:grid-cols-2 text-sm">
+                <div class="border-l-2 border-red pl-3">
+                  <strong class="font-mono text-xs uppercase tracking-wider text-red block mb-1">
+                    符號解碼：h_l^m
+                  </strong>
+                  <p class="text-muted m-0 text-xs leading-relaxed">
+                    <math class="font-serif"><mi>l</mi><mo>=</mo><mn>12</mn></math>{' '}
+                    為最後一層解碼器，<math class="font-serif"><mi>m</mi></math> 為序列尾端的{' '}
+                    <code class="font-mono">[Extract]</code> 標記位置。
+                    <math class="font-serif"><msubsup><mi>h</mi><mi>l</mi><mi>m</mi></msubsup><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mn>1</mn><mo>×</mo><mn>768</mn></mrow></msup></math>
+                    {' '} 是在因果遮罩下，唯一能夠「總結並吸收全句所有前文語意」的全局特徵向量。
+                  </p>
+                </div>
+                <div class="border-l-2 border-red pl-3">
+                  <strong class="font-mono text-xs uppercase tracking-wider text-red block mb-1">
+                    符號解碼：W_y
+                  </strong>
+                  <p class="text-muted m-0 text-xs leading-relaxed">
+                    微調階段<strong>唯一全新加入</strong>的線性分類輸出矩陣（Linear Output Layer
+                    parameters），維度為{' '}
+                    <math class="font-serif"><msub><mi>W</mi><mi>y</mi></msub><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mn>768</mn><mo>×</mo><mo stretchy="false">|</mo><mi>y</mi><mo stretchy="false">|</mo></mrow></msup></math>
+                    。
+                    <math class="font-serif"><mo stretchy="false">|</mo><mi>y</mi><mo stretchy="false">|</mo></math>
+                    {' '} 為目標任務的類別數量（例如二分類是 2，三分類是 3）。下標{' '}
+                    <math class="font-serif"><mi>y</mi></math> 即代表標籤類別。
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <p>
+              在 2018 年以前，NLP 學者習慣為每個任務設計複雜的外部神經網路（如
+              Tree-LSTM、雙向注意力池化層、多層感知機）；而 GPT-1 最激進的簡化正是：
+              <strong>
+                模型結構 100% 保持不變，全模型唯一需要額外初始化的，只有這張僅佔幾千個參數的線性矩陣{' '}
+                <math class="font-serif"><msub><mi>W</mi><mi>y</mi></msub></math>！
+              </strong>
+            </p>
+          </div>
+
+          <aside slot="rail" class="space-y-6">
+            <AsideCard kicker="極簡微調 / PARAMETERS" title="唯一新增參數 W_y" variant="surface">
+              <div class="my-2">
+                <math display="block" class="text-sm text-ink font-serif">
+                  <mrow>
+                    <msub><mi>W</mi><mi>y</mi></msub>
+                    <mo>∈</mo>
+                    <msup><mi mathvariant="double-struck">R</mi><mrow><mn>768</mn><mo>×</mo><mo stretchy="false">|</mo><mi>y</mi><mo stretchy="false">|</mo></mrow></msup>
+                  </mrow>
+                </math>
+              </div>
+              <p class="mt-2 text-xs leading-relaxed text-muted">
+                全模型上億參數直接繼承預訓練權重，僅需學習 W_y 與分隔符 token embedding
+                即可完成跨任務遷移。
+              </p>
+            </AsideCard>
+          </aside>
+        </PaperReadingLayout>
+
+        <!-- 動態擾動實驗 -->
+        <PaperReadingLayout class="text-base leading-8 text-ink">
+          <div class="space-y-6">
+            <h3 class="font-display text-2xl text-ink pt-2">
               動態擾動實驗：自然語言推論中的機率翻轉
             </h3>
 
@@ -1019,58 +1300,102 @@ const timelineEpochs: TimelineEpoch[] = [
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- 機制四 & 五：微調輔助損失與零樣本湧現 -->
-      <div class="space-y-8 pt-6 border-t border-line">
+    <!-- SECTION 4: 一手文獻清單 / 邊界與驗證 (EVIDENCE & ABLATION) -->
+    <section
+      id="evidence"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24 space-y-12`}
+      aria-labelledby="evidence-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            一手文獻清單 / 邊界與驗證
+          </p>
+          <h2
+            id="evidence-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">從消融研究到零樣本湧現：</span>
+            <span class="block">
+              <em>輔助損失的工程智慧，與 Scaling 的初露曙光。</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          論文的 9 項 SOTA 刷新了當時的標竿，但第 5 節末尾的 Figure 5
+          卻揭示了更震撼的秘密：預訓練層數越深，零樣本推理能力自發湧現。
+        </p>
+      </div>
+
+      <!-- 微調輔助損失與消融研究 -->
+      <div class="space-y-8">
         <PaperReadingLayout class="text-base leading-8 text-ink">
           <div class="space-y-6">
-            <h3 class="font-display text-2xl text-ink flex items-center gap-3">
-              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-red text-white text-sm font-mono font-bold">
-                4
-              </span>
+            <h3 class="font-display text-2xl text-ink pt-2">
               輔助損失的工程智慧：微調時為什麼不能忘記「預測下一個字」？
             </h3>
 
             <p>
-              當 GPT-1 進入第二階段的監督微調（Supervised Fine-Tuning）時，給定標註資料集
-              C，標準做法是將最後一個 Token 的輸出 hₗᵐ 通過線性投影矩陣
-              W_y，最大化類別標籤的對數機率：
-            </p>
-
-            <div class="bg-surface border border-line p-4 font-mono text-sm sm:text-base text-ink overflow-x-auto shadow-sm">
-              L₂(C) = Σ_(x, y) log P(y | x¹, ..., xᵐ) = Σ_(x, y) log softmax(hₗᵐ W_y)
-            </div>
-
-            <p>
-              但 Alec Radford 等人在論文中揭露了一項極為關鍵的工程實務：
+              在第一階段的預訓練完成後，模型獲得了強大的通用語言表徵。但在第二階段的有監督微調中，若模型僅僅單純最小化分類損失{' '}
+              <math class="font-serif"><msub><mi>L</mi><mn>2</mn></msub><mo stretchy="false">(</mo><mi mathvariant="script">C</mi><mo stretchy="false">)</mo></math>
+              ，Alec Radford 等人在實驗中發現了一項致命隱患：
               <strong>
-                如果在微調階段只追求分類損失
-                L₂，模型在資料集較大時容易產生「災難性遺忘（Catastrophic
-                Forgetting）」，喪失預訓練階段學到的通用語言能力。
+                當下游標註資料集較大時，深度神經網路容易產生「災難性遺忘（Catastrophic
+                Forgetting）」，在適應特定標籤的過程中喪失了預訓練學到的豐富語言泛化能力。
               </strong>
             </p>
 
             <p>
               因此，作者團隊引入了
               <strong>輔助語言模型目標（Auxiliary Language Modeling Loss）</strong>
-              ，在微調時將「預測下一個字」的任務以權重 λ = 0.5 保留下來：
+              ，在微調優化時將無監督預訓練的「預測下一個字」目標以權重{' '}
+              <math class="font-serif"><mi>λ</mi><mo>=</mo><mn>0.5</mn></math>{' '}
+              保留下來，構成聯合微調目標：
             </p>
 
-            <div class="bg-surface border-2 border-red/40 p-4 font-mono text-sm sm:text-base text-ink overflow-x-auto shadow-sm">
-              L₃(C) = L₂(C) + λ · L₁(C)
+            <div class="bg-surface border-2 border-red/40 p-6 font-mono text-sm sm:text-base text-ink overflow-x-auto shadow-sm my-4">
+              <div class="mb-2 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+                論文公式 (4) · 帶有輔助語言模型目標的聯合微調損失
+              </div>
+              <math
+                display="block"
+                class="text-xl sm:text-2xl text-ink font-serif my-2"
+                aria-label="L 3 of C equals L 2 of C plus lambda times L 1 of C"
+              >
+                <mrow>
+                  <msub><mi>L</mi><mn>3</mn></msub>
+                  <mo stretchy="false">(</mo><mi mathvariant="script">C</mi><mo stretchy="false">)</mo>
+                  <mo>=</mo>
+                  <msub><mi>L</mi><mn>2</mn></msub>
+                  <mo stretchy="false">(</mo><mi mathvariant="script">C</mi><mo stretchy="false">)</mo>
+                  <mo>+</mo>
+                  <mi>λ</mi>
+                  <mo>⋅</mo>
+                  <msub><mi>L</mi><mn>1</mn></msub>
+                  <mo stretchy="false">(</mo><mi mathvariant="script">C</mi><mo stretchy="false">)</mo>
+                </mrow>
+              </math>
+              <p class="mt-3 mb-0 text-xs leading-relaxed text-muted font-sans">
+                其中{' '}
+                <math class="font-serif"><msub><mi>L</mi><mn>2</mn></msub><mo stretchy="false">(</mo><mi mathvariant="script">C</mi><mo stretchy="false">)</mo></math>
+                {' '} 為分類對數似然，
+                <math class="font-serif"><msub><mi>L</mi><mn>1</mn></msub><mo stretchy="false">(</mo><mi mathvariant="script">C</mi><mo stretchy="false">)</mo></math>
+                {' '} 為在微調語料上持續預測下一個字的輔助似然，
+                <math class="font-serif"><mi>λ</mi><mo>=</mo><mn>0.5</mn></math>。
+              </p>
             </div>
 
             <p>
-              消融實驗（Ablation Study）證明，加入輔助損失 λ · L₁
+              消融實驗（Ablation Study）證明，加入輔助損失{' '}
+              <math class="font-serif"><mi>λ</mi><mo>⋅</mo><msub><mi>L</mi><mn>1</mn></msub></math>
               能顯著加速模型在微調階段的收斂速度，並在 MNLI、QQP 等大型數據集上為準確率帶來 0.5% 至
               1.5%
               的穩定增益。這項工程設計展示了預訓練表徵的強韌：即便在專門學習特定分類時，語言模型底層對語法結構的動態建模依然是維持泛化能力的防腐劑。
             </p>
 
-            <h3 class="font-display text-2xl text-ink flex items-center gap-3 pt-6 border-t border-line">
-              <span class="flex h-8 w-8 items-center justify-center rounded-full bg-red text-white text-sm font-mono font-bold">
-                5
-              </span>
+            <h3 class="font-display text-2xl text-ink pt-6 border-t border-line">
               零樣本湧現的黎明：預測下一個字，為何自發掌握多任務？
             </h3>
 
@@ -1090,7 +1415,19 @@ const timelineEpochs: TimelineEpoch[] = [
 
           <aside slot="rail" class="space-y-6">
             <AsideCard kicker="雙重目標 / OBJECTIVES" title="輔助損失公式" variant="surface">
-              <p class="m-0 font-mono text-xs text-ink">L₃(C) = L₂(C) + λ · L₁(C)</p>
+              <div class="my-2">
+                <math display="block" class="text-xs text-ink font-serif">
+                  <mrow>
+                    <msub><mi>L</mi><mn>3</mn></msub>
+                    <mo>=</mo>
+                    <msub><mi>L</mi><mn>2</mn></msub>
+                    <mo>+</mo>
+                    <mn>0.5</mn>
+                    <mo>⋅</mo>
+                    <msub><mi>L</mi><mn>1</mn></msub>
+                  </mrow>
+                </math>
+              </div>
               <p class="mt-2 text-xs leading-relaxed text-muted">
                 微調目標 L₂ 負責分類標籤，輔助目標 L₁ 保留語言模型能力，防止災難性遺忘。
               </p>
@@ -1098,26 +1435,35 @@ const timelineEpochs: TimelineEpoch[] = [
 
             <AsideCard kicker="歷史前瞻 / EMERGENCE" title="零樣本湧現" variant="paper">
               <p class="m-0 text-xs leading-relaxed text-muted">
-                自回歸預測逼迫模型在內部建構微型世界模型。這項在 2018
-                年被視為副產品的「零樣本能力」，正是 GPT-2/3 In-Context Learning 的濫觴。
+                隨預訓練深度增加，模型自發在內部建立啟發式對映，證明 Scaling 是通向 AGI 的必然之路。
               </p>
             </AsideCard>
           </aside>
         </PaperReadingLayout>
 
-        <!-- 零樣本曲線對比卡片 -->
+        <!-- 圖表復刻：Figure 5 零樣本能力演化 -->
         <div class="border border-line bg-surface p-6 sm:p-8 shadow-sm">
           <div class="flex items-center justify-between border-b border-line pb-3 mb-4">
             <span class="font-mono text-xs font-bold text-red uppercase tracking-wider">
-              原創論文 Figure 5 復刻 · 預訓練步數與零樣本準確率的單調上升
+              原論文 Figure 5 復刻 · 預訓練過程中零樣本任務能力的自發湧現
             </span>
-            <span class="font-mono text-xs text-muted">無監督預訓練自然習得多任務</span>
+            <span class="font-mono text-xs text-muted">Zero-Shot Emergence Across Training</span>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
             <div class="p-4 bg-paper-deep border border-line">
-              <span class="font-mono text-xs font-bold text-muted uppercase">
-                CoLA 語法合法性判斷
+              <span class="font-mono text-xs font-bold text-red uppercase">
+                CoLA 語言學可接受度
+              </span>
+              <div class="font-display text-3xl font-bold text-red mt-2 mb-1">穩定上升</div>
+              <p class="text-xs text-muted mb-0">
+                以生成下一個詞的困惑度直接衡量句子語法是否合規，零樣本分數與訓練次數呈正相關。
+              </p>
+            </div>
+
+            <div class="p-4 bg-paper-deep border border-line">
+              <span class="font-mono text-xs font-bold text-ink uppercase">
+                LAMBADA 廣義長程預測
               </span>
               <div class="font-display text-3xl font-bold text-ink mt-2 mb-1">穩定上升</div>
               <p class="text-xs text-muted mb-0">
@@ -1154,21 +1500,31 @@ const timelineEpochs: TimelineEpoch[] = [
       </div>
     </section>
 
-    <!-- ========================================== -->
-    <!-- 第三部分：歷史轉折與現代遺產 (WHAT IT MEANS) -->
-    <!-- ========================================== -->
+    <!-- SECTION 5: 未竟之功 / 時代回響 (AFTERMATH) -->
     <section
       id="what"
       class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
-      aria-labelledby="what-heading"
+      aria-labelledby="aftermath-title"
     >
-      <div class="border-b border-line pb-4 mb-8">
-        <p class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-red mb-2">
-          第三部分 · 歷史迴響 / WHAT IT MEANS TODAY
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            未竟之功 / 時代回響
+          </p>
+          <h2
+            id="aftermath-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">單向與雙向的世紀交鋒：</span>
+            <span class="block">
+              <em>BERT 兵臨城下，OpenAI 孤注一擲。</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          四個月後 BERT
+          以雙向克漏字在各項短文本榜單上逆襲，但單向解碼器卻守住了通往生成式世界模型與通用智慧的唯一窄門。
         </p>
-        <h2 id="what-heading" class="m-0 font-display text-3xl sm:text-4xl text-ink tracking-tight">
-          2018 年的歷史分水嶺：GPT 與 BERT 的路線抉擇
-        </h2>
       </div>
 
       <PaperReadingLayout class="text-base leading-8 text-ink">
@@ -1651,7 +2007,7 @@ const timelineEpochs: TimelineEpoch[] = [
       classification: {
         tokens: ['[Start]', '文本內容 (Text)', '[Extract]'],
         mechanism:
-          '將整段文本夾在 [Start] 與 [Extract] 之間。經過 12 層 Transformer 解碼後，末尾 [Extract] 符號的隱藏狀態向量 hₗᵐ 匯聚了全文語意，直接輸入單一線性層 W_y 輸出類別分佈。',
+          '將整段文本夾在 [Start] 與 [Extract] 之間。經過 12 層 Transformer 解碼後，末尾 [Extract] 符號的最後一層隱藏狀態向量 <em>h</em><sub><em>l</em></sub><sup><em>m</em></sup> 匯聚了全文語意，直接輸入單一線性投影矩陣 <em>W</em><sub><em>y</em></sub> 輸出類別分佈。',
         benchmark: 'SST-2 情緒分類、IMDb 電影正負評分類。',
       },
       entailment: {
