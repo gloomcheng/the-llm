@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import SiteHeader from '../../components/SiteHeader.astro';
 import StoryRail from '../../components/StoryRail.astro';
 import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
 import AsideCard from '../../components/AsideCard.astro';
@@ -138,12 +137,7 @@ const timelineEpochs: TimelineEpoch[] = [
   section="paper"
   description={paper.abstractSummary}
 >
-  <SiteHeader />
-
-  <main
-    id="main-content"
-    class="min-h-screen bg-canvas text-ink selection:bg-red selection:text-white"
-  >
+  <article class="min-h-screen bg-canvas text-ink selection:bg-red selection:text-white">
     <!-- HERO HEADER (Scheme B 規範) -->
     <header class={`${shell} pt-10`}>
       <div class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
@@ -1145,5 +1139,5 @@ const timelineEpochs: TimelineEpoch[] = [
         summary: '以生成式自回歸預訓練與統一輸入序列化，開創通向下游任務的通用基礎模型之路。',
       }}
     />
-  </main>
+  </article>
 </BaseLayout>
