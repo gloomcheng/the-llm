@@ -1,0 +1,1140 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StoryRail from '../../components/StoryRail.astro';
+import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
+import AsideCard from '../../components/AsideCard.astro';
+import Callout from '../../components/Callout.astro';
+import AuthorGrid from '../../components/AuthorGrid.astro';
+import PaperMeta from '../../components/PaperMeta.astro';
+import PaperNavigation from '../../components/PaperNavigation.astro';
+import PaperSectionHeader from '../../components/PaperSectionHeader.astro';
+import {
+  gpt2Paper,
+  gpt2Sources,
+} from '../../content/papers/language-models-are-unsupervised-multitask-learners';
+
+const paper = gpt2Paper;
+const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
+
+const story = [
+  {
+    year: '2018.10',
+    label: '前史 / BERT 雙向霸權',
+    title: '微調範式橫掃，但將模型鎖死在專用數據集',
+    body: 'BERT 證明了雙向理解的威力，但每個任務都需要收集專屬標註數據進行微調，各領域模型互不相通。',
+    status: 'past' as const,
+  },
+  {
+    year: '2019.02',
+    label: '論文 / GPT-2 破局',
+    title: '不改參數，僅憑提示詞實現零樣本多任務',
+    body: 'OpenAI 擴展至 15 億參數與 40GB WebText，證明大規模自回歸自然學會以 Prompt 執行跨領域任務。',
+    status: 'current' as const,
+  },
+  {
+    year: '2020.01',
+    label: '後續 / SCALING LAWS',
+    title: '經驗法則升華為精確的物理冪律',
+    body: 'GPT-2 展現的平滑性能跨越，直接催生了第五章 Kaplan 等人的神經語言模型縮放定律。',
+    status: 'future' as const,
+  },
+];
+
+interface TimelineEpoch {
+  id: string;
+  year: string;
+  period: string;
+  title: string;
+  summary: string;
+  sources: Array<{
+    source: (typeof gpt2Sources)[number];
+    num: number;
+    refCode: string;
+    featured?: boolean;
+    role: string;
+    takeaway: string;
+  }>;
+}
+
+const timelineEpochs: TimelineEpoch[] = [
+  {
+    id: 'epoch-2018-bert',
+    year: '2018.10',
+    period: '雙向微調時代的巔峰與束縛',
+    title: 'BERT 確立有監督微調標竿，但長尾任務受困於數據匱乏',
+    summary:
+      'Google 憑藉 BERT 橫掃 GLUE 與 SQuAD，但所有任務都必須仰賴標註數據微調，模型成了無法自由生成的專用判別器。',
+    sources: [
+      {
+        source: gpt2Sources.find((s) => s.id === 'paper-2018-bert')!,
+        num: 1,
+        refCode: 'S01',
+        featured: true,
+        role: '競爭對照',
+        takeaway:
+          '逼使 OpenAI 放棄微調細節的泥淖，直接將視野拉高至「完全無微調的通用零樣本生成」。',
+      },
+    ],
+  },
+  {
+    id: 'epoch-2019-gpt2',
+    year: '2019.02',
+    period: '零樣本生成革命橫空出世',
+    title: 'GPT-2 發表，以 Prompt 揭開非監督多任務學習序幕',
+    summary:
+      'Alec Radford 等人推出 1.5B 參數的 GPT-2，在完全不更新參數的前提下，僅憑輸入自然語言提示詞便可在問答、翻譯與摘要上運轉。',
+    sources: [
+      {
+        source: gpt2Sources.find((s) => s.id === 'paper-2019-gpt2')!,
+        num: 2,
+        refCode: 'S02',
+        featured: true,
+        role: '核心文獻',
+        takeaway: '確立提示詞工程（Prompt Engineering）與零樣本任務遷移的奠基之作。',
+      },
+      {
+        source: gpt2Sources.find((s) => s.id === 'openai-2019-release')!,
+        num: 3,
+        refCode: 'S03',
+        role: '歷史事件',
+        takeaway: '安地斯山脈獨角獸樣例震撼全球，引發 AI 安全史上首次「分階段漸進發布」爭議。',
+      },
+    ],
+  },
+  {
+    id: 'epoch-2019-bpe',
+    year: '2019',
+    period: '底層架構與分詞工程成熟',
+    title: 'Byte-level BPE 與 Pre-LN 奠定現代大模型標準',
+    summary:
+      '徹底拋棄未知詞（<unk>），以原始位元組編碼世界萬物；將 LayerNorm 前置以穩定數十層深層傳播。',
+    sources: [
+      {
+        source: gpt2Sources.find((s) => s.id === 'paper-2016-bpe')!,
+        num: 4,
+        refCode: 'S04',
+        role: '分詞基石',
+        takeaway: '為現代多語言與代碼混合大模型鋪平了無損符號編碼的通用底座。',
+      },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="Language Models are Unsupervised Multitask Learners — GPT-2 (2019)"
+  section="paper"
+  description={paper.abstractSummary}
+>
+  <article class="min-h-screen bg-canvas text-ink selection:bg-red selection:text-white">
+    <!-- HERO HEADER (Scheme B 規範) -->
+    <header class={`${shell} pt-10`}>
+      <div class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
+        <a class="text-red underline underline-offset-4" href="/">
+          THE LLM
+        </a>
+        <span aria-hidden="true">/</span>
+        <span>第 04 章</span>
+      </div>
+
+      <div class="grid grid-cols-1 items-end gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-24">
+        <div>
+          <p class="mb-5 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            VOL. 04 / ZERO-SHOT TRANSFER
+          </p>
+
+          <h1 class="m-0 font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight tracking-[-0.04em] text-ink">
+            <span class="block">Language Models are</span>
+            <span class="block">Unsupervised</span>
+            <em class="block">Multitask Learners</em>
+          </h1>
+
+          <p class="mt-8 max-w-[52ch] text-lg leading-8 text-muted">
+            在第三章 BERT 憑藉雙向微調橫掃 11 項 NLP 紀錄的幾個月後，OpenAI
+            展開了一場驚世駭俗的絕地反擊。他們不跟隨業界去收集更多標註資料做微調，而是將單向解碼器參數拉大
+            10 倍至 15 億，餵入 40GB 的網路世界。GPT-2
+            證明了一件顛覆直覺的事：只要模型足夠龐大，它根本不需要為了個別任務修改任何參數——僅憑輸入一句「提示詞」，它就能在零樣本條件下自發完成問答、翻譯與摘要，開啟了提示詞工程（Prompt
+            Engineering）的黎明。
+          </p>
+        </div>
+
+        <aside
+          class="border-t-4 border-red bg-surface p-6 shadow-editorial"
+          aria-label="這篇論文的一句評語"
+        >
+          <p class="mb-4 sm:mb-6 font-mono text-xs sm:text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            一句評語 / THE SHORT VERDICT
+          </p>
+          <p class="m-0 max-w-[20ch] sm:max-w-[22ch] font-display text-2xl sm:text-3xl leading-tight text-ink">
+            不要訓練它做特定任務；把任務當成文字的一部分說給它聽。
+          </p>
+          <p class="mt-6 mb-0 text-sm sm:text-base leading-relaxed sm:leading-7 text-muted">
+            GPT-2
+            證明了：只要單向自回歸模型的規模越過臨界點，文字接龍就會自發湧現跨領域的多任務執行能力。
+          </p>
+        </aside>
+      </div>
+
+      <PaperMeta
+        year={paper.year}
+        venue={paper.venue}
+        readTime="32 分鐘"
+        difficulty="核心概念"
+        doi={paper.doi}
+      />
+    </header>
+
+    <!-- 歷史進程 StoryRail -->
+    <section class="border-y border-line bg-surface/50 py-12" aria-label="歷史轉折總覽">
+      <div class={shell}>
+        <div class="mb-6">
+          <p class="font-mono text-xs font-bold text-red uppercase tracking-wider mb-1">
+            歷史轉折 / 2019
+          </p>
+          <h2 class="m-0 font-display text-2xl sm:text-3xl text-ink">
+            從專用微調的泥淖，跨入零樣本通用提示詞的新紀元
+          </h2>
+        </div>
+        <StoryRail events={story} />
+      </div>
+    </section>
+
+    <!-- MOVEMENT 1: 標註微調的窮途末路 (THE SUPERVISION CLIFF) -->
+    <section
+      id="supervision-cliff"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="supervision-cliff-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            第一樂章 / 標註微調的窮途末路
+          </p>
+          <h2
+            id="supervision-cliff-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">窄化專家的代價：</span>
+            <span class="block">
+              <em>為什麼「零樣本」才是通用智慧的聖杯？</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          微調雖然能在特定榜單上刷出高分，但它本質上是製造了一群彼此割裂的「特種工人」。真實世界有成千上萬種需求，人類不可能為每一種需求都人工標註幾萬筆訓練數據。
+        </p>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p class="text-lg leading-relaxed text-ink">
+            回顧第三章〈
+            <a
+              href="/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding"
+              class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+            >
+              BERT
+            </a>
+            〉與第二章〈
+            <a
+              href="/papers/improving-language-understanding-by-generative-pre-training"
+              class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+            >
+              GPT-1
+            </a>
+            〉，當代自然語言處理看似已經找到了「預訓練 +
+            微調」的黃金法則：先在海量文章上預訓練底座，再針對下游任務（如情緒分類、問答、推論）進行有監督微調。
+          </p>
+
+          <p>
+            然而，這套行之有效的標準流程，卻在工業與通用智慧的真實邊界上撞上了一堵無形的高牆：
+            <strong>「微調（Fine-tuning）」本質上依然是一種狹隘的有監督學習。</strong>
+          </p>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            一個生活中的直覺對照：請全才秘書還是專案實習生？
+          </h3>
+
+          <p>為了看清微調的本質缺陷，請想像一間企業招聘員工時的情景：</p>
+
+          <div class="grid gap-4 sm:grid-cols-2 my-6">
+            <div class="border border-line bg-surface p-5 shadow-sm">
+              <span class="font-mono text-xs font-bold text-blue uppercase block mb-1">
+                微調路線（BERT / GPT-1 模式）
+              </span>
+              <p class="font-serif text-base text-ink mb-2">
+                招聘進來的大腦一片空靈，每分派一項新工作（例如審查醫療合約），主管必須耗費數週準備
+                5,000 份標準答案，進行「職前魔鬼集訓」。
+              </p>
+              <p class="text-xs text-muted m-0 leading-relaxed">
+                集訓完畢後，他成了合約審查大師；但當你轉頭吩咐他：「幫我把這段法文翻譯成英文」，他立刻陷入癱瘓。若強行集訓翻譯，他原本學會的合約知識又會發生
+                <strong>災難性遺忘（Catastrophic Forgetting）</strong>。
+              </p>
+            </div>
+
+            <div class="border border-line bg-surface p-5 shadow-sm">
+              <span class="font-mono text-xs font-bold text-red uppercase block mb-1">
+                零樣本路線（GPT-2 理想模式）
+              </span>
+              <p class="font-serif text-base text-ink mb-2">
+                招聘一位閱遍全人類圖書館的博學秘書。你完全不需要為他舉辦集訓，也不需要給他任何標註教材。
+              </p>
+              <p class="text-xs text-muted m-0 leading-relaxed">
+                工作時，你只需要用自然語言交代一句話：
+                <code>「請閱讀以下對話，並回答顧客的問題：」</code>或
+                <code>「請用一句話總結這份會議紀錄：」</code>，他就能立即調動常識執行任務。
+              </p>
+            </div>
+          </div>
+
+          <p>
+            Alec Radford 與 Ilya Sutskever 敏銳地意識到：
+            <strong>現實世界中 99.9% 的語言需求，根本沒有現成的標註數據集！</strong>
+            如果人類每想讓機器做一件事，就必須耗費數十萬美元去僱工標註資料、微調一套專屬權重，那麼人工智慧就永遠無法成為普及的大眾工具。
+          </p>
+
+          <Callout variant="editorial" title="範式的大逆轉：從專用微調到通用條件機率">
+            <p class="m-0 text-base leading-relaxed text-muted">
+              在第三章的結尾，OpenAI 做出了孤注一擲的戰略決策：
+              <strong>不再跟隨業界去打微調排行榜的巷戰！</strong>
+              <br />
+              <br />
+              Radford 提出了一個大膽至極的科學假設：
+              <em>
+                「如果我們把模型做大 10
+                倍，餵入足夠廣闊、包含全人類各領域對話、代碼與文章的語料，那麼神經網路在『預測下一個字』的過程中，自然會學會如何根據上下文的『指令語境』，去執行各式各樣的任務！」
+              </em>
+            </p>
+          </Callout>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            核心懸念：不改參數，機器怎麼知道該做什麼？
+          </h3>
+
+          <p>
+            但學界隨即提出了最尖銳的懷疑：
+            <strong>
+              神經網路的全部權重都是固定不變的矩陣數字。當你把一篇文章丟進去時，完全沒有給它額外的分類器矩陣，也沒有給它進行反向傳播更新，模型究竟憑什麼知道你現在是要它「翻譯」、「寫摘要」還是「回答問題」？
+            </strong>
+          </p>
+
+          <p>
+            答案隱藏在一條極其優雅的統計數學公式中——
+            <strong>多任務條件機率（Multitask Conditioning）</strong>。
+          </p>
+        </div>
+
+        <aside slot="rail" class="space-y-6">
+          <AsideCard kicker="歷史代價 / BOTTLENECK" title="有監督標註的物理極限" variant="surface">
+            <p class="text-xs leading-relaxed text-muted m-0">
+              標註數據集（如 SQuAD、MNLI）往往充斥著人為的「標註偏置（Annotation
+              Artifacts）」。模型微調時常常只是學會了走捷徑（例如看見某些特定字詞就猜否定），而非真正理解語言邏輯。
+            </p>
+          </AsideCard>
+
+          <AsideCard kicker="概念對比 / TAXONOMY" title="三種學習範式的演進" variant="paper">
+            <div class="space-y-2 text-xs text-muted">
+              <div>
+                <strong class="text-ink block">傳統 NLP（Pre-2018）</strong>
+                <span>專用模型架構 + 100% 依賴任務標註數據。</span>
+              </div>
+              <div class="border-t border-line pt-2">
+                <strong class="text-blue block">GPT-1 / BERT（2018）</strong>
+                <span>通用預訓練骨幹 + 依賴小規模標註數據微調。</span>
+              </div>
+              <div class="border-t border-line pt-2">
+                <strong class="text-red block">GPT-2（2019）</strong>
+                <span>超大預訓練骨幹 + 0% 標註數據（Zero-shot 零樣本）。</span>
+              </div>
+            </div>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- MOVEMENT 2: 數學引擎與架構精修 (THE 1.5B ENGINE) -->
+    <section
+      id="engine"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24 space-y-12`}
+      aria-labelledby="engine-title"
+    >
+      <PaperSectionHeader
+        kicker="第二樂章 / 數學引擎與架構精修"
+        title="多任務條件機率與 15 億參數巨獸"
+        subtitle="將所有任務自然封裝進文字序列；以 Pre-LN 與 Byte-level BPE 重塑深層傳播穩定性"
+        id="act-2-multitask-engine"
+      />
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p class="text-lg leading-relaxed text-ink">
+            在傳統統計學習中，常規語言模型學習的是單一文本序列的無條件聯合機率分佈：
+          </p>
+
+          <div class="my-3 bg-paper-deep p-4 font-mono text-sm overflow-x-auto">
+            <math
+              display="block"
+              class="text-lg text-ink font-serif"
+              aria-label="P of x equals product over i of P of s i given s 1 through s i minus 1"
+            >
+              <mrow>
+                <mi>P</mi>
+                <mo stretchy="false">(</mo>
+                <mi>x</mi>
+                <mo stretchy="false">)</mo>
+                <mo>=</mo>
+                <munderover>
+                  <mo>∏</mo>
+                  <mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow>
+                  <mi>n</mi>
+                </munderover>
+                <mi>P</mi>
+                <mo stretchy="false">(</mo>
+                <msub><mi>s</mi><mi>i</mi></msub>
+                <mo>∣</mo>
+                <msub><mi>s</mi><mn>1</mn></msub>
+                <mo>,</mo>
+                <mo>…</mo>
+                <mo>,</mo>
+                <msub><mi>s</mi><mrow><mi>i</mi><mo>−</mo><mn>1</mn></mrow></msub>
+                <mo stretchy="false">)</mo>
+              </mrow>
+            </math>
+          </div>
+
+          <p>
+            但是，通用的智慧系統不能只會漫無目的地默背文字。為了讓同一個模型能執行不同任務，系統必須學習對應於「給定輸入與給定任務」的條件機率分佈：
+          </p>
+
+          <div class="my-3 bg-paper-deep p-4 font-mono text-sm overflow-x-auto">
+            <math
+              display="block"
+              class="text-lg text-ink font-serif"
+              aria-label="P of output given input comma task"
+            >
+              <mrow>
+                <mi>P</mi>
+                <mo stretchy="false">(</mo>
+                <mtext>output</mtext>
+                <mo>∣</mo>
+                <mtext>input</mtext>
+                <mo>,</mo>
+                <mtext>task</mtext>
+                <mo stretchy="false">)</mo>
+              </mrow>
+            </math>
+          </div>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            自然語言就是最通用的介面：McCann 的推動與 Radford 的頓悟
+          </h3>
+
+          <p>
+            2018 年，Bryan McCann 等人在《The Natural Language Decathlon》中提出了一個啟發性的想法：
+            <strong>
+              所有 NLP 任務（無論是翻譯、問答還是摘要），本質上都可以寫成一串問答形式的文字！
+            </strong>
+          </p>
+
+          <p>
+            Radford 團隊將這個洞見推向了極致：
+            <strong>
+              既然所有任務都可以用文字表達，那麼我們根本不需要為「task」設計專屬的數學代號！文字本身就是任務的說明！
+            </strong>
+          </p>
+
+          <ul class="list-disc pl-5 space-y-2 text-sm text-muted">
+            <li>
+              <strong>翻譯任務：</strong>直接輸入{' '}
+              <code>"translate to french, [English Text], [French Text]"</code>。
+            </li>
+            <li>
+              <strong>閱讀理解：</strong>直接輸入{' '}
+              <code>"[Document Text], Q: [Question], A: [Answer]"</code>。
+            </li>
+            <li>
+              <strong>文章摘要：</strong>直接在長文章結尾加上 <code>"TL;DR:"</code>（Too Long;
+              Didn't Read）。
+            </li>
+          </ul>
+
+          <p>
+            只要模型在足夠龐大的文本世界裡見過人類如何使用這些句式，當它看到 <code>"TL;DR:"</code>{' '}
+            時，它的下字預測演算法自然就會將最高的機率分配給「整篇文章的精要總結」！
+          </p>
+
+          <h3 class="font-display text-2xl text-ink pt-4">15 億參數巨獸：從 12 層跨越至 48 層</h3>
+
+          <p>為了承載全人類廣泛的語境，OpenAI 將 Transformer Decoder 擴展至當時難以想像的規模：</p>
+
+          <!-- 規格矩陣表 -->
+          <div class="border border-line bg-surface p-6 sm:p-8 shadow-sm my-6 overflow-x-auto">
+            <span class="font-mono text-xs font-bold text-red uppercase tracking-wider block mb-4">
+              GPT-2 四大模型家族規格表 (Table 2 in Paper)
+            </span>
+            <table class="w-full text-left font-mono text-xs sm:text-sm">
+              <thead class="border-b-2 border-ink">
+                <tr>
+                  <th class="py-2">模型代號</th>
+                  <th class="py-2">參數量 (Params)</th>
+                  <th class="py-2">層數 (Layers)</th>
+                  <th class="py-2">
+                    隱藏維度 (<math class="font-serif"><msub><mi>d</mi><mi>model</mi></msub></math>)
+                  </th>
+                  <th class="py-2">注意力頭數</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-line text-muted">
+                <tr>
+                  <td class="py-2 font-bold text-ink">GPT-2 Small</td>
+                  <td class="py-2">1.17 億 (117M)</td>
+                  <td class="py-2">12</td>
+                  <td class="py-2">768</td>
+                  <td class="py-2">12</td>
+                </tr>
+                <tr>
+                  <td class="py-2 font-bold text-ink">GPT-2 Medium</td>
+                  <td class="py-2">3.45 億 (345M)</td>
+                  <td class="py-2">24</td>
+                  <td class="py-2">1024</td>
+                  <td class="py-2">16</td>
+                </tr>
+                <tr>
+                  <td class="py-2 font-bold text-ink">GPT-2 Large</td>
+                  <td class="py-2">7.62 億 (762M)</td>
+                  <td class="py-2">36</td>
+                  <td class="py-2">1280</td>
+                  <td class="py-2">20</td>
+                </tr>
+                <tr class="bg-red/5 text-ink font-semibold">
+                  <td class="py-2 text-red font-bold">GPT-2 Extra Large</td>
+                  <td class="py-2 text-red">15.42 億 (1.5B)</td>
+                  <td class="py-2">48</td>
+                  <td class="py-2">1600</td>
+                  <td class="py-2">25</td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="mt-4 mb-0 text-xs text-muted leading-relaxed">
+              上下文滑動視窗由 GPT-1 的 512 個詞倍增至 <strong>1024</strong> 個 Token，批次大小增至
+              512。
+            </p>
+          </div>
+
+          <h3 class="font-display text-2xl text-ink pt-4">三大關鍵工程精修：為現代 LLM 奠定骨架</h3>
+
+          <p>
+            把神經網絡從 12 層堆疊到 48
+            層，絕不是單純修改代碼裡的迴圈數字。在深層網絡中，梯度消失與數值不穩定會讓訓練瞬間發散。GPT-2
+            引入了三項至今依然是主流標準的架構改進：
+          </p>
+
+          <div class="space-y-4 text-sm text-muted">
+            <div class="border-l-2 border-ink pl-4 py-1">
+              <strong class="text-ink font-mono text-base block mb-1">
+                1. Pre-Layer Normalization（前置層正規化）：
+              </strong>
+              <p class="m-0 leading-relaxed">
+                在原始 Transformer 與 GPT-1
+                中，正規化是放在殘差相加「之後」（Post-LN）。這導致深層網絡的梯度在反向傳播時必須穿透層層相乘，極易不穩。GPT-2
+                將 LayerNorm
+                移至每個自注意力與前饋區塊的「輸入端」（Pre-LN），並在最後一層額外追加一個
+                LayerNorm。這使得殘差主幹保持暢通無阻，為日後百層千億模型打通了生命通道。
+              </p>
+            </div>
+
+            <div class="border-l-2 border-ink pl-4 py-1">
+              <strong class="text-ink font-mono text-base block mb-1">
+                2. 殘差權重初始縮放（Residual Scaling）：
+              </strong>
+              <p class="m-0 leading-relaxed">
+                隨著深度增加，殘差連接上的數值方差會逐步累積膨脹。GPT-2
+                在模型初始化時，將所有殘差層權重依據層數以{' '}
+                <math class="font-serif"><mfrac><mn>1</mn><msqrt><mrow><mn>2</mn><mi>N</mi></mrow></msqrt></mfrac></math>
+                {' '} 進行衰減縮放（其中{' '}
+                <math class="font-serif"><mi>N</mi><mo>=</mo><mn>48</mn></math>{' '}
+                為層數），徹底平抑了深層輸出方差。
+              </p>
+            </div>
+
+            <div class="border-l-2 border-ink pl-4 py-1">
+              <strong class="text-ink font-mono text-base block mb-1">
+                3. Byte-level BPE 分詞器：徹底告別未知詞（&lt;unk&gt;）
+              </strong>
+              <p class="m-0 leading-relaxed">
+                傳統以 Unicode
+                字元為單位的分詞器，遇到罕見漢字、特殊符號或生僻字時，只能無奈輸出未知符號{' '}
+                <code>&lt;unk&gt;</code>。GPT-2 改以電腦最底層的{' '}
+                <strong>256 個原始字節（Byte）</strong>
+                作為基礎詞表，並在此之上進行 BPE 演算法合併，詞表擴充至 50,257。這意味著：
+                <strong>
+                  全世界任何文字、emoji、表情符號甚至二進制代碼，都可以被無損解碼，詞庫裡永遠不會再有任何一個未知詞！
+                </strong>
+              </p>
+            </div>
+          </div>
+
+          <h3 class="font-display text-2xl text-ink pt-4">高品質的數據燃料：WebText 40GB 語料庫</h3>
+
+          <p>
+            BERT 訓練在 33
+            億詞的書籍與維基百科上；但若想讓模型學會世間萬物的話題，維基百科的語調過於單一刻板。OpenAI
+            開發了全新數據集——<strong>WebText</strong>：
+          </p>
+          <ul class="list-disc pl-5 space-y-2 text-sm text-muted">
+            <li>
+              爬取社交論壇 Reddit 上所有獲得至少 <strong>3 個讚（Karma ≥ 3）</strong>
+              的外連網頁連結。這項巧思巧妙利用了人類社群的集體智慧，自動過濾掉低俗垃圾與機器人農場文。
+            </li>
+            <li>
+              移除了所有維基百科頁面（避免與下游基準測試重疊），清洗去重後留下{' '}
+              <strong>800 萬篇高品質長文，容量達 40GB</strong>
+              ，為模型注入了極度鮮活、覆蓋多樣領域的真實人類語言。
+            </li>
+          </ul>
+        </div>
+
+        <aside slot="rail" class="space-y-6">
+          <AsideCard
+            kicker="架構對比 / POST-LN VS PRE-LN"
+            title="梯度高速公路的變遷"
+            variant="surface"
+          >
+            <p class="text-xs leading-relaxed text-muted m-0">
+              從 GPT-1 的 Post-LN 轉向 GPT-2 的
+              Pre-LN，是深度學習歷史上最關鍵的穩定性改良之一。如果沒有 Pre-LN，後來超過 100 層的
+              GPT-3（96 層）與現代大模型將在反向傳播的最初幾個 Step 便陷入數值溢出。
+            </p>
+          </AsideCard>
+
+          <AsideCard kicker="分詞革命 / TOKENIZER" title="字節級 BPE 的威能" variant="paper">
+            <p class="text-xs leading-relaxed text-muted m-0">
+              以 256
+              個字節作為基底，保證了對所有文字的「通用覆蓋率」。即使遇到一個從未見過的罕見字詞，模型最差也能將其拆解為若干字節組合，絕不會吐出讓系統崩潰的未知符號。
+            </p>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- MOVEMENT 3: 零微調的奇蹟 (ZERO-SHOT TRANSFER) -->
+    <section
+      id="zero-shot"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24 space-y-12`}
+      aria-labelledby="zero-shot-title"
+    >
+      <PaperSectionHeader
+        kicker="第三樂章 / 零微調的奇蹟"
+        title="提示詞的萌芽：完全不更新權重，橫掃多領域任務"
+        subtitle="無需專用線性層與梯度反向傳播，僅憑輸入文字的引導，1.5B 巨獸在零樣本下湧現令人震撼的跨領域實用能力"
+        id="act-3-zero-shot"
+      />
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p class="text-lg leading-relaxed text-ink">
+            當 15 億參數的 GPT-2 訓練完成後，OpenAI 做了一件在 2019 年看來極度瘋狂的實驗：
+            <strong>把下游評測資料集的訓練集全部扔掉！一張標註資料都不給模型看！</strong>
+          </p>
+
+          <p>
+            他們直接將模型切換至<strong>唯讀推論模式（Inference Only）</strong>
+            ，在輸入端透過手工構造的「提示詞（Prompt）」，測試模型能否直接完成下游任務：
+          </p>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            任務實測一：CoQA 對話式閱讀理解（55 F1 分數）
+          </h3>
+
+          <p>
+            在史丹佛大學發布的 CoQA 數據集中，包含一篇閱讀材料與多輪問答對話。傳統模型必須在 12
+            萬個問答範例上微調數十個小時；而 GPT-2 的測試方式極其自然：
+          </p>
+
+          <!-- Prompt 交互展示框 -->
+          <div class="border border-line bg-surface p-6 sm:p-8 shadow-sm my-6 font-mono text-xs sm:text-sm">
+            <div class="flex items-center justify-between border-b border-line pb-3 mb-4">
+              <span class="font-bold text-red uppercase tracking-wider">
+                提示詞構造 · 閱讀理解零樣本輸入樣例
+              </span>
+              <span class="text-muted">Zero-shot CoQA Prompt</span>
+            </div>
+
+            <div class="bg-paper-deep p-4 space-y-2 border border-line leading-relaxed">
+              <p class="text-muted m-0">
+                [文章段落] Jessica went to the market to buy fresh vegetables for dinner...
+              </p>
+              <p class="text-muted m-0">Q: Who went to the market?</p>
+              <p class="text-blue font-bold m-0">A: Jessica</p>
+              <p class="text-muted m-0">Q: What did she want to buy?</p>
+              <p class="text-red font-bold m-0 animate-pulse">
+                A: [模型在此處自動接續預測下一個詞：fresh vegetables]
+              </p>
+            </div>
+
+            <p class="text-xs text-muted mt-4 mb-0 leading-relaxed">
+              結果震驚學界：
+              <strong>在完全沒見過任何訓練樣本的前提下，GPT-2 拿下了 55.0 F1 分數！</strong>
+              這個分數直接匹敵甚至擊敗了三套當時依賴數萬筆資料微調訓練出來的專用基線模型！
+            </p>
+          </div>
+
+          <h3 class="font-display text-2xl text-ink pt-4">任務實測二：文章摘要（TL;DR: 的發明）</h3>
+
+          <p>
+            傳統摘要任務需要訓練專門的序列到序列（Seq2Seq）指針網絡。GPT-2
+            團隊發現在網際網路文化中，Reddit 網友習慣在落落長的文章最後寫上 <code>TL;DR:</code>
+            （太長了，懶得看）。
+          </p>
+
+          <p>於是，他們在測試 CNN/Daily Mail 摘要新聞時，直接在 1000 字的新聞尾巴貼上：</p>
+
+          <div class="bg-paper-deep p-4 font-mono text-sm border-l-4 border-red my-4">
+            <code>... [1000 字完整新聞] ... TL;DR: [模型開始接龍]</code>
+          </div>
+
+          <p>
+            在沒有任何摘要訓練的情況下，GPT-2 吐出了一篇凝練準確的要點總結，直接刷下了 19.88 的
+            ROUGE-L 分數，首度證實了語言模型具有理解篇章重點並進行高度凝練的本能。
+          </p>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            任務實測三：機器翻譯（不給雙語平行字典）
+          </h3>
+
+          <p>
+            最令人匪夷所思的是翻譯任務。傳統機器翻譯必須在數千萬句對齊的「英文–法文」平行語料庫上訓練。而
+            WebText 是個 99% 以上為英文的單語語料庫。
+          </p>
+
+          <p>
+            然而，在網際網路的茫茫文章中，偶爾會出現類似{' '}
+            <code>"French word for apple is pomme"</code> 的句子。GPT-2 在輸入端寫入：
+          </p>
+
+          <div class="bg-paper-deep p-4 font-mono text-sm border-l-4 border-blue my-4">
+            <code>
+              English = I love you. French = Je t'aime. English = Good morning. French =
+              [模型接續...]
+            </code>
+          </div>
+
+          <p>
+            模型在零樣本條件下直接輸出 <code>Bonjour</code>，在法翻英任務上刷出了 11.5 BLEU
+            的分數！這項實驗向全世界展示了：
+            <strong>
+              語言模型在無監督預訓練中吸收的知識，遠遠超越了單純的單詞接龍，它在無形中勾勒出了不同語言概念之間的映射地圖。
+            </strong>
+          </p>
+
+          <h3 class="font-display text-2xl text-ink pt-4">為什麼會這樣？零背景的幾何理解</h3>
+
+          <div class="border-l-4 border-red bg-red-soft/20 p-5 my-6 space-y-3">
+            <strong class="text-ink font-mono text-sm block">
+              觀念解鎖：文字接龍為什麼會變成邏輯推論？
+            </strong>
+            <p class="text-sm leading-relaxed text-ink m-0">
+              許多讀者會問：<strong>「模型不是只在算機率嗎？它怎麼知道題目問什麼？」</strong>
+              <br />
+              <br />
+              請試想：在 15 億參數的大腦中，高達 1600
+              維的幾何空間裡記錄了世界知識。當輸入文字是一篇關於小狗的故事，並以{' '}
+              <code>「問：小狗的顏色是什麼？答：」</code>{' '}
+              結尾時，此時前文所有向量的注意力加權流向，將
+              <strong>「最符合統計合理性、最能消除不確定性」</strong>
+              的那個幾何位置，極度精準地推向了「黃色」或「黑色」。
+              <br />
+              <br />
+              這不是魔法，這正是序章 Shannon 的資訊熵在 70 年後的終極實踐：
+              <strong>
+                只要你把世界文脈的前半段描述得足夠具體，能讓不確定性降到最低的那個下一個詞，恰恰就是問題的正確答案！
+              </strong>
+            </p>
+          </div>
+        </div>
+
+        <aside slot="rail" class="space-y-6">
+          <AsideCard
+            kicker="核心發現 / CAPACITY"
+            title="容量決定一切：對數線性飛躍"
+            variant="surface"
+          >
+            <p class="text-xs leading-relaxed text-muted m-0">
+              論文 Figure 4 展示了一張至關重要的折線圖：在所有任務上，當參數量從 117M、345M、762M
+              一路擴展到 1542M 時，任務誤差呈現不可阻擋的<strong>對數線性（Log-linear）</strong>
+              平滑下降。這宣告了一個全新真理：<strong>規模本身就是一種質變。</strong>
+            </p>
+          </AsideCard>
+
+          <AsideCard kicker="經典成就 / BENCHMARK" title="Winograd 語意消歧突破" variant="paper">
+            <p class="text-xs leading-relaxed text-muted m-0">
+              在測試代名詞指代常識的 Winograd Schema 挑戰中，GPT-2 零樣本準確率從 GPT-1 的 63.7%
+              暴拉至 <strong>70.35%</strong>
+              ，證明模型對「常識物理與社會因果」的理解隨著參數急遽深化。
+            </p>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- MOVEMENT 4: 獨角獸震撼與歷史大分水嶺 (THE CONTROVERSY & LEGACY) -->
+    <section
+      id="divergence"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24 space-y-12`}
+      aria-labelledby="divergence-title"
+    >
+      <PaperSectionHeader
+        kicker="第四樂章 / 世紀分水嶺"
+        title="獨角獸震撼與太危險發布：被封印的模型，與通向 Scaling Law 的大道"
+        subtitle="一篇關於安地斯山脈說英語獨角獸的合成新聞震撼全球，開啟現代 AI 安全與開源倫理之世紀辯論"
+        id="act-4-staged-release"
+      />
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p class="text-lg leading-relaxed text-ink">
+            如果說第三章 BERT 的成就是讓科學家驚嘆於閱讀理解指標，那麼 GPT-2 的問世，則是
+            <strong>第一次讓整個人類大眾社會感受到了直擊靈魂的恐懼與震撼。</strong>
+          </p>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            「安地斯山脈的獨角獸」：人類歷史上第一篇完美的 AI 新聞偽造
+          </h3>
+
+          <p>
+            為了測試 GPT-2 的長文連貫性，OpenAI
+            團隊隨手寫了一段極度荒謬、完全違背常理的假新聞開頭給模型當 Prompt：
+          </p>
+
+          <div class="border border-line bg-surface p-5 my-4 font-mono text-xs sm:text-sm">
+            <span class="font-bold text-red block mb-2">人類輸入的 Prompt（提示詞）：</span>
+            <p class="text-muted m-0 italic">
+              "In a shocking finding, scientist discovered a herd of unicorns living in a remote,
+              previously unexplored valley, in the Andes Mountains. Even more surprising to the
+              researchers was the fact that the unicorns spoke perfect English."
+              <br />
+              <span class="text-ink not-italic text-xs mt-1 block">
+                （令人震驚的發現：科學家在安地斯山脈一個偏遠且未曾被探索的山谷中，發現了一群生活在那裡的獨角獸。更令研究人員驚訝的是，這些獨角獸會說流利的英語。）
+              </span>
+            </p>
+          </div>
+
+          <p>
+            在此之前，所有神經網絡在生成超過兩句話後，就會開始陷入無意義的胡言亂語或無限自我重複。然而，15
+            億參數的 GPT-2 卻以令人毛骨悚然的嚴肅新聞腔調，連續接寫了整整十幾段內容：
+          </p>
+
+          <div class="border-l-4 border-red bg-paper-deep p-5 my-4 font-mono text-xs sm:text-sm space-y-3">
+            <span class="font-bold text-ink block">
+              GPT-2 自主接續生成的內容（完全未經人工修改）：
+            </span>
+            <p class="text-muted m-0 leading-relaxed">
+              "The scientist named the population, after their distinctive horn, Ovid’s Unicorn.
+              These four-horned, silver-white unicorns were previously unknown to science. Now,
+              after just over two centuries, the mystery of what sparked this odd phenomenon is
+              finally solved..."
+            </p>
+            <p class="text-muted m-0 leading-relaxed">
+              "...Dr. Jorge Pérez, an evolutionary biologist from the University of La Paz, and
+              several companions, were exploring the Andes Mountains when they found the small
+              valley, with no other animals or humans. Pérez noticed that the valley had what
+              appeared to be a natural fountain, surrounded by two peaks of rock and silver snow..."
+            </p>
+          </div>
+
+          <p>
+            讀完這篇報導的科學家與記者全部倒吸一口涼氣：模型不僅自發虛構了合乎安地斯山脈地理背景的「拉巴斯大學（University
+            of La Paz）」與「豪爾赫·佩雷斯博士（Dr. Jorge Pérez）」，更在長達 500
+            字的篇幅中，精準維持了「會講英文」、「四隻角」、「銀白毛色」與「山谷噴泉」等核心設定，前後完全呼應，文筆比絕大多數人類撰稿人還要流暢優雅！
+          </p>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            「太危險而不能發布」：歷史性的分階段延遲開源
+          </h3>
+
+          <p>
+            面對如此逼真的生成能力，由 Dario Amodei 領導的 OpenAI
+            安全團隊做出了公司成立以來最具爭議的歷史決定：
+            <strong>
+              15 億參數的完整版模型「太危險了，不能發布（Too Dangerous to Release）」！
+            </strong>
+          </p>
+
+          <p>
+            OpenAI
+            擔心該模型若被惡意勢力獲取，會被用來以極低成本大規模自動生成煽動性的政治假新聞、仿造逼真的釣魚郵件、或進行水軍輿論操縱。因此，他們宣布採取史上首次的「分階段發布（Staged
+            Release）」：
+          </p>
+
+          <div class="grid gap-3 sm:grid-cols-4 my-6 text-xs font-mono">
+            <div class="border border-line p-3 bg-surface">
+              <span class="text-muted block mb-1">2019 年 2 月</span>
+              <span class="text-base font-bold text-ink block">124M 模型</span>
+              <span class="text-muted text-[11px]">最小版本先行開源供研究</span>
+            </div>
+            <div class="border border-line p-3 bg-surface">
+              <span class="text-muted block mb-1">2019 年 5 月</span>
+              <span class="text-base font-bold text-ink block">355M 模型</span>
+              <span class="text-muted text-[11px]">釋出中型版本評估風險</span>
+            </div>
+            <div class="border border-line p-3 bg-surface">
+              <span class="text-muted block mb-1">2019 年 8 月</span>
+              <span class="text-base font-bold text-ink block">774M 模型</span>
+              <span class="text-muted text-[11px]">確認社群濫用跡象輕微</span>
+            </div>
+            <div class="border border-2 border-red p-3 bg-red/5">
+              <span class="text-red font-bold block mb-1">2019 年 11 月</span>
+              <span class="text-base font-bold text-red block">1.5B 完整版</span>
+              <span class="text-muted text-[11px]">完成外部夥伴安全審查後全面公開</span>
+            </div>
+          </div>
+
+          <p>
+            這項舉動在當時引發了開源社群極大的憤怒與質疑，不少學者批評 OpenAI
+            違背了「Open」的初衷，是在進行聳人聽聞的公關炒作。但從歷史長河回望，這正是全球人工智慧界第一次真正嚴肅思考
+            <strong>
+              「大模型安全（AI Safety）」、「紅隊演練（Red-teaming）」與「合成假訊息防禦」
+            </strong>
+            的歷史轉折點。
+          </p>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            雙塔已逝，單向啟航：通往第五章縮放定律
+          </h3>
+
+          <p>至此，回看 2018 至 2019 年的世紀之戰：</p>
+          <ul class="list-disc pl-5 space-y-2 text-sm text-muted">
+            <li>
+              <strong>Google 的 BERT</strong> 贏得了 2018
+              年的微調理解榜單，但在生成與開放對話的維度上止步於雙向克漏字的結構天花板。
+            </li>
+            <li>
+              <strong>OpenAI 的 GPT-2</strong>{' '}
+              雖然在特定評測的絕對分數上依然不及精細微調的模型，但它證明了一條更加恢弘的康莊大道：
+              <strong>
+                文字生成是一切智能的超集。只要你擁有足夠的參數量與計算量，單純的自回歸下字預測，就能自然演化出跨任務的通用智慧！
+              </strong>
+            </li>
+          </ul>
+
+          <p>
+            更關鍵的是，Radford
+            在這篇論文中觀察到的「困惑度與任務表現隨參數量平滑跨越」的幾何現象，深深震撼了一位前理論物理學家
+            Jared Kaplan。在接下來的幾個月裡，Kaplan 帶著極為嚴密的統計物理眼光進駐
+            OpenAI，即將在第五章〈
+            <a
+              href="/papers/scaling-laws-for-neural-language-models"
+              class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+            >
+              Scaling Laws for Neural Language Models
+            </a>
+            〉中，為全人類正式推導出支配大語言模型演進的終極宇宙物理方程式！
+          </p>
+        </div>
+
+        <aside slot="rail" class="space-y-6">
+          <AsideCard kicker="安全先驅 / AI GOVERNANCE" title="紅隊防禦的開端" variant="surface">
+            <p class="text-xs leading-relaxed text-muted m-0">
+              OpenAI 與數十所大學合作，研發用於檢測 GPT-2
+              生成文字的自動檢測器（Detector），並首創了模型釋放前的風險評估框架，成為現代大模型發布治理的標準範本。
+            </p>
+          </AsideCard>
+
+          <AsideCard kicker="承先啟後 / BRIDGE" title="通往第五章物理定律" variant="paper">
+            <p class="text-xs leading-relaxed text-muted m-0">
+              GPT-2 讓人們看到了「規模化」的魔法；而下一章〈Scaling
+              Laws〉則要撕開魔法的面紗，用精確的數學冪律告訴大家：需要多少算力、多少資料、多大模型，才能訓練出超越人類的下一個神經網絡。
+            </p>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- 歷史時間軸 -->
+    <section class="border-t border-ink bg-canvas py-16 sm:py-24" aria-label="思想演進時間軸">
+      <div class={shell}>
+        <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between border-b border-ink/10 pb-8">
+          <div>
+            <span class="font-mono text-xs font-bold uppercase tracking-[0.14em] text-red">
+              歷史時間軸 / TIMELINE
+            </span>
+            <h2 class="m-0 mt-2 font-display text-3xl sm:text-4xl text-ink">
+              從微調束縛，到零樣本生成時代的黎明
+            </h2>
+            <p class="m-0 mt-2 max-w-[65ch] text-sm text-muted">
+              串聯 2018 年 BERT 的微調霸權、2019 年初 GPT-2 的 15
+              億參數震撼，以及安地斯山脈獨角獸背後的分階段發布爭議。
+            </p>
+          </div>
+
+          <!-- 快速跳轉年代按鈕 -->
+          <div class="flex flex-wrap items-center gap-2 font-mono text-xs">
+            <span class="text-ink/50 uppercase tracking-wider mr-1">跳轉年代：</span>
+            {timelineEpochs.map((epoch) => (
+              <a
+                href={`#${epoch.id}`}
+                class="px-3 py-1.5 border border-ink/20 bg-surface/80 hover:bg-ink hover:text-surface text-ink transition-all rounded-none font-semibold"
+              >
+                {epoch.year}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <!-- 時間軸主體容器 -->
+        <div class="relative mt-16 sm:mt-24">
+          <div
+            class="hidden md:block absolute left-4 sm:left-8 top-4 bottom-8 w-0.5 bg-gradient-to-b from-blue via-ink/30 to-red/40"
+            aria-hidden="true"
+          ></div>
+
+          <div class="space-y-24 sm:space-y-32">
+            {timelineEpochs.map((epoch) => (
+              <div id={epoch.id} class="relative scroll-mt-28">
+                <!-- 背景水印年份 -->
+                <div
+                  class="pointer-events-none select-none absolute -top-12 sm:-top-20 -left-6 sm:left-4 font-display font-black text-8xl sm:text-9xl lg:text-[11rem] leading-none text-ink/[0.04] tracking-tighter"
+                  aria-hidden="true"
+                >
+                  {epoch.year.split('–')[0].replace(/[^0-9]/g, '')}
+                </div>
+
+                <!-- 標題與節點 -->
+                <div class="relative flex items-start gap-4 sm:gap-8 mb-8 sm:mb-12">
+                  <div
+                    class="hidden md:flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border-2 border-red bg-surface font-mono text-xs font-bold text-red shadow-sm z-10"
+                    aria-hidden="true"
+                  >
+                    {epoch.year.slice(-2)}
+                  </div>
+
+                  <div class="flex-1">
+                    <div class="flex flex-wrap items-center gap-3">
+                      <span class="font-mono text-xs font-bold uppercase tracking-[0.12em] text-red">
+                        {epoch.period}
+                      </span>
+                    </div>
+                    <h3 class="m-0 mt-1 font-display text-2xl sm:text-3xl text-ink tracking-tight">
+                      {epoch.title}
+                    </h3>
+                    <p class="m-0 mt-2 max-w-[85ch] text-sm sm:text-base text-ink/75 leading-relaxed">
+                      {epoch.summary}
+                    </p>
+                  </div>
+                </div>
+
+                <!-- 論文卡片 -->
+                <div class="md:ml-16">
+                  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {epoch.sources.map((item) => (
+                      <div
+                        id={item.source.id}
+                        class={`group relative border bg-surface p-6 shadow-sm transition-all hover:shadow-md ${
+                          item.featured
+                            ? 'border-2 border-ink lg:col-span-2'
+                            : 'border-ink/20 hover:border-ink'
+                        }`}
+                      >
+                        <div class="flex items-center justify-between border-b border-line pb-3 mb-3">
+                          <span class="font-mono text-xs font-bold text-red uppercase">
+                            [{item.refCode}] {item.role}
+                          </span>
+                          <span class="font-mono text-xs text-muted">
+                            {item.source.published} · {item.source.publisher}
+                          </span>
+                        </div>
+
+                        <h4 class="m-0 font-display text-lg sm:text-xl text-ink leading-snug">
+                          {item.source.title}
+                        </h4>
+
+                        <p class="mt-3 text-xs sm:text-sm text-ink/75 leading-relaxed">
+                          {item.takeaway}
+                        </p>
+
+                        <div class="mt-4 border-t border-line/60 pt-3">
+                          <p class="m-0 text-xs text-muted">
+                            <span class="font-bold text-ink">邊界限制：</span>
+                            {item.source.limits}
+                          </p>
+                        </div>
+
+                        <div class="mt-4 text-right">
+                          <a
+                            href={item.source.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            class="font-mono text-xs text-red underline underline-offset-4 hover:text-ink"
+                          >
+                            原始來源 ↗
+                          </a>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 參考文獻與史料依據 -->
+    <section class={`${shell} border-t border-ink py-16`} aria-label="參考文獻與歷史證物">
+      <div class="mb-8">
+        <p class="font-mono text-xs font-bold uppercase tracking-wider text-red mb-1">
+          史料依據 / EVIDENCE & SOURCES
+        </p>
+        <h2 class="m-0 font-display text-2xl sm:text-3xl text-ink">一手文獻清單，與技術宣稱邊界</h2>
+      </div>
+
+      <div class="space-y-4">
+        {gpt2Sources.map((s, idx) => (
+          <article class="border border-line bg-surface p-5 text-sm" id={`source-${s.id}`}>
+            <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-line pb-2 mb-3">
+              <span class="font-mono text-xs font-bold text-red">
+                [{idx + 1}] {s.id}
+              </span>
+              <span class="font-mono text-xs text-muted">
+                {s.publisher} · {s.published || 'n.d.'}
+              </span>
+            </div>
+            <h3 class="m-0 font-display text-base text-ink mb-2">
+              <a
+                href={s.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:text-red underline underline-offset-4"
+              >
+                {s.title}
+              </a>
+            </h3>
+            <ul class="list-disc pl-5 text-xs text-muted space-y-1 mb-3">
+              {s.supports.map((sup) => (
+                <li>{sup}</li>
+              ))}
+            </ul>
+            <p class="text-xs text-ink/70 italic border-l-2 border-line pl-3 m-0">
+              技術極限與邊界：{s.limits}
+            </p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- 作者群檔案 -->
+    <AuthorGrid authors={paper.authorBriefs} />
+
+    <!-- 篇章導航 -->
+    <PaperNavigation
+      currentId="language-models-are-unsupervised-multitask-learners"
+      prev={{
+        summary: '以克漏字雙向注意力橫掃 11 項 NLP 紀錄，確立閱讀理解巔峰。',
+      }}
+      next={{
+        summary: '揭示計算量、參數量與數據規模對模型性能的物理冪律支配規律。',
+      }}
+    />
+  </article>
+</BaseLayout>

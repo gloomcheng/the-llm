@@ -174,7 +174,7 @@ export const milestonePapers: MilestonePaper[] = [
     org: 'OpenAI',
     venue: 'OpenAI Paper',
     url: '/papers/language-models-are-unsupervised-multitask-learners',
-    status: 'outline',
+    status: 'published',
     track: 'language',
     theme: '零樣本學習',
     kicker: 'VOL. 04 / ZERO-SHOT TRANSFER',

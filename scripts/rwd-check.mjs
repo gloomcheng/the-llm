@@ -18,6 +18,14 @@ const pages = [
     path: 'src/pages/papers/improving-language-understanding-by-generative-pre-training.astro',
     required: ['grid-cols-1', 'md:grid-cols-', 'w-[calc(100%-2rem)]', 'max-w-[1120px]'],
   },
+  {
+    path: 'src/pages/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding.astro',
+    required: ['grid-cols-1', 'lg:grid-cols-', 'w-[calc(100%-2rem)]', 'max-w-[1120px]'],
+  },
+  {
+    path: 'src/pages/papers/language-models-are-unsupervised-multitask-learners.astro',
+    required: ['grid-cols-1', 'lg:grid-cols-', 'w-[calc(100%-2rem)]', 'max-w-[1120px]'],
+  },
 ];
 const failures = [];
 

@@ -6,6 +6,8 @@ const pages = [
   'dist/papers/attention-is-all-you-need/index.html',
   'dist/papers/a-mathematical-theory-of-communication/index.html',
   'dist/papers/improving-language-understanding-by-generative-pre-training/index.html',
+  'dist/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding/index.html',
+  'dist/papers/language-models-are-unsupervised-multitask-learners/index.html',
 ];
 /** @type {string[]} */
 const failures = [];
