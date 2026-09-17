@@ -187,7 +187,7 @@ const timelineEpochs: TimelineEpoch[] = [
       <div class="grid grid-cols-1 items-end gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-24">
         <div>
           <p class="mb-5 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            理論 / THEORY 02
+            VOL. 02 / GENERATIVE PRE-TRAINING
           </p>
           <h1 class="m-0 font-display text-4xl sm:text-5xl lg:text-6xl leading-tight tracking-[-0.04em] text-ink">
             <span class="block">Improving Language Understanding</span>
@@ -485,7 +485,7 @@ const timelineEpochs: TimelineEpoch[] = [
           >
             <span class="block">預測下一個字，不是文字接龍：</span>
             <span class="block">
-              <em>自回歸因果解碼，與世界的因果鏡像。</em>
+              <em>自回歸因果解碼，與世界的因果鏡像</em>
             </span>
           </h2>
         </div>
@@ -815,7 +815,7 @@ const timelineEpochs: TimelineEpoch[] = [
             <span class="block">統一序列化革命：</span>
             <span class="block">
               <em>
-                丟掉專用網路，用一張投影矩陣 W<sub>y</sub> 通吃所有任務。
+                丟掉專用網路，用一張投影矩陣 W<sub>y</sub> 通吃所有任務
               </em>
             </span>
           </h2>
@@ -836,14 +836,31 @@ const timelineEpochs: TimelineEpoch[] = [
 
             <p>
               在 GPT-1
-              出現以前，學界普遍認為「不同的語言任務本質不同」：情緒分析是單句分類、自然語言推論是雙句關係、相似度需要無方向性比對、問答則需要從長文中檢索候選答案。因此每一種任務，研究者都會煞費苦心地發明一套專用的神經網路（例如樹狀
-              LSTM、孿生網路 Siamese Network）。
+              出現以前，學界普遍深信「不同的語言任務，其大腦結構必須完全不同」：情緒分析是單句分類、自然語言推論是雙句邏輯、語意相似度是雙向比對、問答則是從長文中檢索候選答案。因此每換一個任務，研究者就必須耗費數月發明一套專用的神經網路：
+            </p>
+
+            <ul class="space-y-3 pl-5 list-disc list-outside text-muted">
+              <li>
+                <strong>樹狀 LSTM（Tree-LSTM）：</strong>
+                語言學家認為句子有文法樹結構（主詞、動詞短語層層嵌套），因此強迫神經網路不要從左往右排隊讀，而是沿著文法樹枝自底向上合併。但每句話的樹形結構各異，GPU
+                根本無法進行矩陣批次平行加速，運算緩慢至極。
+              </li>
+              <li>
+                <strong>孿生網路（Siamese Network，得名自連體嬰）：</strong>
+                為了比較兩句話的意思是否相同，打造兩套參數完全一樣的雙胞胎網路，左邊讀句子
+                A、右邊讀句子
+                B，最後才拿尺量度兩個向量的幾何距離。然而雙方在計算過程互不相通，完全無法捕捉精細的跨句逐詞對齊。
+              </li>
+            </ul>
+
+            <p>
+              這些五花八門的專用結構不僅維護極其繁瑣，更因為每種任務的網路形狀迥異，使得跨任務的預訓練知識遷移變得完全不可能。
             </p>
 
             <p>
               GPT-1 做出了極具歷史意義的簡化：
               <strong>
-                不要為任何任務修改模型結構。相反地，把所有任務格式化為一串單一的線性序列！
+                不要為任何任務修改模型結構！相反地，把所有任務格式化為一串單一的線性序列。
               </strong>
             </p>
 
@@ -1310,13 +1327,13 @@ const timelineEpochs: TimelineEpoch[] = [
           >
             <span class="block">從消融研究到零樣本湧現：</span>
             <span class="block">
-              <em>輔助損失的工程智慧，與 Scaling 的初露曙光。</em>
+              <em>輔助損失的工程智慧，與 Scaling 的初露曙光</em>
             </span>
           </h2>
         </div>
         <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
-          論文的 9 項 SOTA 刷新了當時的標竿，但第 5 節末尾的 Figure 5
-          卻揭示了更震撼的秘密：預訓練層數越深，零樣本推理能力自發湧現。
+          論文奪得 9 項 SOTA（State-of-the-Art，當前業界最佳紀錄），刷新了當時的標竿，但第 5
+          節末尾的 Figure 5 卻揭示了更震撼的秘密：預訓練層數越深，零樣本推理能力自發湧現。
         </p>
       </div>
 
@@ -1508,7 +1525,7 @@ const timelineEpochs: TimelineEpoch[] = [
           >
             <span class="block">單向與雙向的世紀交鋒：</span>
             <span class="block">
-              <em>BERT 兵臨城下，OpenAI 孤注一擲。</em>
+              <em>BERT 兵臨城下，OpenAI 孤注一擲</em>
             </span>
           </h2>
         </div>
@@ -1551,8 +1568,8 @@ const timelineEpochs: TimelineEpoch[] = [
                   <strong>訓練目標：</strong>克漏字挖空（Masked LM）與下一句預測（NSP）。
                 </li>
                 <li>
-                  <strong>優勢：</strong>單詞能同時看見前後文，在 SQuAD 問答、GLUE
-                  分類等判別式任務上以壓倒性分數超越 GPT-1。
+                  <strong>優勢：</strong>單詞能同時看見前後文，在 SQuAD（史丹佛閱讀理解問答）與 GLUE
+                  綜合語言理解基準等判別式任務上，以壓倒性分數超越 GPT-1。
                 </li>
                 <li>
                   <strong>致命限制：</strong>無法自然進行自由文本生成，難以適配開放對話與寫作。

@@ -194,6 +194,8 @@ Use an inexpensive model for the window audit when available. Its role is to ask
   Strictly prohibit pseudo-poetic fluff such as 「每個故事都有它的邊界」, 「先是算得慢，後來還得記住前文」, or 「三次修補，最後換了路」. Headings must have concrete technical substance and clear subjects, naming the specific architecture, the physical/engineering bottleneck, or the mechanism (e.g., 「循環神經網路的瓶頸：循序依賴拖慢運算，長程記憶容易遺忘」, 「一手文獻清單，與技術宣稱邊界」, 「四大關鍵機制拆解：QKV 檢索、縮放因子、多頭注意力與位置編碼」).
 - **Avoid juvenile simplifications:**
   Never talk down to graduate readers with toddler-like phrases (e.g., avoid 「Transformer 先分成兩邊，每一邊有自己的工作」; write instead 「編碼器與解碼器分工：Encoder 理解全文，Decoder 逐字生成」).
+- **Never end headings or display titles with a full stop / period (「。」):**
+  Headings (H1–H6) and editorial display titles are visually isolated, prominent typographical elements. Under Chinese typographical conventions and international editorial standards, headings must never end with a period (「。」). Punctuation such as colons (「：」) or commas (「，」) may be used internally to separate clauses, and question marks (「？」) or exclamation marks (「！」) may be used if rhetorical, but a terminal period (「。」) is strictly prohibited on all headings and subheadings. Body sentences must not be lazily copied into heading tags without removing trailing punctuation.
 
 ## Visual, layout, and mathematical notation invariant specification
 
@@ -214,9 +216,9 @@ Every chapter page header must implement the exact semantic structure below:
 
   <div class="grid grid-cols-1 items-end gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-24">
     <div>
-      <!-- 2. Mono Kicker: single-line mono uppercase text-red. NO border, NO background pill -->
+      <!-- 2. Mono Kicker: Scheme B canonical kicker directly from milestones.ts (VOL. XX / [LABEL] or PROLOGUE / ...) -->
       <p class="mb-5 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-        理論 / THEORY 02
+        VOL. 02 / GENERATIVE PRE-TRAINING
       </p>
 
       <!-- 3. Title (H1): Serif display, pure text-ink. NO red words or colored spans -->
@@ -261,6 +263,7 @@ Every chapter page header must implement the exact semantic structure below:
 
 #### Visual Invariant Prohibitions:
 
+- **Canonical Kicker Standard (Scheme B):** The Mono Kicker strictly uses the pre-registered `kicker` field from `src/content/papers/milestones.ts` (`VOL. 01 / THE ARCHITECTURE`, `VOL. 02 / GENERATIVE PRE-TRAINING`, `PROLOGUE / THE GENESIS OF INFORMATION`). Authors and agents must NEVER invent ad-hoc kicker labels (such as `理論 / THEORY 01`). Every paper has a pre-registered, immutable kicker in the registry.
 - **No pill badges in kickers:** Never wrap the kicker in `border border-red bg-red/10 px-3 py-1 rounded-full`. The kicker is always unadorned mono text in `text-red`.
 - **No multi-colored titles:** Never highlight individual words in H1 with `text-red` or background gradients. The entire title must be uniformly rendered in `text-ink`.
 - **No unconstrained lead paragraphs:** Never use fluid, unbounded widths or `max-w-2xl` for lead paragraphs. Always enforce `max-w-[52ch]` to preserve typographic rhythm.
@@ -313,6 +316,7 @@ Read the case, prose, diagrams, formulas, and cited evidence together. Prioritiz
 - Does each repeated explanation add a comparison, result, or consequence? Can production commentary and unsupported chronological language be removed without losing evidence?
 - Does the hero header strictly adhere to the Visual Invariant specification (clean mono red kicker without badge pill wrappers, pure `text-ink` serif display title without colored words, `max-w-[52ch]` lead paragraph, standard breadcrumb)?
 - Does the chapter follow its assigned Archetype blueprint (A: 3-Act, B: 5-Movement, C: 4-Movement, D: 4-Movement) without exposing internal prompt scaffolding tags (`WHY`, `HOW`, `WHAT`, `第一部分`) or numbered circle badges?
+- Are all headings and display titles free of trailing full stops / periods (「。」)?
 - Are all mathematical formulas rendered using native W3C MathML Core with accessible `aria-label` attributes and escaped curly braces (`&#123;` / `&#125;`), and accompanied by explicit tensor/variable definitions?
 - Report remaining failures as location → missing knowledge or contradiction → reader consequence → concrete repair. Distinguish confirmed source contradictions from claims still needing verification. A passing formatter or typecheck is not editorial approval.
 
