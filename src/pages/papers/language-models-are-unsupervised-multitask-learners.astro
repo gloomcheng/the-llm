@@ -266,7 +266,7 @@ const timelineEpochs: TimelineEpoch[] = [
                 招聘進來的大腦一片空靈，每分派一項新工作（例如審查醫療合約），主管必須耗費數週準備
                 5,000 份標準答案，進行「職前魔鬼集訓」。
               </p>
-              <p class="text-xs text-muted m-0 leading-relaxed">
+              <p class="text-sm text-muted m-0 leading-relaxed">
                 集訓完畢後，他成了合約審查大師；但當你轉頭吩咐他：「幫我把這段法文翻譯成英文」，他立刻陷入癱瘓。若強行集訓翻譯，他原本學會的合約知識又會發生
                 <strong>災難性遺忘（Catastrophic Forgetting）</strong>。
               </p>
@@ -279,7 +279,7 @@ const timelineEpochs: TimelineEpoch[] = [
               <p class="font-serif text-base text-ink mb-2">
                 招聘一位閱遍全人類圖書館的博學秘書。你完全不需要為他舉辦集訓，也不需要給他任何標註教材。
               </p>
-              <p class="text-xs text-muted m-0 leading-relaxed">
+              <p class="text-sm text-muted m-0 leading-relaxed">
                 工作時，你只需要用自然語言交代一句話：
                 <code>「請閱讀以下對話，並回答顧客的問題：」</code>或
                 <code>「請用一句話總結這份會議紀錄：」</code>，他就能立即調動常識執行任務。
@@ -326,14 +326,14 @@ const timelineEpochs: TimelineEpoch[] = [
 
         <aside slot="rail" class="space-y-6">
           <AsideCard kicker="歷史代價 / BOTTLENECK" title="有監督標註的物理極限" variant="surface">
-            <p class="text-xs leading-relaxed text-muted m-0">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
               標註數據集（如 SQuAD、MNLI）往往充斥著人為的「標註偏置（Annotation
               Artifacts）」。模型微調時常常只是學會了走捷徑（例如看見某些特定字詞就猜否定），而非真正理解語言邏輯。
             </p>
           </AsideCard>
 
           <AsideCard kicker="概念對比 / TAXONOMY" title="三種學習典範的演進" variant="paper">
-            <div class="space-y-2 text-xs text-muted">
+            <div class="space-y-2 text-sm text-muted">
               <div>
                 <strong class="text-ink block">傳統 NLP（Pre-2018）</strong>
                 <span>專用模型架構 + 100% 依賴任務標註數據。</span>
@@ -515,7 +515,7 @@ const timelineEpochs: TimelineEpoch[] = [
                 </tr>
               </tbody>
             </table>
-            <p class="mt-4 mb-0 text-xs text-muted leading-relaxed">
+            <p class="mt-4 mb-0 text-sm text-muted leading-relaxed">
               上下文滑動視窗由 GPT-1 的 512 個詞倍增至 <strong>1024</strong> 個 Token，批次大小增至
               512。
             </p>
@@ -600,7 +600,7 @@ const timelineEpochs: TimelineEpoch[] = [
             title="梯度高速公路的變遷"
             variant="surface"
           >
-            <p class="text-xs leading-relaxed text-muted m-0">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
               從 GPT-1 的 Post-LN 轉向 GPT-2 的
               Pre-LN，是深度學習歷史上最關鍵的穩定性改良之一。如果沒有 Pre-LN，後來超過 100 層的
               GPT-3（96 層）與現代大模型將在反向傳播的最初幾個 Step 便陷入數值溢出。
@@ -608,7 +608,7 @@ const timelineEpochs: TimelineEpoch[] = [
           </AsideCard>
 
           <AsideCard kicker="分詞革命 / TOKENIZER" title="字節級 BPE 的威能" variant="paper">
-            <p class="text-xs leading-relaxed text-muted m-0">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
               以 256
               個字節作為基底，保證了對所有文字的「通用覆蓋率」。即使遇到一個從未見過的罕見字詞，模型最差也能將其拆解為若干字節組合，絕不會吐出讓系統崩潰的未知符號。
             </p>
@@ -672,7 +672,7 @@ const timelineEpochs: TimelineEpoch[] = [
               </p>
             </div>
 
-            <p class="text-xs text-muted mt-4 mb-0 leading-relaxed">
+            <p class="text-sm text-muted mt-4 mb-0 leading-relaxed">
               結果震驚學界：
               <strong>在完全沒見過任何訓練樣本的前提下，GPT-2 拿下了 55.0 F1 分數！</strong>
               這個分數直接匹敵甚至擊敗了三套當時依賴數萬筆資料微調訓練出來的專用基線模型！
@@ -759,7 +759,7 @@ const timelineEpochs: TimelineEpoch[] = [
             title="容量決定一切：對數線性飛躍"
             variant="surface"
           >
-            <p class="text-xs leading-relaxed text-muted m-0">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
               論文 Figure 4 展示了一張至關重要的折線圖：在所有任務上，當參數量從 117M、345M、762M
               一路擴展到 1542M 時，任務誤差呈現不可阻擋的<strong>對數線性（Log-linear）</strong>
               平滑下降。這宣告了一個全新真理：<strong>規模本身就是一種質變。</strong>
@@ -767,7 +767,7 @@ const timelineEpochs: TimelineEpoch[] = [
           </AsideCard>
 
           <AsideCard kicker="經典成就 / BENCHMARK" title="Winograd 語意消歧突破" variant="paper">
-            <p class="text-xs leading-relaxed text-muted m-0">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
               在測試代名詞指代常識的 Winograd Schema 挑戰中，GPT-2 零樣本準確率從 GPT-1 的 63.7%
               暴拉至 <strong>70.35%</strong>
               ，證明模型對「常識物理與社會因果」的理解隨著參數急遽深化。
@@ -870,22 +870,22 @@ const timelineEpochs: TimelineEpoch[] = [
             <div class="border border-line p-3 bg-surface">
               <span class="text-muted block mb-1">2019 年 2 月</span>
               <span class="text-base font-bold text-ink block">124M 模型</span>
-              <span class="text-muted text-[11px]">最小版本先行開源供研究</span>
+              <span class="text-muted text-xs">最小版本先行開源供研究</span>
             </div>
             <div class="border border-line p-3 bg-surface">
               <span class="text-muted block mb-1">2019 年 5 月</span>
               <span class="text-base font-bold text-ink block">355M 模型</span>
-              <span class="text-muted text-[11px]">釋出中型版本評估風險</span>
+              <span class="text-muted text-xs">釋出中型版本評估風險</span>
             </div>
             <div class="border border-line p-3 bg-surface">
               <span class="text-muted block mb-1">2019 年 8 月</span>
               <span class="text-base font-bold text-ink block">774M 模型</span>
-              <span class="text-muted text-[11px]">確認社群濫用跡象輕微</span>
+              <span class="text-muted text-xs">確認社群濫用跡象輕微</span>
             </div>
             <div class="border border-2 border-red p-3 bg-red/5">
               <span class="text-red font-bold block mb-1">2019 年 11 月</span>
               <span class="text-base font-bold text-red block">1.5B 完整版</span>
-              <span class="text-muted text-[11px]">完成外部夥伴安全審查後全面公開</span>
+              <span class="text-muted text-xs">完成外部夥伴安全審查後全面公開</span>
             </div>
           </div>
 
@@ -934,14 +934,14 @@ const timelineEpochs: TimelineEpoch[] = [
 
         <aside slot="rail" class="space-y-6">
           <AsideCard kicker="安全先驅 / AI GOVERNANCE" title="紅隊防禦的開端" variant="surface">
-            <p class="text-xs leading-relaxed text-muted m-0">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
               OpenAI 與數十所大學合作，研發用於檢測 GPT-2
               生成文字的自動檢測器（Detector），並首創了模型釋放前的風險評估框架，成為現代大模型發布治理的標準範本。
             </p>
           </AsideCard>
 
           <AsideCard kicker="承先啟後 / BRIDGE" title="通往第五章物理定律" variant="paper">
-            <p class="text-xs leading-relaxed text-muted m-0">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
               GPT-2 讓人們看到了「規模化」的魔法；而下一章〈Scaling
               Laws〉則要撕開魔法的面紗，用精確的數學冪律告訴大家：需要多少算力、多少資料、多大模型，才能訓練出超越人類的下一個神經網絡。
             </p>
@@ -1048,12 +1048,12 @@ const timelineEpochs: TimelineEpoch[] = [
                           {item.source.title}
                         </h4>
 
-                        <p class="mt-3 text-xs sm:text-sm text-ink/75 leading-relaxed">
+                        <p class="mt-3 text-sm sm:text-base text-ink/75 leading-relaxed">
                           {item.takeaway}
                         </p>
 
                         <div class="mt-4 border-t border-line/60 pt-3">
-                          <p class="m-0 text-xs text-muted">
+                          <p class="m-0 text-sm text-muted">
                             <span class="font-bold text-ink">邊界限制：</span>
                             {item.source.limits}
                           </p>
@@ -1115,7 +1115,7 @@ const timelineEpochs: TimelineEpoch[] = [
                 <li>{sup}</li>
               ))}
             </ul>
-            <p class="text-xs text-ink/70 italic border-l-2 border-line pl-3 m-0">
+            <p class="text-sm text-ink/70 italic border-l-2 border-line pl-3 m-0">
               技術極限與邊界：{s.limits}
             </p>
           </article>

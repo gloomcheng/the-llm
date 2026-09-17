@@ -430,7 +430,7 @@ const timelineEpochs: TimelineEpoch[] = [
           </AsideCard>
 
           <AsideCard kicker="數據檔案 / CORPUS" title="BooksCorpus 語料庫" variant="paper">
-            <ul class="m-0 space-y-2 text-xs leading-relaxed text-muted list-disc list-outside pl-4">
+            <ul class="m-0 space-y-2 text-sm leading-relaxed text-muted list-disc list-outside pl-4">
               <li>
                 <strong>規模：</strong>7,000+ 冊未出版小說，約 8 億單詞（5 GB 未標註文本）。
               </li>
@@ -445,7 +445,7 @@ const timelineEpochs: TimelineEpoch[] = [
           </AsideCard>
 
           <AsideCard kicker="演進對照 / LINEAGE" title="詞向量三代跨越" variant="paper">
-            <dl class="m-0 grid gap-3 text-xs leading-relaxed">
+            <dl class="m-0 grid gap-3 text-sm leading-relaxed">
               <div>
                 <dt class="font-mono font-bold text-red">Word2Vec (2013)</dt>
                 <dd class="m-0 text-muted">靜態詞向量，一詞多義在固定幾何座標中坍塌。</dd>
@@ -566,7 +566,7 @@ const timelineEpochs: TimelineEpoch[] = [
                   <mo stretchy="false">)</mo>
                 </mrow>
               </math>
-              <p class="mt-3 mb-0 text-xs leading-relaxed text-muted font-sans">
+              <p class="mt-3 mb-0 text-sm leading-relaxed text-muted font-sans">
                 其中 <math class="font-serif"><mi>k</mi><mo>=</mo><mn>512</mn></math>{' '}
                 為滑動上下文視窗大小，
                 <math class="font-serif"><mi mathvariant="normal">Θ</mi></math>{' '}
@@ -707,7 +707,7 @@ const timelineEpochs: TimelineEpoch[] = [
                   </mrow>
                 </math>
               </div>
-              <p class="mt-2 text-xs leading-relaxed text-muted">
+              <p class="mt-2 text-sm leading-relaxed text-muted">
                 僅依賴先前出現的詞預測下一個詞，形成無標註文本的自監督訓練閉環。
               </p>
             </AsideCard>
@@ -717,7 +717,7 @@ const timelineEpochs: TimelineEpoch[] = [
               title="為何必須遮蔽未來？"
               variant="paper"
             >
-              <p class="m-0 text-xs leading-relaxed text-muted">
+              <p class="m-0 text-sm leading-relaxed text-muted">
                 若無因果遮罩，多層注意力會在較深層直接複製真實目標詞（Identity
                 Lookup），損失函數歸零但學不到因果語意。
               </p>
@@ -829,7 +829,7 @@ const timelineEpochs: TimelineEpoch[] = [
                   根據「科技」預測下一個詞
                 </div>
               </div>
-              <p class="text-xs text-muted leading-relaxed" id="causal-explanation">
+              <p class="text-sm text-muted leading-relaxed" id="causal-explanation">
                 當模型處理「科技」時，只能看見自己。未來的所有 Token
                 被遮罩隔離，強迫模型調用深層參數來推敲後續可能出現的字詞機率分佈。
               </p>
@@ -919,7 +919,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
           <aside slot="rail" class="space-y-6">
             <AsideCard kicker="特殊符號 / DELIMITERS" title="序列分隔標記" variant="surface">
-              <ul class="m-0 space-y-2 text-xs leading-relaxed text-muted list-disc list-outside pl-4">
+              <ul class="m-0 space-y-2 text-sm leading-relaxed text-muted list-disc list-outside pl-4">
                 <li>
                   <code>[Start]</code>：標記序列開端，觸發解碼起始狀態。
                 </li>
@@ -933,7 +933,7 @@ const timelineEpochs: TimelineEpoch[] = [
             </AsideCard>
 
             <AsideCard kicker="架構革命 / PARADIGM" title="打破專用網路" variant="paper">
-              <p class="m-0 text-xs leading-relaxed text-muted">
+              <p class="m-0 text-sm leading-relaxed text-muted">
                 從此無需為不同任務設計專用拓撲，所有 NLP 任務皆化為字串遍歷（Traversal-style
                 serialization）。
               </p>
@@ -1128,7 +1128,7 @@ const timelineEpochs: TimelineEpoch[] = [
                     符號解碼：
                     <math class="font-serif"><msubsup><mi>h</mi><mi>l</mi><mi>m</mi></msubsup></math>
                   </strong>
-                  <p class="text-muted m-0 text-xs leading-relaxed">
+                  <p class="text-muted m-0 text-sm leading-relaxed">
                     <math class="font-serif"><mi>l</mi><mo>=</mo><mn>12</mn></math>{' '}
                     為最後一層解碼器，<math class="font-serif"><mi>m</mi></math> 為序列尾端的{' '}
                     <code class="font-mono">[Extract]</code> 標記位置。
@@ -1140,7 +1140,7 @@ const timelineEpochs: TimelineEpoch[] = [
                   <strong class="text-xs uppercase tracking-wider text-red block mb-1">
                     符號解碼：<math class="font-serif"><msub><mi>W</mi><mi>y</mi></msub></math>
                   </strong>
-                  <p class="text-muted m-0 text-xs leading-relaxed">
+                  <p class="text-muted m-0 text-sm leading-relaxed">
                     微調階段新增的線性分類輸出矩陣（Linear Output Layer parameters），維度為{' '}
                     <math class="font-serif"><msub><mi>W</mi><mi>y</mi></msub><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mn>768</mn><mo>×</mo><mo stretchy="false">|</mo><mi>y</mi><mo stretchy="false">|</mo></mrow></msup></math>
                     。
@@ -1184,7 +1184,7 @@ const timelineEpochs: TimelineEpoch[] = [
                   </mrow>
                 </math>
               </div>
-              <p class="mt-2 text-xs leading-relaxed text-muted">
+              <p class="mt-2 text-sm leading-relaxed text-muted">
                 全模型 1.17 億參數直接繼承預訓練權重；微調時僅額外引入分類頭矩陣{' '}
                 <math class="font-serif"><msub><mi>W</mi><mi>y</mi></msub></math>{' '} 與特殊符號（
                 <code>[Start]</code>、<code>[Delim]</code>、<code>[Extract]</code>
@@ -1218,7 +1218,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
           <aside slot="rail" class="space-y-6">
             <AsideCard kicker="推論維度 / NLI LOGIC" title="語意關係三態" variant="paper">
-              <ul class="m-0 space-y-2 text-xs leading-relaxed text-muted list-disc list-outside pl-4">
+              <ul class="m-0 space-y-2 text-sm leading-relaxed text-muted list-disc list-outside pl-4">
                 <li>
                   <strong>蘊含 (Entailment)：</strong>前提為真，假設必然為真。
                 </li>
@@ -1357,7 +1357,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
             <div class="border-l-2 border-line pl-4 space-y-2">
               <div class="font-mono text-xs text-muted uppercase">內部因果機制解析</div>
-              <p class="text-xs sm:text-sm text-ink leading-relaxed" id="perturb-analysis-text">
+              <p class="text-sm sm:text-base text-ink leading-relaxed" id="perturb-analysis-text">
                 「東部各縣市」與「花蓮、台東」在地理常識空間中具備高度蘊含關係，而「停止上班上課」直接對應「無需到班出勤」。在跨過
                 [Delim] 的多頭自注意力交互中，Extract Token
                 聚合了兩句的同義語意，輸出極高的蘊含信賴度。
@@ -1443,7 +1443,7 @@ const timelineEpochs: TimelineEpoch[] = [
                   <mo stretchy="false">(</mo><mi mathvariant="script">C</mi><mo stretchy="false">)</mo>
                 </mrow>
               </math>
-              <p class="mt-3 mb-0 text-xs leading-relaxed text-muted font-sans">
+              <p class="mt-3 mb-0 text-sm leading-relaxed text-muted font-sans">
                 其中{' '}
                 <math class="font-serif"><msub><mi>L</mi><mn>2</mn></msub><mo stretchy="false">(</mo><mi mathvariant="script">C</mi><mo stretchy="false">)</mo></math>
                 {' '} 為分類對數似然，
@@ -1482,7 +1482,7 @@ const timelineEpochs: TimelineEpoch[] = [
           <aside slot="rail" class="space-y-6">
             <AsideCard kicker="雙重目標 / OBJECTIVES" title="輔助損失公式" variant="surface">
               <div class="my-2">
-                <math display="block" class="text-xs text-ink font-serif">
+                <math display="block" class="text-sm sm:text-base text-ink font-serif">
                   <mrow>
                     <msub><mi>L</mi><mn>3</mn></msub>
                     <mo>=</mo>
@@ -1494,13 +1494,13 @@ const timelineEpochs: TimelineEpoch[] = [
                   </mrow>
                 </math>
               </div>
-              <p class="mt-2 text-xs leading-relaxed text-muted">
+              <p class="mt-2 text-sm leading-relaxed text-muted">
                 微調目標 L₂ 負責分類標籤，輔助目標 L₁ 保留語言模型能力，防止災難性遺忘。
               </p>
             </AsideCard>
 
             <AsideCard kicker="歷史前瞻 / EMERGENCE" title="零樣本湧現" variant="paper">
-              <p class="m-0 text-xs leading-relaxed text-muted">
+              <p class="m-0 text-sm leading-relaxed text-muted">
                 隨預訓練深度增加，模型自發在內部建立啟發式對映，證明 Scaling 是通向 AGI 的必然之路。
               </p>
             </AsideCard>
@@ -1522,7 +1522,7 @@ const timelineEpochs: TimelineEpoch[] = [
                 CoLA 語言學可接受度
               </span>
               <div class="font-display text-3xl font-bold text-red mt-2 mb-1">穩定上升</div>
-              <p class="text-xs text-muted mb-0">
+              <p class="text-sm text-muted mb-0 leading-relaxed">
                 以生成下一個詞的困惑度直接衡量句子語法是否合規，零樣本分數與訓練次數呈正相關。
               </p>
             </div>
@@ -1532,7 +1532,7 @@ const timelineEpochs: TimelineEpoch[] = [
                 LAMBADA 廣義長程預測
               </span>
               <div class="font-display text-3xl font-bold text-ink mt-2 mb-1">穩定上升</div>
-              <p class="text-xs text-muted mb-0">
+              <p class="text-sm text-muted mb-0 leading-relaxed">
                 以生成下一個詞的困惑度直接衡量句子語法是否合規，零樣本分數與訓練次數呈正相關。
               </p>
             </div>
@@ -1540,7 +1540,7 @@ const timelineEpochs: TimelineEpoch[] = [
             <div class="p-4 bg-paper-deep border border-line">
               <span class="font-mono text-xs font-bold text-red uppercase">SST-2 情緒二元分類</span>
               <div class="font-display text-3xl font-bold text-red mt-2 mb-1">自發對齊</div>
-              <p class="text-xs text-muted mb-0">
+              <p class="text-sm text-muted mb-0 leading-relaxed">
                 在句子後方接上「very」，直接比較預測「good」與「bad」的機率，不經微調即超越隨機猜測。
               </p>
             </div>
@@ -1548,7 +1548,7 @@ const timelineEpochs: TimelineEpoch[] = [
             <div class="p-4 bg-paper-deep border border-line">
               <span class="font-mono text-xs font-bold text-blue uppercase">RACE 閱讀理解問答</span>
               <div class="font-display text-3xl font-bold text-blue mt-2 mb-1">+45% 躍升</div>
-              <p class="text-xs text-muted mb-0">
+              <p class="text-sm text-muted mb-0 leading-relaxed">
                 比較文章拼接不同選項時的平均交叉熵損失，選擇最低者，準確率隨預訓練進程直線攀升。
               </p>
             </div>
@@ -1724,7 +1724,7 @@ const timelineEpochs: TimelineEpoch[] = [
             title="雙向理解 vs 生成長路"
             variant="surface"
           >
-            <dl class="m-0 grid gap-3 text-xs leading-relaxed">
+            <dl class="m-0 grid gap-3 text-sm leading-relaxed">
               <div>
                 <dt class="font-mono font-bold text-blue">BERT (Encoder)</dt>
                 <dd class="m-0 text-muted">全雙向克漏字，擅長判別與短文本理解，但無法自然生成。</dd>
@@ -1739,7 +1739,7 @@ const timelineEpochs: TimelineEpoch[] = [
           </AsideCard>
 
           <AsideCard kicker="工程檔案 / SPECIFICATIONS" title="GPT-1 訓練檔案" variant="paper">
-            <ul class="m-0 space-y-2 text-xs leading-relaxed text-muted list-disc list-outside pl-4">
+            <ul class="m-0 space-y-2 text-sm leading-relaxed text-muted list-disc list-outside pl-4">
               <li>
                 <strong>參數量：</strong>117M (1.17 億)
               </li>
@@ -1945,12 +1945,10 @@ const timelineEpochs: TimelineEpoch[] = [
                             {item.source.title}
                           </h4>
 
-                          <p class="mt-2 text-xs sm:text-sm text-ink/75 leading-relaxed">
-                            {item.takeaway}
-                          </p>
+                          <p class="mt-2 text-sm text-ink/75 leading-relaxed">{item.takeaway}</p>
 
                           <div class="mt-4 border-t border-line/60 pt-3">
-                            <p class="m-0 text-xs text-muted">
+                            <p class="m-0 text-sm text-muted">
                               <span class="font-bold text-ink">邊界限制：</span>
                               {item.source.limits}
                             </p>

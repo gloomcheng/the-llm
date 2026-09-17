@@ -260,7 +260,7 @@ const timelineEpochs: TimelineEpoch[] = [
             title="工程常識的崩潰：為什麼傳統機器學習的直覺全部失效？"
             variant="surface"
           >
-            <p class="text-xs leading-relaxed text-muted m-0">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
               在傳統統計學中，VC 維度理論與偏差-方差權衡（Bias-Variance
               Tradeoff）告訴我們模型參數量必須嚴格受限於樣本容量。但在自回歸 Transformer
               的世界裡，研究人員驚訝地發現模型哪怕參數量擴大十倍，只要訓練數據同步微調，測試集上的交叉熵損失（Cross-Entropy
@@ -642,7 +642,7 @@ const timelineEpochs: TimelineEpoch[] = [
               </text>
             </svg>
 
-            <p class="mt-3 text-xs text-muted leading-relaxed m-0">
+            <p class="mt-3 text-sm sm:text-base text-muted leading-relaxed m-0">
               實驗證實：無論網路是堆疊 2 層還是 48 層、採用 4 個頭還是 32 個頭，只要總參數量
               <math class="font-serif"><mi>N</mi></math>
               相同，模型收斂的測試損失完全重合於同一條物理冪律直線上。
@@ -712,7 +712,7 @@ const timelineEpochs: TimelineEpoch[] = [
               </mrow>
             </math>
 
-            <p class="text-xs text-muted leading-relaxed m-0 mt-3">
+            <p class="text-sm sm:text-base text-muted leading-relaxed m-0 mt-3">
               其中
               <math class="font-serif"><msub><mi>L</mi><mi>∞</mi></msub><mo>≈</mo><mn>1.69</mn></math>
               nats/token（約合每 token 2.44 bits）。這代表無論未來的 GPT 演進到 GPT-10 還是
@@ -747,7 +747,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
         <aside slot="rail" class="space-y-6">
           <AsideCard kicker="物理本質 / NATURE OF SCALE" title="為什麼是冪律？" variant="surface">
-            <p class="text-xs leading-relaxed text-muted m-0">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
               在統計物理中，冪律通常象徵著「無特徵尺度（Scale-Free）」與「臨界現象（Critical
               Phenomena）」。這說明語言模型在汲取人類語料時，並沒有某個「只有 10
               億參數才能學會」的特定斷崖，知識在所有尺度下以平滑自相似的方式被持續壓縮。
@@ -846,7 +846,7 @@ const timelineEpochs: TimelineEpoch[] = [
               </mrow>
             </math>
 
-            <p class="text-xs text-muted leading-relaxed m-0 mt-3">
+            <p class="text-sm sm:text-base text-muted leading-relaxed m-0 mt-3">
               這個分配關係式宣告了一種極端偏向模型的擴展哲學：
               <strong>
                 當總算力預算擴大 10 倍時，最優策略是將模型參數量擴大 5.4 倍（
@@ -929,7 +929,7 @@ const timelineEpochs: TimelineEpoch[] = [
             variant="editorial"
             title="歷史大伏筆：Kaplan 處方的盲點與 2022 年 Chinchilla 修正案"
           >
-            <p class="text-xs leading-relaxed text-ink/80 m-0">
+            <p class="text-sm sm:text-base leading-relaxed text-ink/80 m-0">
               兩年後的 2022 年，DeepMind 的 Jordan Hoffmann 等人在第七章《Chinchilla》論文中發現了
               Kaplan 實驗的一個關鍵致命瑕疵：Kaplan 在 2020
               年的實驗中，對所有不同尺寸的模型統一使用了固定的「10
@@ -1028,7 +1028,7 @@ const timelineEpochs: TimelineEpoch[] = [
             title="歷史實證：GPT-3 完訓後的驚人驗證"
             variant="surface"
           >
-            <p class="text-xs leading-relaxed text-muted m-0">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
               四個月後的 2020 年 5 月，當 1750 億參數的 GPT-3
               耗時數月終於完成訓練時，研究團隊測量其在測試集上的收斂損失——
               <strong>
@@ -1140,12 +1140,12 @@ const timelineEpochs: TimelineEpoch[] = [
                           {item.source.title}
                         </h4>
 
-                        <p class="mt-3 text-xs sm:text-sm text-ink/75 leading-relaxed">
+                        <p class="mt-3 text-sm sm:text-base text-ink/75 leading-relaxed">
                           {item.takeaway}
                         </p>
 
                         <div class="mt-4 border-t border-line/60 pt-3">
-                          <p class="m-0 text-xs text-muted">
+                          <p class="m-0 text-sm text-muted">
                             <span class="font-bold text-ink">邊界限制：</span>
                             {item.source.limits}
                           </p>
@@ -1205,7 +1205,7 @@ const timelineEpochs: TimelineEpoch[] = [
                 <li>{sup}</li>
               ))}
             </ul>
-            <p class="text-xs text-ink/70 italic border-l-2 border-line pl-3 m-0">
+            <p class="text-sm text-ink/70 italic border-l-2 border-line pl-3 m-0">
               技術極限與邊界：{s.limits}
             </p>
           </article>

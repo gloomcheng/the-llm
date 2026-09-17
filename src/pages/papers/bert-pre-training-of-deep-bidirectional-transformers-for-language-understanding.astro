@@ -272,7 +272,7 @@ const timelineEpochs: TimelineEpoch[] = [
                 "He walked along the <strong class="text-red font-bold">bank</strong> of the river
                 to fish."
               </p>
-              <p class="text-xs text-muted m-0 leading-relaxed">
+              <p class="text-sm text-muted m-0 leading-relaxed">
                 決定 <code>bank</code> 意指「河岸」的最關鍵線索，是後面的 <code>river</code>
                 （河流）與 <code>fish</code>（釣魚）。
               </p>
@@ -286,7 +286,7 @@ const timelineEpochs: TimelineEpoch[] = [
                 "He walked into the <strong class="text-red font-bold">bank</strong> to deposit his
                 money."
               </p>
-              <p class="text-xs text-muted m-0 leading-relaxed">
+              <p class="text-sm text-muted m-0 leading-relaxed">
                 決定 <code>bank</code> 意指「銀行」的最關鍵線索，是後面的 <code>deposit</code>
                 （存款）與 <code>money</code>（金錢）。
               </p>
@@ -353,7 +353,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
         <aside slot="rail" class="space-y-6">
           <AsideCard kicker="對比實驗 / ABLATION" title="視野對決：單向 vs 雙向" variant="surface">
-            <p class="text-xs leading-relaxed text-muted m-0">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
               BERT 論文在第 5.1 節做了殘酷的對照實驗：在完全相同架構與訓練量下，強制改用單向
               Left-to-Right 訓練的 BERT，在 SQuAD 問答測驗上的分數暴跌了 10
               分以上！這直接證明：單向視角是閱讀理解的天然枷鎖。
@@ -361,7 +361,7 @@ const timelineEpochs: TimelineEpoch[] = [
           </AsideCard>
 
           <AsideCard kicker="歷史線索 / ELMO" title="ELMo 的偽雙向遺憾" variant="paper">
-            <p class="text-xs leading-relaxed text-muted m-0">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
               在 BERT 之前，ELMo（2018 初）嘗試用「一個從左到右的 LSTM」加上「一個從右到左的
               LSTM」拼湊出雙向。但兩者是獨立運算、在最後才強行拼接向量，中間每一層完全沒有進行深度的跨方向注意力交互，被稱為「淺層雙向（Shallow
               Bidirectionality）」。
@@ -494,7 +494,7 @@ const timelineEpochs: TimelineEpoch[] = [
                 80% 的比例
               </span>
               <h4 class="m-0 font-display text-base text-ink mb-2">替換為 [MASK]</h4>
-              <p class="text-xs text-muted m-0 leading-relaxed">
+              <p class="text-sm text-muted m-0 leading-relaxed">
                 例如：<code>"my dog is hairy"</code> → <code>"my dog is [MASK]"</code>
                 。強迫模型從前後文提取特徵以填補空缺。
               </p>
@@ -505,7 +505,7 @@ const timelineEpochs: TimelineEpoch[] = [
                 10% 的比例
               </span>
               <h4 class="m-0 font-display text-base text-ink mb-2">替換為隨機雜訊詞</h4>
-              <p class="text-xs text-muted m-0 leading-relaxed">
+              <p class="text-sm text-muted m-0 leading-relaxed">
                 例如：<code>"my dog is hairy"</code> → <code>"my dog is apple"</code>
                 。強迫模型隨時保持懷疑，具備糾正輸入錯誤語意之能力。
               </p>
@@ -516,7 +516,7 @@ const timelineEpochs: TimelineEpoch[] = [
                 10% 的比例
               </span>
               <h4 class="m-0 font-display text-base text-ink mb-2">保持原詞不變</h4>
-              <p class="text-xs text-muted m-0 leading-relaxed">
+              <p class="text-sm text-muted m-0 leading-relaxed">
                 例如：<code>"my dog is hairy"</code> → <code>"my dog is hairy"</code>
                 。強迫模型對完全沒有被遮蔽的真實詞彙，依然認真計算上下文表徵。
               </p>
@@ -562,7 +562,7 @@ const timelineEpochs: TimelineEpoch[] = [
               <strong class="text-ink font-mono text-sm block">
                 [CLS] · 分類錨點 (Classification Token)
               </strong>
-              <p class="text-xs text-muted m-0 leading-relaxed">
+              <p class="text-sm text-muted m-0 leading-relaxed">
                 永遠放置在整個輸入序列的最前端（第 0 個位置）。
                 <br />
                 <span class="text-ink font-medium">
@@ -578,7 +578,7 @@ const timelineEpochs: TimelineEpoch[] = [
               <strong class="text-ink font-mono text-sm block">
                 [SEP] · 句子邊界隔板 (Separator Token)
               </strong>
-              <p class="text-xs text-muted m-0 leading-relaxed">
+              <p class="text-sm text-muted m-0 leading-relaxed">
                 插在句子 A 與句子 B 之間，以及整個輸入序列的結尾，作為劃分不同語意區塊的明確邊界。
               </p>
             </div>
@@ -619,7 +619,7 @@ const timelineEpochs: TimelineEpoch[] = [
               </div>
             </div>
 
-            <p class="text-xs text-muted mt-4 mb-0 leading-relaxed">
+            <p class="text-sm text-muted mt-4 mb-0 leading-relaxed">
               三合一疊加確保了 Transformer
               的矩陣同時知曉「這個詞是什麼」、「屬於第一句還是第二句」、以及「在全句的絕對排位是多少」。
             </p>
@@ -628,7 +628,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
         <aside slot="rail" class="space-y-6">
           <AsideCard kicker="模型規格 / SCALE" title="BERT 雙雄參數對照" variant="surface">
-            <div class="space-y-3 text-xs text-muted">
+            <div class="space-y-3 text-sm text-muted">
               <div class="border-b border-line pb-2">
                 <strong class="text-ink block">BERT_BASE (對齊 GPT-1)</strong>
                 <span>12 層 · 768 隱藏維度 · 12 頭 · 1.1 億參數 (110M)</span>
@@ -638,14 +638,14 @@ const timelineEpochs: TimelineEpoch[] = [
                 <span>24 層 · 1024 隱藏維度 · 16 頭 · 3.4 億參數 (340M)</span>
               </div>
             </div>
-            <p class="mt-3 mb-0 text-[11px] leading-relaxed text-muted">
+            <p class="mt-3 mb-0 text-sm leading-relaxed text-muted">
               BERT-Base 刻意將參數設定得與 GPT-1
               完全一致（12層/768維），以最無可辯駁的科學控制變數，直接證明「雙向克漏字」在理解架構上的純粹勝出。
             </p>
           </AsideCard>
 
           <AsideCard kicker="語料檔案 / CORPUS" title="33 億詞的巨型知識庫" variant="paper">
-            <p class="text-xs leading-relaxed text-muted m-0">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
               GPT-1 當初只訓練在 BooksCorpus（8 億詞小說）；而 BERT 除了 BooksCorpus
               外，額外加入了整整 25 億詞的英文維基百科（English
               Wikipedia，僅抽取純文字段落），總語料庫達到 33 億詞，為模型注入了龐大的百科常識體系。
@@ -779,20 +779,20 @@ const timelineEpochs: TimelineEpoch[] = [
               <div class="border border-line p-3 bg-paper-deep">
                 <span class="text-muted block mb-1">GLUE 綜合總分</span>
                 <span class="text-xl font-bold text-red block">80.5</span>
-                <span class="text-muted text-[11px]">GPT-1: 72.8 (+7.7 巨大跨越)</span>
+                <span class="text-muted text-xs">GPT-1: 72.8 (+7.7 巨大跨越)</span>
               </div>
               <div class="border border-line p-3 bg-paper-deep">
                 <span class="text-muted block mb-1">MNLI 自然語言推論</span>
                 <span class="text-xl font-bold text-red block">86.7%</span>
-                <span class="text-muted text-[11px]">GPT-1: 82.1% (+4.6%)</span>
+                <span class="text-muted text-xs">GPT-1: 82.1% (+4.6%)</span>
               </div>
               <div class="border border-line p-3 bg-paper-deep">
                 <span class="text-muted block mb-1">SQuAD v1.1 F1 分數</span>
                 <span class="text-xl font-bold text-red block">93.2</span>
-                <span class="text-muted text-[11px]">人類平均基準: 86.8 (超越人類)</span>
+                <span class="text-muted text-xs">人類平均基準: 86.8 (超越人類)</span>
               </div>
             </div>
-            <p class="mt-4 mb-0 text-xs text-muted leading-relaxed">
+            <p class="mt-4 mb-0 text-sm text-muted leading-relaxed">
               在 2018 年底，BERT 席捲了整座 NLP
               學界。過去數十個針對個別數據集精雕細琢的傳統模型，在一夜之間被這套雙向預訓練大模型全數推平。
             </p>
@@ -805,7 +805,7 @@ const timelineEpochs: TimelineEpoch[] = [
             title="搜尋引擎五年最大躍進"
             variant="surface"
           >
-            <p class="text-xs leading-relaxed text-muted m-0">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
               2019 年底，Google 宣布將 BERT 正式部署至其全球搜尋引擎核心演算法中，直接改善了超過 10%
               的自然語言查詢結果。特別是對於包含介系詞（如 "2019 brazil traveler to usa need
               visa"）等複雜語序問題，雙向注意力能準確辨識出究竟是「巴西人去美國」還是「美國人去巴西」。
@@ -813,7 +813,7 @@ const timelineEpochs: TimelineEpoch[] = [
           </AsideCard>
 
           <AsideCard kicker="衍生家族 / THE POST-BERT ERA" title="雙向編碼器的繁衍" variant="paper">
-            <p class="text-xs leading-relaxed text-muted m-0">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
               BERT 點燃了雙向預訓練的軍備競賽：Facebook 推出移除 NSP 並加大算力的{' '}
               <strong>RoBERTa</strong>；Google 推出降低參數量並共享權重的 <strong>ALBERT</strong>
               ；微軟推出解構位置注意力的 <strong>DeBERTa</strong>，在多年間主導了整個企業級 NLP
@@ -910,7 +910,7 @@ const timelineEpochs: TimelineEpoch[] = [
                 <span class="font-mono text-xs font-bold text-blue uppercase block mb-1">
                   Google 的分流：雙向與混合架構
                 </span>
-                <p class="text-xs text-muted m-0 leading-relaxed">
+                <p class="text-sm text-muted m-0 leading-relaxed">
                   Google 沿著 BERT 的輝煌，陸續開發出 RoBERTa、ALBERT、以及試圖融合編碼與解碼的{' '}
                   <strong>T5</strong>。在搜尋、分類、檢索與特徵工程中主導了整個大數據工業時代，直到
                   2022 年底才驚覺生成大模型的質變。
@@ -921,7 +921,7 @@ const timelineEpochs: TimelineEpoch[] = [
                 <span class="font-mono text-xs font-bold text-red uppercase block mb-1">
                   OpenAI 的孤注一擲：規模化生成
                 </span>
-                <p class="text-xs text-muted m-0 leading-relaxed">
+                <p class="text-sm text-muted m-0 leading-relaxed">
                   面對 BERT 的全面壓制，OpenAI 選擇了最激進的孤注一擲：既然 GPT-1
                   參數不夠大，那就把參數拉高 10 倍！在未標註的 40GB 網路世界（WebText）上，15
                   億參數的 <strong>GPT-2</strong>{' '}
@@ -934,7 +934,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
         <aside slot="rail" class="space-y-6">
           <AsideCard kicker="路線地圖 / PARADIGMS" title="NLP 兩大演化分支" variant="surface">
-            <div class="space-y-2 text-xs text-muted">
+            <div class="space-y-2 text-sm text-muted">
               <div>
                 <strong class="text-blue block">Encoder-only 分支 (BERT)</strong>
                 <span>全雙向視野 · 專注於判別、檢索、情感分類、實體辨識與摘要評分。</span>
@@ -947,7 +947,7 @@ const timelineEpochs: TimelineEpoch[] = [
           </AsideCard>
 
           <AsideCard kicker="承先啟後 / BRIDGE" title="通往下一個里程碑" variant="paper">
-            <p class="text-xs leading-relaxed text-muted m-0">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
               搞懂了 BERT 的雙向極限，你才能徹底理解第四章〈GPT-2〉與第五章〈Scaling
               Laws〉為什麼堅持將單向自回歸推向物理極限。那不僅是參數的膨脹，更是一場關於「生成即智慧」的信仰長征。
             </p>
@@ -1054,12 +1054,12 @@ const timelineEpochs: TimelineEpoch[] = [
                           {item.source.title}
                         </h4>
 
-                        <p class="mt-3 text-xs sm:text-sm text-ink/75 leading-relaxed">
+                        <p class="mt-3 text-sm sm:text-base text-ink/75 leading-relaxed">
                           {item.takeaway}
                         </p>
 
                         <div class="mt-4 border-t border-line/60 pt-3">
-                          <p class="m-0 text-xs text-muted">
+                          <p class="m-0 text-sm text-muted">
                             <span class="font-bold text-ink">邊界限制：</span>
                             {item.source.limits}
                           </p>
@@ -1121,7 +1121,7 @@ const timelineEpochs: TimelineEpoch[] = [
                 <li>{sup}</li>
               ))}
             </ul>
-            <p class="text-xs text-ink/70 italic border-l-2 border-line pl-3 m-0">
+            <p class="text-sm text-ink/70 italic border-l-2 border-line pl-3 m-0">
               技術極限與邊界：{s.limits}
             </p>
           </article>

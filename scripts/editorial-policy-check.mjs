@@ -147,6 +147,31 @@ for (const filePath of targetFiles) {
         mathItem.pattern.lastIndex = 0;
       }
     }
+
+    // Check 3: Minimum readable font size policy (prohibit text-xs and text-[10-12px] on Chinese narrative prose)
+    // Paragraphs <p>, lists <li>, or description terms/details with text-xs or text-[10-12px] must not be used for narrative prose.
+    if (
+      filePath.endsWith('.astro') &&
+      !filePath.includes('/components/') &&
+      (line.includes('text-xs') || /text-\[\s*1[0-2]px\s*\]/.test(line))
+    ) {
+      if (
+        (/<p\b[^>]*class="[^"]*text-xs[^"]*"/.test(line) ||
+          /<li\b[^>]*class="[^"]*text-xs[^"]*"/.test(line) ||
+          /<dd\b[^>]*class="[^"]*text-xs[^"]*"/.test(line) ||
+          /text-\[\s*1[0-2]px\s*\]/.test(line)) &&
+        !line.includes('font-mono') &&
+        !line.includes('uppercase') &&
+        !line.includes('tracking-') &&
+        !line.includes('font-bold text-red') &&
+        !line.includes('font-bold text-blue') &&
+        !line.includes('font-bold text-ink')
+      ) {
+        failures.push(
+          `[${relPath}:${lineNum}] 違規使用過小字級（text-xs / 12px 以下）於閱讀內文！繁體中文內文段落最低應為 text-sm (14px) 或 text-base (16px)。\n  行內容：${line.trim()}`,
+        );
+      }
+    }
   });
 }
 

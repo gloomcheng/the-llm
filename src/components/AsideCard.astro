@@ -32,7 +32,7 @@ const hasTitle = Astro.slots.has('title') || Boolean(title);
       <slot name="title">{title}</slot>
     </h3>
   )}
-  <div class:list={[hasTitle ? 'mt-4' : '']}>
+  <div class:list={[hasTitle ? 'mt-4' : '', 'text-sm sm:text-base leading-relaxed text-muted']}>
     <slot />
   </div>
 </aside>

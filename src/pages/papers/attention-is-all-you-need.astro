@@ -571,9 +571,9 @@ const timelineEpochs: TimelineEpoch[] = [
             <div class="border border-line bg-surface p-4">
               <span class="font-bold text-ink block mb-1">① 經典 Seq2Seq (2014)</span>
               <span class="text-xs text-muted block mb-2">Sutskever et al.</span>
-              <p class="m-0 text-xs text-muted leading-relaxed">
+              <p class="m-0 text-sm text-muted leading-relaxed">
                 雙 RNN 結構。解決了變長映射，但整句壓縮為單一向量{' '}
-                <code class="text-[11px] bg-paper-deep px-1">
+                <code class="text-xs bg-paper-deep px-1">
                   h<sub>T</sub>
                 </code>
                 ，造成長句資訊瓶頸。
@@ -582,9 +582,9 @@ const timelineEpochs: TimelineEpoch[] = [
             <div class="border border-line bg-surface p-4">
               <span class="font-bold text-ink block mb-1">② Seq2Seq + 注意力 (2014)</span>
               <span class="text-xs text-muted block mb-2">Bahdanau et al.</span>
-              <p class="m-0 text-xs text-muted leading-relaxed">
+              <p class="m-0 text-sm text-muted leading-relaxed">
                 保留所有{' '}
-                <code class="text-[11px] bg-paper-deep px-1">
+                <code class="text-xs bg-paper-deep px-1">
                   [h₁, ..., h<sub>T</sub>]
                 </code>
                 ，動態軟對齊。解決了記憶瓶頸，但依然受限於 RNN 串行等待，無法平行。
@@ -593,7 +593,7 @@ const timelineEpochs: TimelineEpoch[] = [
             <div class="border border-red bg-red-soft p-4">
               <span class="font-bold text-red block mb-1">③ Transformer (2017)</span>
               <span class="text-xs text-red block mb-2">Vaswani et al.</span>
-              <p class="m-0 text-xs text-ink leading-relaxed">
+              <p class="m-0 text-sm text-ink leading-relaxed">
                 <strong>徹底移除 RNN 循環</strong>。僅憑 Self-Attention
                 全域矩陣相乘，實現完全並行與無損關聯。
               </p>
@@ -2146,7 +2146,7 @@ const timelineEpochs: TimelineEpoch[] = [
                   </div>
                   <div>Weight α = softmax(Scores)</div>
                 </div>
-                <p class="mt-3 mb-0 text-xs text-muted leading-normal">
+                <p class="mt-3 mb-0 text-sm text-muted leading-relaxed">
                   模型內部沒有預設任何硬編碼的語法樹規則，而是透過反向傳播訓練，使具備相容屬性的
                   Query 與 Key 向量在高維空間中內積較大，自然重構出注意力分配。
                 </p>
@@ -2449,9 +2449,9 @@ const timelineEpochs: TimelineEpoch[] = [
           </div>
           <div class="flex flex-col items-center justify-center gap-2 text-center font-mono text-xs uppercase tracking-[0.06em] text-red">
             <span class="font-bold">上下文跨塔傳遞</span>
-            <span class="text-[11px] text-muted">提供 Key & Value</span>
+            <span class="text-xs text-muted">提供 Key & Value</span>
             <span class="h-0.5 w-16 bg-red md:w-full"></span>
-            <span class="text-[10px] text-muted hidden md:inline">
+            <span class="text-xs text-muted hidden md:inline">
               K<sub>enc</sub>, V<sub>enc</sub> ──→
             </span>
           </div>
@@ -3156,7 +3156,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
                         <div class="mt-auto border-t border-dashed border-line pt-4">
                           <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                            <p class="m-0 max-w-[42ch] text-xs leading-relaxed text-faint">
+                            <p class="m-0 max-w-[42ch] text-sm leading-relaxed text-muted">
                               <span class="font-mono text-xs font-semibold uppercase text-ink">
                                 文獻焦點 /{' '}
                               </span>
@@ -3382,7 +3382,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
                           <div class="mt-auto border-t border-dashed border-line pt-4">
                             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                              <p class="m-0 max-w-[42ch] text-xs leading-relaxed text-faint">
+                              <p class="m-0 max-w-[42ch] text-sm leading-relaxed text-muted">
                                 <span class="font-mono text-xs font-semibold uppercase text-ink">
                                   文獻焦點 /{' '}
                                 </span>
@@ -3467,7 +3467,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
                       <div class="mt-auto border-t border-dashed border-line pt-4">
                         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                          <p class="m-0 max-w-[42ch] text-xs leading-relaxed text-faint">
+                          <p class="m-0 max-w-[42ch] text-sm leading-relaxed text-muted">
                             <span class="font-mono text-xs font-semibold uppercase text-ink">
                               文獻焦點 /{' '}
                             </span>
