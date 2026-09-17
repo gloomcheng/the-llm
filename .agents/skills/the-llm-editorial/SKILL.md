@@ -197,6 +197,15 @@ Use an inexpensive model for the window audit when available. Its role is to ask
 - **Never end headings or display titles with a full stop / period (「。」):**
   Headings (H1–H6) and editorial display titles are visually isolated, prominent typographical elements. Under Chinese typographical conventions and international editorial standards, headings must never end with a period (「。」). Punctuation such as colons (「：」) or commas (「，」) may be used internally to separate clauses, and question marks (「？」) or exclamation marks (「！」) may be used if rhetorical, but a terminal period (「。」) is strictly prohibited on all headings and subheadings. Body sentences must not be lazily copied into heading tags without removing trailing punctuation.
 
+### Personal names standard: strictly preserve original English/Latin names without phonetic translation
+
+- **Never translate foreign/Western personal names phonetically into Chinese:**
+  Strictly preserve all foreign author and researcher names in their original English/Latin spelling across headings, prose, diagrams, and metadata (e.g., use **Shannon**, **Claude Shannon**, **Vaswani**, **Radford**, **Sutskever**, **Kaplan**, **Amodei**, **Devlin**, **Taylor**, **Hoffmann**).
+  - **Strictly prohibit phonetic transliterations:** Never use mainland or ad-hoc phonetic translations such as 「香農」、「夏農」、「向農」、「瓦斯瓦尼」、「雷德福」、「蘇茨克維」、「卡普蘭」、「阿莫迪」、「戴夫林」.
+  - **Derived scientific terms and laws:** Any law, limit, or concept derived from a personal name must directly retain the original name in English (e.g., **Shannon 極限 / Shannon limit**, **Shannon 熵 / Shannon entropy**, **Markov 鏈 / Markov chain**).
+- **Chinese/Taiwanese scholars exception:**
+  For scholars of Chinese/Taiwanese descent with established native Chinese names, write the English name followed by the Chinese name in parentheses on first mention (e.g., `Ming-Wei Chang (張明偉)`), but foreign authors remain exclusively in original English.
+
 ## Visual, layout, and mathematical notation invariant specification
 
 To prevent visual drift, typography mismatches, and broken formulas across chapters, all paper pages must adhere strictly to these visual and mathematical invariants.

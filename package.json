@@ -14,8 +14,9 @@
     "a11y:check": "node scripts/a11y-check.mjs",
     "style:check": "node scripts/style-policy-check.mjs",
     "rwd:check": "node scripts/rwd-check.mjs",
+    "editorial:check": "node scripts/editorial-policy-check.mjs",
     "harness:check": "node scripts/paper-routing-harness.mjs",
-    "quality": "npm run format:check && npm run lint && npm run typecheck && npm run harness:check && npm run build && npm run a11y:check && npm run style:check && npm run rwd:check"
+    "quality": "npm run format:check && npm run lint && npm run typecheck && npm run harness:check && npm run build && npm run a11y:check && npm run style:check && npm run rwd:check && npm run editorial:check"
   },
   "dependencies": {
     "@astrojs/check": "0.9.10",

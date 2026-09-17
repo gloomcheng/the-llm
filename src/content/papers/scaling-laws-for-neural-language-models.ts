@@ -73,7 +73,7 @@ export const scalingLawsSources: SourceRecord[] = [
     accessed: '2026-09-17',
     url: 'https://doi.org/10.1002/j.1538-7305.1948.tb01338.x',
     supports: [
-      '冪律公式中不可約減熵（Irreducible Entropy, L_inf）的理論根源：自然語言真實分佈的極限資訊熵',
+      '冪律公式中不可約減熵（Irreducible Entropy, L_∞）的理論根源：自然語言真實分佈的極限資訊熵',
       '任何自回歸語言模型的交叉熵損失均無法跌破人類文本真實的 Shannon Entropy 下界',
     ],
     limits:
@@ -167,7 +167,7 @@ export const scalingLawsPaper: PaperRecord = {
     {
       id: 'claim-power-law-universality',
       claim:
-        '語言模型的測試損失與參數量、數據量及計算量之間存在橫跨數個數量級的精確冪律關係，可表示為 L(X) = (X_c / X)^alpha。',
+        '語言模型的測試損失與參數量、數據量及計算量之間存在橫跨數個數量級的精確冪律關係，可表示為 L(X) = (X<sub>c</sub> / X)<sup>α<sub>x</sub></sup>。',
       explanation:
         '在對數-對數座標系（Log-Log Plot）下，損失與各項規模維度呈現筆直的線性關係，顯示神經網路學習過程遵循深刻的統計物理自相似性。',
       status: 'documented',

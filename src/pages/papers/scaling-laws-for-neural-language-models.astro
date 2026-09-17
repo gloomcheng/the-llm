@@ -77,7 +77,7 @@ const timelineEpochs: TimelineEpoch[] = [
         num: 2,
         refCode: 'S02',
         role: '理論底層',
-        takeaway: '奠定自然語言不可約減熵（L_inf）的極限邊界，證明語言模型損失無法無限降至零。',
+        takeaway: '奠定自然語言不可約減熵（L_∞）的極限邊界，證明語言模型損失無法無限降至零。',
       },
     ],
   },
@@ -578,7 +578,7 @@ const timelineEpochs: TimelineEpoch[] = [
                 1.8
               </text>
 
-              <!-- 不可約減熵下界 (L_inf = 1.69) -->
+              <!-- 不可約減熵下界 (L_∞ = 1.69) -->
               <line
                 x1="80"
                 y1="262"
@@ -596,7 +596,11 @@ const timelineEpochs: TimelineEpoch[] = [
                 fill="#b91c1c"
                 text-anchor="end"
               >
-                不可約減香農極限熵 L_inf ≈ 1.69
+                不可約減 Shannon 極限熵 L
+                <tspan font-size="8" dy="2">
+                  ∞
+                </tspan>
+                <tspan dy="-2"> ≈ 1.69</tspan>
               </text>
 
               <!-- 冪律直線 (主擬合曲線) -->
@@ -647,7 +651,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
           <h3 class="font-display text-2xl text-ink pt-4">
             回溯序章：自然語言的不可約減熵（
-            <math class="font-serif"><msub><mi>L</mi><mi>∞</mi></msub></math>）與香農極限
+            <math class="font-serif"><msub><mi>L</mi><mi>∞</mi></msub></math>）與 Shannon 極限
           </h3>
 
           <p>
@@ -712,8 +716,8 @@ const timelineEpochs: TimelineEpoch[] = [
               其中
               <math class="font-serif"><msub><mi>L</mi><mi>∞</mi></msub><mo>≈</mo><mn>1.69</mn></math>
               nats/token（約合每 token 2.44 bits）。這代表無論未來的 GPT 演進到 GPT-10 還是
-              GPT-100，在當前 WebText
-              網路文字分佈下，模型所能達到的理論損失下界就是這個香農極限。多出來的
+              GPT-100，在當前 WebText 網路文字分佈下，模型所能達到的理論損失下界就是這個 Shannon
+              極限。多出來的
               <math class="font-serif"><mo stretchy="false">(</mo><msub><mi>N</mi><mi>c</mi></msub><mo>/</mo><mi>N</mi><msup><mo stretchy="false">)</mo><msub><mi>α</mi><mi>N</mi></msub></msup></math>
               部分，正是模型因參數量有限、尚未學透世界知識所承受的「可約減知識赤字」。
             </p>
