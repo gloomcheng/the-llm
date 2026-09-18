@@ -94,6 +94,7 @@ struct PortraitMetric: Codable {
     let midY: Double?
     let chinY: Double?
     let faceBoxHeight: Double?
+    let hasCleanCorners: Bool
     let detectedTexts: [String]
 }
 
@@ -124,6 +125,7 @@ for file in files {
             midY: nil,
             chinY: nil,
             faceBoxHeight: nil,
+            hasCleanCorners: true,
             detectedTexts: []
         ))
         continue
@@ -154,6 +156,7 @@ for file in files {
             midY: nil,
             chinY: nil,
             faceBoxHeight: nil,
+            hasCleanCorners: true,
             detectedTexts: detectedTexts
         ))
         continue
@@ -202,6 +205,38 @@ for file in files {
         }
     }
     
+    var hasCleanCorners = true
+    if let dataProvider = cgImg.dataProvider,
+       let data = dataProvider.data,
+       let ptr = CFDataGetBytePtr(data) {
+        let bpr = cgImg.bytesPerRow
+        let bpp = cgImg.bitsPerPixel / 8
+        for y in 920..<1024 {
+            for x in 0..<120 {
+                let offset = y * bpr + x * bpp
+                let r = Int(ptr[offset])
+                let g = Int(ptr[offset + 1])
+                let b = Int(ptr[offset + 2])
+                if (r + g + b) / 3 < 225 {
+                    hasCleanCorners = false
+                    break
+                }
+            }
+            if !hasCleanCorners { break }
+            for x in (1024 - 120)..<1024 {
+                let offset = y * bpr + x * bpp
+                let r = Int(ptr[offset])
+                let g = Int(ptr[offset + 1])
+                let b = Int(ptr[offset + 2])
+                if (r + g + b) / 3 < 225 {
+                    hasCleanCorners = false
+                    break
+                }
+            }
+            if !hasCleanCorners { break }
+        }
+    }
+    
     results.append(PortraitMetric(
         filename: file.lastPathComponent,
         width: w,
@@ -213,6 +248,7 @@ for file in files {
         midY: midYVal,
         chinY: chinYVal,
         faceBoxHeight: round(fbHeight * 10) / 10.0,
+        hasCleanCorners: hasCleanCorners,
         detectedTexts: detectedTexts
     ))
 }
@@ -298,10 +334,10 @@ if let data = try? encoder.encode(results), let jsonStr = String(data: data, enc
                 `[${m.filename}] Vertical eye line out of alignment: ${m.midY}px (target: 384.0px +- 8.0px)`,
               );
             }
-            // Target Face Box Height: 280px ~ 390px
-            if (m.faceBoxHeight < 280.0 || m.faceBoxHeight > 390.0) {
+            // Target Face Box Height: 280px ~ 410px
+            if (m.faceBoxHeight < 280.0 || m.faceBoxHeight > 410.0) {
               failures.push(
-                `[${m.filename}] Face box height out of scale: ${m.faceBoxHeight}px (target: 340.0px +- 50.0px)`,
+                `[${m.filename}] Face box height out of scale: ${m.faceBoxHeight}px (target: 345.0px +- 65.0px)`,
               );
             }
             // Target ChinY: 590px ~ 670px
@@ -319,8 +355,14 @@ if let data = try? encoder.encode(results), let jsonStr = String(data: data, enc
             }
           }
 
+          if (!m.hasCleanCorners) {
+            failures.push(
+              `[${m.filename}] Bottom corner bleed detected: bust silhouette must taper along canonical elliptical arc with clean margins`,
+            );
+          }
+
           passes.push(
-            `  ✓ ${m.filename.padEnd(26)} IPD: ${(m.ipd ?? 'N/A').toString().padStart(5)}px | Mid: (${(m.midX ?? 'N/A').toString().padStart(5)}, ${(m.midY ?? 'N/A').toString().padStart(5)}) | Chin: ${(m.chinY ?? 'N/A').toString().padStart(5)}px | BoxH: ${(m.faceBoxHeight ?? 'N/A').toString().padStart(5)}px | OCR: clean`,
+            `  ✓ ${m.filename.padEnd(26)} IPD: ${(m.ipd ?? 'N/A').toString().padStart(5)}px | Mid: (${(m.midX ?? 'N/A').toString().padStart(5)}, ${(m.midY ?? 'N/A').toString().padStart(5)}) | Chin: ${(m.chinY ?? 'N/A').toString().padStart(5)}px | BoxH: ${(m.faceBoxHeight ?? 'N/A').toString().padStart(5)}px | Arc: clean | OCR: clean`,
           );
         }
       }

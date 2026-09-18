@@ -100,3 +100,27 @@ screenshots. All example metrics are labeled with their paper and condition.
 - **Milestone Registry Alignment**: In `src/content/papers/milestones.ts`, every milestone entry's `id` and `url` must strictly equal `slugifyPaperTitle(paper.title)` and `/papers/${slugifyPaperTitle(paper.title)}`.
 - **Backward Compatibility**: Shorthand aliases (such as `/papers/gpt-1`) may only exist as redirects in `astro.config.mjs` to ensure incoming links do not break.
 - **Automated Harness Gate**: `scripts/paper-routing-harness.mjs` is executed as part of `npm run quality` (`npm run harness:check`). Any deviation in file names, milestone IDs, or internal links will immediately abort the quality build.
+
+## Author portrait geometric & vignette specification contract
+
+- **Canvas Specification**:
+  - Format: PNG, exactly $1024 \times 1024\text{px}$.
+  - Background: Warm uncoated engraving paper texture (`#fbf9f5` / `#fcfaf6`).
+- **Canonical Bust Vignette Ellipse**:
+  - Model: Symmetrical vertical elliptical bust vignette (經典版畫垂直胸像橢圓包絡線).
+  - Vignette Center $(X_c, Y_c)$: $(512\text{px}, 500\text{px})$.
+  - Semi-Major Vertical Axis $b$: $420.0\text{px} \pm 10.0\text{px}$ (overall figure height $\approx 840\text{px}$).
+  - Semi-Minor Horizontal Axis $a$: $360.0\text{px} \pm 10.0\text{px}$ (overall shoulder width $\approx 720\text{px}$).
+  - Ellipticity / Aspect Ratio: $b / a = 1.17 \pm 0.03$.
+  - Bottom Arc Parabolic Equation:
+    $$Y_{\text{arc}}(x) = 875 - \left(\frac{|x - 512|}{340}\right)^2 \times 150$$
+    Chest center terminates at $Y \approx 875\text{px}$, rising symmetrically to shoulders at $Y \approx 725\text{px}$.
+- **Landmark & Feature Anchors**:
+  - Eye Level ($Y_{\text{eyes}}$): Pinned at $Y = 384.0 \pm 4.0\text{px}$ (golden eye line, top 37.5%).
+  - Horizontal Symmetry Axis ($X_{\text{mid}}$): Pinned at $X = 512.0 \pm 6.0\text{px}$.
+  - Headroom: Distance from top of hair to top canvas edge $= 85.0 \pm 10.0\text{px}$.
+  - Chin Line ($Y_{\text{chin}}$): Lower jawline falls within $Y = 625\text{px} \sim 655\text{px}$.
+  - Corner Safety Margin: Bottom-left ($x < 150, y > 900$) and bottom-right ($x > 874, y > 900$) corner margins must have zero bleeding ink (no corner clipping or square cuts).
+- **Edge Transition & Text Inscription**:
+  - $25\text{px}$ organic feathering into paper grain along the elliptical envelope boundary.
+  - Strict 0% baked-in text policy: verified by Apple Vision OCR in `scripts/portrait-harness.mjs`. Institutional affiliations and author names are rendered solely in HTML/CSS cards.
