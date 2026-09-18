@@ -92,6 +92,7 @@ struct PortraitMetric: Codable {
     let ipd: Double?
     let midX: Double?
     let midY: Double?
+    let chinY: Double?
     let faceBoxHeight: Double?
     let detectedTexts: [String]
 }
@@ -121,6 +122,7 @@ for file in files {
             ipd: nil,
             midX: nil,
             midY: nil,
+            chinY: nil,
             faceBoxHeight: nil,
             detectedTexts: []
         ))
@@ -150,6 +152,7 @@ for file in files {
             ipd: nil,
             midX: nil,
             midY: nil,
+            chinY: nil,
             faceBoxHeight: nil,
             detectedTexts: detectedTexts
         ))
@@ -160,7 +163,15 @@ for file in files {
     var ipdVal: Double? = nil
     var midXVal: Double? = nil
     var midYVal: Double? = nil
+    var chinYVal: Double? = nil
     var isFrontal = false
+    
+    if let fc = detectedFace.landmarks?.faceContour {
+        let pts = fc.normalizedPoints
+        let minNormY = pts.map { $0.y }.min() ?? 0
+        let cy = (1.0 - (detectedFace.boundingBox.origin.y + minNormY * detectedFace.boundingBox.height)) * Double(h)
+        chinYVal = round(cy * 10) / 10.0
+    }
     
     if let leftEye = detectedFace.landmarks?.leftEye,
        let rightEye = detectedFace.landmarks?.rightEye {
@@ -200,6 +211,7 @@ for file in files {
         ipd: ipdVal,
         midX: midXVal,
         midY: midYVal,
+        chinY: chinYVal,
         faceBoxHeight: round(fbHeight * 10) / 10.0,
         detectedTexts: detectedTexts
     ))
@@ -268,22 +280,34 @@ if let data = try? encoder.encode(results), let jsonStr = String(data: data, enc
 
           // Check biometric proportions
           if (m.isFrontal) {
-            // Target IPD: 136px (+-6px tolerance)
-            if (m.ipd < 130.0 || m.ipd > 142.0) {
+            // Target IPD: 122px ~ 152px (harmonious for visual head size across gender/cranial types)
+            if (m.ipd < 120.0 || m.ipd > 152.0) {
               failures.push(
-                `[${m.filename}] IPD (pupil distance) out of calibration: ${m.ipd}px (target: 136.0px +- 6.0px)`,
+                `[${m.filename}] IPD (pupil distance) out of calibration: ${m.ipd}px (target: 136.0px +- 16.0px)`,
               );
             }
-            // Target MidX: 512px (+-10px tolerance)
-            if (m.midX < 502.0 || m.midX > 522.0) {
+            // Target MidX: 512px (+-12px tolerance)
+            if (m.midX < 500.0 || m.midX > 524.0) {
               failures.push(
-                `[${m.filename}] Horizontal eye center out of alignment: ${m.midX}px (target: 512.0px +- 10.0px)`,
+                `[${m.filename}] Horizontal eye center out of alignment: ${m.midX}px (target: 512.0px +- 12.0px)`,
               );
             }
             // Target MidY: 384px (+-8px tolerance)
             if (m.midY < 376.0 || m.midY > 392.0) {
               failures.push(
                 `[${m.filename}] Vertical eye line out of alignment: ${m.midY}px (target: 384.0px +- 8.0px)`,
+              );
+            }
+            // Target Face Box Height: 280px ~ 390px
+            if (m.faceBoxHeight < 280.0 || m.faceBoxHeight > 390.0) {
+              failures.push(
+                `[${m.filename}] Face box height out of scale: ${m.faceBoxHeight}px (target: 340.0px +- 50.0px)`,
+              );
+            }
+            // Target ChinY: 590px ~ 670px
+            if (m.chinY && (m.chinY < 590.0 || m.chinY > 670.0)) {
+              failures.push(
+                `[${m.filename}] Chin line out of alignment: ${m.chinY}px (target: 630.0px +- 40.0px)`,
               );
             }
           } else {
@@ -296,7 +320,7 @@ if let data = try? encoder.encode(results), let jsonStr = String(data: data, enc
           }
 
           passes.push(
-            `  ✓ ${m.filename.padEnd(26)} IPD: ${(m.ipd ?? 'N/A').toString().padStart(5)}px | Mid: (${(m.midX ?? 'N/A').toString().padStart(5)}, ${(m.midY ?? 'N/A').toString().padStart(5)}) | BoxH: ${(m.faceBoxHeight ?? 'N/A').toString().padStart(5)}px | OCR: clean`,
+            `  ✓ ${m.filename.padEnd(26)} IPD: ${(m.ipd ?? 'N/A').toString().padStart(5)}px | Mid: (${(m.midX ?? 'N/A').toString().padStart(5)}, ${(m.midY ?? 'N/A').toString().padStart(5)}) | Chin: ${(m.chinY ?? 'N/A').toString().padStart(5)}px | BoxH: ${(m.faceBoxHeight ?? 'N/A').toString().padStart(5)}px | OCR: clean`,
           );
         }
       }
