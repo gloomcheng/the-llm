@@ -37,17 +37,9 @@
 @font-face {
   font-family: 'LINE Seed TW';
   font-style: normal;
-  font-weight: 100;
-  font-display: swap;
-  src: url('/fonts/line-seed/LINESeedTW_OTF_Th.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'LINE Seed TW';
-  font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/line-seed/LINESeedTW_OTF_Rg.woff2') format('woff2');
+  src: url('../assets/fonts/line-seed/LINESeedTW_OTF_Rg.woff2') format('woff2');
 }
 
 @font-face {
@@ -55,7 +47,7 @@
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('/fonts/line-seed/LINESeedTW_OTF_Bd.woff2') format('woff2');
+  src: url('../assets/fonts/line-seed/LINESeedTW_OTF_Bd.woff2') format('woff2');
 }
 
 @font-face {
@@ -63,7 +55,7 @@
   font-style: normal;
   font-weight: 800;
   font-display: swap;
-  src: url('/fonts/line-seed/LINESeedTW_OTF_Eb.woff2') format('woff2');
+  src: url('../assets/fonts/line-seed/LINESeedTW_OTF_Eb.woff2') format('woff2');
 }
 
 @font-face {
@@ -71,7 +63,7 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/jigmo/Jigmo.woff2') format('woff2');
+  src: url('../assets/fonts/jigmo/Jigmo.woff2') format('woff2');
   unicode-range: U+3400-4DBF, U+4E00-9FFF, U+F900-FAFF;
 }
 
@@ -80,7 +72,7 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/jigmo/Jigmo2.woff2') format('woff2');
+  src: url('../assets/fonts/jigmo/Jigmo2.woff2') format('woff2');
   unicode-range: U+20000-2EE5D, U+2F800-2FA1D;
 }
 
@@ -89,7 +81,7 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/jigmo/Jigmo3.woff2') format('woff2');
+  src: url('../assets/fonts/jigmo/Jigmo3.woff2') format('woff2');
   unicode-range: U+30000-33479, U+E0100-E01EF;
 }
 

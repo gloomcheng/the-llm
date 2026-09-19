@@ -1,5 +1,6 @@
 ---
 import type { AuthorBrief } from '../content/paper-schema';
+import { withBase } from '../lib/paths';
 
 interface Props {
   authors: AuthorBrief[];
@@ -46,12 +47,21 @@ const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
         <div>
           {author.portraitUrl && (
             <div class="mb-5 aspect-square overflow-hidden border border-ink/10 bg-paper-deep/30">
-              <img
-                src={author.portraitUrl}
-                alt={`${author.name} 線稿人像`}
-                class="h-full w-full object-cover grayscale contrast-125 transition-transform duration-500 group-hover:scale-105"
-                loading="lazy"
-              />
+              <picture>
+                <source
+                  srcset={withBase(author.portraitUrl.replace(/\.png$/, '.webp'))}
+                  type="image/webp"
+                />
+                <img
+                  src={withBase(author.portraitUrl)}
+                  alt={`${author.name} 線稿人像`}
+                  class="h-full w-full object-cover grayscale contrast-125 transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
+                  decoding="async"
+                  width="1024"
+                  height="1024"
+                />
+              </picture>
             </div>
           )}
           <p class="m-0 font-mono text-xs uppercase tracking-wider text-red">

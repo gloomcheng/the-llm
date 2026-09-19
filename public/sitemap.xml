@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Keep in sync with src/content/papers/milestones.ts (16 papers + home). -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://gloomcheng.github.io/the-llm/</loc></url>
+  <url><loc>https://gloomcheng.github.io/the-llm/papers/a-mathematical-theory-of-communication</loc></url>
+  <url><loc>https://gloomcheng.github.io/the-llm/papers/attention-is-all-you-need</loc></url>
+  <url><loc>https://gloomcheng.github.io/the-llm/papers/improving-language-understanding-by-generative-pre-training</loc></url>
+  <url><loc>https://gloomcheng.github.io/the-llm/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding</loc></url>
+  <url><loc>https://gloomcheng.github.io/the-llm/papers/language-models-are-unsupervised-multitask-learners</loc></url>
+  <url><loc>https://gloomcheng.github.io/the-llm/papers/scaling-laws-for-neural-language-models</loc></url>
+  <url><loc>https://gloomcheng.github.io/the-llm/papers/language-models-are-few-shot-learners</loc></url>
+  <url><loc>https://gloomcheng.github.io/the-llm/papers/training-compute-optimal-large-language-models</loc></url>
+  <url><loc>https://gloomcheng.github.io/the-llm/papers/training-language-models-to-follow-instructions-with-human-feedback</loc></url>
+  <url><loc>https://gloomcheng.github.io/the-llm/papers/llama-open-and-efficient-foundation-language-models</loc></url>
+  <url><loc>https://gloomcheng.github.io/the-llm/papers/direct-preference-optimization-your-language-model-is-secretly-a-reward-model</loc></url>
+  <url><loc>https://gloomcheng.github.io/the-llm/papers/an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale</loc></url>
+  <url><loc>https://gloomcheng.github.io/the-llm/papers/learning-transferable-visual-models-from-natural-language-supervision</loc></url>
+  <url><loc>https://gloomcheng.github.io/the-llm/papers/high-resolution-image-synthesis-with-latent-diffusion-models</loc></url>
+  <url><loc>https://gloomcheng.github.io/the-llm/papers/visual-instruction-tuning</loc></url>
+  <url><loc>https://gloomcheng.github.io/the-llm/papers/visual-autoregressive-modeling-scalable-image-generation-via-next-scale-prediction</loc></url>
+</urlset>

@@ -15,9 +15,10 @@
     "style:check": "node scripts/style-policy-check.mjs",
     "rwd:check": "node scripts/rwd-check.mjs",
     "editorial:check": "node scripts/editorial-policy-check.mjs",
+    "seo:check": "node scripts/seo-check.mjs",
     "harness:check": "node scripts/paper-routing-harness.mjs",
     "portrait:check": "node scripts/portrait-harness.mjs",
-    "quality": "npm run format:check && npm run lint && npm run typecheck && npm run harness:check && npm run portrait:check && npm run build && npm run a11y:check && npm run style:check && npm run rwd:check && npm run editorial:check"
+    "quality": "npm run format:check && npm run lint && npm run typecheck && npm run harness:check && npm run portrait:check && npm run build && npm run a11y:check && npm run style:check && npm run rwd:check && npm run editorial:check && npm run seo:check"
   },
   "dependencies": {
     "@astrojs/check": "0.9.10",
