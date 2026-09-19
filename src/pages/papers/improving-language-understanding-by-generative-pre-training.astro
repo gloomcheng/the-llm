@@ -9,6 +9,7 @@ import AuthorGrid from '../../components/AuthorGrid.astro';
 import EvidenceList from '../../components/EvidenceList.astro';
 import PaperNavigation from '../../components/PaperNavigation.astro';
 import Callout from '../../components/Callout.astro';
+import Icon from '../../components/Icon.astro';
 import {
   gpt1Paper,
   gpt1Sources,
@@ -819,9 +820,11 @@ const timelineEpochs: TimelineEpoch[] = [
                 <button
                   id="gpt1-mask-toggle-btn"
                   type="button"
-                  class="border border-ink bg-red text-surface px-4 py-2 font-mono text-xs font-bold transition hover:opacity-90 cursor-pointer whitespace-nowrap shadow-xs"
+                  class="inline-flex items-center gap-2 border border-ink bg-red text-surface px-4 py-2 font-mono text-xs font-bold transition hover:opacity-90 cursor-pointer whitespace-nowrap shadow-xs"
                 >
-                  🔒 因果遮罩：啟用中 (標準)
+                  <span id="gpt1-mask-icon-lock"><Icon name="lock" class="h-4 w-4" /></span>
+                  <span id="gpt1-mask-icon-alert" class="hidden"><Icon name="alert" class="h-4 w-4" /></span>
+                  <span id="gpt1-mask-label">因果遮罩：啟用中</span>
                 </button>
               </div>
             </div>
@@ -2127,15 +2130,22 @@ const timelineEpochs: TimelineEpoch[] = [
         return;
 
       // 1. Update Mask Button & Desc
+      const maskLabel = document.getElementById('gpt1-mask-label');
+      const maskIconLock = document.getElementById('gpt1-mask-icon-lock');
+      const maskIconAlert = document.getElementById('gpt1-mask-icon-alert');
       if (isCausalMaskActive) {
-        maskToggleBtn.textContent = '🔒 因果遮罩：啟用中 (標準)';
+        if (maskLabel) maskLabel.textContent = '因果遮罩：啟用中';
+        maskIconLock?.classList.remove('hidden');
+        maskIconAlert?.classList.add('hidden');
         maskToggleBtn.className =
-          'border border-ink bg-red text-surface px-4 py-2 font-mono text-xs font-bold transition hover:opacity-90 cursor-pointer whitespace-nowrap shadow-xs';
+          'inline-flex items-center gap-2 border border-ink bg-red text-surface px-4 py-2 font-mono text-xs font-bold transition hover:opacity-90 cursor-pointer whitespace-nowrap shadow-xs';
         maskDesc.textContent = '標準因果模式：上三角填入 −∞，未來詞彙權重為 0.0%，完全防止偷看';
       } else {
-        maskToggleBtn.textContent = '⚠️ 作弊模式：因果遮罩已關閉';
+        if (maskLabel) maskLabel.textContent = '作弊模式：因果遮罩已關閉';
+        maskIconLock?.classList.add('hidden');
+        maskIconAlert?.classList.remove('hidden');
         maskToggleBtn.className =
-          'border border-ink bg-blue text-surface px-4 py-2 font-mono text-xs font-bold transition hover:opacity-90 cursor-pointer whitespace-nowrap shadow-xs';
+          'inline-flex items-center gap-2 border border-ink bg-blue text-surface px-4 py-2 font-mono text-xs font-bold transition hover:opacity-90 cursor-pointer whitespace-nowrap shadow-xs';
         maskDesc.textContent =
           '【警告：標籤洩漏】關閉因果遮罩後，模型可直接偷看未來詞彙，損失瞬間歸零但喪失推論能力！';
       }

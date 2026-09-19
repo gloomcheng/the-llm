@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { withBase } from '../../lib/paths';
 import PaperMeta from '../../components/PaperMeta.astro';
 import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
+import Icon from '../../components/Icon.astro';
 import PaperNavigation from '../../components/PaperNavigation.astro';
 import StoryRail from '../../components/StoryRail.astro';
 import EvidenceList from '../../components/EvidenceList.astro';
@@ -257,7 +258,7 @@ const story = [
                   font-family="LINE Seed TW, sans-serif"
                   font-size="10"
                 >
-                  ⚠️ 突發雜訊峰值
+                  突發雜訊峰值
                 </text>
 
                 <!-- Track 3: 接收端閾值判決 -->
@@ -1516,9 +1517,10 @@ const story = [
                   <button
                     id="shannon-generate-btn"
                     type="button"
-                    class="border border-ink bg-red text-surface px-5 py-2.5 font-mono text-xs font-bold transition hover:opacity-90 cursor-pointer shadow-xs"
+                    class="inline-flex items-center gap-2 border border-ink bg-red text-surface px-5 py-2.5 font-mono text-xs font-bold transition hover:opacity-90 cursor-pointer shadow-xs"
                   >
-                    🎲 隨機抽樣生成序列
+                    <Icon name="shuffle" class="h-4 w-4" />
+                    <span>隨機抽樣生成序列</span>
                   </button>
                   <span id="shannon-gen-status" class="font-mono text-xs text-muted">
                     點擊按鈕啟動馬可夫鏈抽樣

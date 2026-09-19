@@ -1,21 +1,26 @@
 ---
-// Interactive Reader Feedback & Annotation Component
-// Allows graduate readers to mark paragraphs ("這段我看不懂", etc.)
-// and export or submit feedback as GitHub Issues so content can evolve.
+import Icon from './Icon.astro';
+// 共讀訊號：讀者在段落留下理解狀態，元件即時給出下一步閱讀建議。
+// 註記預設只存本機；送出至討論區是選用的公開動作，不是勘誤回報。
 ---
 
 <!-- FLOATING FEEDBACK TRIGGER BUTTON -->
-<aside aria-label="讀者標註與內容演化功能">
+<aside aria-label="共讀訊號與學習回饋">
   <button
     id="feedback-toggle-btn"
     type="button"
-    class="fixed bottom-6 right-6 z-40 flex items-center gap-2 border-2 border-ink bg-surface px-4 py-2.5 font-mono text-xs sm:text-sm font-bold text-ink shadow-editorial hover:border-red hover:text-red transition-all cursor-pointer"
+    class="fixed bottom-6 right-6 z-40 inline-flex items-center gap-2 border-2 border-ink bg-surface px-4 py-2.5 font-mono text-xs sm:text-sm font-bold text-ink shadow-editorial hover:border-red hover:text-red transition-all cursor-pointer"
     aria-expanded="false"
     aria-controls="feedback-drawer"
   >
-    <span aria-hidden="true">💬</span>
-    <span>讀者標註與演化</span>
-    <span id="feedback-counter" class="ml-1 rounded-full bg-red px-2 py-0.5 text-xs text-white">
+    <Icon name="message" class="h-4 w-4" />
+    <span>共讀訊號</span>
+    <span
+      id="feedback-counter"
+      class="ml-1 rounded-full bg-red px-2 py-0.5 text-xs text-white"
+      aria-live="polite"
+      aria-label="本頁共讀註記數量"
+    >
       0
     </span>
   </button>
@@ -27,7 +32,7 @@
   class="fixed z-50 hidden w-80 max-w-[calc(100vw-2rem)] border-2 border-ink bg-surface p-4 shadow-editorial transition-opacity"
   role="dialog"
   aria-modal="false"
-  aria-label="段落標註表單"
+  aria-label="段落共讀註記表單"
 >
   <div class="flex items-center justify-between border-b border-line pb-2 mb-3">
     <p class="font-mono text-xs font-bold uppercase tracking-wider text-red m-0">
@@ -37,9 +42,9 @@
       id="popover-close-btn"
       type="button"
       class="text-muted hover:text-ink font-mono text-xs font-bold cursor-pointer p-1"
-      aria-label="關閉標註視窗"
+      aria-label="關閉註記視窗"
     >
-      ✕
+      關閉
     </button>
   </div>
 
@@ -48,30 +53,38 @@
   </p>
 
   <fieldset class="mb-3 border-0 p-0 m-0">
-    <legend class="font-mono text-xs text-ink font-bold mb-2">請選擇回饋類型：</legend>
+    <legend class="font-mono text-xs text-ink font-bold mb-2">目前的閱讀狀態：</legend>
     <div class="grid grid-cols-1 gap-1.5 font-mono text-xs">
       <label class="flex items-center gap-2 p-1.5 border border-line bg-paper/50 cursor-pointer hover:border-red">
-        <input type="radio" name="feedback-type" value="confused" checked class="accent-red" />
-        <span>🤔 這段我看不懂（邏輯跳躍／需補充）</span>
-      </label>
-      <label class="flex items-center gap-2 p-1.5 border border-line bg-paper/50 cursor-pointer hover:border-red">
-        <input type="radio" name="feedback-type" value="clear" class="accent-red" />
-        <span>💡 這裡解釋得很清楚（保留此寫法）</span>
+        <input type="radio" name="feedback-type" value="stuck" checked class="accent-red" />
+        <Icon name="question" class="h-4 w-4 shrink-0 text-red" />
+        <span>這段卡住了，想先補前提</span>
       </label>
       <label class="flex items-center gap-2 p-1.5 border border-line bg-paper/50 cursor-pointer hover:border-red">
         <input type="radio" name="feedback-type" value="derivation" class="accent-red" />
-        <span>🔍 想要更多數學推導或具體範例</span>
+        <Icon name="search" class="h-4 w-4 shrink-0 text-red" />
+        <span>想看一步計算或對比例子</span>
       </label>
       <label class="flex items-center gap-2 p-1.5 border border-line bg-paper/50 cursor-pointer hover:border-red">
-        <input type="radio" name="feedback-type" value="typo" class="accent-red" />
-        <span>✏️ 發現筆誤、錯字或用詞待商榷</span>
+        <input type="radio" name="feedback-type" value="clear" class="accent-red" />
+        <Icon name="bulb" class="h-4 w-4 shrink-0 text-red" />
+        <span>這段讀懂了</span>
+      </label>
+      <label class="flex items-center gap-2 p-1.5 border border-line bg-paper/50 cursor-pointer hover:border-red">
+        <input type="radio" name="feedback-type" value="wording" class="accent-red" />
+        <Icon name="pencil" class="h-4 w-4 shrink-0 text-red" />
+        <span>用詞可以再斟酌</span>
       </label>
     </div>
   </fieldset>
 
+  <p id="popover-hint" class="mb-3 border-l-2 border-red bg-paper/60 p-2 font-mono text-xs leading-relaxed text-ink" aria-live="polite">
+    建議：先記下哪個名詞或哪一步斷掉，存檔後會給一條回讀路線。
+  </p>
+
   <div class="mb-3">
     <label for="popover-note-input" class="block font-mono text-xs text-muted mb-1">
-      補充說明或具體疑問（選填）：
+      補充一句卡點或疑問（選填）：
     </label>
     <textarea
       id="popover-note-input"
@@ -94,7 +107,7 @@
       type="button"
       class="border-2 border-red bg-red px-3 py-1.5 font-mono text-xs font-bold text-white hover:bg-red/90 cursor-pointer"
     >
-      儲存標註
+      儲存註記
     </button>
   </div>
 </div>
@@ -111,7 +124,7 @@
   class="fixed inset-y-0 right-0 z-50 hidden w-full max-w-md border-l-2 border-ink bg-surface shadow-2xl transition-transform"
   role="dialog"
   aria-modal="true"
-  aria-label="讀者標註與內容演化抽屜"
+  aria-label="共讀訊號抽屜"
 >
   <div class="flex h-full flex-col justify-between p-6">
     <div>
@@ -119,23 +132,22 @@
       <div class="flex items-start justify-between border-b border-line pb-4 mb-4">
         <div>
           <p class="font-mono text-xs font-semibold uppercase tracking-wider text-red m-0">
-            內容演化中樞 / CONTENT EVOLUTION
+            共讀訊號 / LEARNING SIGNALS
           </p>
-          <h2 class="font-display text-2xl text-ink m-0 mt-1">讀者標註清單</h2>
+          <h2 class="font-display text-2xl text-ink m-0 mt-1">本頁註記</h2>
         </div>
         <button
           id="drawer-close-btn"
           type="button"
-          class="border border-line p-1 text-muted hover:text-ink hover:border-ink font-mono text-sm cursor-pointer"
+          class="border border-line px-2 py-1 text-muted hover:text-ink hover:border-ink font-mono text-xs cursor-pointer"
           aria-label="關閉抽屜"
         >
-          ✕
+          關閉
         </button>
       </div>
 
       <p class="text-sm text-muted leading-relaxed mb-4">
-        您在閱讀時標註的「這段我看不懂」與反饋建議，會儲存在本機瀏覽器中。您可以一鍵複製或直接提交至
-        GitHub Issue，讓作者群依據讀者困惑點持續演化章節內容。
+        註記是你留給自己的閱讀座標，預設只存放在本機瀏覽器。每一則註記都會附一條回讀建議；只有當你主動送出，內容才會離開本機，成為作者改善教學的訊號。
       </p>
 
       <!-- Annotation Items Container -->
@@ -147,9 +159,9 @@
       </div>
 
       <div id="annotations-empty" class="py-8 text-center border border-dashed border-line">
-        <p class="font-mono text-sm text-muted m-0">目前尚無標註紀錄</p>
+        <p class="font-mono text-sm text-muted m-0">目前尚無註記</p>
         <p class="text-xs text-muted mt-2 mb-0">
-          在文章中滑鼠移至任意段落，點擊出現的「💬 標註」按鈕即可記錄！
+          在文章任意段落旁點「標註此段」，記下卡點或讀懂的瞬間。
         </p>
       </div>
     </div>
@@ -160,20 +172,20 @@
         <button
           id="btn-copy-markdown"
           type="button"
-          class="flex items-center justify-center gap-1.5 border border-ink bg-paper p-2.5 font-mono text-xs font-bold text-ink hover:bg-surface cursor-pointer"
+          class="inline-flex items-center justify-center gap-1.5 border border-ink bg-paper p-2.5 font-mono text-xs font-bold text-ink hover:bg-surface cursor-pointer"
         >
-          <span>📋</span>
-          <span>複製 Markdown</span>
+          <Icon name="copy" class="h-4 w-4" />
+          <span>複製共讀筆記</span>
         </button>
         <a
           id="btn-github-issue"
           href="https://github.com/gloomcheng/the-llm/issues/new"
           target="_blank"
           rel="noreferrer"
-          class="flex items-center justify-center gap-1.5 border-2 border-red bg-red p-2.5 font-mono text-xs font-bold text-white hover:bg-red/90 no-underline cursor-pointer"
+          class="inline-flex items-center justify-center gap-1.5 border-2 border-red bg-red p-2.5 font-mono text-xs font-bold text-white hover:bg-red/90 no-underline cursor-pointer"
         >
-          <span>🚀</span>
-          <span>提交 GitHub Issue</span>
+          <Icon name="external" class="h-4 w-4" />
+          <span>送出共讀問題</span>
         </a>
       </div>
       <button
@@ -181,7 +193,7 @@
         type="button"
         class="w-full border border-line bg-surface p-2 font-mono text-xs text-muted hover:text-red hover:border-red cursor-pointer"
       >
-        清除本頁標註紀錄
+        清除本頁註記
       </button>
     </div>
   </div>
@@ -194,7 +206,7 @@
     pageTitle: string;
     paragraphIndex: number;
     quote: string;
-    type: 'confused' | 'clear' | 'derivation' | 'typo';
+    type: 'stuck' | 'derivation' | 'clear' | 'wording';
     typeLabel: string;
     note: string;
     createdAt: string;
@@ -203,10 +215,24 @@
   const STORAGE_KEY = 'the-llm-annotations-v1';
 
   const typeLabels: Record<string, string> = {
-    confused: '🤔 這段我看不懂',
-    clear: '💡 解釋得很清楚',
-    derivation: '🔍 想要更多推導',
-    typo: '✏️ 發現筆誤／錯字',
+    stuck: '卡住：想先補前提',
+    derivation: '想看一步計算或例子',
+    clear: '讀懂了',
+    wording: '用詞可以再斟酌',
+  };
+
+  const typeHints: Record<string, string> = {
+    stuck: '建議：記下斷掉的名詞或步驟，存檔後先回讀本章機制段與名詞表，再往下走。',
+    derivation: '建議：寫下你想改動的輸入，存檔後去操作本章沙盒，看數字如何跟著動。',
+    clear: '建議：用一句話寫下这一段的結論，存檔後直接進入下一節驗證。',
+    wording: '建議：寫下你覺得更貼切的台灣學術用詞，作者會對照譯名政策處理。',
+  };
+
+  const typeFollowups: Record<string, string> = {
+    stuck: '回讀路線：本章機制段與名詞表，確認前提後再回來重讀此段。',
+    derivation: '下一步：操作本章互動沙盒，改一個輸入，看輸出如何變化。',
+    clear: '下一步：帶著結論進入下一節，看它如何被使用。',
+    wording: '處理方式：作者對照台灣學術譯名政策檢視，不會只當錯字改掉。',
   };
 
   function loadAnnotations(): Annotation[] {
@@ -247,9 +273,23 @@
     const popoverNoteInput = document.getElementById(
       'popover-note-input',
     ) as HTMLTextAreaElement | null;
+    const popoverHint = document.getElementById('popover-hint');
 
     let activeParagraph: HTMLParagraphElement | null = null;
     let activeParagraphIndex = -1;
+    let lastFocused: HTMLElement | null = null;
+
+    function refreshHint(): void {
+      const selected = document.querySelector<HTMLInputElement>(
+        'input[name="feedback-type"]:checked',
+      );
+      const type = selected?.value || 'stuck';
+      if (popoverHint) popoverHint.textContent = typeHints[type] || typeHints['stuck'];
+    }
+
+    document.querySelectorAll<HTMLInputElement>('input[name="feedback-type"]').forEach((radio) => {
+      radio.addEventListener('change', refreshHint);
+    });
 
     function refreshUI(): void {
       const allAnnotations = loadAnnotations();
@@ -272,13 +312,15 @@
           pageAnnotations.forEach((item) => {
             const card = document.createElement('div');
             card.className = 'py-3 text-xs';
+            const followup = typeFollowups[item.type] || '';
             card.innerHTML = `
               <div class="flex items-center justify-between mb-1">
                 <span class="font-mono font-bold text-red">${item.typeLabel}</span>
-                <button type="button" class="del-btn text-muted hover:text-red font-mono cursor-pointer" data-id="${item.id}" aria-label="刪除標註">✕</button>
+                <button type="button" class="del-btn text-muted hover:text-red font-mono cursor-pointer" data-id="${item.id}" aria-label="刪除註記">刪除</button>
               </div>
               <p class="font-serif italic text-muted m-0 mb-1.5 border-l-2 border-line pl-2 line-clamp-3">"${item.quote}"</p>
               ${item.note ? `<p class="font-mono text-ink m-0 bg-paper/60 p-1.5 border border-line">${item.note}</p>` : ''}
+              ${followup ? `<p class="font-mono text-muted m-0 mt-1.5">${followup}</p>` : ''}
               <p class="font-mono text-[10px] text-muted/80 mt-1 m-0">${item.createdAt}</p>
             `;
             listContainer.appendChild(card);
@@ -297,21 +339,21 @@
         }
       }
 
-      // Update GitHub Issue Link
+      // Update discussion link: frame as a learning question, not an errata report
       if (btnGithub) {
-        const issueTitle = encodeURIComponent(`[讀者回饋] ${document.title.split('—')[0].trim()}`);
-        let issueBody = `### 讀者標註與內容演化建議\n\n**章節頁面**：${window.location.href}\n\n`;
+        const issueTitle = encodeURIComponent(`[共讀問題] ${document.title.split('—')[0].trim()}`);
+        let issueBody = `### 共讀問題\n\n**章節頁面**：${window.location.href}\n\n**我目前的理解**：\n\n**卡住或想深挖的點**：\n\n`;
         if (pageAnnotations.length > 0) {
           pageAnnotations.forEach((a, i) => {
-            issueBody += `#### 標註 #${i + 1}：${a.typeLabel}\n`;
+            issueBody += `#### 註記 #${i + 1}：${a.typeLabel}\n`;
             issueBody += `> ${a.quote}\n\n`;
             if (a.note) {
-              issueBody += `**讀者疑問/建議**：${a.note}\n\n`;
+              issueBody += `**補充**：${a.note}\n\n`;
             }
             issueBody += `---\n\n`;
           });
         } else {
-          issueBody += `（請在此填寫您對本章節的具體建議或看不懂的段落...）\n`;
+          issueBody += `（請寫下哪一段卡住、你已理解的部分，以及你期望看到的例子或推導...）\n`;
         }
         btnGithub.href = `https://github.com/gloomcheng/the-llm/issues/new?title=${issueTitle}&body=${encodeURIComponent(issueBody)}`;
       }
@@ -335,20 +377,29 @@
 
     // Drawer Open / Close
     function openDrawer(): void {
+      lastFocused = document.activeElement as HTMLElement | null;
       drawer?.classList.remove('hidden');
       overlay?.classList.remove('hidden');
       toggleBtn?.setAttribute('aria-expanded', 'true');
+      (drawerCloseBtn as HTMLElement | null)?.focus();
     }
 
     function closeDrawer(): void {
       drawer?.classList.add('hidden');
       overlay?.classList.add('hidden');
       toggleBtn?.setAttribute('aria-expanded', 'false');
+      lastFocused?.focus();
     }
 
     toggleBtn?.addEventListener('click', openDrawer);
     drawerCloseBtn?.addEventListener('click', closeDrawer);
     overlay?.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (popover && !popover.classList.contains('hidden')) closePopover();
+        else if (drawer && !drawer.classList.contains('hidden')) closeDrawer();
+      }
+    });
 
     // Popover Close
     function closePopover(): void {
@@ -368,7 +419,7 @@
       const selectedRadio = document.querySelector<HTMLInputElement>(
         'input[name="feedback-type"]:checked',
       );
-      const type = (selectedRadio?.value || 'confused') as Annotation['type'];
+      const type = (selectedRadio?.value || 'stuck') as Annotation['type'];
       const note = popoverNoteInput?.value.trim() || '';
       const quote = activeParagraph.textContent?.trim().slice(0, 200) || '';
 
@@ -379,7 +430,7 @@
         paragraphIndex: activeParagraphIndex,
         quote,
         type,
-        typeLabel: typeLabels[type] || '🤔 這段我看不懂',
+        typeLabel: typeLabels[type] || '卡住：想先補前提',
         note,
         createdAt: new Date().toLocaleString('zh-TW', { hour12: false }),
       };
@@ -390,45 +441,49 @@
 
       closePopover();
       refreshUI();
+      openDrawer();
     });
 
     // Copy Markdown
     btnCopy?.addEventListener('click', () => {
       const pageAnnotations = loadAnnotations().filter((a) => a.url === window.location.pathname);
       if (pageAnnotations.length === 0) {
-        alert('目前尚無標註紀錄可複製。');
+        alert('目前尚無註記可複製。');
         return;
       }
-      let md = `## 讀者標註與內容演化回饋 (${document.title})\n\n`;
+      let md = `## 共讀筆記 (${document.title})\n\n`;
       pageAnnotations.forEach((a, i) => {
         md += `### ${i + 1}. ${a.typeLabel}\n`;
         md += `> ${a.quote}\n\n`;
-        if (a.note) md += `**說明**：${a.note}\n\n`;
+        if (a.note) md += `**補充**：${a.note}\n\n`;
+        const followup = typeFollowups[a.type];
+        if (followup) md += `${followup}\n\n`;
       });
       navigator.clipboard.writeText(md).then(() => {
-        alert('已複製 Markdown 格式的標註清單至剪貼簿！');
+        alert('已複製共讀筆記至剪貼簿。');
       });
     });
 
     // Clear Annotations
     btnClear?.addEventListener('click', () => {
-      if (confirm('確定要清除本頁的所有標註紀錄嗎？')) {
+      if (confirm('確定要清除本頁的所有註記嗎？此動作只影響本機瀏覽器。')) {
         const remaining = loadAnnotations().filter((a) => a.url !== window.location.pathname);
         saveAnnotations(remaining);
         refreshUI();
       }
     });
 
-    // Attach Inline Trigger Buttons to article paragraphs
+    // Attach Inline Trigger Buttons to article paragraphs.
+    // Always visible so keyboard and touch readers can discover them;
+    // never hover-only.
     const paragraphs = document.querySelectorAll<HTMLParagraphElement>('article p');
     paragraphs.forEach((p, idx) => {
-      // Create a small discreet trigger button
       const trigger = document.createElement('button');
       trigger.type = 'button';
       trigger.className =
-        'feedback-inline-trigger inline-flex items-center gap-1 ml-2 font-mono text-xs text-muted/60 hover:text-red opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer';
-      trigger.setAttribute('aria-label', '標註此段落');
-      trigger.innerHTML = '<span>💬 標註</span>';
+        'feedback-inline-trigger ml-2 inline-flex items-center gap-1 font-mono text-xs text-muted underline underline-offset-4 decoration-line hover:text-red hover:decoration-red focus-visible:text-red cursor-pointer';
+      trigger.setAttribute('aria-label', `標註第 ${idx + 1} 段`);
+      trigger.textContent = '標註此段';
 
       p.classList.add('group', 'relative');
       p.appendChild(trigger);
@@ -441,6 +496,7 @@
         if (popoverQuotePreview) {
           popoverQuotePreview.textContent = `"${p.textContent?.trim().slice(0, 120)}..."`;
         }
+        refreshHint();
 
         if (popover) {
           popover.classList.remove('hidden');
@@ -454,6 +510,7 @@
       });
     });
 
+    refreshHint();
     refreshUI();
   }
 

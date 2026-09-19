@@ -1914,10 +1914,10 @@ const timelineEpochs: TimelineEpoch[] = [
             const pairCard = document.createElement('div');
             pairCard.className = `p-3 border ${isFlipped ? 'border-red/60 bg-red-soft/20' : 'border-line bg-surface'} font-mono text-xs space-y-1.5`;
             pairCard.innerHTML = `
-              <div class="flex justify-between items-center border-b border-line/60 pb-1">
-                <span class="font-bold text-ink">#${i + 1} (${winner.id}) ≻ #${j + 1} (${loser.id})</span>
-                <span class="${isFlipped ? 'text-red font-bold' : 'text-emerald-700'}">${isFlipped ? '預測顛倒 ⚠️' : '勝率符合 ✓'}</span>
-              </div>
+                <div class="flex justify-between items-center border-b border-line/60 pb-1">
+                  <span class="font-bold text-ink">#${i + 1} (${winner.id}) ≻ #${j + 1} (${loser.id})</span>
+                  <span class="${isFlipped ? 'text-red font-bold' : 'text-emerald-700'}">${isFlipped ? '預測顛倒' : '勝率符合'}</span>
+                </div>
               <div class="flex justify-between text-muted">
                 <span>分差 Δr:</span>
                 <strong class="${deltaR >= 0 ? 'text-emerald-700' : 'text-red'}">${deltaR > 0 ? '+' : ''}${deltaR.toFixed(2)}</strong>

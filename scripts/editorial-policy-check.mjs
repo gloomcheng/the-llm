@@ -152,6 +152,14 @@ const prohibitedMathPatterns = [
 ];
 
 /**
+ * 3. Prohibited emoji glyphs in reader-facing source:
+ * UI states use src/components/Icon.astro (inline SVG) plus text.
+ * The word "emoji" as a technical term is allowed; emoji codepoints are not.
+ */
+// eslint-disable-next-line no-misleading-character-class -- intentional: flag pairs and VS16 must be caught
+const prohibitedEmojiPattern = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{1F1E6}-\u{1F1FF}]/u;
+
+/**
  * @param {string} dir
  * @param {string[]} exts
  * @returns {string[]}
@@ -254,6 +262,13 @@ for (const filePath of targetFiles) {
         );
       }
     }
+    // Check 5: Emoji glyphs (the word "emoji" is allowed; codepoints are not)
+    if (prohibitedEmojiPattern.test(line)) {
+      failures.push(
+        `[${relPath}:${lineNum}] 發現 emoji 字元！狀態與操作請改用 src/components/Icon.astro 內聯 SVG 加文字，內文僅保留英文術語 emoji 一詞。\n  行內容：${line.trim()}`,
+      );
+    }
+    prohibitedEmojiPattern.lastIndex = 0;
   });
 }
 

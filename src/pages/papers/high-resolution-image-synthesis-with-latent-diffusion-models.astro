@@ -5,6 +5,7 @@ import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
 import PaperSectionHeader from '../../components/PaperSectionHeader.astro';
 import AsideCard from '../../components/AsideCard.astro';
 import Callout from '../../components/Callout.astro';
+import Icon from '../../components/Icon.astro';
 import AuthorGrid from '../../components/AuthorGrid.astro';
 import EvidenceList from '../../components/EvidenceList.astro';
 import PaperNavigation from '../../components/PaperNavigation.astro';
@@ -999,8 +1000,9 @@ const timelineEvents: StoryEvent[] = [
 
                 <!-- Warning Callout if w is too high -->
                 <div id="cfg-warning" class="mt-4 border border-red/40 bg-red-soft/20 p-3 hidden">
-                  <p class="font-mono text-xs font-bold text-red m-0">
-                    ⚠️ 飽和警報：引導係數過高 (w &gt; 11)
+                  <p class="m-0 inline-flex items-center gap-2 font-mono text-xs font-bold text-red">
+                    <Icon name="alert" class="h-4 w-4" />
+                    <span>飽和警報：引導係數過高 (w &gt; 11)</span>
                   </p>
                   <p class="text-sm text-ink/80 mt-1 mb-0 leading-relaxed">
                     過大的外推力道導致數值超出隱空間常態範圍，畫面將出現強烈的色彩溢出、極端對比度與油畫般生硬偽影。
