@@ -156,8 +156,9 @@ const prohibitedMathPatterns = [
  * UI states use src/components/Icon.astro (inline SVG) plus text.
  * The word "emoji" as a technical term is allowed; emoji codepoints are not.
  */
-// eslint-disable-next-line no-misleading-character-class -- intentional: flag pairs and VS16 must be caught
-const prohibitedEmojiPattern = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{1F1E6}-\u{1F1FF}]/u;
+const prohibitedEmojiPattern =
+  // eslint-disable-next-line no-misleading-character-class -- intentional: flag pairs and VS16 must be caught
+  /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{1F1E6}-\u{1F1FF}]/u;
 
 /**
  * @param {string} dir
