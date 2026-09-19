@@ -34,6 +34,18 @@ const pages = [
     path: 'src/pages/papers/language-models-are-few-shot-learners.astro',
     required: ['grid-cols-1', 'lg:grid-cols-', 'w-[calc(100%-2rem)]', 'max-w-[1120px]'],
   },
+  {
+    path: 'src/pages/papers/training-compute-optimal-large-language-models.astro',
+    required: ['grid-cols-1', 'lg:grid-cols-', 'w-[calc(100%-2rem)]', 'max-w-[1120px]'],
+  },
+  {
+    path: 'src/pages/papers/training-language-models-to-follow-instructions-with-human-feedback.astro',
+    required: ['grid-cols-1', 'lg:grid-cols-', 'w-[calc(100%-2rem)]', 'max-w-[1120px]'],
+  },
+  {
+    path: 'src/pages/papers/llama-open-and-efficient-foundation-language-models.astro',
+    required: ['grid-cols-1', 'lg:grid-cols-', 'w-[calc(100%-2rem)]', 'max-w-[1120px]'],
+  },
 ];
 const failures = [];
 

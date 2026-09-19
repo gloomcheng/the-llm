@@ -20,8 +20,16 @@ front page attached, not a gallery of cards.
   fallbacks; `LINE Seed TW` for interface and body text; the system monospace stack
   for dates, equations, labels, and paper metadata.
 - Spacing follows a 4px base scale. Substantive paper prose uses the standard
-  Tailwind `text-base leading-8` scale with a `max-w-2xl` reading measure and
-  `mb-10` paragraph rhythm.
+  Tailwind `text-base leading-8` scale (`--text-body` in `@theme`) with a `max-w-2xl`
+  reading measure and `space-y-6` paragraph rhythm.
+- **Strict Flat Prose Rule (嚴格扁平段落規範)**: All narrative paragraphs inside
+  `PaperReadingLayout` are strictly uniform `text-base leading-8 text-ink` (`LINE Seed TW`).
+  - **No lead paragraph magnification**: The first paragraph of any narrative section
+    MUST NOT be arbitrarily magnified or styled differently (strictly prohibiting `text-lg`,
+    `text-xl`, `text-2xl`, `font-serif`, or `font-display` on opening `<p>` elements).
+    All narrative paragraphs share the exact same font family, size, line-height, and color.
+  - **Hierarchical ownership**: Section emphasis is carried exclusively by the section
+    banner (`kicker` + `h2` + optional deck), never by distorting body paragraph scales.
 - The paper supplement rail is a fixed `20rem` column at `lg` and above. It holds
   term dictionaries, evidence notes, and explanatory side material; it must not
   carry a premise required by the main narrative.
@@ -124,3 +132,54 @@ screenshots. All example metrics are labeled with their paper and condition.
 - **Edge Transition & Text Inscription**:
   - $25\text{px}$ organic feathering into paper grain along the elliptical envelope boundary.
   - Strict 0% baked-in text policy: verified by Apple Vision OCR in `scripts/portrait-harness.mjs`. Institutional affiliations and author names are rendered solely in HTML/CSS cards.
+
+## Canonical paper outline reference architecture contract
+
+Every paper chapter in THE LLM follows a unified, predictable, two-zone macro-architecture. Authors and editing agents must strictly adhere to this progression; arbitrary ad-hoc structuring, phantom part numbers, theatrical "幕" (Acts), or musical "樂章" (Movements) are strictly prohibited.
+
+### 1. Architectural Zones & Section Progression
+
+Every chapter is partitioned into two distinct, non-overlapping structural zones:
+
+#### Zone A: 核心正文主幹 (Core Narrative Spine)
+
+Follows a rigorous 4-stage / 5-stage intellectual arc depending on paper archetype:
+
+- **章節 01 · 歷史轉折與問題緣起（The Impasse & Dilemma）**:
+  - Technical and physical bottlenecks of prior paradigms (e.g. RNN recurrence, supervision cliff, compute scaling blind spots).
+  - Concrete historical actors, hardware/data constraints, and why common sense solutions failed.
+  - Kicker standard: `章節 01 · [核心主題] / [ENGLISH SUBTITLE]` (e.g. `章節 01 · 標註懸崖與無監督破局 / THE IMPASSE`).
+- **章節 02 · 核心架構與數學機制（Architecture & Mechanics）**:
+  - Deconstruction of mathematical formulations, dynamic perturbation, worked tensor computations, and architectural innovations.
+  - Kicker standard: `章節 02 · [核心主題] / [ENGLISH SUBTITLE]` (e.g. `章節 02 · 自回歸因果解碼機制 / THE MECHANISM`).
+- **章節 03 · 統一輸入與極簡微調 / 實驗消融（Engineering Synthesis & Findings）**:
+  - Ablation studies, parameter scaling, data filtering, and benchmark comparisons.
+  - Kicker standard: `章節 03 · [核心主題] / [ENGLISH SUBTITLE]` (e.g. `章節 03 · 零微調的奇蹟 / ZERO-SHOT TRANSFER`).
+- **章節 04 · 時代分水嶺與典範開展（Paradigm Shift & Legacy）**:
+  - SOTA impacts, paradigm clashes (e.g. GPT-1 vs BERT, Base vs Align), limitations, and historical legacy leading to subsequent milestones.
+  - Kicker standard: `章節 04 · [核心主題] / [ENGLISH SUBTITLE]` (e.g. `章節 04 · 世紀分水嶺 / PARADIGM SHIFT`).
+
+#### Zone B: 論文標準雙附錄 (Canonical Dual Appendices)
+
+Documentary evidence and research personnel records are **always appended at the conclusion of the chapter** and **never numbered as narrative chapters**:
+
+- **附錄 01：歷時溯源與一手文獻清單（Chronological Citation Ledger & Evidence）**:
+  - Strict chronological timeline and source ledger contextualizing paper claims and technical boundaries.
+  - Section placement: Precedes the Author Dossier Grid.
+  - Kicker standard: `文獻清單 · 歷時溯源 / REFERENCES` (or `史料依據 / EVIDENCE & SOURCES`).
+- **附錄 02：核心研發團隊檔案（Core Research Team Dossier）**:
+  - Formally introduces the research team via `<AuthorGrid />`.
+  - **Mandatory Lead-in Narrative Requirement**: Every author dossier section must provide 2–3 substantive paragraphs before the portrait grid explaining the team's historical composition, institutional division of labor, distributed systems or theoretical contributions, and why their collective effort was required for the breakthrough. Naked, zero-prose author grid sections are strictly prohibited.
+  - Section placement: Follows the Citation Ledger, anchoring the chapter finale before page navigation.
+  - Kicker standard: `研發團隊 · 核心檔案 / THE AUTHORS`.
+
+### 2. Kicker & Heading Syntax Standard
+
+- **Prohibition of Phantom Part Numbering**:
+  Never label author dossiers or references with isolated ordinals such as `第四部分` when no `第一部分` ~ `第三部分` exist.
+- **Prohibition of Theatrical and Musical Scaffolding**:
+  Abolish arbitrary metaphors such as `第一～八樂章` (Movements) or `第一～三幕` (Acts). Use clean, authoritative `章節 XX · [主題] / [ENGLISH]` for narrative chapters and semantic labels (`文獻清單`, `研發團隊`) for appendices.
+- **Prohibition of Trailing Full Stops**:
+  Headings must never end with a period (`。`).
+- **Personal Names Integrity**:
+  Strictly preserve all foreign/Western author names in original English/Latin spelling across all kickers, headings, and lead-in prose without phonetic transliteration.

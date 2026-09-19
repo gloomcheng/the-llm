@@ -1,0 +1,1406 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../lib/paths';
+import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
+import PaperSectionHeader from '../../components/PaperSectionHeader.astro';
+import AsideCard from '../../components/AsideCard.astro';
+import Callout from '../../components/Callout.astro';
+import AuthorGrid from '../../components/AuthorGrid.astro';
+import EvidenceList from '../../components/EvidenceList.astro';
+import PaperNavigation from '../../components/PaperNavigation.astro';
+import PaperMeta from '../../components/PaperMeta.astro';
+import StoryRail from '../../components/StoryRail.astro';
+import {
+  paper,
+  ldmSources,
+  ldmTimelineEpochs,
+} from '../../content/papers/high-resolution-image-synthesis-with-latent-diffusion-models';
+
+const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
+
+interface StoryEvent {
+  year: string;
+  label: string;
+  title: string;
+  body: string;
+  status?: 'past' | 'current' | 'future';
+}
+
+const timelineEvents: StoryEvent[] = [
+  {
+    year: '2015',
+    label: '熱力學起點 / NON-EQUILIBRIUM THERMODYNAMICS',
+    title: '非平衡態統計物理啟發的生成模型',
+    body: 'Sohl-Dickstein 等人首度將物理學中的逆向擴散過程引入機器學習，建立以微小高斯擾動逐步銷毀結構、再以神經網路反向復原的理論雛形。',
+    status: 'past',
+  },
+  {
+    year: '2020.06',
+    label: '畫素去噪 / DDPM BREAKTHROUGH',
+    title: '去噪擴散機率模型與極簡評估目標',
+    body: 'Jonathan Ho 等人提出 DDPM，以預測噪點的極簡損失函數與 U-Net 骨幹刷新無條件影像生成品質，徹底終結 GAN 模式崩潰的噩夢，但畫素級暴力運算成本極其高昂。',
+    status: 'past',
+  },
+  {
+    year: '2020.12',
+    label: '感知壓縮 / VQGAN FOUNDATION',
+    title: '對抗與感知損失驅動的隱空間壓縮',
+    body: 'Esser、Rombach 與 Ommer 發表 VQGAN，證明以 Autoencoder 將高解析度影像壓縮至離散或連續隱空間，能有效剝離肉眼不可見的高頻冗餘資訊。',
+    status: 'past',
+  },
+  {
+    year: '2021.12',
+    label: '本篇焦點 / LATENT DIFFUSION MODELS',
+    title: '潛在擴散模型：從混沌噪點中雕刻圖像',
+    body: 'Rombach 等人提出 LDM，將擴散過程完全移至 8 倍空間壓縮的感知隱空間中執行，並引入 Cross-Attention 注入 CLIP 文字引導，催生開源現象級應用 Stable Diffusion。',
+    status: 'current',
+  },
+  {
+    year: '2022–至今',
+    label: '開源風暴 / STABLE DIFFUSION & BEYOND',
+    title: '個人顯示卡生圖浪潮與自回歸精準修圖',
+    body: 'ControlNet 與 LoRA 建立繁榮的擴散生圖生態，但全域隨機漂移與文字渲染缺陷，促使新一代多模態原生自回歸模型（VAR、GPT-4o）展開全新探索。',
+    status: 'future',
+  },
+];
+---
+
+<BaseLayout title={`${paper.chineseTitle} | THE LLM`} description={paper.abstractSummary}>
+  <!-- HERO HEADER (UNIVERSAL INVARIANT) -->
+  <header class={`${shell} pt-10`}>
+    <div class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
+      <a class="text-red underline underline-offset-4" href={withBase('/')}>
+        THE LLM
+      </a>
+      <span aria-hidden="true">/</span>
+      <span>第十三章</span>
+    </div>
+
+    <div class="grid grid-cols-1 items-end gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-24">
+      <div>
+        <p class="mb-5 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+          VOL. 13 / LATENT DIFFUSION
+        </p>
+        <h1 class="m-0 font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight tracking-[-0.04em] text-ink">
+          <span class="block">High-Resolution Image Synthesis</span>
+          <em class="block font-serif italic">with Latent Diffusion Models.</em>
+        </h1>
+        <p class="mt-8 max-w-[52ch] text-lg leading-8 text-muted">
+          在 2021
+          年以前，高解析度影像生成如同在數百萬畫素的暴風雪中盲目摸索。潛在擴散模型（LDM）將去噪過程從昂貴的畫素泥淖徹底解耦至低維感知隱空間，讓個人電腦也能從純粹噪點中雕刻出精準光影。
+        </p>
+      </div>
+
+      <aside
+        class="border-t-4 border-red bg-surface p-6 shadow-editorial"
+        aria-label="這篇論文的一句評語"
+      >
+        <p class="mb-4 sm:mb-6 font-mono text-xs sm:text-sm font-semibold uppercase tracking-[0.12em] text-red">
+          一句評語 / THE SHORT VERDICT
+        </p>
+        <p class="m-0 max-w-[20ch] sm:max-w-[22ch] font-display text-2xl sm:text-3xl leading-tight text-ink">
+          畫家不從單顆像素起筆，神經網路也不該在像素噪聲中虛耗算力。
+        </p>
+        <p class="mt-6 mb-0 text-sm sm:text-base leading-relaxed sm:leading-7 text-muted">
+          LDM 證明：將感知壓縮與語意生成徹底解耦，以隱空間搭配
+          Cross-Attention，才是跨模態高解析度生成的終極解答。
+        </p>
+      </aside>
+    </div>
+
+    <PaperMeta
+      year={paper.year}
+      venue={paper.venue}
+      readTime="28 分鐘"
+      difficulty="核心架構"
+      doi={paper.doi}
+    />
+  </header>
+
+  <!-- STORY RAIL / TIMELINE -->
+  <section class={`${shell} py-12 border-t border-line`} aria-label="核心歷史時間線">
+    <StoryRail events={timelineEvents} label="擴散模型演進軌跡" />
+  </section>
+
+  <!-- MAIN READING LAYOUT -->
+  <main class={`${shell} py-16`}>
+    <PaperReadingLayout>
+      <!-- CHAPTER 01 -->
+      <article class="mb-24" id="chapter-01">
+        <PaperSectionHeader
+          kicker="章節 01 / CHAPTER 01"
+          title="畫素空間的算力深淵：DDPM 暴力去噪的百萬維度泥淖"
+          subtitle="為什麼在原始 RGB 畫素矩陣上進行千步反向擴散，會讓頂級伺服器叢集陷入癱瘓？"
+        />
+
+        <p>
+          在生成對抗網路（GAN）統治電腦視覺的時代，研究者始終飽受模式崩潰（Mode
+          Collapse）與訓練不穩定的折磨。2020 年，Jonathan Ho 等人發表的
+          DDPM（去噪擴散機率模型）帶來了一場宛如物理熱力學逆行的革命：如果把一張清晰的影像想像成一滴落入清水的墨汁，分子擴散的過程會不可逆地將其均勻稀釋為混沌；那麼，只要讓神經網路學會每一步「微小的逆向去噪」，我們就能從純粹的隨機高斯噪聲中，重新凝結出栩栩如生的真實世界。
+        </p>
+
+        <p>
+          這項理論的數學形式極具對稱之美。在前向加噪過程（Forward Process）中，給定真實影像
+          <math class="font-serif"><msub><mi>x</mi><mn>0</mn></msub><mo>∼</mo><mi>q</mi><mo>(</mo><mi>x</mi><mo>)</mo></math>
+          ，我們透過馬可夫鏈在連續的<math class="font-serif"><mi>T</mi></math>
+          個時間步中逐步滲入微量高斯噪聲：
+        </p>
+
+        <math
+          display="block"
+          class="editorial-math my-6"
+          aria-label="DDPM 前向加噪馬可夫鏈轉移機率公式"
+        >
+          <mi>q</mi>
+          <mo>(</mo>
+          <msub><mi>x</mi><mi>t</mi></msub>
+          <mo>&#x2223;</mo>
+          <msub><mi>x</mi><mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub>
+          <mo>)</mo>
+          <mo>=</mo>
+          <mi mathvariant="script">N</mi>
+          <mo>(</mo>
+          <msub><mi>x</mi><mi>t</mi></msub>
+          <mo>;</mo>
+          <msqrt><mn>1</mn><mo>-</mo><msub><mi>&#x3B2;</mi><mi>t</mi></msub></msqrt>
+          <msub><mi>x</mi><mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub>
+          <mo>,</mo>
+          <msub><mi>&#x3B2;</mi><mi>t</mi></msub>
+          <mi mathvariant="bold">I</mi>
+          <mo>)</mo>
+        </math>
+
+        <p>
+          其中
+          <math class="font-serif"><msub><mi>&#x3B2;</mi><mi>t</mi></msub><mo>&#x2208;</mo><mo>(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo>)</mo></math>
+          為預先排程的噪聲變異數。得益於高斯分佈的良好性質，我們不需要一步步遞迴推導，即可直接寫出從原始影像
+          <math class="font-serif"><msub><mi>x</mi><mn>0</mn></msub></math>到任意時間步
+          <math class="font-serif"><msub><mi>x</mi><mi>t</mi></msub></math>的閉式解析採樣公式：
+        </p>
+
+        <math display="block" class="editorial-math my-6" aria-label="任意時間步前向加噪閉式解析解">
+          <mi>q</mi>
+          <mo>(</mo>
+          <msub><mi>x</mi><mi>t</mi></msub>
+          <mo>&#x2223;</mo>
+          <msub><mi>x</mi><mn>0</mn></msub>
+          <mo>)</mo>
+          <mo>=</mo>
+          <mi mathvariant="script">N</mi>
+          <mo>(</mo>
+          <msub><mi>x</mi><mi>t</mi></msub>
+          <mo>;</mo>
+          <msqrt><msub><mover><mi>&#x3B1;</mi><mo>&#xAF;</mo></mover><mi>t</mi></msub></msqrt>
+          <msub><mi>x</mi><mn>0</mn></msub>
+          <mo>,</mo>
+          <mo>(</mo><mn>1</mn><mo>-</mo><msub><mover><mi>&#x3B1;</mi><mo>&#xAF;</mo></mover><mi>t</mi></msub><mo>)</mo>
+          <mi mathvariant="bold">I</mi>
+          <mo>)</mo>
+        </math>
+
+        <p>
+          這裡定義
+          <math class="font-serif"><msub><mi>&#x3B1;</mi><mi>t</mi></msub><mo>=</mo><mn>1</mn><mo>-</mo><msub><mi>&#x3B2;</mi><mi>t</mi></msub></math>
+          且
+          <math class="font-serif"><msub><mover><mi>&#x3B1;</mi><mo>&#xAF;</mo></mover><mi>t</mi></msub><mo>=</mo><msubsup><mo>&#x220F;</mo><mrow><mi>s</mi><mo>=</mo><mn>1</mn></mrow><mi>t</mi></msubsup><msub><mi>&#x3B1;</mi><mi>s</mi></msub></math>
+          。當時間步<math class="font-serif"><mi>t</mi><mo>=</mo><mi>T</mi></math>（通常設為
+          1,000）時，
+          <math class="font-serif"><msub><mover><mi>&#x3B1;</mi><mo>&#xAF;</mo></mover><mi>T</mi></msub><mo>&#x2248;</mo><mn>0</mn></math>
+          ，原始影像的結構被徹底抹煞，化為標準各向同性高斯分佈
+          <math class="font-serif"><mi mathvariant="script">N</mi><mo>(</mo><mn>0</mn><mo>,</mo><mi mathvariant="bold">I</mi><mo>)</mo></math>
+          。
+        </p>
+
+        <p>
+          反向生成過程則是訓練一個帶有參數<math class="font-serif"><mi>&#x3B8;</mi></math>
+          的類神經網路（通常為 U-Net 架構），估計反向條件機率分佈
+          <math class="font-serif"><msub><mi>p</mi><mi>&#x3B8;</mi></msub><mo>(</mo><msub><mi>x</mi><mrow><mi>t</mi><mo>-</mo><mn>1</mn></mrow></msub><mo>&#x2223;</mo><msub><mi>x</mi><mi>t</mi></msub><mo>)</mo></math>
+          。Jonathan Ho 的關鍵洞見在於：我們不需要估計均值向量，只需讓網路直接預測在時間步
+          <math class="font-serif"><mi>t</mi></math>所注入的標準高斯噪聲
+          <math class="font-serif"><mi>&#x3F5;</mi><mo>∼</mo><mi mathvariant="script">N</mi><mo>(</mo><mn>0</mn><mo>,</mo><mi mathvariant="bold">I</mi><mo>)</mo></math>
+          。其簡化目標函數極其簡潔：
+        </p>
+
+        <math display="block" class="editorial-math my-6" aria-label="DDPM 簡化均方誤差損失函數">
+          <msub><mi>L</mi><mtext>simple</mtext></msub>
+          <mo>(</mo><mi>&#x3B8;</mi><mo>)</mo>
+          <mo>=</mo>
+          <msub><mi mathvariant="double-struck">E</mi><mrow><msub><mi>x</mi><mn>0</mn></msub><mo>,</mo><mi>&#x3F5;</mi><mo>∼</mo><mi mathvariant="script">N</mi><mo>(</mo><mn>0</mn><mo>,</mo><mi mathvariant="bold">I</mi><mo>)</mo><mo>,</mo><mi>t</mi></mrow></msub>
+          <mo>[</mo>
+          <mo>&#x2225;</mo>
+          <mi>&#x3F5;</mi>
+          <mo>-</mo>
+          <msub><mi>&#x3F5;</mi><mi>&#x3B8;</mi></msub>
+          <mo>(</mo>
+          <msqrt><msub><mover><mi>&#x3B1;</mi><mo>&#xAF;</mo></mover><mi>t</mi></msub></msqrt>
+          <msub><mi>x</mi><mn>0</mn></msub>
+          <mo>+</mo>
+          <msqrt><mn>1</mn><mo>-</mo><msub><mover><mi>&#x3B1;</mi><mo>&#xAF;</mo></mover><mi>t</mi></msub></msqrt>
+          <mi>&#x3F5;</mi>
+          <mo>,</mo>
+          <mi>t</mi>
+          <mo>)</mo>
+          <msubsup><mo>&#x2225;</mo><mn>2</mn><mn>2</mn></msubsup>
+          <mo>]</mo>
+        </math>
+
+        <p>
+          然而，這個美麗的理論在面對真實世界的高解析度影像時，遭遇了難以逾越的「畫素算力深淵」。
+        </p>
+
+        <p>
+          思考一下高維影像的物理本質：一張標準的 512×512 RGB 圖像，包含整整 786,432
+          個獨立的浮點數值。如果直接在畫素空間執行擴散過程，神經網路必須在每一步去噪推論中，對這近
+          80 萬個數值執行巨大的卷積與自注意力運算。在 1,000
+          個採樣步數中，一次完整的影像生成需要對龐大的 U-Net 進行 1,000 次前向傳播！
+        </p>
+
+        <p>
+          更為致命的是資訊理論上的嚴重失衡：影像中的資訊可以劃分為「感知語意結構」（Perceptual/Semantic
+          Structure，如物體形狀、空間構圖、色彩氛圍）與「無感知冗餘細節」（Imperceptible
+          High-Frequency
+          Details，如單顆像素間的隨機噪聲、微小色差震盪）。實驗顯示，畫素空間擴散模型將超過 90%
+          的運算容量與梯度更新，耗費在人類肉眼根本無法察覺的高頻細節微調上，而真正決定畫面成敗的宏觀語意，卻只能在微弱的訊號邊緣掙扎。
+        </p>
+
+        <Callout variant="alert" title="畫素空間的殘酷現實">
+          在 2021 年，要訓練一個 512×512 解析度的原始畫素 DDPM，需要數百張頂級 GPU（如 NVIDIA
+          V100）連續運算數月。對於個人研究者、中小型實驗室與普羅大眾而言，這道高聳的算力門檻直接將所有人拒於門外。
+        </Callout>
+      </article>
+
+      <!-- CHAPTER 02 -->
+      <article class="mb-24" id="chapter-02">
+        <PaperSectionHeader
+          kicker="章節 02 / CHAPTER 02"
+          title="兩階段感知壓縮：Autoencoder 隱空間的幾何解耦"
+          subtitle="將視覺世界壓縮八倍：在低維流形中釋放擴散模型的真實潛能"
+        />
+
+        <p>
+          面對畫素空間的運算泥淖，慕尼黑大學的 Robin Rombach、Patrick Esser 與 Björn Ommer
+          提出了一個極具洞察力的核心論斷：
+          <strong>
+            「生成建模（Generative Modeling）與感知壓縮（Perceptual
+            Compression）本應是兩個完全獨立的工程階段，不該混為一談。」
+          </strong>
+        </p>
+
+        <p>
+          人類畫家在創作油畫時，從來不是拿著放大鏡一顆一顆像素點畫出來的。大師總是先在大畫布上勾勒出宏觀的光影大勢與輪廓草稿（語意生成），最後才在畫面上點綴微小筆觸與反光細節（感知解碼）。LDM
+          的核心架構，正是對這種創作心智的嚴格數學實踐。
+        </p>
+
+        <p>LDM 建立了兩階段解耦架構：</p>
+
+        <div class="my-8 border border-line bg-surface p-6 sm:p-8">
+          <h3 class="m-0 mb-4 font-display text-xl sm:text-2xl text-ink">
+            兩階段解耦架構的數學分工
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="border-t-2 border-ink pt-4">
+              <p class="m-0 font-mono text-xs font-semibold uppercase tracking-wider text-red mb-2">
+                階段一 · 感知壓縮空間 / STAGE 1: AUTOENCODER
+              </p>
+              <p class="text-sm leading-relaxed text-muted mb-0">
+                由編碼器<math class="font-serif"><mi mathvariant="script">E</mi></math>與解碼器
+                <math class="font-serif"><mi mathvariant="script">D</mi></math>
+                組成。利用感知損失（LPIPS）與對抗損失（PatchGAN
+                Discriminator）預先訓練，負責抹除高頻不可察覺噪聲，將真實影像
+                <math class="font-serif"><mi>x</mi><mo>&#x2208;</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mi>H</mi><mo>&#xD7;</mo><mi>W</mi><mo>&#xD7;</mo><mn>3</mn></mrow></msup></math>
+                映射為緊湊的連續特徵圖
+                <math class="font-serif"><mi>z</mi><mo>=</mo><mi mathvariant="script">E</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>&#x2208;</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mi>h</mi><mo>&#xD7;</mo><mi>w</mi><mo>&#xD7;</mo><mi>c</mi></mrow></msup></math>
+                。
+              </p>
+            </div>
+            <div class="border-t-2 border-red pt-4">
+              <p class="m-0 font-mono text-xs font-semibold uppercase tracking-wider text-red mb-2">
+                階段二 · 潛在擴散模型 / STAGE 2: LATENT DIFFUSION
+              </p>
+              <p class="text-sm leading-relaxed text-muted mb-0">
+                專注於低維隱空間<math class="font-serif"><mi>z</mi></math>
+                進行擴散生成。前向加噪、反向去噪與條件控制全部在
+                <math class="font-serif"><mi>z</mi></math>
+                上運作，模型擺脫畫素矩陣的維度詛咒，專注於學習純粹的語意、結構與跨模態關聯。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <p>
+          在階段一中，編碼器定義了空間下採樣因子
+          <math class="font-serif"><mi>f</mi><mo>=</mo><mi>H</mi><mo>/</mo><mi>h</mi><mo>=</mo><mi>W</mi><mo>/</mo><mi>w</mi><mo>=</mo><msup><mn>2</mn><mi>m</mi></msup></math>
+          。為了防止隱空間特徵分佈發散或出現過大的變異數，論文探索了兩種正規化策略：
+        </p>
+
+        <ul class="my-6 space-y-4 text-ink">
+          <li>
+            <strong>KL-reg（變分正規化）：</strong>
+            類似標準變分自動編碼器（VAE），在編碼器輸出施加微弱的 KL 散度懲罰，促使潛在變量
+            <math class="font-serif"><mi>z</mi></math>
+            輕度靠近標準常態分佈，確保隱空間的連續性與平滑度。
+          </li>
+          <li>
+            <strong>VQ-reg（向量量化）：</strong>在解碼器前引入向量量化碼本（Vector
+            Quantization），將特徵投影到離散碼本嵌入中。雖然本質離散，但可視為一種強烈的資訊瓶頸約束。
+          </li>
+        </ul>
+
+        <AsideCard
+          title="率真度與失真度權衡：下採樣因子的消融對決"
+          kicker="RATE-DISTORTION TRADEOFF / f=8 SWEET SPOT"
+          class="my-8"
+        >
+          <p class="m-0 mb-4 text-sm text-muted leading-relaxed">
+            論文作者進行了詳盡的降採樣係數消融實驗，對比
+            <math class="font-serif"><mi>f</mi><mo>&#x2208;</mo><mo>&#123;</mo><mn>1</mn><mo>,</mo><mn>2</mn><mo>,</mo><mn>4</mn><mo>,</mo><mn>8</mn><mo>,</mo><mn>16</mn><mo>,</mo><mn>32</mn><mo>&#125;</mo></math>
+            的效能表現。實驗揭示了極具啟發性的「率真度-失真度權衡曲線」（Rate-Distortion Curve）：
+          </p>
+          <div class="overflow-x-auto border-t border-line pt-4">
+            <table class="w-full text-left font-mono text-xs sm:text-sm">
+              <thead>
+                <tr class="border-b border-ink">
+                  <th class="pb-3 text-ink">下採樣因子 f</th>
+                  <th class="pb-3 text-ink">隱空間維度 (512x512 輸入)</th>
+                  <th class="pb-3 text-ink">資料數值總量</th>
+                  <th class="pb-3 text-ink">空間壓縮倍率</th>
+                  <th class="pb-3 text-ink">特徵與訓練特性</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-line text-muted">
+                <tr>
+                  <td class="py-3 text-ink font-bold">f = 1 (純畫素)</td>
+                  <td class="py-3">512 × 512 × 3</td>
+                  <td class="py-3">786,432</td>
+                  <td class="py-3">1× (無壓縮)</td>
+                  <td class="py-3">計算極慢，梯度被高頻無效噪聲淹沒</td>
+                </tr>
+                <tr>
+                  <td class="py-3 text-ink font-bold">f = 4</td>
+                  <td class="py-3">128 × 128 × 3</td>
+                  <td class="py-3">49,152</td>
+                  <td class="py-3">16×</td>
+                  <td class="py-3">收斂加速，保留大量微觀紋理</td>
+                </tr>
+                <tr class="bg-red-soft/20">
+                  <td class="py-3 text-red font-bold">f = 8 (黃金甜蜜點)</td>
+                  <td class="py-3 text-ink font-semibold">64 × 64 × 4</td>
+                  <td class="py-3 text-ink font-semibold">16,384</td>
+                  <td class="py-3 text-red font-bold">64× (空間) / 48× (數值)</td>
+                  <td class="py-3 text-ink">感知品質與計算複雜度的極致平衡</td>
+                </tr>
+                <tr>
+                  <td class="py-3 text-ink font-bold">f = 16</td>
+                  <td class="py-3">32 × 32 × 8</td>
+                  <td class="py-3">8,192</td>
+                  <td class="py-3">256×</td>
+                  <td class="py-3">訓練飛快，但微小細節（文字、眼神）開始失真</td>
+                </tr>
+                <tr>
+                  <td class="py-3 text-ink font-bold">f = 32</td>
+                  <td class="py-3">16 × 16 × 16</td>
+                  <td class="py-3">4,096</td>
+                  <td class="py-3">1024×</td>
+                  <td class="py-3">感知壓縮過度，解碼重建出現嚴重模糊與偽影</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </AsideCard>
+
+        <p>
+          當<math class="font-serif"><mi>f</mi><mo>=</mo><mn>8</mn></math>時，一張 512×512 的 RGB
+          照片被壓縮為僅僅 64×64×4 的潛在特徵張量。資料量從 786,432 個數值暴跌至 16,384
+          個數值，壓縮率高達 48 倍！更為關鍵的是空間 Token 數量從 262,144 顆像素銳減至 4,096
+          個空間單元，使得後續 U-Net 中的自注意力運算複雜度直接下降了整整 64 倍！
+        </p>
+
+        <p>在隱空間中，擴散模型的損失函數演變為：</p>
+
+        <math
+          display="block"
+          class="editorial-math my-6"
+          aria-label="潛在擴散模型 LDM 核心損失函數"
+        >
+          <msub><mi>L</mi><mtext>LDM</mtext></msub>
+          <mo>(</mo><mi>&#x3B8;</mi><mo>)</mo>
+          <mo>=</mo>
+          <msub><mi mathvariant="double-struck">E</mi><mrow><mi mathvariant="script">E</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>,</mo><mi>&#x3F5;</mi><mo>∼</mo><mi mathvariant="script">N</mi><mo>(</mo><mn>0</mn><mo>,</mo><mi mathvariant="bold">I</mi><mo>)</mo><mo>,</mo><mi>t</mi></mrow></msub>
+          <mo>[</mo>
+          <mo>&#x2225;</mo>
+          <mi>&#x3F5;</mi>
+          <mo>-</mo>
+          <msub><mi>&#x3F5;</mi><mi>&#x3B8;</mi></msub>
+          <mo>(</mo>
+          <msub><mi>z</mi><mi>t</mi></msub>
+          <mo>,</mo>
+          <mi>t</mi>
+          <mo>)</mo>
+          <msubsup><mo>&#x2225;</mo><mn>2</mn><mn>2</mn></msubsup>
+          <mo>]</mo>
+        </math>
+
+        <p>
+          透過這一步神來之筆，去噪神經網路徹底從繁重無效的畫素重建中解脫出來。擴散模型第一次能夠在單張消費級顯示卡（如
+          RTX 3060 12GB）上，在幾秒鐘內完成整張 512×512 高解析度影像的反向去噪推論。
+        </p>
+      </article>
+
+      <!-- CHAPTER 03 -->
+      <article class="mb-24" id="chapter-03">
+        <PaperSectionHeader
+          kicker="章節 03 / CHAPTER 03"
+          title="跨模態條件引導引擎：Cross-Attention 如何將文字語意注入噪點"
+          subtitle="建立靈活的條件控制中樞：讓自然語言成為雕刻光影的手術刀"
+        />
+
+        <p>
+          如果只有隱空間去噪，LDM
+          充其量只是一個高效率的「無條件影像生成器」（只能隨機吐出未知的風景或人臉）。然而，現代生成式人工智慧的核心靈魂在於
+          <strong>條件可控性（Controllability）</strong>
+          ——人類希望能輸入一段細膩的文字描述（如「一隻戴著蒸氣龐克護目鏡的貓，在雨夜霓虹街道上漫步」），並讓模型忠實呈現這段語意。
+        </p>
+
+        <p>
+          為了將多模態條件引入擴散過程，LDM
+          設計了一個極具通用性的條件控制架構。給定任意形式的條件輸入
+          <math class="font-serif"><mi>y</mi></math>
+          （可以是自然語言提示、語意分割圖、草圖線條或另一張影像），首先透過專屬領域編碼器
+          <math class="font-serif"><msub><mi>&#x3C4;</mi><mi>&#x3B8;</mi></msub><mo>(</mo><mi>y</mi><mo>)</mo></math>
+          將其轉換為特徵序列：
+        </p>
+
+        <math display="block" class="editorial-math my-6" aria-label="領域專屬條件編碼器映射公式">
+          <msub><mi>&#x3C4;</mi><mi>&#x3B8;</mi></msub>
+          <mo>(</mo><mi>y</mi><mo>)</mo>
+          <mo>&#x2208;</mo>
+          <msup><mi mathvariant="double-struck">R</mi><mrow><mi>M</mi><mo>&#xD7;</mo><msub><mi>d</mi><mi>&#x3C4;</mi></msub></mrow></msup>
+        </math>
+
+        <p>
+          對於文字到影像合成（Text-to-Image），
+          <math class="font-serif"><msub><mi>&#x3C4;</mi><mi>&#x3B8;</mi></msub></math>
+          正是前一章介紹的預訓練 CLIP ViT-L/14 文字編碼器（或 BERT）。它將包含
+          <math class="font-serif"><mi>M</mi></math>個詞元的英文提示，映射為長度為
+          <math class="font-serif"><mi>M</mi></math>、維度為
+          <math class="font-serif"><msub><mi>d</mi><mi>&#x3C4;</mi></msub><mo>=</mo><mn>768</mn></math>
+          的稠密語意特徵矩陣。
+        </p>
+
+        <p>
+          接著，LDM 在去噪 U-Net 骨幹的各個中間層特徵圖
+          <math class="font-serif"><msub><mi>&#x3D5;</mi><mi>i</mi></msub><mo>(</mo><msub><mi>z</mi><mi>t</mi></msub><mo>)</mo><mo>&#x2208;</mo><msup><mi mathvariant="double-struck">R</mi><mrow><msub><mi>N</mi><mi>i</mi></msub><mo>&#xD7;</mo><msubsup><mi>d</mi><mi>&#x3F5;</mi><mi>i</mi></msubsup></mrow></msup></math>
+          中，嵌入了交叉注意力機制（Cross-Attention Layer）：
+        </p>
+
+        <math
+          display="block"
+          class="editorial-math my-6"
+          aria-label="Cross-Attention 條件特徵混合計算公式"
+        >
+          <mtext>Attention</mtext>
+          <mo>(</mo><mi>Q</mi><mo>,</mo><mi>K</mi><mo>,</mo><mi>V</mi><mo>)</mo>
+          <mo>=</mo>
+          <mtext>softmax</mtext>
+          <mo>(</mo>
+          <mfrac>
+            <mrow><mi>Q</mi><msup><mi>K</mi><mi>T</mi></msup></mrow>
+            <msqrt><mi>d</mi></msqrt>
+          </mfrac>
+          <mo>)</mo>
+          <mi>V</mi>
+        </math>
+
+        <p>其中查詢、鍵與值的投影矩陣分工無比清晰：</p>
+
+        <ul class="my-6 space-y-3 text-ink">
+          <li>
+            <strong>查詢向量 Query：</strong>
+            <math class="font-serif"><mi>Q</mi><mo>=</mo><msubsup><mi>W</mi><mi>Q</mi><mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msubsup><mo>&#x22C5;</mo><msub><mi>&#x3D5;</mi><mi>i</mi></msub><mo>(</mo><msub><mi>z</mi><mi>t</mi></msub><mo>)</mo></math>
+            ，來自當前正在去噪的影像隱空間特徵。每個空間座標上的特徵向量代表「畫面中這個區域正在形成什麼結構」。
+          </li>
+          <li>
+            <strong>鍵向量 Key：</strong>
+            <math class="font-serif"><mi>K</mi><mo>=</mo><msubsup><mi>W</mi><mi>K</mi><mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msubsup><mo>&#x22C5;</mo><msub><mi>&#x3C4;</mi><mi>&#x3B8;</mi></msub><mo>(</mo><mi>y</mi><mo>)</mo></math>
+            ，來自文字條件編碼。代表「提示詞中有哪些概念與屬性等待被體現」。
+          </li>
+          <li>
+            <strong>值向量 Value：</strong>
+            <math class="font-serif"><mi>V</mi><mo>=</mo><msubsup><mi>W</mi><mi>V</mi><mrow><mo>(</mo><mi>i</mi><mo>)</mo></mrow></msubsup><mo>&#x22C5;</mo><msub><mi>&#x3C4;</mi><mi>&#x3B8;</mi></msub><mo>(</mo><mi>y</mi><mo>)</mo></math>
+            ，攜帶文字條件的深層語意資訊，將根據注意力權重加權注入回影像特徵中。
+          </li>
+        </ul>
+
+        <p>
+          透過這種方式，每當 U-Net 在時間步<math class="font-serif"><mi>t</mi></math>
+          試圖預測噪聲時，畫面的每一個空間位置都能主動向文字提示發出詢問：「我現在位於畫面的左上方，我應該生成藍天、飛鳥還是城堡？」注意力權重動態將對應的文字特徵注入特徵圖，達成前所未有的精確語意導航。
+        </p>
+
+        <p>結合條件引導後的整體條件潛在擴散損失函數為：</p>
+
+        <math display="block" class="editorial-math my-6" aria-label="條件潛在擴散模型整體損失函數">
+          <msub><mi>L</mi><mtext>LDM-cond</mtext></msub>
+          <mo>(</mo><mi>&#x3B8;</mi><mo>)</mo>
+          <mo>=</mo>
+          <msub><mi mathvariant="double-struck">E</mi><mrow><mi mathvariant="script">E</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>,</mo><mi>y</mi><mo>,</mo><mi>&#x3F5;</mi><mo>∼</mo><mi mathvariant="script">N</mi><mo>(</mo><mn>0</mn><mo>,</mo><mi mathvariant="bold">I</mi><mo>)</mo><mo>,</mo><mi>t</mi></mrow></msub>
+          <mo>[</mo>
+          <mo>&#x2225;</mo>
+          <mi>&#x3F5;</mi>
+          <mo>-</mo>
+          <msub><mi>&#x3F5;</mi><mi>&#x3B8;</mi></msub>
+          <mo>(</mo>
+          <msub><mi>z</mi><mi>t</mi></msub>
+          <mo>,</mo>
+          <mi>t</mi>
+          <mo>,</mo>
+          <msub><mi>&#x3C4;</mi><mi>&#x3B8;</mi></msub><mo>(</mo><mi>y</mi><mo>)</mo>
+          <mo>)</mo>
+          <msubsup><mo>&#x2225;</mo><mn>2</mn><mn>2</mn></msubsup>
+          <mo>]</mo>
+        </math>
+
+        <p>
+          在推論取樣階段，為了讓生成結果更緊密地遵循人類指令，Stable Diffusion 普遍採用了 Jonathan
+          Ho 與 Tim Salimans 提出的<strong>無分類器引導（Classifier-Free Guidance, CFG）</strong>
+          技術。
+        </p>
+
+        <p>
+          在訓練期間，模型以約 10% 的機率隨機丟棄文字條件（以空字串
+          <math class="font-serif"><mi>&#x2205;</mi></math>
+          取代），從而在同一個網路中同時學會無條件去噪方向
+          <math class="font-serif"><msub><mi>&#x3F5;</mi><mi>&#x3B8;</mi></msub><mo>(</mo><msub><mi>z</mi><mi>t</mi></msub><mo>,</mo><mi>t</mi><mo>,</mo><mi>&#x2205;</mi><mo>)</mo></math>
+          與有條件去噪方向
+          <math class="font-serif"><msub><mi>&#x3F5;</mi><mi>&#x3B8;</mi></msub><mo>(</mo><msub><mi>z</mi><mi>t</mi></msub><mo>,</mo><mi>t</mi><mo>,</mo><mi>y</mi><mo>)</mo></math>
+          。在推論時，最終的噪聲預測值被調整為：
+        </p>
+
+        <math display="block" class="editorial-math my-6" aria-label="無分類器引導 CFG 外推公式">
+          <msub><mover><mi>&#x3F5;</mi><mo>~</mo></mover><mi>&#x3B8;</mi></msub>
+          <mo>(</mo><msub><mi>z</mi><mi>t</mi></msub><mo>,</mo><mi>t</mi><mo>,</mo><mi>y</mi><mo>)</mo>
+          <mo>=</mo>
+          <msub><mi>&#x3F5;</mi><mi>&#x3B8;</mi></msub>
+          <mo>(</mo><msub><mi>z</mi><mi>t</mi></msub><mo>,</mo><mi>t</mi><mo>,</mo><mi>&#x2205;</mi><mo>)</mo>
+          <mo>+</mo>
+          <mi>w</mi>
+          <mo>&#x22C5;</mo>
+          <mo>[</mo>
+          <msub><mi>&#x3F5;</mi><mi>&#x3B8;</mi></msub>
+          <mo>(</mo><msub><mi>z</mi><mi>t</mi></msub><mo>,</mo><mi>t</mi><mo>,</mo><mi>y</mi><mo>)</mo>
+          <mo>-</mo>
+          <msub><mi>&#x3F5;</mi><mi>&#x3B8;</mi></msub>
+          <mo>(</mo><msub><mi>z</mi><mi>t</mi></msub><mo>,</mo><mi>t</mi><mo>,</mo><mi>&#x2205;</mi><mo>)</mo>
+          <mo>]</mo>
+        </math>
+
+        <p>
+          其中<math class="font-serif"><mi>w</mi><mo>&#x2265;</mo><mn>1.0</mn></math>
+          為引導係數（Guidance Scale）。這項公式的幾何直覺非常精妙：差值向量
+          <math class="font-serif"><msub><mi>&#x3F5;</mi><mi>&#x3B8;</mi></msub><mo>(</mo><msub><mi>z</mi><mi>t</mi></msub><mo>,</mo><mi>t</mi><mo>,</mo><mi>y</mi><mo>)</mo><mo>-</mo><msub><mi>&#x3F5;</mi><mi>&#x3B8;</mi></msub><mo>(</mo><msub><mi>z</mi><mi>t</mi></msub><mo>,</mo><mi>t</mi><mo>,</mo><mi>&#x2205;</mi><mo>)</mo></math>
+          代表了「純粹由文字條件所驅動的語意位移方向」。透過設定
+          <math class="font-serif"><mi>w</mi><mo>&gt;</mo><mn>1</mn></math>（實務上通常在 7.0 至 8.5
+          之間），我們人為放大了這個語意訊號，迫使模型嚴格朝著文字描述的方向去噪，極大提升了生成影像的提示貼合度與細節清晰度。
+        </p>
+      </article>
+
+      <!-- CHAPTER 04 -->
+      <article class="mb-24" id="chapter-04">
+        <PaperSectionHeader
+          kicker="章節 04 / CHAPTER 04"
+          title="開源海嘯與局限：Stable Diffusion 浪潮、幾何漂移與局部編輯困境"
+          subtitle="民主化生成力量的崛起，與擴散機制深處難以抹除的結構性盲點"
+        />
+
+        <p>
+          2022 年 8 月，基於 LDM 架構、由 Stability AI、Runway 與慕尼黑大學共同訓練並開源的
+          <strong>Stable Diffusion v1.4</strong>
+          正式釋出。這在整個人工智慧歷史上引發了一場空前絕後的開源海嘯。
+        </p>
+
+        <p>
+          在此之前，文字生圖技術（如 OpenAI 的 DALL-E 2 或 Google 的
+          Imagen）被科技巨頭嚴密鎖在封閉的 API
+          閘道背後，使用者必須按次付費，且無法窺見任何權重細節。Stable Diffusion
+          徹底打破了這道壟斷高牆：由於 LDM
+          將推論開銷壓縮至極低水準，全球數百萬名創作者、獨立開發者與設計師，第一次能夠在自己桌上的個人電腦（搭載一張幾千台幣的家用顯示卡）上，本機運行最先進的高畫質生成模型。
+        </p>
+
+        <p>圍繞著 Stable Diffusion，一個龐大繁榮的開源生態迅速成形：</p>
+
+        <ul class="my-6 space-y-4 text-ink">
+          <li>
+            <strong>Automatic1111 WebUI：</strong>建立了普及全球的本機生成控制台，將採樣器（Euler
+            a、DDIM、DPM++）、種子碼、解析度與修圖管線整合為直覺介面。
+          </li>
+          <li>
+            <strong>LoRA（Low-Rank Adaptation）：</strong>
+            允許創作者僅需數十張特定角色或畫風的照片，以極小的參數量（幾十
+            MB）在十幾分鐘內微調出專屬風格模型。
+          </li>
+          <li>
+            <strong>ControlNet（張呂敏等人，2023）：</strong>透過複製 U-Net 編碼層並以零卷積（Zero
+            Convolution）接入邊緣線稿（Canny）、深度圖（Depth）或人體骨架（OpenPose），徹底解決了純文字無法精確控制空間構圖的痛點，使擴散模型真正進入工業級插畫與商業設計工作流。
+          </li>
+        </ul>
+
+        <p>然而，在熱烈的開源狂歡背後，擴散模型底層的數學機制也逐漸暴露出難以克服的本質局限：</p>
+
+        <div class="my-8 space-y-6">
+          <div class="border-l-4 border-ink pl-6">
+            <h4 class="m-0 font-display text-lg sm:text-xl text-ink">
+              1. 全域隨機漂移的「蝴蝶效應」
+            </h4>
+            <p class="mt-2 text-sm leading-relaxed text-muted mb-0">
+              在擴散模型中，整張圖片是從一整塊連續的高斯噪聲張量中，經由數十步馬可夫鏈共同去噪洗出來的。這意味著空間中任意一個位置的數值變化，都會透過
+              U-Net
+              的全域卷積與注意力機制向周圍擴散。如果使用者好不容易生成了一張完美的少女肖像，只想「為她戴上一副眼鏡」，在提示詞中加入「glasses」會徹底改變整個反向去噪軌跡——重新生成後，少女的長相、髮型、衣著甚至背景光影往往全部變了一個人。即使使用手動筆刷塗黑的局部重繪（Inpainting），遮罩邊緣也極易出現光影不一致與斷裂感。
+            </p>
+          </div>
+
+          <div class="border-l-4 border-ink pl-6">
+            <h4 class="m-0 font-display text-lg sm:text-xl text-ink">
+              2. 離散字符排版的「鬼畫符之謎」
+            </h4>
+            <p class="mt-2 text-sm leading-relaxed text-muted mb-0">
+              早期的 Stable Diffusion
+              在生成海報、路標或商店招牌時，上面的英文字母總是呈現莫名其妙的火星文拼寫。這是因為擴散模型本質是在高維連續流形上擬合視覺統計分佈，它「看過很多招牌有黑白相間的線條」，但它的大腦裡缺乏語言模型對離散字符（Discrete
+              Tokens）與語法拼寫的邏輯認知。它在模擬文字的「視覺質感」，而不是在「寫出單字」。
+            </p>
+          </div>
+
+          <div class="border-l-4 border-red pl-6">
+            <h4 class="m-0 font-display text-lg sm:text-xl text-ink">
+              3. 邁向原生自回歸的轉折伏筆
+            </h4>
+            <p class="mt-2 text-sm leading-relaxed text-muted mb-0">
+              這兩大局限促使頂尖學者開始反思：如果影像能被離散量化為視覺單字（Visual
+              Tokens），是否能直接運用 Transformer
+              的強大自回歸注意力，像編輯文字一樣精準修改影像中的特定圖塊？這個疑問，直接為 2024 年以
+              VAR（視覺自回歸模型）為代表的新一代生圖典範，埋下了最深沉的伏筆。
+            </p>
+          </div>
+        </div>
+      </article>
+
+      <!-- DYNAMIC LAB (INTERACTIVE LATENT DIFFUSION LAB) -->
+      <section
+        class="mb-24 border-2 border-line bg-surface p-6 sm:p-10 shadow-editorial"
+        id="interactive-lab"
+        aria-label="動態實驗室"
+      >
+        <div class="border-b border-line pb-6 mb-8">
+          <p class="font-mono text-xs font-semibold uppercase tracking-[0.14em] text-red mb-2">
+            動態實驗室 / INTERACTIVE LATENT DIFFUSION LAB
+          </p>
+          <h2 class="m-0 font-display text-3xl sm:text-4xl text-ink tracking-tight">
+            潛在空間幾何與條件去噪風洞
+          </h2>
+          <p class="mt-3 text-base text-muted leading-relaxed max-w-3xl">
+            透過這座動態實驗室，親手驗證 LDM 的兩大核心機制：在模組一中調節下採樣因子
+            <math class="font-serif"><mi>f</mi></math>
+            觀察隱空間維度暴跌與算力節省；在模組二中調校無分類器引導係數
+            <math class="font-serif"><mi>w</mi></math>與去噪時間步
+            <math class="font-serif"><mi>t</mi></math>，即時觀測文字語意對混沌噪聲的引導軌跡。
+          </p>
+        </div>
+
+        <!-- MODULE 1: COMPRESSION SANDBOX -->
+        <div class="mb-12 border border-line bg-paper/60 p-6 sm:p-8">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <p class="font-mono text-xs font-semibold uppercase tracking-wider text-red m-0">
+                實驗模組 01 / MODULE 01
+              </p>
+              <h3 class="font-display text-2xl text-ink m-0 mt-1">
+                隱空間感知壓縮比對儀 (Latent Compression Sandbox)
+              </h3>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="inline-block h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span class="font-mono text-xs text-muted">即時張量維度運算</span>
+            </div>
+          </div>
+
+          <p class="text-sm text-muted leading-relaxed mb-6">
+            請選擇不同的空間下採樣因子<math class="font-serif"><mi>f</mi></math>（預設輸入為
+            512×512×3 RGB 影像），觀察隱空間尺寸、資料量壓縮比、注意力複雜度以及重建細節的理論變化：
+          </p>
+
+          <!-- Factor Selector Buttons -->
+          <div class="mb-6 flex flex-wrap gap-2" role="group" aria-label="選擇下採樣因子 f">
+            {[
+              { f: 1, label: 'f = 1 (純畫素 DDPM)' },
+              { f: 2, label: 'f = 2' },
+              { f: 4, label: 'f = 4' },
+              { f: 8, label: 'f = 8 (LDM 黃金甜蜜點)' },
+              { f: 16, label: 'f = 16' },
+              { f: 32, label: 'f = 32 (極限壓縮)' },
+            ].map((item) => (
+              <button
+                type="button"
+                class:list={[
+                  'factor-btn px-4 py-2 font-mono text-xs font-semibold uppercase tracking-wider transition-all border',
+                  item.f === 8
+                    ? 'border-red bg-red text-white shadow-sm'
+                    : 'border-line bg-surface text-ink hover:border-ink',
+                ]}
+                data-factor={item.f}
+                aria-pressed={item.f === 8 ? 'true' : 'false'}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+
+          <!-- Dynamic Metrics Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+            <div class="border border-line bg-surface p-4">
+              <p class="font-mono text-xs text-muted m-0 uppercase">隱空間空間尺寸 (h × w)</p>
+              <p
+                id="metric-spatial"
+                class="font-mono text-xl sm:text-2xl font-bold text-ink mt-1 mb-0"
+              >
+                64 × 64
+              </p>
+              <p id="metric-spatial-sub" class="font-mono text-xs text-muted mt-1 mb-0">
+                空間縮減 64×
+              </p>
+            </div>
+            <div class="border border-line bg-surface p-4">
+              <p class="font-mono text-xs text-muted m-0 uppercase">特徵張量總數值量</p>
+              <p
+                id="metric-values"
+                class="font-mono text-xl sm:text-2xl font-bold text-ink mt-1 mb-0"
+              >
+                16,384
+              </p>
+              <p id="metric-values-sub" class="font-mono text-xs text-red font-semibold mt-1 mb-0">
+                資料量壓縮 48.0×
+              </p>
+            </div>
+            <div class="border border-line bg-surface p-4">
+              <p class="font-mono text-xs text-muted m-0 uppercase">注意力矩陣規模 (N²)</p>
+              <p
+                id="metric-attn"
+                class="font-mono text-xl sm:text-2xl font-bold text-ink mt-1 mb-0"
+              >
+                1.68 × 10⁷
+              </p>
+              <p
+                id="metric-attn-sub"
+                class="font-mono text-xs text-emerald-600 font-semibold mt-1 mb-0"
+              >
+                運算負擔暴跌 4,096×
+              </p>
+            </div>
+            <div class="border border-line bg-surface p-4">
+              <p class="font-mono text-xs text-muted m-0 uppercase">感知品質與細節評級</p>
+              <p
+                id="metric-quality"
+                class="font-mono text-xl sm:text-2xl font-bold text-red mt-1 mb-0"
+              >
+                完美平衡
+              </p>
+              <p id="metric-quality-sub" class="font-mono text-xs text-muted mt-1 mb-0">
+                無損人眼可見細節
+              </p>
+            </div>
+          </div>
+
+          <!-- Dynamic Visual Schema SVG -->
+          <div class="border border-line bg-surface p-6">
+            <p class="font-mono text-xs uppercase tracking-wider text-muted mb-4">
+              空間流形與維度網格幾何投影示意
+            </p>
+            <div class="flex flex-col md:flex-row items-center justify-around gap-8">
+              <!-- Pixel Grid Representation -->
+              <div class="text-center">
+                <div class="relative mx-auto flex h-36 w-36 items-center justify-center border-2 border-dashed border-line bg-paper/80 shadow-inner">
+                  <div class="grid h-28 w-28 grid-cols-8 gap-0.5 opacity-60">
+                    {Array.from({ length: 64 }).map(() => (
+                      <div class="bg-muted/40 rounded-[0.5px]"></div>
+                    ))}
+                  </div>
+                  <span class="absolute font-mono text-xs font-bold text-ink bg-surface/90 px-2 py-0.5 border border-line">
+                    512 × 512 × 3
+                  </span>
+                </div>
+                <p class="font-mono text-xs text-muted mt-2 mb-0">原始畫素空間 (786k 參數)</p>
+              </div>
+
+              <!-- Mapping Arrow -->
+              <div class="flex flex-col items-center">
+                <span class="font-mono text-xs font-semibold text-red mb-1">Autoencoder (E)</span>
+                <svg
+                  class="h-6 w-16 text-red"
+                  fill="none"
+                  viewBox="0 0 64 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M0 12h56m0 0l-6-6m6 6l-6 6"
+                  />
+                </svg>
+                <span id="svg-factor-label" class="font-mono text-xs text-muted mt-1">
+                  f = 8 (空間下採樣)
+                </span>
+              </div>
+
+              <!-- Latent Grid Representation -->
+              <div class="text-center">
+                <div
+                  id="latent-box"
+                  class="relative mx-auto flex h-36 w-36 items-center justify-center border-2 border-red bg-red-soft/20 shadow-editorial transition-all duration-300"
+                >
+                  <div id="latent-grid" class="grid h-16 w-16 grid-cols-4 gap-1">
+                    {Array.from({ length: 16 }).map(() => (
+                      <div class="bg-red/60 rounded-[1px]"></div>
+                    ))}
+                  </div>
+                  <span
+                    id="latent-spec-tag"
+                    class="absolute font-mono text-xs font-bold text-red bg-surface px-2 py-0.5 border border-red shadow-sm"
+                  >
+                    64 × 64 × 4
+                  </span>
+                </div>
+                <p id="latent-box-desc" class="font-mono text-xs text-red font-semibold mt-2 mb-0">
+                  感知隱空間 z (16.3k 參數)
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODULE 2: CFG & DENOISING WIND TUNNEL -->
+        <div class="border border-line bg-paper/60 p-6 sm:p-8">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <div>
+              <p class="font-mono text-xs font-semibold uppercase tracking-wider text-red m-0">
+                實驗模組 02 / MODULE 02
+              </p>
+              <h3 class="font-display text-2xl text-ink m-0 mt-1">
+                條件引導去噪風洞 (Cross-Attention & CFG Wind Tunnel)
+              </h3>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="inline-block h-2.5 w-2.5 rounded-full bg-blue animate-pulse"></span>
+              <span class="font-mono text-xs text-muted">無分類器引導幾何外推</span>
+            </div>
+          </div>
+
+          <p class="text-sm text-muted leading-relaxed mb-6">
+            調校無分類器引導係數<math class="font-serif"><mi>w</mi></math>（Guidance
+            Scale）與去噪時間步<math class="font-serif"><mi>t</mi></math>，實時觀察條件外推向量
+            <math class="font-serif"><msub><mover><mi>&#x3F5;</mi><mo>~</mo></mover><mi>&#x3B8;</mi></msub></math>
+            如何在不同階段雕刻畫面結構，並檢驗過高引導係數帶來的飽和失真風險：
+          </p>
+
+          <!-- Prompt Selector -->
+          <div class="mb-6">
+            <label
+              for="prompt-select"
+              class="block font-mono text-xs font-semibold uppercase tracking-wider text-ink mb-2"
+            >
+              選擇測試文字提示 (Text Prompt):
+            </label>
+            <select
+              id="prompt-select"
+              class="w-full border border-line bg-surface p-3 font-mono text-xs sm:text-sm text-ink focus:border-red focus:outline-none"
+            >
+              <option value="cyberpunk">
+                "A cyberpunk street in Taipei at rainy night, neon reflections, highly detailed 8k"
+              </option>
+              <option value="portrait">
+                "Cinematic portrait of an elderly watchmaker examining intricate gears, soft
+                dramatic lighting"
+              </option>
+              <option value="landscape">
+                "A majestic snowy mountain range with a serene crystalline lake under starry aurora
+                sky"
+              </option>
+            </select>
+          </div>
+
+          <!-- Dual Sliders: Guidance Scale & Timestep -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="border border-line bg-surface p-5">
+              <div class="flex justify-between items-center mb-2">
+                <label
+                  for="slider-cfg"
+                  class="font-mono text-xs font-bold uppercase tracking-wider text-ink"
+                >
+                  引導係數 (Guidance Scale w):
+                </label>
+                <span id="cfg-value" class="font-mono text-base font-bold text-red">
+                  7.5
+                </span>
+              </div>
+              <input
+                id="slider-cfg"
+                type="range"
+                min="1.0"
+                max="15.0"
+                step="0.5"
+                value="7.5"
+                class="w-full accent-red cursor-pointer"
+              />
+              <div class="flex justify-between font-mono text-xs text-muted mt-2">
+                <span>w = 1.0 (純條件無外推)</span>
+                <span>7.5 (建議甜蜜點)</span>
+                <span>15.0 (極度飽和失真)</span>
+              </div>
+            </div>
+
+            <div class="border border-line bg-surface p-5">
+              <div class="flex justify-between items-center mb-2">
+                <label
+                  for="slider-timestep"
+                  class="font-mono text-xs font-bold uppercase tracking-wider text-ink"
+                >
+                  擴散時間步 (Timestep t):
+                </label>
+                <span id="timestep-value" class="font-mono text-base font-bold text-blue">
+                  500 / 1000
+                </span>
+              </div>
+              <input
+                id="slider-timestep"
+                type="range"
+                min="0"
+                max="1000"
+                step="25"
+                value="500"
+                class="w-full accent-blue cursor-pointer"
+              />
+              <div class="flex justify-between font-mono text-xs text-muted mt-2">
+                <span>t = 0 (清晰原圖)</span>
+                <span>500 (半去噪過渡)</span>
+                <span>1000 (純高斯白噪聲)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Wind Tunnel Output Panel -->
+          <div class="border border-line bg-surface p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <!-- Dynamic Stage Assessment -->
+              <div class="border-b lg:border-b-0 lg:border-r border-line pb-4 lg:pb-0 lg:pr-6">
+                <p class="font-mono text-xs text-muted uppercase m-0">當前去噪階段與物理心智</p>
+                <h4 id="stage-name" class="font-display text-xl text-ink mt-2 mb-1">
+                  中度去噪：輪廓與實體塑造
+                </h4>
+                <p id="stage-desc" class="text-sm text-muted leading-relaxed mb-0">
+                  噪聲強度中等。模型正在確立主體物體邊界、主要光影走向與物體間的空間遮擋關係。
+                </p>
+
+                <!-- Warning Callout if w is too high -->
+                <div id="cfg-warning" class="mt-4 border border-red/40 bg-red-soft/20 p-3 hidden">
+                  <p class="font-mono text-xs font-bold text-red m-0">
+                    ⚠️ 飽和警報：引導係數過高 (w &gt; 11)
+                  </p>
+                  <p class="text-sm text-ink/80 mt-1 mb-0 leading-relaxed">
+                    過大的外推力道導致數值超出隱空間常態範圍，畫面將出現強烈的色彩溢出、極端對比度與油畫般生硬偽影。
+                  </p>
+                </div>
+              </div>
+
+              <!-- Mathematical Extrapolation Preview -->
+              <div class="border-b lg:border-b-0 lg:border-r border-line pb-4 lg:pb-0 lg:pr-6">
+                <p class="font-mono text-xs text-muted uppercase m-0">噪聲向量合成動態分量</p>
+                <div class="mt-3 space-y-2 font-mono text-xs">
+                  <div class="flex justify-between">
+                    <span class="text-muted">無條件基礎噪聲 ||ε_uncond||:</span>
+                    <span id="val-uncond" class="text-ink font-bold">
+                      1.00
+                    </span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-muted">文字條件噪聲 ||ε_text||:</span>
+                    <span id="val-cond" class="text-ink font-bold">
+                      1.24
+                    </span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-muted">純語意差值方向 Δ:</span>
+                    <span id="val-delta" class="text-blue font-bold">
+                      +0.48
+                    </span>
+                  </div>
+                  <div class="flex justify-between border-t border-line pt-2">
+                    <span class="text-red font-bold">最終外推強度 ||ε~||:</span>
+                    <span id="val-final" class="text-red font-bold">
+                      4.36
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Token Attention Focus Simulation -->
+              <div>
+                <p class="font-mono text-xs text-muted uppercase m-0">
+                  Cross-Attention 詞元權重聚焦點
+                </p>
+                <div id="token-chips" class="mt-3 flex flex-wrap gap-1.5">
+                  <!-- Injected via JavaScript -->
+                </div>
+                <p class="text-sm text-muted mt-3 mb-0">
+                  亮度越深代表當前時間步下，U-Net 交叉注意力機制對該文字詞元施加更高的能量關注度。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- APPENDIX 01: AUTHOR DOSSIER -->
+      <section class="mb-24 border-t border-line pt-16" id="authors">
+        <PaperSectionHeader
+          kicker="附錄 01 / APPENDIX 01"
+          title="核心作者群與研發脈絡"
+          subtitle="慕尼黑大學與 Runway 的產學共振：以兩階段解耦引爆全球生圖民主化"
+        />
+
+        <p class="mb-8">
+          潛在擴散模型（LDM）的誕生，是學術界極致理論追求與新創產業工程實踐深度結合的經典典範。以慕尼黑大學（LMU
+          Munich）Björn Ommer 教授領導的電腦視覺與學習實驗室為核心，研究團隊在 VQGAN
+          的感知壓縮基礎上，成功攻克了擴散模型長久以來高昂的算力瓶頸。
+        </p>
+
+        <p class="mb-10">
+          第一作者 Robin Rombach 與共同作者 Patrick Esser
+          等人，隨後將這項學術突破轉化為享譽全球的開源基石 Stable
+          Diffusion，並進一步創辦了頂尖生成模型機構（如 Black Forest Labs 與 Runway
+          核心架構），徹底重構了全球數位視覺藝術與創意設計的版圖。
+        </p>
+
+        <AuthorGrid authors={paper.authorBriefs} />
+      </section>
+
+      <!-- APPENDIX 02: CITATION & EVIDENCE -->
+      <section class="mb-24 border-t border-line pt-16" id="evidence">
+        <PaperSectionHeader
+          kicker="附錄 02 / APPENDIX 02"
+          title="引用文獻與一手考證紀錄"
+          subtitle="嚴格考證 CVPR 2022 論文原文、同儕評審意見與擴散模型歷史演進譜系"
+        />
+
+        <EvidenceList sources={ldmSources} timelineEpochs={ldmTimelineEpochs} />
+      </section>
+    </PaperReadingLayout>
+  </main>
+
+  <!-- CHAPTER NAVIGATION -->
+  <PaperNavigation currentId="high-resolution-image-synthesis-with-latent-diffusion-models" />
+</BaseLayout>
+
+<script>
+  // ==========================================
+  // DYNAMIC LAB LOGIC: MODULE 1 & MODULE 2
+  // ==========================================
+
+  interface FactorMetric {
+    spatial: string;
+    spatialSub: string;
+    values: string;
+    valuesSub: string;
+    attn: string;
+    attnSub: string;
+    quality: string;
+    qualitySub: string;
+    boxScale: string;
+    gridCols: string;
+    dotCount: number;
+    tag: string;
+  }
+
+  const factorData: Record<number, FactorMetric> = {
+    1: {
+      spatial: '512 × 512',
+      spatialSub: '無壓縮 (1×)',
+      values: '786,432',
+      valuesSub: '無壓縮基準 (1.0×)',
+      attn: '6.87 × 10¹⁰',
+      attnSub: '運算負擔極重 (基準)',
+      quality: '低效浪費',
+      qualitySub: '梯度被無效噪聲淹沒',
+      boxScale: 'scale-100',
+      gridCols: 'grid-cols-8',
+      dotCount: 64,
+      tag: '512 × 512 × 3',
+    },
+    2: {
+      spatial: '256 × 256',
+      spatialSub: '空間縮減 4×',
+      values: '196,608',
+      valuesSub: '資料量壓縮 4.0×',
+      attn: '4.29 × 10⁹',
+      attnSub: '運算降低 16×',
+      quality: '輕度壓縮',
+      qualitySub: '運算負擔仍偏高',
+      boxScale: 'scale-95',
+      gridCols: 'grid-cols-6',
+      dotCount: 36,
+      tag: '256 × 256 × 3',
+    },
+    4: {
+      spatial: '128 × 128',
+      spatialSub: '空間縮減 16×',
+      values: '49,152',
+      valuesSub: '資料量壓縮 16.0×',
+      attn: '2.68 × 10⁸',
+      attnSub: '運算降低 256×',
+      quality: '極佳品質',
+      qualitySub: '保留極高細微紋理',
+      boxScale: 'scale-90',
+      gridCols: 'grid-cols-5',
+      dotCount: 25,
+      tag: '128 × 128 × 3',
+    },
+    8: {
+      spatial: '64 × 64',
+      spatialSub: '空間縮減 64×',
+      values: '16,384',
+      valuesSub: '資料量壓縮 48.0×',
+      attn: '1.68 × 10⁷',
+      attnSub: '運算負擔暴跌 4,096×',
+      quality: '黃金甜蜜點',
+      qualitySub: '無損人眼可見細節',
+      boxScale: 'scale-80',
+      gridCols: 'grid-cols-4',
+      dotCount: 16,
+      tag: '64 × 64 × 4',
+    },
+    16: {
+      spatial: '32 × 32',
+      spatialSub: '空間縮減 256×',
+      values: '8,192',
+      valuesSub: '資料量壓縮 96.0×',
+      attn: '1.05 × 10⁶',
+      attnSub: '運算降低 65,536×',
+      quality: '輕度失真',
+      qualitySub: '微小字體與眼神稍糊',
+      boxScale: 'scale-70',
+      gridCols: 'grid-cols-3',
+      dotCount: 9,
+      tag: '32 × 32 × 8',
+    },
+    32: {
+      spatial: '16 × 16',
+      spatialSub: '空間縮減 1024×',
+      values: '4,096',
+      valuesSub: '資料量壓縮 192.0×',
+      attn: '6.55 × 10⁴',
+      attnSub: '運算降低 1,048,576×',
+      quality: '嚴重失真',
+      qualitySub: '解碼重建產生強烈偽影',
+      boxScale: 'scale-60',
+      gridCols: 'grid-cols-2',
+      dotCount: 4,
+      tag: '16 × 16 × 16',
+    },
+  };
+
+  function initModule1(): void {
+    const buttons = document.querySelectorAll<HTMLButtonElement>('.factor-btn');
+    const metricSpatial = document.getElementById('metric-spatial');
+    const metricSpatialSub = document.getElementById('metric-spatial-sub');
+    const metricValues = document.getElementById('metric-values');
+    const metricValuesSub = document.getElementById('metric-values-sub');
+    const metricAttn = document.getElementById('metric-attn');
+    const metricAttnSub = document.getElementById('metric-attn-sub');
+    const metricQuality = document.getElementById('metric-quality');
+    const metricQualitySub = document.getElementById('metric-quality-sub');
+    const svgFactorLabel = document.getElementById('svg-factor-label');
+    const latentBox = document.getElementById('latent-box');
+    const latentGrid = document.getElementById('latent-grid');
+    const latentSpecTag = document.getElementById('latent-spec-tag');
+    const latentBoxDesc = document.getElementById('latent-box-desc');
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const factor = Number(btn.getAttribute('data-factor') || '8');
+        const data = factorData[factor] || factorData[8];
+
+        buttons.forEach((b) => {
+          b.classList.remove('border-red', 'bg-red', 'text-white');
+          b.classList.add('border-line', 'bg-surface', 'text-ink');
+          b.setAttribute('aria-pressed', 'false');
+        });
+        btn.classList.remove('border-line', 'bg-surface', 'text-ink');
+        btn.classList.add('border-red', 'bg-red', 'text-white');
+        btn.setAttribute('aria-pressed', 'true');
+
+        if (metricSpatial) metricSpatial.textContent = data.spatial;
+        if (metricSpatialSub) metricSpatialSub.textContent = data.spatialSub;
+        if (metricValues) metricValues.textContent = data.values;
+        if (metricValuesSub) metricValuesSub.textContent = data.valuesSub;
+        if (metricAttn) metricAttn.textContent = data.attn;
+        if (metricAttnSub) metricAttnSub.textContent = data.attnSub;
+        if (metricQuality) metricQuality.textContent = data.quality;
+        if (metricQualitySub) metricQualitySub.textContent = data.qualitySub;
+        if (svgFactorLabel) svgFactorLabel.textContent = `f = ${factor} (空間下採樣)`;
+        if (latentSpecTag) latentSpecTag.textContent = data.tag;
+        if (latentBoxDesc) {
+          latentBoxDesc.textContent = `感知隱空間 z (${data.values} 數值)`;
+        }
+
+        if (latentGrid) {
+          latentGrid.className = `grid h-16 w-16 ${data.gridCols} gap-1`;
+          latentGrid.innerHTML = '';
+          for (let i = 0; i < data.dotCount; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'bg-red/60 rounded-[1px]';
+            latentGrid.appendChild(dot);
+          }
+        }
+
+        if (latentBox) {
+          latentBox.className = `relative mx-auto flex h-36 w-36 items-center justify-center border-2 border-red bg-red-soft/20 shadow-editorial transition-all duration-300 ${data.boxScale}`;
+        }
+      });
+    });
+  }
+
+  interface PromptTokens {
+    tokens: string[];
+    weights: number[]; // relative emphasis
+  }
+
+  const promptTokenDict: Record<string, PromptTokens> = {
+    cyberpunk: {
+      tokens: ['A', 'cyberpunk', 'street', 'in', 'Taipei', 'rainy', 'night', 'neon', 'reflections'],
+      weights: [0.1, 0.95, 0.7, 0.1, 0.85, 0.8, 0.75, 0.9, 0.65],
+    },
+    portrait: {
+      tokens: [
+        'Cinematic',
+        'portrait',
+        'elderly',
+        'watchmaker',
+        'examining',
+        'gears',
+        'dramatic',
+        'lighting',
+      ],
+      weights: [0.6, 0.8, 0.85, 0.95, 0.7, 0.9, 0.6, 0.75],
+    },
+    landscape: {
+      tokens: [
+        'A',
+        'majestic',
+        'snowy',
+        'mountain',
+        'crystalline',
+        'lake',
+        'starry',
+        'aurora',
+        'sky',
+      ],
+      weights: [0.1, 0.6, 0.9, 0.95, 0.75, 0.85, 0.7, 0.95, 0.8],
+    },
+  };
+
+  function initModule2(): void {
+    const sliderCfg = document.getElementById('slider-cfg') as HTMLInputElement | null;
+    const sliderTimestep = document.getElementById('slider-timestep') as HTMLInputElement | null;
+    const cfgValue = document.getElementById('cfg-value');
+    const timestepValue = document.getElementById('timestep-value');
+    const promptSelect = document.getElementById('prompt-select') as HTMLSelectElement | null;
+    const stageName = document.getElementById('stage-name');
+    const stageDesc = document.getElementById('stage-desc');
+    const cfgWarning = document.getElementById('cfg-warning');
+    const valUncond = document.getElementById('val-uncond');
+    const valCond = document.getElementById('val-cond');
+    const valDelta = document.getElementById('val-delta');
+    const valFinal = document.getElementById('val-final');
+    const tokenChips = document.getElementById('token-chips');
+
+    function updateWindTunnel(): void {
+      const cfg = parseFloat(sliderCfg?.value || '7.5');
+      const t = parseInt(sliderTimestep?.value || '500', 10);
+      const promptKey = promptSelect?.value || 'cyberpunk';
+      const promptData = promptTokenDict[promptKey] || promptTokenDict['cyberpunk'];
+
+      if (cfgValue) cfgValue.textContent = cfg.toFixed(1);
+      if (timestepValue) timestepValue.textContent = `${t} / 1000`;
+
+      // Warning check
+      if (cfgWarning) {
+        if (cfg >= 11.5) {
+          cfgWarning.classList.remove('hidden');
+        } else {
+          cfgWarning.classList.add('hidden');
+        }
+      }
+
+      // Stage description
+      if (stageName && stageDesc) {
+        if (t >= 750) {
+          stageName.textContent = '初期階段：低頻宏觀構圖 (t = 750–1000)';
+          stageDesc.textContent =
+            '噪聲強度極高。畫面呈現大面積混沌雪花，模型專注於決定全域色彩分佈、地平線位置與宏觀氛圍，尚未形成具體幾何輪廓。';
+        } else if (t >= 300) {
+          stageName.textContent = '中度去噪：幾何輪廓與實體塑造 (t = 300–749)';
+          stageDesc.textContent =
+            '噪聲顯著衰減。主體物件邊界、肢體走向、主要光影面與空間遮擋關係被快速確立，畫面具備清晰可辨的語意拓撲。';
+        } else {
+          stageName.textContent = '末期精修：高頻紋理與反光刻畫 (t = 0–299)';
+          stageDesc.textContent =
+            '噪聲微乎其微。模型負責微觀毛孔、髮絲走向、雨滴反光與材質光澤等高頻細節雕刻，此時大幅改變引導係數已難以撼動大局。';
+        }
+      }
+
+      // Math components simulation
+      const baseUncond = 1.0;
+      const baseCond = 1.0 + (t / 1000) * 0.4 + 0.1;
+      const delta = baseCond - baseUncond;
+      const finalVal = baseUncond + cfg * delta;
+
+      if (valUncond) valUncond.textContent = baseUncond.toFixed(2);
+      if (valCond) valCond.textContent = baseCond.toFixed(2);
+      if (valDelta) valDelta.textContent = `+${delta.toFixed(2)}`;
+      if (valFinal) valFinal.textContent = finalVal.toFixed(2);
+
+      // Render tokens
+      if (tokenChips) {
+        tokenChips.innerHTML = '';
+        promptData.tokens.forEach((tok, idx) => {
+          const w = promptData.weights[idx] || 0.5;
+          // Timestep influence: early stages focus on scene words; late stages focus on texture words
+          const focusModifier = t > 600 ? 1.0 : 0.8;
+          const effectiveEmphasis = Math.min(1.0, w * focusModifier * (cfg / 7.5));
+
+          const chip = document.createElement('span');
+          chip.className =
+            'inline-block px-2.5 py-1 font-mono text-xs border rounded transition-all duration-200';
+
+          if (effectiveEmphasis > 0.8) {
+            chip.classList.add('border-red', 'bg-red', 'text-white', 'font-bold');
+          } else if (effectiveEmphasis > 0.4) {
+            chip.classList.add('border-line', 'bg-red-soft/40', 'text-ink', 'font-medium');
+          } else {
+            chip.classList.add('border-line', 'bg-surface', 'text-muted');
+          }
+
+          chip.textContent = tok;
+          tokenChips.appendChild(chip);
+        });
+      }
+    }
+
+    sliderCfg?.addEventListener('input', updateWindTunnel);
+    sliderTimestep?.addEventListener('input', updateWindTunnel);
+    promptSelect?.addEventListener('change', updateWindTunnel);
+
+    updateWindTunnel();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initModule1();
+    initModule2();
+  });
+</script>

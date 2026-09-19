@@ -116,7 +116,7 @@ export const milestonePapers: MilestonePaper[] = [
     kicker: 'VOL. 02 / GENERATIVE PRE-TRAINING',
     why: '監督式學習極度依賴昂貴且有限的人工標註數據，模型換一個任務就必須從頭訓練。',
     how: '只取 Transformer Decoder 架構，在海量無標註書籍文本上執行「預測下一個字」的自回歸預訓練，再於特定任務上做微調。',
-    what: '確立了「大數據無監督預訓練 + 小數據微調」的兩階段標準典範，開啟 GPT 家族的演進序列。',
+    what: '確立了「大數據無監督預訓練 + 小規模資料微調」的兩階段標準典範，開啟 GPT 家族的演進序列。',
     outline: {
       history: 'Word2Vec 與 ELMo 的啟發：靜態詞向量無法應付動態上下文，預訓練需要更深的模型。',
       theory:
@@ -204,21 +204,21 @@ export const milestonePapers: MilestonePaper[] = [
     theme: '物理定律',
     kicker: 'VOL. 05 / THE SCALING LAWS',
     why: '投入百萬甚至千萬美元訓練大模型像在賭博，模型性能的提升究竟是隨機運氣還是可預測的工程？',
-    how: '跨越數個數量級系統性測量參數規模（N）、數據集大小（D）與浮點運算量（C），擬合出跨尺度的冪律公式（Power Law）。',
+    how: '跨越數個數量級系統性測量參數規模（N）、資料集大小（D）與浮點運算量（C），擬合出跨尺度的冪律公式（Power Law）。',
     what: '證實語言模型性能與資源呈精確的冪律關係；確立了只要擴大參數與算力就能穩定降低損失，給予業界推進千億參數的巨大信心。',
     outline: {
       history: '從試誤經驗到理論規律：深度學習需要一張算力與效果的導航地圖。',
-      theory: '冪律公式 $L(N, D, C)$、過擬合邊界、參數與數據分配比例推導。',
+      theory: '冪律公式 $L(N, D, C)$、過度擬合邊界、參數與數據分配比例推導。',
       flood: '為 GPT-3 與後續超大模型奠定理論與投資底氣，算力競爭全面爆發。',
     },
     draftSections: [
       {
         heading: '傳承第四章的未竟之功：從 GPT-2 的經驗驚喜到萬卡叢林的投資恐懼',
-        body: '在第四章中，GPT-2 憑藉 15 億參數展示了零樣本多任務學習的驚人潛力。然而，這項成功卻將整個 AI 領域推向了一場巨大的心理煎熬：若要更進一步，模型是否需要 100 億、甚至 1000 億參數？每一次擴展都意味著數百萬美元的算力投入與長達數月的訓練風險。在缺乏理論指引的 2019 年底，沒有人能保證巨資打造的模型不會在中途梯度爆炸、陷入過擬合，或遭遇嚴重的效益遞減。深度學習迫切需要一套如同天體物理與熱力學般的確定性規律。',
+        body: '在第四章中，GPT-2 憑藉 15 億參數展示了零樣本多任務學習的驚人潛力。然而，這項成功卻將整個 AI 領域推向了一場巨大的心理煎熬：若要更進一步，模型是否需要 100 億、甚至 1000 億參數？每一次擴展都意味著數百萬美元的算力投入與長達數月的訓練風險。在缺乏理論指引的 2019 年底，沒有人能保證巨資打造的模型不會在中途梯度爆炸、陷入過度擬合，或遭遇嚴重的效益遞減。深度學習迫切需要一套如同天體物理與熱力學般的確定性規律。',
       },
       {
         heading: '統治神經網路的冪律方程式：跨越六個數量級的筆直直線',
-        body: '理論物理學家 Jared Kaplan 等人以物理學家測量自然常數的嚴謹方法，對數百個不同規模的 Transformer 進行了地毯式的跨尺度實驗。研究發現：自回歸語言模型的交叉熵損失與模型參數量（N）、數據集大小（D）和計算預算（C）之間，在對數座標下呈現近乎完美的線性關係（冪律分佈）。更令人震驚的是「形狀無關性」：模型的具體深度、寬度或注意力頭數對性能影響極微，決定智慧高度的唯有純粹的物理規模。',
+        body: '理論物理學家 Jared Kaplan 等人以物理學家測量自然常數的嚴謹方法，對數百個不同規模的 Transformer 進行了地毯式的跨尺度實驗。研究發現：自回歸語言模型的交叉熵損失與模型參數量（N）、資料集大小（D）和計算預算（C）之間，在對數座標下呈現近乎完美的線性關係（冪律分佈）。更令人震驚的是「形狀無關性」：模型的具體深度、寬度或注意力頭數對性能影響極微，決定智慧高度的唯有純粹的物理規模。',
       },
       {
         heading: '風洞試驗的誕生與千億參數軍備競賽的發令槍',
@@ -263,16 +263,16 @@ export const milestonePapers: MilestonePaper[] = [
     venue: 'NeurIPS 2022',
     arxivId: '2203.15556',
     url: '/papers/training-compute-optimal-large-language-models',
-    status: 'outline',
+    status: 'published',
     track: 'language',
-    theme: '算力最優解',
+    theme: '算力最佳化解',
     kicker: 'VOL. 07 / COMPUTE-OPTIMAL',
     why: '業界盲目追逐數千億超大參數，但既有模型真的在給定算力下獲得最佳訓練了嗎？',
     how: '重新評估超過 400 個模型的訓練損失曲線，指出 Kaplan 原定律低估了數據的重要性；提出模型參數與訓練 token 數應以 1:1 的等比例增長。',
-    what: '僅 70B 參數但訓練 1.4 兆 token 的 Chinchilla 全面擊敗 175B 的 GPT-3，扭轉了大模型研發方向：小模型配海量數據才是最高性價比。',
+    what: '僅 70B 參數但訓練 1.4 兆 token 的 Chinchilla 全面擊敗 175B 的 GPT-3，扭轉了大模型研發方向：小模型配海量資料才是最高性價比。',
     outline: {
       history: 'Kaplan 定律的盲點：模型「嚴重吃不飽數據」被誤以為需要更多參數。',
-      theory: '三種算力最優預算推導方法、數據與參數的等比擴增前沿。',
+      theory: '三種算力最佳化預算推導方法、數據與參數的等比擴增前沿。',
       flood: '啟發了 LLaMA 等一系列現代高效輕量級基座模型，改變了推論成本的經濟學。',
     },
   },
@@ -288,7 +288,7 @@ export const milestonePapers: MilestonePaper[] = [
     venue: 'NeurIPS 2022',
     arxivId: '2203.02155',
     url: '/papers/training-language-models-to-follow-instructions-with-human-feedback',
-    status: 'outline',
+    status: 'published',
     track: 'language',
     theme: '指令對齊',
     kicker: 'VOL. 08 / ALIGNMENT & RLHF',
@@ -313,7 +313,7 @@ export const milestonePapers: MilestonePaper[] = [
     venue: 'arXiv Preprint',
     arxivId: '2302.13971',
     url: '/papers/llama-open-and-efficient-foundation-language-models',
-    status: 'outline',
+    status: 'published',
     track: 'language',
     theme: '開源民主化',
     kicker: 'VOL. 09 / OPEN FOUNDATION',
@@ -322,7 +322,7 @@ export const milestonePapers: MilestonePaper[] = [
     what: '引爆全球開源 LLM 的繁榮浪潮（Alpaca, Vicuna, LoRA, llama.cpp），打破閉源壟斷，讓千家萬戶的個人電腦也能運行大模型。',
     outline: {
       history: '開源與閉源的世紀大分水嶺：如何用平民級算力打破巨頭封鎖？',
-      theory: 'RMSNorm、SwiGLU 激活函數、Rotary Position Embedding (RoPE) 等現代架構工程最佳實踐。',
+      theory: 'RMSNorm、SwiGLU 激勵函數、Rotary Position Embedding (RoPE) 等現代架構工程最佳實踐。',
       flood: '推動邊緣運算、量化微調技術（QLoRA），開源生態與閉源巨頭形成雙雄抗衡。',
     },
   },
@@ -339,7 +339,7 @@ export const milestonePapers: MilestonePaper[] = [
     venue: 'NeurIPS 2023',
     arxivId: '2305.18290',
     url: '/papers/direct-preference-optimization-your-language-model-is-secretly-a-reward-model',
-    status: 'outline',
+    status: 'published',
     track: 'language',
     theme: '偏好優化',
     kicker: 'VOL. 10 / DIRECT PREFERENCE',
@@ -351,6 +351,24 @@ export const milestonePapers: MilestonePaper[] = [
       theory: 'Bradley-Terry 偏好模型推導、解析解代入策略損失函數的精妙數學推論。',
       flood: '推動 Alignment 普及化，促成 IPO、KTO、ORPO 等後續直接偏好對齊演算法的蓬勃發展。',
     },
+    draftSections: [
+      {
+        heading: '強化學習的對齊代價與 PPO 泥淖',
+        body: 'InstructGPT 確立了以人類反饋強化學習（RLHF）引導大模型對齊的黃金典範，但其實踐代價極其高昂。在傳統 PPO 管線中，工程師必須在顯示卡記憶體中同時維護四個神經網路：當前生成策略（Actor）、價值評估網路（Critic）、未對齊的參考模型（Reference）與評分獎勵模型（Reward）。PPO 在高維離散文字空間的策略梯度方差極大，對超參數極度敏感，稍有不慎便導致獎勵作弊與策略崩潰。',
+      },
+      {
+        heading: '隱式獎勵函數與封閉解數學推導',
+        body: '史丹佛團隊洞悉了帶有 KL 散度懲罰的標準受限 RLHF 目標的深層代數結構：最佳策略與真實獎勵函數之間存在一對一的精確解析閉式解。真實獎勵可以直接表達為當前策略與參考策略的對數機率勝算比。透過將該閉式解直接代入 Bradley-Terry 成對偏好選擇模型，配分函數被神奇對消，顯式獎勵模型與強化學習採樣迴圈被完全抹去，化為優雅的二元交叉熵損失。',
+      },
+      {
+        heading: '梯度動力學與動態權重調節機制',
+        body: 'DPO 不僅在形式上極簡，其梯度更內建了精妙的自適應權重調節特性。當模型對人類偏好對（勝者與敗者）做出嚴重背離真實標籤的錯誤判斷時，隱式機率誤差會使梯度加權係數迅速增大，施加極強的矯正力道；而當模型已能清晰區分兩者優劣時，梯度權重自然衰減趨零，避免過度破壞既有語言能力。',
+      },
+      {
+        heading: '對齊民主化與後續偏好演進',
+        body: 'DPO 的問世徹底打破了科技巨頭對千卡 RLHF 系統的技術壟斷，開源社群得以在平民級算力上直接微調出對齊品質卓越的模型（如 Zephyr-7B、Tulu 與 LLaMA 對齊版）。雖然 DPO 隨後也展現出容易受回覆長度偏見（Length Bias）影響的理論盲點，但它激發了 IPO、KTO、ORPO 等一系列直接偏好對齊演算法，深刻重構了現代大模型的後訓練版圖。',
+      },
+    ],
   },
 
   // ==================== 系列二：視覺與原生多模態革命 ====================
@@ -366,7 +384,7 @@ export const milestonePapers: MilestonePaper[] = [
     venue: 'ICLR 2021',
     arxivId: '2010.11929',
     url: '/papers/an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale',
-    status: 'outline',
+    status: 'published',
     track: 'multimodal',
     theme: '視覺統一',
     kicker: 'VOL. 11 / VISION TRANSFORMER',
@@ -374,7 +392,7 @@ export const milestonePapers: MilestonePaper[] = [
     how: '將整張圖片切成 $16 \times 16$ 像素的小圖塊（Patch），拉平成向量當作「視覺單字」，直接送入標準純粹的 Transformer Encoder。',
     what: '證明純 Transformer 在充足大數據下能全面擊敗 CNN，打破了 CV 與 NLP 的學科壁壘，為現代多模態鋪平道路。',
     outline: {
-      history: 'CNN 歸納偏置（Inductive Bias）的優勢與束縛：局部卷積核為什麼看不到全域長距離依賴？',
+      history: 'CNN 歸納偏向（Inductive Bias）的優勢與束縛：局部卷積核為什麼看不到全域長距離依賴？',
       theory:
         'Patch Embedding 投影矩陣、類別標籤 Token [CLS] 與二維位置編碼（Positional Embedding）。',
       flood:
@@ -403,12 +421,12 @@ export const milestonePapers: MilestonePaper[] = [
     venue: 'ICML 2021',
     arxivId: '2103.00020',
     url: '/papers/learning-transferable-visual-models-from-natural-language-supervision',
-    status: 'outline',
+    status: 'published',
     track: 'multimodal',
     theme: '多模態對齊',
     kicker: 'VOL. 12 / CONTRASTIVE ALIGNMENT',
     why: '傳統影像分類器是封閉集合（例如只能認 ImageNet 的 1000 種固定類別），完全無法理解人類豐富多樣的開放語言描述。',
-    how: '爬取網路 4 億對圖文數據，設計雙塔架構（Text Encoder + Image Encoder），以對比學習（Contrastive Learning）把文字與圖片特徵拉到同一個高維向量空間中彼此對齊。',
+    how: '爬取網路 4 億對圖文資料，設計雙塔架構（Text Encoder + Image Encoder），以對比學習（Contrastive Learning）把文字與圖片特徵拉到同一個高維向量空間中彼此對齊。',
     what: '讓模型能直接以自然語言進行零樣本分類（Zero-shot Classification）；成為所有後續文字生圖（DALL-E 2/3、Stable Diffusion）的核心文字引導大腦。',
     outline: {
       history: '傳統分類器的語意孤島：為什麼電腦認得「狗」，卻不認得「一隻戴著草帽在衝浪的柴犬」？',
@@ -434,11 +452,11 @@ export const milestonePapers: MilestonePaper[] = [
     venue: 'CVPR 2022 (Oral)',
     arxivId: '2112.10752',
     url: '/papers/high-resolution-image-synthesis-with-latent-diffusion-models',
-    status: 'outline',
+    status: 'published',
     track: 'multimodal',
     theme: '擴散生成',
     kicker: 'VOL. 13 / LATENT DIFFUSION',
-    why: '在像素空間直接做擴散去噪（DDPM）算力成本極其高昂，高解析度生成需要百張 GPU 訓練數月，一般研究者與個人顯卡根本無法運行。',
+    why: '在像素空間直接做擴散去噪（DDPM）算力成本極其高昂，高解析度生成需要百張 GPU 訓練數月，一般研究者與個人顯示卡根本無法運行。',
     how: '先用自編碼器（VAE）將圖片壓縮成空間尺寸小 8 倍的「隱空間（Latent Space）」，在隱空間進行反向去噪，並透過 Cross-Attention 接入 CLIP 文字引導。',
     what: '催生了開源現象級應用 Stable Diffusion 與 Midjourney；確立 2022–2024 擴散生圖統治地位，但也留下了「牽一髮動全身」難以精確局部修改的困境。',
     outline: {
@@ -527,7 +545,7 @@ export const milestonePapers: MilestonePaper[] = [
       },
       {
         heading: '突破印表機思維：Next-Scale 讓自回歸也學會「畫草圖」',
-        body: '過去業界排斥自回歸生圖的一大原因，是以前的做法像打字機一樣，從第 1 顆像素從左到右、從上到下印到最後一顆。人類畫畫絕不是印表機！VAR（NeurIPS 2024 最佳論文）震撼學界的地方，在於它把自回歸的「下一步預測」改成了「下一尺度預測」：第一步先預測一張超低解析度的全局模糊大色塊（粗草稿），第二步在此基礎上預測中度結構，第三步、第四步逐步預測出精緻毛孔與紋理。它完美結合了「擴散模型的畫家草圖美學」與「Transformer 自回歸的強大邏輯控制力」！',
+        body: '過去業界排斥自回歸生圖的一大原因，是以前的做法像打字機一樣，從第 1 顆像素從左到右、從上到下印到最後一顆。人類畫畫絕不是印表機！VAR（NeurIPS 2024 最佳論文）震撼學界的地方，在於它把自回歸的「下一步預測」改成了「下一尺度預測」：第一步先預測一張超低解析度的全域模糊大色塊（粗草稿），第二步在此基礎上預測中度結構，第三步、第四步逐步預測出精緻毛孔與紋理。它完美結合了「擴散模型的畫家草圖美學」與「Transformer 自回歸的強大邏輯控制力」！',
       },
     ],
   },

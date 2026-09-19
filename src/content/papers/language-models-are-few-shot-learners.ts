@@ -86,7 +86,7 @@ export const fewShotPaper: PaperRecord = {
   researchStatus: 'published',
   lastChecked: '2026-09-18',
   coverageNote:
-    '依據 NeurIPS 2020 論文正本、附錄實驗數據，以及 2022 Chinchilla 與 InstructGPT 等後續文獻進行交叉驗證。',
+    '依據 NeurIPS 2020 論文正本、附錄實驗資料，以及 2022 Chinchilla 與 InstructGPT 等後續文獻進行交叉驗證。',
   title: 'Language Models are Few-Shot Learners',
   chineseTitle: 'GPT-3：少樣本學習與湧現能力的爆發',
   year: 2020,
@@ -210,14 +210,14 @@ export const fewShotPaper: PaperRecord = {
       claim:
         '自然語言本身就是最通用的程式介面，提示工程（Prompt Engineering）正式取代專用微調成為人機互動新標準。',
       explanation:
-        '不需為文字分類、翻譯、代碼生成分別訓練專用頭部，使用者只需透過自然語言設計「指令 + 範例」，就能指揮同一個模型完成百種任務。',
+        '不需為文字分類、翻譯、程式碼生成分別訓練專用頭部，使用者只需透過自然語言設計「指令 + 範例」，就能指揮同一個模型完成百種任務。',
       status: 'documented',
       confidence: 'direct',
       evidenceIds: ['paper-2020-gpt3'],
     },
   ],
   unknowns: [
-    'GPT-3 論文中採用的 3000 億 token 預訓練規模，在 2022 年被 DeepMind Chinchilla 證明嚴重受限於訓練不足，若增加訓練數據至數兆 token 可獲得更高的算力效益比。',
+    'GPT-3 論文中採用的 3000 億 token 預訓練規模，在 2022 年被 DeepMind Chinchilla 證明嚴重受限於訓練不足，若增加訓練資料至數兆 token 可獲得更高的算力效益比。',
     '上下文學習（ICL）在 Transformer 矩陣層次上的確切數學運作機理（如隱式元學習或內置梯度下降動態）在原論文中尚未給出完整的理論閉式解。',
     '身為無監督基座模型，GPT-3 缺乏明確的人類意圖對齊，導致其無法穩定拒絕危險請求，需要後續 InstructGPT 與 RLHF 進行行為修正。',
   ],

@@ -1,0 +1,383 @@
+---
+import type { SourceRecord } from '../content/paper-schema';
+
+export interface TimelineSourceItem {
+  refCode?: string;
+  source: SourceRecord;
+  isFeatured?: boolean;
+  featured?: boolean;
+  takeaway?: string;
+  role?: string;
+  num?: number;
+}
+
+export interface TimelineEpoch {
+  id: string;
+  year: string;
+  epochNumber?: string;
+  title: string;
+  subtitle?: string;
+  period?: string;
+  summary: string;
+  sources: TimelineSourceItem[];
+  navTitle?: string;
+}
+
+interface Props {
+  timelineEpochs?: TimelineEpoch[];
+  sources?: SourceRecord[];
+  kicker?: string;
+  title?: string;
+  kickerBadge?: string;
+  kickerEnglish?: string;
+  titleMain?: string;
+  titleHighlight?: string;
+  description?: string;
+  id?: string;
+  class?: string;
+}
+
+const {
+  timelineEpochs: explicitEpochs,
+  sources,
+  kicker,
+  title,
+  kickerBadge = kicker
+    ? kicker.includes('/')
+      ? kicker.split('/')[0].trim()
+      : kicker
+    : '文獻演進時間軸',
+  kickerEnglish = kicker
+    ? kicker.includes('/')
+      ? kicker.split('/')[1].trim()
+      : ''
+    : 'HISTORICAL CITATION TIMELINE',
+  titleMain = title || '一手文獻清單，與技術演進時間軸',
+  titleHighlight = title ? undefined : '技術宣稱邊界與一手文獻譜系',
+  description = '本章立論嚴格本於原著論文、同期官方技術報告、同儕評審紀錄與核心作者訪談，依歷史時間線重現技術突破的演進軌跡與一手出處。',
+  id = 'references',
+  class: className = '',
+} = Astro.props;
+
+const sourceKindMeta: Record<string, { label: string; badge: string }> = {
+  paper: {
+    label: '一手論文 / DIRECT PAPER',
+    badge: 'border border-blue/30 bg-blue/10 text-blue',
+  },
+  'authorial-account': {
+    label: '官方解析 / OFFICIAL REPORT',
+    badge: 'border border-amber-600/30 bg-amber-500/10 text-amber-800',
+  },
+  interview: {
+    label: '口述訪談 / INTERVIEW',
+    badge: 'border border-red/30 bg-red/10 text-red',
+  },
+  'later-history': {
+    label: '同儕評審 / REVIEW RECORD',
+    badge: 'border border-emerald-700/30 bg-emerald-700/10 text-emerald-800',
+  },
+  'institutional-article': {
+    label: '機構報告 / INSTITUTIONAL',
+    badge: 'border border-purple-700/30 bg-purple-700/10 text-purple-800',
+  },
+};
+
+// 處理時代節點：若未提供 timelineEpochs，則由 sources 自動按年份聚合建構歷史時代節點
+const epochs: TimelineEpoch[] =
+  explicitEpochs ??
+  (() => {
+    if (!sources || sources.length === 0) return [];
+    const sorted = [...sources].sort((a, b) => {
+      const ya = parseInt(a.published || '9999', 10);
+      const yb = parseInt(b.published || '9999', 10);
+      return ya - yb;
+    });
+
+    const groups = new Map<string, SourceRecord[]>();
+    sorted.forEach((s) => {
+      const yr = s.published ? s.published.split('-')[0].split('–')[0].trim() : '經典奠基';
+      if (!groups.has(yr)) groups.set(yr, []);
+      groups.get(yr)!.push(s);
+    });
+
+    let counter = 1;
+    let globalSourceIdx = 1;
+    const result: TimelineEpoch[] = [];
+    groups.forEach((srcs, yr) => {
+      result.push({
+        id: `epoch-${yr.replace(/[^a-zA-Z0-9]/g, '-')}`,
+        year: yr,
+        epochNumber: String(counter).padStart(2, '0'),
+        title: `${yr} 年核心文獻與理論依據`,
+        subtitle: `HISTORICAL EVIDENCE · ${yr}`,
+        summary: `收錄 ${yr} 年經文獻考證之關鍵一手論文、實證報告與理論模型，支撐本章核心技術宣稱。`,
+        sources: srcs.map((src) => ({
+          refCode: `S${String(globalSourceIdx++).padStart(2, '0')}`,
+          source: src,
+          takeaway: src.supports?.[0],
+        })),
+        navTitle: `${yr} 年`,
+      });
+      counter++;
+    });
+    return result;
+  })();
+
+// 計算統計膠囊
+const sourceCounts = (() => {
+  const counts = new Map<string, number>();
+  epochs.forEach((e) => {
+    e.sources.forEach((item) => {
+      const kind = item.source?.kind || 'paper';
+      counts.set(kind, (counts.get(kind) || 0) + 1);
+    });
+  });
+  const kindLabels: Record<string, string> = {
+    paper: '一手論文',
+    'authorial-account': '官方解析',
+    interview: '口述訪談',
+    'later-history': '評審紀錄',
+    'institutional-article': '機構報告',
+  };
+  return Array.from(counts.entries()).map(([k, num]) => `${num} 篇 ${kindLabels[k] || k}`);
+})();
+---
+
+<section
+  class:list={[
+    'relative w-full border-t-2 border-ink bg-[#f5efe4] py-24 sm:py-32 overflow-hidden scroll-mt-24',
+    className,
+  ]}
+  id={id}
+  aria-labelledby={`${id}-heading`}
+  data-slot="evidence-timeline-section"
+>
+  {id !== 'references' && <span id="references" class="sr-only" />}
+  {id !== 'sources-evidence' && <span id="sources-evidence" class="sr-only" />}
+
+  <div class="mx-auto w-[calc(100%-2rem)] max-w-[1360px]">
+    <!-- 頂部標題與破格快跳導覽 -->
+    <div class="mb-16 sm:mb-20 border-b-2 border-ink pb-12">
+      <div class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+        <div class="max-w-3xl">
+          <div class="mb-4 flex flex-wrap items-center gap-3 font-mono text-xs font-bold uppercase tracking-[0.16em] text-red">
+            <span class="rounded bg-red/10 px-2.5 py-1 text-red">{kickerBadge}</span>
+            <span class="text-muted">/ {kickerEnglish}</span>
+          </div>
+          <h2
+            id={`${id}-heading`}
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            {titleMain}
+            {titleHighlight && (
+              <>
+                <br />
+                <span class="text-red">{titleHighlight}</span>
+              </>
+            )}
+          </h2>
+          <p class="mt-6 mb-0 text-base sm:text-lg leading-8 text-muted max-w-2xl">{description}</p>
+        </div>
+
+        <!-- 時代節點快速跳轉導覽 (Era Fast-Travel Pills) -->
+        {epochs.length > 1 && (
+          <div class="flex flex-col gap-3">
+            <span class="font-mono text-xs font-bold uppercase tracking-wider text-muted">
+              快速跳轉時代節點 / JUMP TO EPOCH
+            </span>
+            <nav class="flex flex-wrap gap-2" aria-label="文獻年代快跳">
+              {epochs.map((epoch) => (
+                <a
+                  href={`#${epoch.id}`}
+                  class="group inline-flex items-center gap-2 rounded border border-ink/20 bg-surface px-3 py-1.5 font-mono text-xs font-semibold text-ink no-underline transition-all hover:border-red hover:bg-red hover:text-surface"
+                >
+                  <span class="h-1.5 w-1.5 rounded-full bg-red group-hover:bg-surface" />
+                  <span>{epoch.year}</span>
+                  <span class="text-muted group-hover:text-surface/80">
+                    {epoch.navTitle ||
+                      (epoch.subtitle || epoch.period || epoch.title)
+                        .split('，')[0]
+                        .split('：')[0]
+                        .slice(0, 10)}
+                  </span>
+                </a>
+              ))}
+            </nav>
+            {sourceCounts.length > 0 && (
+              <div class="mt-2 flex flex-wrap gap-2 text-xs text-muted">
+                {sourceCounts.map((count) => (
+                  <span class="rounded bg-surface/80 px-2 py-0.5 font-mono text-ink">{count}</span>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+
+    <slot />
+
+    <!-- 時間軸整體流向軌道 -->
+    <div class="relative space-y-24 sm:space-y-32">
+      <!-- 貫穿全軸的垂直引導線 -->
+      <div
+        class="pointer-events-none absolute left-3 sm:left-6 top-6 bottom-12 w-0.5 bg-gradient-to-b from-red via-ink/30 to-blue/40"
+        aria-hidden="true"
+      />
+
+      {epochs.map((epoch, idx) => (
+        <div id={epoch.id} class="relative scroll-mt-28 pl-8 sm:pl-16 lg:pl-20">
+          <!-- 破版巨幅背景年份浮水印 -->
+          <div
+            class="pointer-events-none select-none absolute -top-8 -left-2 sm:-left-4 font-display font-black text-8xl sm:text-9xl lg:text-[11rem] text-ink/[0.04] leading-none tracking-tighter"
+            aria-hidden="true"
+          >
+            {epoch.year.split('–')[0].replace(/[^0-9]/g, '') || epoch.year}
+          </div>
+
+          <!-- 時代節點標記 (Timeline Node Landmark) -->
+          <div
+            class="absolute -left-[1.4rem] sm:-left-[2.15rem] top-1.5 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full border-2 border-surface bg-red text-surface shadow-[0_0_0_3px_theme(colors.red/25%)]"
+            aria-hidden="true"
+          >
+            <span class="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-surface" />
+          </div>
+
+          <!-- 時代標題與脈絡說明 -->
+          <div class="relative mb-10 max-w-4xl">
+            <div class="flex flex-wrap items-center gap-3 font-mono text-xs font-bold uppercase tracking-wider text-red">
+              <span class="rounded bg-ink px-2.5 py-0.5 text-surface">
+                EPOCH {epoch.epochNumber || String(idx + 1).padStart(2, '0')}
+              </span>
+              <span>{epoch.year}</span>
+              {(epoch.subtitle || epoch.period) && (
+                <span class="text-muted">/ {epoch.subtitle || epoch.period}</span>
+              )}
+            </div>
+            <h3 class="mt-3 mb-4 font-display text-3xl sm:text-4xl font-bold leading-tight text-ink">
+              {epoch.title}
+            </h3>
+            <p class="m-0 text-base leading-8 text-muted">{epoch.summary}</p>
+          </div>
+
+          <!-- 卡片群佈局 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+            {epoch.sources.map((item) => (
+              <article
+                id={item.source.id}
+                class:list={[
+                  'group flex flex-col justify-between border border-line bg-surface p-7 sm:p-8 transition-all duration-300 hover:border-ink hover:shadow-lg',
+                  (item.isFeatured || item.featured) &&
+                    'md:col-span-2 border-2 border-ink shadow-md',
+                ]}
+              >
+                {item.refCode && (
+                  <>
+                    <span
+                      id={`source-${parseInt(item.refCode.replace(/[^0-9]/g, '') || '0', 10)}`}
+                      class="sr-only"
+                    />
+                    <span id={item.refCode.toLowerCase()} class="sr-only" />
+                  </>
+                )}
+                <div>
+                  <div class="flex items-center justify-between gap-4 border-b border-line/60 pb-4">
+                    <div class="flex items-center gap-2">
+                      <span class="inline-flex items-center justify-center rounded bg-ink px-2.5 py-0.5 font-mono text-xs font-bold tracking-wider text-surface">
+                        [{item.refCode || 'REF'}]
+                      </span>
+                      <span class="font-mono text-xs font-medium text-muted">
+                        {item.source.published || epoch.year}
+                      </span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      {item.role && (
+                        <span class="rounded bg-ink/5 px-2 py-0.5 font-mono text-xs font-semibold text-muted">
+                          {item.role}
+                        </span>
+                      )}
+                      <span
+                        class={`rounded-full px-2.5 py-0.5 font-mono text-xs font-semibold ${sourceKindMeta[item.source.kind]?.badge || 'border border-line bg-paper-deep text-ink'}`}
+                      >
+                        {sourceKindMeta[item.source.kind]?.label || item.source.kind || '一手文獻'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <a
+                    href={item.source.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    class="group/link mt-5 mb-2 block no-underline"
+                    aria-label={`開啟來源：${item.source.title}（在新分頁開啟）`}
+                  >
+                    <h4 class="m-0 flex items-start justify-between gap-3 font-display text-2xl font-bold leading-snug text-ink transition-colors group-hover/link:text-red">
+                      <span>{item.source.title}</span>
+                      <span class="inline-block shrink-0 font-mono text-lg text-muted transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 group-hover/link:text-red">
+                        ↗
+                      </span>
+                    </h4>
+                  </a>
+
+                  <p class="mt-1 mb-5 font-mono text-xs uppercase tracking-wider text-red">
+                    {item.source.publisher}
+                    {item.source.published ? ` · ${item.source.published}` : ''}
+                  </p>
+
+                  {item.takeaway && (
+                    <div class="mb-4 rounded border-l-2 border-red/60 bg-paper-deep/40 px-3.5 py-2.5 text-sm text-ink leading-relaxed">
+                      <strong class="font-mono text-xs uppercase text-red mr-1.5 font-bold">
+                        核心貢獻 /
+                      </strong>
+                      <span>{item.takeaway}</span>
+                    </div>
+                  )}
+
+                  {item.source.supports && item.source.supports.length > 0 && (
+                    <div class="mb-6 space-y-2">
+                      <p class="m-0 font-mono text-xs font-semibold uppercase tracking-wider text-muted">
+                        核心實證與論據 / KEY EVIDENCE
+                      </p>
+                      <ul class="m-0 list-none space-y-2 p-0">
+                        {item.source.supports.map((evidence) => (
+                          <li class="flex items-start gap-2.5 text-sm leading-relaxed text-muted">
+                            <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-red" />
+                            <span>{evidence}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
+                <div class="mt-auto border-t border-dashed border-line pt-4">
+                  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    {item.source.limits ? (
+                      <p class="m-0 max-w-[42ch] text-sm leading-relaxed text-muted">
+                        <span class="font-mono text-xs font-semibold uppercase text-ink">
+                          文獻焦點 /{' '}
+                        </span>
+                        {item.source.limits}
+                      </p>
+                    ) : (
+                      <span />
+                    )}
+                    <a
+                      href={item.source.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      class="inline-flex shrink-0 items-center justify-center gap-1.5 border border-ink/20 bg-paper-deep/50 px-4 py-2 font-mono text-xs font-semibold uppercase tracking-wider text-ink no-underline transition-all hover:border-red hover:bg-red hover:text-surface"
+                      aria-label={`開啟來源：${item.source.title}（在新分頁開啟）`}
+                    >
+                      閱讀原文 ↗
+                    </a>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../lib/paths';
 import { milestonePapers, type MilestonePaper } from '../../content/papers/milestones';
 
 export function getStaticPaths() {
@@ -29,11 +30,11 @@ const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
   <article>
     <header class={`${shell} pt-10`}>
       <nav class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
-        <a class="text-red underline underline-offset-4" href="/">
+        <a class="text-red underline underline-offset-4" href={withBase('/')}>
           THE LLM
         </a>
         <span aria-hidden="true">/</span>
-        <a class="text-muted underline underline-offset-4" href="/#milestones">
+        <a class="text-muted underline underline-offset-4" href={withBase('/#milestones')}>
           全系列大綱
         </a>
         <span aria-hidden="true">/</span>
@@ -195,25 +196,25 @@ const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
           id="chapter-outline-title"
           class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight"
         >
-          深入導讀的三大樂章
+          深入導讀的三大主軸
         </h2>
       </div>
 
       <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
         <div class="border-t-4 border-ink bg-paper p-6">
-          <p class="font-mono text-xs uppercase tracking-[0.1em] text-red">樂章一 / MOVEMENT 01</p>
+          <p class="font-mono text-xs uppercase tracking-[0.1em] text-red">模組 01 / MODULE 01</p>
           <h3 class="mt-4 mb-3 font-display text-2xl leading-snug">歷史：問題從何而來</h3>
           <p class="text-sm leading-7 text-muted">{paper.outline.history}</p>
         </div>
 
         <div class="border-t-4 border-red bg-paper p-6">
-          <p class="font-mono text-xs uppercase tracking-[0.1em] text-red">樂章二 / MOVEMENT 02</p>
+          <p class="font-mono text-xs uppercase tracking-[0.1em] text-red">模組 02 / MODULE 02</p>
           <h3 class="mt-4 mb-3 font-display text-2xl leading-snug">理論：這台機器怎麼運轉</h3>
           <p class="text-sm leading-7 text-muted">{paper.outline.theory}</p>
         </div>
 
         <div class="border-t-4 border-blue bg-paper p-6">
-          <p class="font-mono text-xs uppercase tracking-[0.1em] text-red">樂章三 / MOVEMENT 03</p>
+          <p class="font-mono text-xs uppercase tracking-[0.1em] text-red">模組 03 / MODULE 03</p>
           <h3 class="mt-4 mb-3 font-display text-2xl leading-snug">洪流：後續規模與未解難題</h3>
           <p class="text-sm leading-7 text-muted">{paper.outline.flood}</p>
         </div>
@@ -224,18 +225,16 @@ const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
           <p class="m-0 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
             推薦先讀篇章 / CURRENT FEATURE
           </p>
-          <h3 class="mt-2 mb-1 font-display text-2xl text-ink">
-            第一章〈Attention Is All You Need〉
-          </h3>
+          <h3 class="mt-2 mb-1 font-display text-2xl text-ink">〈Attention Is All You Need〉</h3>
           <p class="m-0 text-sm text-muted">
             已完成 28 分鐘完整逐字拆解、小明生活案例、QKV 手工算例與歷史回顧。
           </p>
         </div>
         <a
           class="mt-5 inline-block shrink-0 border border-ink bg-ink px-6 py-3 font-mono text-sm uppercase text-surface no-underline hover:bg-red hover:border-red sm:mt-0"
-          href="/papers/attention-is-all-you-need"
+          href={withBase('/papers/attention-is-all-you-need')}
         >
-          立即閱讀第一章 ↗
+          立即閱讀全文 ↗
         </a>
       </div>
     </section>

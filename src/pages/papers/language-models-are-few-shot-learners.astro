@@ -1,10 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../lib/paths';
 import StoryRail from '../../components/StoryRail.astro';
 import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
 import AsideCard from '../../components/AsideCard.astro';
 import Callout from '../../components/Callout.astro';
 import AuthorGrid from '../../components/AuthorGrid.astro';
+import EvidenceList from '../../components/EvidenceList.astro';
 import PaperMeta from '../../components/PaperMeta.astro';
 import PaperNavigation from '../../components/PaperNavigation.astro';
 import {
@@ -40,7 +42,7 @@ const story = [
   {
     year: '2022.03',
     label: '後續 / 對齊與 CHINCHILLA',
-    title: '從機率接龍到意圖對齊，算力最優化改寫訓練比例',
+    title: '從機率接龍到意圖對齊，算力最佳化化改寫訓練比例',
     body: 'Chinchilla 指出 GPT-3 數據量嚴重不足；InstructGPT 則引入 RLHF 解決原始大模型「不聽指令與幻覺」的原罪。',
     status: 'future' as const,
   },
@@ -67,9 +69,9 @@ const timelineEpochs: TimelineEpoch[] = [
     id: 'epoch-2018-finetune',
     year: '2018–2019',
     period: '微調典範的統治與隱形天花板',
-    title: '任務專用數據集與梯度更新的雙重代價',
+    title: '任務專用資料集與梯度更新的雙重代價',
     summary:
-      'GPT-1 與 BERT 確立了先在大規模語料預訓練、再於下游任務微調的黃金架構。然而每個新任務都需要耗費高昂人力收集標註，且模型在微調集上容易過擬合並喪失泛化能力。',
+      'GPT-1 與 BERT 確立了先在大規模語料預訓練、再於下游任務微調的黃金架構。然而每個新任務都需要耗費高昂人力收集標註，且模型在微調集上容易過度擬合並喪失泛化能力。',
     sources: [
       {
         source: fewShotSources.find((s) => s.id === 'paper-2019-gpt2')!,
@@ -105,14 +107,14 @@ const timelineEpochs: TimelineEpoch[] = [
         featured: true,
         role: '本篇核心',
         takeaway:
-          '確立 In-Context Learning（ICL）為全新的人機協作典範，展現三位數算術、單字重組與代碼合成等階躍式湧現能力。',
+          '確立 In-Context Learning（ICL）為全新的人機協作典範，展現三位數算術、單字重組與程式碼合成等階躍式湧現能力。',
       },
     ],
   },
   {
     id: 'epoch-2022-evolution',
     year: '2022',
-    period: '計算最優化與意圖對齊的雙軌演進',
+    period: '計算最佳化化與意圖對齊的雙軌演進',
     title: 'Chinchilla 修正數據分配，RLHF 馴服原始預訓練基座',
     summary:
       'DeepMind 證明 GPT-3 數據量嚴重吃不飽；OpenAI 則透過 InstructGPT 引入人類反饋強化學習，解決基座模型漫無邊際接龍與難以遵循指令的缺陷。',
@@ -143,11 +145,11 @@ const timelineEpochs: TimelineEpoch[] = [
     <!-- 1. Hero Header -->
     <header class={`${shell} pt-10`}>
       <div class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
-        <a class="text-red underline underline-offset-4" href="/">
+        <a class="text-red underline underline-offset-4" href={withBase('/')}>
           THE LLM
         </a>
         <span aria-hidden="true">/</span>
-        <span>第六章</span>
+        <span>第 06 章</span>
       </div>
 
       <div class="grid grid-cols-1 items-end gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-24">
@@ -220,7 +222,7 @@ const timelineEpochs: TimelineEpoch[] = [
       <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            第一樂章 / 微調典範的結構性困境
+            章節 01 · 微調典範的結構性困境 / THE IMPASSE
           </p>
           <h2
             id="finetune-bottleneck-title"
@@ -239,17 +241,17 @@ const timelineEpochs: TimelineEpoch[] = [
 
       <PaperReadingLayout class="text-base leading-8 text-ink">
         <div class="space-y-6">
-          <p class="text-lg leading-relaxed text-ink">
+          <p>
             在 2018 年至 2020
             年初的自然語言處理領域，整個學界與工業界共同信奉一套標準作業程序：先在大規模未標註文本上預訓練一個通用語言模型（如
             GPT-1 或
-            BERT），接著針對特定下游任務——無論是情緒分類、生物醫療實體識別、還是跨語言翻譯——收集數千至數萬筆精心標註的訓練樣本，透過反向傳播算法持續更新神經網路的所有權重。這種「預訓練
+            BERT），接著針對特定下游任務——無論是情緒分類、生物醫療實體識別、還是跨語言翻譯——收集數千至數萬筆精心標註的訓練樣本，透過反向傳播演算法持續更新神經網路的所有權重。這種「預訓練
             + 微調」（Pre-train and
             Fine-tune）的兩階段典範，雖然刷新了無數基準測試的最高分紀錄，卻在現實世界的應用中撞上了一面堅硬的工程高牆。
           </p>
 
           <p>
-            這堵高牆由四重難以克服的結構性代價堆砌而成：第一重是「標註數據的枯竭與昂貴」——在常規的新聞分類任務中獲取標註尚稱容易，但在法律合約審查、罕見病理診斷或精密機械故障排查等高度專業領域，獲取數萬筆專家級標註資料的成本極其高昂，甚至在許多長尾場景中根本不可行；第二重是「偽泛化與分佈漂移脆弱性」——微調過程會迫使龐大的預訓練特徵空間過擬合於狹窄的微調數據集分佈，一旦測試環境中的用語習慣、格式或排版發生些許微調，模型的推論準確率便會發生斷崖式崩潰；第三重是「基礎設施維護的幾何級膨脹」——若一家企業擁有
+            這堵高牆由四重難以克服的結構性代價堆砌而成：第一重是「標註數據的枯竭與昂貴」——在常規的新聞分類任務中獲取標註尚稱容易，但在法律合約審查、罕見病理診斷或精密機械故障排查等高度專業領域，獲取數萬筆專家級標註資料的成本極其高昂，甚至在許多長尾場景中根本不可行；第二重是「偽泛化與分佈漂移脆弱性」——微調過程會迫使龐大的預訓練特徵空間過度擬合於狹窄的微調資料集分佈，一旦測試環境中的用語習慣、格式或排版發生些許微調，模型的推論準確率便會發生斷崖式崩潰；第三重是「基礎設施維護的幾何級膨脹」——若一家企業擁有
             100
             個不同的業務語言任務，微調典範要求為每個任務分別保存並部署一份獨立的模型權重副本，這在百億甚至千億參數時代意味著天文數字般的儲存與託管開銷。
           </p>
@@ -261,9 +263,21 @@ const timelineEpochs: TimelineEpoch[] = [
 
           <p>
             OpenAI 的 Tom B. Brown、Melanie Subbiah、Jared Kaplan 與 Dario Amodei
-            等人由此提出了一個大膽的科學假說：既然前一章的縮放定律（Scaling
-            Laws）證實了語言模型的損失函數會隨著參數規模的擴展而呈現嚴格的冪律下降，那麼當我們把模型從
-            GPT-2 的 15 億參數一口氣推升至 1750
+            等人由此提出了一個大膽的科學假說：既然
+            <a
+              href={withBase('/papers/scaling-laws-for-neural-language-models')}
+              class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+            >
+              Scaling Laws
+            </a>
+            縮放定律證實了語言模型的損失函數會隨著參數規模的擴展而呈現嚴格的冪律下降，那麼當我們把模型從
+            <a
+              href={withBase('/papers/language-models-are-unsupervised-multitask-learners')}
+              class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+            >
+              GPT-2
+            </a>
+            的 15 億參數一口氣推升至 1750
             億參數時，這個龐大的自回歸網路是否也能如同人類大腦一般，在完全不更新任何權重的情況下，僅僅藉由閱讀提示詞（Prompt）中的前文示範，就學會此前從未見過的全新任務？這個被稱為「上下文學習」（In-Context
             Learning, ICL）的機制，成為了 GPT-3 撼動整個 AI 領域的核心支點。
           </p>
@@ -276,7 +290,7 @@ const timelineEpochs: TimelineEpoch[] = [
                 <dt class="font-bold text-ink">傳統微調（Fine-tuning）</dt>
                 <dd class="mt-1 text-muted">
                   透過反向傳播計算梯度，更新模型內部全部或部分權重參數（ΔW ≠
-                  0）。每個任務都需要專屬數據集與獨立權重檔案。
+                  0）。每個任務都需要專屬資料集與獨立權重檔案。
                 </dd>
               </div>
               <div class="border-t border-line pt-3">
@@ -295,7 +309,7 @@ const timelineEpochs: TimelineEpoch[] = [
             title="In-Context Learning 不是 Meta-Learning"
           >
             <p class="m-0 text-sm leading-6 text-muted">
-              在機器學習文獻中，「元學習」（Meta-Learning）通常指涉專門設計了內外雙迴圈優化目標以學會快速調整參數的算法（如
+              在機器學習文獻中，「元學習」（Meta-Learning）通常指涉專門設計了內外雙迴圈最佳化目標以學會快速調整參數的演算法（如
               MAML）。而 GPT-3 的 In-Context Learning
               並沒有專門的元學習訓練目標，它只是純粹預測下一個字的無監督自回歸模型，少樣本學習能力是純粹在規模擴展過程中自發「湧現」出來的副產品。
             </p>
@@ -313,7 +327,7 @@ const timelineEpochs: TimelineEpoch[] = [
       <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            第二樂章 / 1750 億參數的物理矩陣
+            章節 02 · 1750 億參數的物理矩陣 / ARCHITECTURE
           </p>
           <h2
             id="architecture-engineering-title"
@@ -333,7 +347,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
       <PaperReadingLayout class="text-base leading-8 text-ink">
         <div class="space-y-6">
-          <p class="text-lg leading-relaxed text-ink">
+          <p>
             為了驗證少樣本學習究竟是規模擴展的普遍趨勢，還是僅僅在極端參數下才出現的孤立現象，Tom B.
             Brown 等人在論文中並未孤立地只訓練一個超大模型，而是構建了一個跨越三個數量級、包含 8
             個不同規模的 Transformer 解碼器矩陣梯隊。從最小的 GPT-3 Small（1.25 億參數，相當於原始
@@ -469,22 +483,23 @@ const timelineEpochs: TimelineEpoch[] = [
             在架構細節上，GPT-3 沿用了 Rewon Child 等人在 2019
             年發明的「交替局部帶狀稀疏注意力」（Alternating Dense and Locally Banded Sparse
             Attention Patterns）。在標準的 Self-Attention
-            機制中，計算複雜度與顯存消耗隨序列長度呈平方比例 O(n<sup>2</sup>) 增長，當序列長度從
-            GPT-2 的 1024 翻倍至 2048
+            機制中，計算複雜度與視訊記憶體消耗隨序列長度呈平方比例 O(n<sup>2</sup>)
+            增長，當序列長度從 GPT-2 的 1024 翻倍至 2048
             時，注意力矩陣的記憶體開銷激增了四倍。為了緩解長程運算的壓力，GPT-3
-            在每一層交替安排：一層使用標準的全局 Dense Attention，允許每個位置觀察所有先前的
+            在每一層交替安排：一層使用標準的全域 Dense Attention，允許每個位置觀察所有先前的
             token；緊接著下一層則切換為 Locally Banded Sparse
-            Attention，每個位置只與相鄰的局部窗口（Bandwidth）以及特定步長（Strided）的代表節點進行比對。這種交替設計既保留了全局訊息的穿透流通，又顯著抑制了超大層數下的記憶體爆炸。
+            Attention，每個位置只與相鄰的局部窗口（Bandwidth）以及特定步幅（Strided）的代表節點進行比對。這種交替設計既保留了全域訊息的穿透流通，又顯著抑制了超大層數下的記憶體爆炸。
           </p>
 
           <p>
             然而，這座模型面臨的最根本障礙在於硬體物理極限。在 2020 年，市場上最頂級的 AI 晶片是配備
-            16GB 或 32GB 顯存的 NVIDIA V100 GPU。即使以最省顯存的半精度浮點數（FP16，每個參數佔用 2
-            個位元組）來儲存，單純將 1750 億個靜態參數加載進記憶體，就需要 350GB
-            的純粹空間！如果再加上 Adam 優化器的動態狀態（一階矩動量與二階矩方差各佔 4
-            個位元組，加上 FP32 主副本權重，優化器每參數需要 16
-            位元組）、前向傳播的激活值（Activations）以及反向傳播的梯度向量，訓練 GPT-3 175B
-            至少需要超過 1.2TB 的高速顯存，這意味著任何單一伺服器節點都無法容納模型。
+            16GB 或 32GB 視訊記憶體的 NVIDIA V100
+            GPU。即使以最省視訊記憶體的半精度浮點數（FP16，每個參數佔用 2 個位元組）來儲存，單純將
+            1750 億個靜態參數載入進記憶體，就需要 350GB 的純粹空間！如果再加上 Adam
+            最佳化器的動態狀態（一階矩動量與二階矩方差各佔 4 個位元組，加上 FP32
+            主副本權重，最佳化器每參數需要 16
+            位元組）、前向傳播的活化值（Activations）以及反向傳播的梯度向量，訓練 GPT-3 175B
+            至少需要超過 1.2TB 的高速視訊記憶體，這意味著任何單一伺服器節點都無法容納模型。
           </p>
 
           <p>
@@ -510,7 +525,7 @@ const timelineEpochs: TimelineEpoch[] = [
           <Callout variant="note" kicker="架構細節" title="稀疏注意力的交替節奏">
             <p class="m-0 text-sm leading-6 text-muted">
               Dense 與 Sparse
-              注意力的交替排列，類似於現代晶片設計中的區域快取與全局匯流排分工：局部帶狀注意力負責捕捉相鄰單詞間的語法修飾與緊密詞組結構，而全局注意力則在宏觀層面協調跨段落的核心主旨與長程因果指代。
+              注意力的交替排列，類似於現代晶片設計中的區域快取與全域匯流排分工：局部帶狀注意力負責捕捉相鄰單詞間的語法修飾與緊密詞組結構，而全域注意力則在宏觀層面協調跨段落的核心主旨與長程因果指代。
             </p>
           </Callout>
         </div>
@@ -526,7 +541,7 @@ const timelineEpochs: TimelineEpoch[] = [
       <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            第三樂章 / 數據濾網與清洗工程
+            章節 03 · 數據濾網與清洗工程 / DATA CURATION
           </p>
           <h2
             id="data-pipeline-title"
@@ -540,23 +555,23 @@ const timelineEpochs: TimelineEpoch[] = [
         </div>
         <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
           單純堆砌網路文本只會引入海量垃圾與噪音。OpenAI
-          如何利用高品質二元分類器與去重算法，提煉出足以啟蒙千億智慧的 570GB 純淨養分。
+          如何利用高品質二元分類器與去重演算法，提煉出足以啟蒙千億智慧的 570GB 純淨養分。
         </p>
       </div>
 
       <PaperReadingLayout class="text-base leading-8 text-ink">
         <div class="space-y-6">
-          <p class="text-lg leading-relaxed text-ink">
+          <p>
             在 GPT-2 時代，研究團隊為確保語料品質，採取了一種相當謹慎的封閉策略：僅爬取 Reddit
             上獲得至少 3 個讚賞評分的對外超連結網頁，建構了 40GB 的 WebText
-            數據集。然而，當模型的參數量從 15 億膨脹至 1750 億時，40GB
-            的數據規模在千億級參數面前顯得捉襟見肘，如果不進行跨數量級的語料庫擴充，模型在預訓練的第一個週期內便會迅速耗盡所有文本，陷入毀滅性的記憶過擬合。
+            資料集。然而，當模型的參數量從 15 億膨脹至 1750 億時，40GB
+            的數據規模在千億級參數面前顯得捉襟見肘，如果不進行跨數量級的語料庫擴充，模型在預訓練的第一個週期內便會迅速耗盡所有文本，陷入毀滅性的記憶過度擬合。
           </p>
 
           <p>
             擺在研究團隊面前唯一的公開巨型寶藏，是開源非營利組織爬取的「Common
             Crawl」——這是一個累積了數十億網頁、原始容量高達 45TB
-            的非結構化網際網路鏡像數據庫。然而，未經篩選的 Common Crawl
+            的非結構化網際網路鏡像資料庫。然而，未經篩選的 Common Crawl
             是一片充斥著數位垃圾的未開墾荒原：其中混雜著數以億計的色情垃圾訊息、博弈廣告、SEO
             關鍵字堆砌農場、格式錯亂的 HTML
             標籤、機器自動生成的重複亂碼以及無意義的日誌字串。直接拿這樣的資料庫訓練模型，只會培育出一個口齒不清、思維混亂的胡言亂語生成器。
@@ -570,7 +585,7 @@ const timelineEpochs: TimelineEpoch[] = [
             <table class="w-full border-collapse text-left font-mono text-sm leading-relaxed">
               <thead>
                 <tr class="border-b border-ink/20 text-muted">
-                  <th class="py-2.5 pr-4 font-semibold">數據集名稱</th>
+                  <th class="py-2.5 pr-4 font-semibold">資料集名稱</th>
                   <th class="py-2.5 pr-4 font-semibold">原始文本大小</th>
                   <th class="py-2.5 pr-4 font-semibold">語料 Token 總數</th>
                   <th class="py-2.5 pr-4 font-semibold">訓練期間採樣佔比</th>
@@ -631,7 +646,7 @@ const timelineEpochs: TimelineEpoch[] = [
             隨機採樣作為負樣本，訓練了一個邏輯斯蒂迴歸分類器（Logistic Regression
             Classifier）。透過詞特徵與文字流暢度打分，分類器僅保留預測機率高於門檻的優質網頁，一口氣過濾掉了超過
             98% 的垃圾內容；接著，團隊利用 MinHash LSH
-            算法進行文檔級別的模糊去重，將各網站相互轉載的重複內容與模板文本剔除。
+            演算法進行文本層級的模糊去重，將各網站相互轉載的重複內容與模板文本剔除。
           </p>
 
           <p>
@@ -668,7 +683,7 @@ const timelineEpochs: TimelineEpoch[] = [
       <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            第四樂章 / 上下文學習的動態機制
+            章節 04 · 上下文學習的動態機制 / IN-CONTEXT MECHANICS
           </p>
           <h2
             id="icl-mechanics-title"
@@ -688,7 +703,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
       <PaperReadingLayout class="text-base leading-8 text-ink">
         <div class="space-y-6">
-          <p class="text-lg leading-relaxed text-ink">
+          <p>
             在 GPT-3
             的體系中，「學習」（Learning）一詞的物理意義被徹底改寫了。它不再指代神經網路權重空間中沿著梯度反方向的微小位移，而是指模型在長達
             2048 個 token
@@ -855,6 +870,473 @@ const timelineEpochs: TimelineEpoch[] = [
       </PaperReadingLayout>
     </section>
 
+    <!-- BREAKOUT: 動態實驗室：上下文少樣本學習與規模湧現模擬器 -->
+    <section
+      id="gpt3-interactive-lab"
+      class="border-y border-ink bg-paper-deep/60 py-16 sm:py-20 lg:py-24 scroll-mt-24"
+      aria-labelledby="gpt3-lab-title"
+    >
+      <div class={shell}>
+        <div class="mb-10 max-w-[800px]">
+          <p class="m-0 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+            動態實驗室 / INTERACTIVE IN-CONTEXT LEARNING LAB
+          </p>
+          <h3
+            id="gpt3-lab-title"
+            class="mt-2 m-0 font-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-ink"
+          >
+            上下文少樣本學習（Few-Shot ICL）與規模湧現模擬器
+          </h3>
+          <p class="mt-4 text-base leading-7 text-muted">
+            親手驗證 GPT-3 革命性發明：完全不更新模型權重（ΔW = 0），如何透過提示詞中 K
+            個示範範例（Demonstrations）激發推理；並親自推動參數量從 1.25 億至 1750
+            億，觀察三位數加法與常識問答中的階躍式相變湧現。
+          </p>
+        </div>
+
+        <!-- Mode Tab Bar -->
+        <div
+          class="flex flex-wrap gap-2 mb-8 border-b border-line pb-4"
+          role="tablist"
+          aria-label="實驗室模組切換"
+        >
+          <button
+            type="button"
+            id="gpt3-tab-icl"
+            role="tab"
+            aria-selected="true"
+            aria-controls="gpt3-panel-icl"
+            class="px-4 py-2 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer"
+          >
+            模組 01 · K-Shot 範例注入沙盒 (Few-Shot ICL)
+          </button>
+          <button
+            type="button"
+            id="gpt3-tab-scale"
+            role="tab"
+            aria-selected="false"
+            aria-controls="gpt3-panel-scale"
+            class="px-4 py-2 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer"
+          >
+            模組 02 · 參數量規模湧現對比儀 (125M → 175B)
+          </button>
+        </div>
+
+        <!-- PANEL 01: K-Shot 範例注入沙盒 -->
+        <div id="gpt3-panel-icl" role="tabpanel" aria-labelledby="gpt3-tab-icl" class="space-y-8">
+          <!-- Controls: Task Selector + K-shot Selector -->
+          <div class="border border-ink bg-surface p-5 sm:p-6 space-y-4">
+            <div>
+              <span class="font-mono text-xs font-bold uppercase tracking-wider text-red block mb-3">
+                TASK BENCHMARK / 測試任務情境
+              </span>
+              <div class="flex flex-wrap gap-2" id="icl-task-container">
+                <!-- Task buttons rendered by JS -->
+              </div>
+            </div>
+
+            <!-- K-shot Selector -->
+            <div class="border-t border-line pt-4">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-blue">
+                  示範範例數量 K (DEMONSTRATIONS IN CONTEXT):
+                </span>
+                <span
+                  id="icl-k-badge"
+                  class="font-mono text-xs bg-red text-surface px-2.5 py-0.5 font-bold"
+                >
+                  K = 0 (零樣本 Zero-Shot)
+                </span>
+              </div>
+              <div class="flex flex-wrap gap-2" id="icl-k-selector">
+                <!-- K buttons rendered by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Sandbox Display: 2 Columns -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Left: Prompt Assembly Stream (7 cols) -->
+            <div class="lg:col-span-7 border border-ink bg-surface p-5 sm:p-6 space-y-4">
+              <div class="flex items-center justify-between border-b border-line pb-2">
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                  PROMPT ASSEMBLY STREAM / 上下文提示序列
+                </span>
+                <span class="font-mono text-xs bg-paper-deep px-2 py-0.5 border border-line text-ink">
+                  ΔW = 0 (權重凍結)
+                </span>
+              </div>
+
+              <!-- Formatted Prompt Box -->
+              <div
+                id="icl-prompt-stream"
+                class="border border-line bg-paper p-4 font-mono text-xs sm:text-sm leading-relaxed text-ink space-y-3 max-h-96 overflow-y-auto"
+              >
+                <!-- Rendered by JS -->
+              </div>
+
+              <!-- Mathematical Insight -->
+              <div class="border-l-4 border-red bg-paper p-3 text-sm text-ink leading-relaxed">
+                <span class="font-mono text-xs font-bold text-red uppercase block mb-1">
+                  上下文隱式最佳化原理 / IN-CONTEXT WEIGHT DYNAMICS
+                </span>
+                <p id="icl-math-desc" class="m-0 text-sm text-muted">
+                  透過自注意力機制，K
+                  個範例在隱藏狀態空間中提供類比向量，等效於執行了一次隱式的元梯度更新。
+                </p>
+              </div>
+            </div>
+
+            <!-- Right: Prediction & Confidence Meter (5 cols) -->
+            <div class="lg:col-span-5 border border-ink bg-surface p-5 sm:p-6 space-y-4">
+              <div class="border-b border-line pb-3">
+                <span class="font-mono text-xs font-semibold uppercase tracking-[0.1em] text-red">
+                  MODEL PREDICTION / 模型預測輸出
+                </span>
+                <h4
+                  class="mt-1 m-0 font-display text-lg font-bold text-ink"
+                  id="icl-target-query-title"
+                >
+                  目標輸入與次詞信心度
+                </h4>
+              </div>
+
+              <!-- Output Box -->
+              <div class="border border-line bg-paper p-4 space-y-2">
+                <span class="font-mono text-xs text-muted block">模型即時預測輸出：</span>
+                <div
+                  id="icl-model-output"
+                  class="font-mono text-base font-bold text-red p-2 bg-paper-deep border border-line"
+                >
+                  預測中...
+                </div>
+                <div class="flex items-center justify-between text-xs font-mono pt-1">
+                  <span class="text-muted">正確答案機率：</span>
+                  <span id="icl-confidence-val" class="font-bold text-ink">
+                    0.0%
+                  </span>
+                </div>
+                <div class="h-3 w-full bg-paper-deep border border-line relative overflow-hidden">
+                  <div
+                    id="icl-confidence-bar"
+                    class="h-full bg-red transition-all duration-300 w-0"
+                  ></div>
+                </div>
+              </div>
+
+              <!-- Attention Flow Schematic -->
+              <div class="border border-line bg-paper p-4 space-y-2">
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-muted block">
+                  ATTENTION HEAD RETRIEVAL / 注意力頭跨範例檢索
+                </span>
+                <div id="icl-attention-flow" class="font-mono text-xs space-y-1.5 text-muted">
+                  <!-- Flow steps rendered by JS -->
+                </div>
+              </div>
+
+              <!-- Linguistic Diagnosis -->
+              <div class="border border-line bg-paper-deep p-3 font-mono text-xs text-muted">
+                <span class="font-bold text-ink block mb-1">推論機制診斷：</span>
+                <p id="icl-diagnosis-text" class="m-0 leading-relaxed text-muted">
+                  診斷分析載入中...
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL 02: 參數量規模湧現對比儀 -->
+        <div
+          id="gpt3-panel-scale"
+          role="tabpanel"
+          aria-labelledby="gpt3-tab-scale"
+          class="space-y-8 hidden"
+        >
+          <!-- Control bar: Benchmark + Model Size Slider -->
+          <div class="border border-ink bg-surface p-5 sm:p-6 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-line pb-3">
+              <div>
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                  EVALUATION BENCHMARK / 基準測試集
+                </span>
+                <h4
+                  class="mt-1 m-0 font-display text-lg font-bold text-ink"
+                  id="scale-benchmark-title"
+                >
+                  三位數加法算術（3-Digit Addition）
+                </h4>
+              </div>
+              <!-- Benchmark switcher -->
+              <div class="flex flex-wrap gap-2" id="scale-bench-container">
+                <!-- Bench buttons rendered by JS -->
+              </div>
+            </div>
+
+            <!-- Model Size Range Slider -->
+            <div>
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <label
+                  for="scale-model-slider"
+                  class="font-mono text-xs font-bold text-ink uppercase"
+                >
+                  GPT-3 八大參數量級選擇：
+                </label>
+                <span
+                  id="scale-model-badge"
+                  class="font-mono text-xs font-bold text-red bg-red-soft/40 px-2.5 py-0.5 border border-red"
+                >
+                  175B (GPT-3 Flagship, 96 層)
+                </span>
+              </div>
+              <input
+                id="scale-model-slider"
+                type="range"
+                min="0"
+                max="7"
+                step="1"
+                value="7"
+                class="w-full accent-red cursor-pointer"
+              />
+              <div class="flex justify-between font-mono text-xs text-muted mt-1 px-1">
+                <span>125M</span>
+                <span>350M</span>
+                <span>760M</span>
+                <span>1.3B</span>
+                <span>2.7B</span>
+                <span>6.7B</span>
+                <span>13B</span>
+                <span class="font-bold text-red">175B</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chart & Phase Transition Analysis: 2 Columns -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Left: SVG Log-Scale Scaling Chart (7 cols) -->
+            <div class="lg:col-span-7 border border-ink bg-surface p-5 sm:p-6 space-y-3">
+              <div class="flex items-center justify-between border-b border-line pb-2">
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                  SCALING ACCURACY TRAJECTORY / 準確率縮放軌跡
+                </span>
+                <span class="font-mono text-xs text-muted">橫軸：對數參數量級 (Log Scale)</span>
+              </div>
+
+              <!-- SVG Chart -->
+              <svg
+                id="scale-chart-svg"
+                viewBox="0 0 500 240"
+                class="w-full h-auto bg-paper border border-line"
+                role="img"
+                aria-label="GPT-3 準確率隨模型參數量規模湧現之曲線圖"
+              >
+                <!-- Grid Lines -->
+                <line
+                  x1="50"
+                  y1="30"
+                  x2="470"
+                  y2="30"
+                  stroke="#e0ded6"
+                  stroke-dasharray="2,2"
+                ></line>
+                <line
+                  x1="50"
+                  y1="80"
+                  x2="470"
+                  y2="80"
+                  stroke="#e0ded6"
+                  stroke-dasharray="2,2"
+                ></line>
+                <line
+                  x1="50"
+                  y1="130"
+                  x2="470"
+                  y2="130"
+                  stroke="#e0ded6"
+                  stroke-dasharray="2,2"
+                ></line>
+                <line
+                  x1="50"
+                  y1="180"
+                  x2="470"
+                  y2="180"
+                  stroke="#e0ded6"
+                  stroke-dasharray="2,2"
+                ></line>
+                <line x1="50" y1="210" x2="470" y2="210" stroke="#1e2224" stroke-width="1.5"></line>
+                <line x1="50" y1="30" x2="50" y2="210" stroke="#1e2224" stroke-width="1.5"></line>
+
+                <!-- Y-axis Labels -->
+                <text
+                  x="42"
+                  y="34"
+                  text-anchor="end"
+                  font-family="monospace"
+                  font-size="10"
+                  fill="#62665f"
+                >
+                  100%
+                </text>
+                <text
+                  x="42"
+                  y="84"
+                  text-anchor="end"
+                  font-family="monospace"
+                  font-size="10"
+                  fill="#62665f"
+                >
+                  75%
+                </text>
+                <text
+                  x="42"
+                  y="134"
+                  text-anchor="end"
+                  font-family="monospace"
+                  font-size="10"
+                  fill="#62665f"
+                >
+                  50%
+                </text>
+                <text
+                  x="42"
+                  y="184"
+                  text-anchor="end"
+                  font-family="monospace"
+                  font-size="10"
+                  fill="#62665f"
+                >
+                  25%
+                </text>
+                <text
+                  x="42"
+                  y="214"
+                  text-anchor="end"
+                  font-family="monospace"
+                  font-size="10"
+                  fill="#62665f"
+                >
+                  0%
+                </text>
+
+                <!-- X-axis Labels -->
+                <text x="60" y="226" font-family="monospace" font-size="9" fill="#62665f">
+                  125M
+                </text>
+                <text x="175" y="226" font-family="monospace" font-size="9" fill="#62665f">
+                  1.3B
+                </text>
+                <text x="350" y="226" font-family="monospace" font-size="9" fill="#62665f">
+                  13B
+                </text>
+                <text
+                  x="460"
+                  y="226"
+                  font-family="monospace"
+                  font-size="9"
+                  fill="#b6412c"
+                  font-weight="bold"
+                >
+                  175B
+                </text>
+
+                <!-- Polyline Series -->
+                <!-- Zero-shot (Gray) -->
+                <polyline
+                  id="scale-line-0shot"
+                  fill="none"
+                  stroke="#62665f"
+                  stroke-width="2"
+                  stroke-dasharray="4,4"
+                ></polyline>
+                <!-- Few-shot (Red) -->
+                <polyline
+                  id="scale-line-fewshot"
+                  fill="none"
+                  stroke="#b6412c"
+                  stroke-width="3"
+                ></polyline>
+
+                <!-- Active Model Indicator -->
+                <line
+                  id="scale-cursor-line"
+                  x1="460"
+                  y1="30"
+                  x2="460"
+                  y2="210"
+                  stroke="#b6412c"
+                  stroke-width="1.5"
+                  stroke-dasharray="2,2"
+                ></line>
+                <circle id="scale-point-0shot" cx="460" cy="200" r="4" fill="#62665f"></circle>
+                <circle
+                  id="scale-point-fewshot"
+                  cx="460"
+                  cy="50"
+                  r="6"
+                  fill="#b6412c"
+                  stroke="#fffdf8"
+                  stroke-width="2"
+                ></circle>
+              </svg>
+
+              <!-- Legend -->
+              <div class="flex items-center justify-end gap-6 font-mono text-xs">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-4 h-0.5 bg-muted border-b border-dashed border-muted"></span>
+                  <span class="text-muted">Zero-Shot (K=0)</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-4 h-1 bg-red"></span>
+                  <span class="font-bold text-red">Few-Shot (K=32~64)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Emergence Diagnosis Card (5 cols) -->
+            <div class="lg:col-span-5 border border-ink bg-surface p-5 sm:p-6 space-y-4">
+              <div class="border-b border-line pb-3">
+                <span class="font-mono text-xs font-semibold uppercase tracking-[0.1em] text-red">
+                  PHASE TRANSITION METRICS
+                </span>
+                <h4 class="mt-1 m-0 font-display text-lg font-bold text-ink">模型性能指標檢驗</h4>
+              </div>
+
+              <!-- Metric stats -->
+              <div class="grid grid-cols-2 gap-3 font-mono text-xs">
+                <div class="border border-line bg-paper p-3">
+                  <span class="text-muted block">零樣本準確率：</span>
+                  <span id="stat-0shot" class="font-bold text-ink text-base">
+                    0.1%
+                  </span>
+                </div>
+                <div class="border border-line bg-paper p-3">
+                  <span class="text-muted block">少樣本準確率：</span>
+                  <span id="stat-fewshot" class="font-bold text-red text-base">
+                    80.2%
+                  </span>
+                </div>
+                <div class="border border-line bg-paper p-3 col-span-2">
+                  <span class="text-muted block">少樣本增益幅（Few-shot Gain）：</span>
+                  <span id="stat-gain" class="font-bold text-red text-base">
+                    +80.1%
+                  </span>
+                </div>
+              </div>
+
+              <!-- Non-linear Phase Transition Narrative -->
+              <div class="border-l-4 border-red bg-paper p-3 space-y-2">
+                <span class="font-mono text-xs font-bold text-red uppercase block">
+                  非線性相變解析 / WHY EMERGENCE HAPPENS
+                </span>
+                <p id="scale-narrative-text" class="m-0 text-sm leading-relaxed text-muted">
+                  解析載入中...
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- MOVEMENT 5: 湧現能力與相變爆發 (EMERGENCE AND PHASE TRANSITIONS) -->
     <section
       id="emergent-abilities"
@@ -864,7 +1346,7 @@ const timelineEpochs: TimelineEpoch[] = [
       <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            第五樂章 / 湧現能力與相變爆發
+            章節 05 · 湧現能力與相變爆發 / EMERGENCE & PHASE CHANGE
           </p>
           <h2
             id="emergent-abilities-title"
@@ -872,7 +1354,7 @@ const timelineEpochs: TimelineEpoch[] = [
           >
             <span class="block">平滑損失下的階躍奇蹟：</span>
             <span class="block">
-              <em>算術推理、單字重組與代碼合成的非線性相變</em>
+              <em>算術推理、單字重組與程式碼合成的非線性相變</em>
             </span>
           </h2>
         </div>
@@ -883,7 +1365,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
       <PaperReadingLayout class="text-base leading-8 text-ink">
         <div class="space-y-6">
-          <p class="text-lg leading-relaxed text-ink">
+          <p>
             在科學哲學中，諾貝爾物理學獎得主 Philip Anderson 曾提出著名的論斷：「多則異也」（More is
             Different）——當系統的基本單元數量跨越某個臨界尺度時，整個系統會展現出微觀個體所完全不具備的全新宏觀性質。GPT-3
             帶給人類人工智慧歷史最震撼的衝擊，正是這場被稱為「能力湧現」（Emergent
@@ -891,7 +1373,14 @@ const timelineEpochs: TimelineEpoch[] = [
           </p>
 
           <p>
-            在前一章的縮放定律中，我們看見模型的跨尺度訓練損失呈現出極為平滑、毫無波瀾的對數線性下降。許多批評者據此推斷：GPT-3
+            在{' '}
+            <a
+              href={withBase('/papers/scaling-laws-for-neural-language-models')}
+              class="text-primary hover:underline font-medium"
+            >
+              Scaling Laws
+            </a>{' '}
+            縮放定律中，我們看見模型的跨尺度訓練損失呈現出極為平滑、毫無波瀾的對數線性下降。許多批評者據此推斷：GPT-3
             不過是一個把預測下一個字做得稍微好一點點的機率統計機器，不會帶來任何認知本質的變化。然而，當研究團隊將
             8
             個不同尺寸的模型置於一系列高度複雜的符號操作與推理任務中進行評估時，令人瞠目結舌的景象出現了。
@@ -984,8 +1473,8 @@ const timelineEpochs: TimelineEpoch[] = [
             除了算術運算，GPT-3
             還在完全未經刻意訓練的領域展現出了不可思議的衍生天賦：其中最引發科技產業地震的，是其編寫程式碼的能力。在提示詞中輸入簡單的英文函數功能描述，GPT-3
             竟能流暢地生成語法完全正確的 Python、JavaScript 或 SQL
-            查詢語句，甚至能即時修復代碼中的語法錯誤。這一意外的湧現，直接促成了 OpenAI
-            在隔年將代碼預訓練獨立化，打造出 Codex 模型，並孕育了後來的 GitHub Copilot 革命。
+            查詢語句，甚至能即時修復程式碼中的語法錯誤。這一意外的湧現，直接促成了 OpenAI
+            在隔年將程式碼預訓練獨立化，打造出 Codex 模型，並孕育了後來的 GitHub Copilot 革命。
           </p>
         </div>
 
@@ -1012,7 +1501,7 @@ const timelineEpochs: TimelineEpoch[] = [
       <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            第六樂章 / 原始基座的未竟之功
+            章節 06 · 原始基座的未竟之功 / LEGACY & LIMITS
           </p>
           <h2
             id="alignment-bridge-title"
@@ -1032,7 +1521,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
       <PaperReadingLayout class="text-base leading-8 text-ink">
         <div class="space-y-6">
-          <p class="text-lg leading-relaxed text-ink">
+          <p>
             儘管 GPT-3 在 NeurIPS 2020 榮獲了最佳論文獎（Best Paper
             Award），並在科技界掀起了一場自網際網路普及以來最熱烈的投資與研發狂潮，但冷靜審視論文第
             6 節與第 7 節的坦率自白，這座由 1750
@@ -1076,7 +1565,7 @@ const timelineEpochs: TimelineEpoch[] = [
           <p>
             這三大致命缺陷，直接導致了「提示工程」（Prompt Engineering）在 2020
             年後的畸形繁榮。使用者必須像哄騙一個心智未成熟的神童一樣，在 Prompt
-            中精心編寫複雜的前言背景、設定角色人設、甚至給出數組示範，才能誘使模型產出符合預期的結果。任何標點符號或用詞的些微變動，都可能導致輸出品質的大幅波動。
+            中精心編寫複雜的前言背景、設定角色人設、甚至給出數個示範範例，才能誘使模型產出符合預期的結果。任何標點符號或用詞的些微變動，都可能導致輸出品質的大幅波動。
           </p>
 
           <p>
@@ -1084,8 +1573,16 @@ const timelineEpochs: TimelineEpoch[] = [
             <strong>
               單純依靠擴展參數與無監督預訓練，固然能不斷推高模型的「認知智商上限」，卻無法解決模型的「行為意圖對齊」
             </strong>
-            。要將一尊只會無休止續寫文字的機率巨獸，轉變為一個忠誠、誠實、有益且隨叫隨到的數位助手，我們必須在無監督預訓練的鋼鐵骨架之上，注入一套以人類反饋強化學習（RLHF）為核心的全新對齊靈魂。這場劃時代的轉型，將在本書第八章的
-            InstructGPT 中正式爆發。
+            。要將一尊只會無休止續寫文字的機率巨獸，轉變為一個忠誠、誠實、有益且隨叫隨到的數位助手，我們必須在無監督預訓練的鋼鐵骨架之上，注入一套以人類反饋強化學習（RLHF）為核心的全新對齊靈魂。這場劃時代的轉型，將在
+            <a
+              href={withBase(
+                '/papers/training-language-models-to-follow-instructions-with-human-feedback',
+              )}
+              class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+            >
+              InstructGPT
+            </a>
+            中正式爆發。
           </p>
         </div>
 
@@ -1102,84 +1599,52 @@ const timelineEpochs: TimelineEpoch[] = [
       </PaperReadingLayout>
     </section>
 
-    <!-- MOVEMENT 7: 歷時溯源與一手文獻清單 (SOURCES & EVIDENCE) -->
-    <section
-      id="sources-evidence"
-      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
-      aria-labelledby="sources-evidence-title"
+    <!-- 附錄 01: 歷時溯源與一手文獻清單 (ZONE B) -->
+    <EvidenceList
+      timelineEpochs={timelineEpochs}
+      kickerBadge="文獻演進時間軸"
+      kickerEnglish="HISTORICAL CITATION TIMELINE (2018–2020)"
+      titleMain="一手文獻清單，與技術演進時間軸"
+      titleHighlight="從微調瓶頸到 Few-Shot In-Context Learning 典範轉移"
+      description="本章立論嚴格本於原著論文、同期官方技術報告、同儕評審紀錄與核心作者訪談，依歷史時間線重現技術突破的演進軌跡與一手出處。"
+    />
+
+    <!-- 附錄 02: 核心研發團隊檔案 (AUTHORS) -->
+    <AuthorGrid
+      authors={paper.authorBriefs}
+      kicker="研發團隊 · 核心檔案 / THE AUTHORS"
+      title="推動千億大模型落地的先驅者"
+      description="原著論文由 31 位跨領域學者與分散式系統工程師共同署名。採用經典鋼筆線雕肖像呈現關鍵作者歷史形象與經文獻考證之關鍵貢獻。"
     >
-      <div class="mb-12">
-        <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-          第七樂章 / 歷時溯源與證據清單
+      <div class="mb-12 max-w-4xl space-y-6 text-base leading-8 text-ink">
+        <p>
+          GPT-3
+          的誕生，標誌著人工智慧研究正式揮別了「數名研究者在實驗室微調參數」的手工作坊時代，全面邁入媲美阿波羅登月計畫的巨型分散式系統工程。要在數千顆
+          NVIDIA V100 GPU 叢集上穩定訓練一個擁有 1750 億參數、佔用 350 GB 原始 FP16
+          權重的巨型模型，不僅需要深厚的深度學習理論，更仰賴前所未有的工程協同與跨學科攻堅。
         </p>
-        <h2
-          id="sources-evidence-title"
-          class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
-        >
-          一手文獻清單，與技術宣稱邊界
-        </h2>
-      </div>
-
-      <div class="space-y-12">
-        {timelineEpochs.map((epoch) => (
-          <div class="border border-line bg-surface p-6 sm:p-8">
-            <div class="flex flex-wrap items-baseline justify-between gap-4 border-b border-line pb-4">
-              <div>
-                <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
-                  {epoch.year} &middot; {epoch.period}
-                </span>
-                <h3 class="mt-1 font-display text-2xl text-ink">{epoch.title}</h3>
-              </div>
-            </div>
-            <p class="mt-4 text-base leading-7 text-muted">{epoch.summary}</p>
-            <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
-              {epoch.sources.map((item) => (
-                <div class="rounded border border-line/60 bg-paper p-4">
-                  <div class="flex items-center justify-between text-xs">
-                    <span class="font-mono font-bold text-red">[{item.refCode}]</span>
-                    <span class="rounded bg-line px-1.5 py-0.5 font-mono text-muted">
-                      {item.role}
-                    </span>
-                  </div>
-                  <h4 class="mt-2 text-base font-bold text-ink">
-                    <a
-                      href={item.source.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="hover:text-red hover:underline"
-                    >
-                      {item.source.title}
-                    </a>
-                  </h4>
-                  <p class="mt-2 text-sm leading-relaxed text-muted">{item.takeaway}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-
-    <!-- MOVEMENT 8: 核心作者檔案 (AUTHORS) -->
-    <section
-      id="authors"
-      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
-      aria-labelledby="authors-title"
-    >
-      <div class="mb-12">
-        <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-          第八樂章 / 核心研發團隊檔案
+        <p class="text-muted">
+          由 Tom B. Brown 與 Benjamin Mann 等人領銜的系統架構團隊，將原本無法塞入單張 GPU
+          記憶體的龐大網路，以張量模型並行（將 96 個 Attention Heads 切分至單一節點的 8 顆
+          GPU）與跨節點管線並行緊密縫合，克服了極其嚴苛的節點間通訊頻寬瓶頸；而在數據陣線，Melanie
+          Subbiah 等人從高達 45 TB 的 Common Crawl 原始網頁中淘洗出 570 GB
+          的黃金語料，建立嚴格的語義分類模型與測試集防污染去重稽核，為百億級矩陣注入了高純度的知識源泉。
         </p>
-        <h2
-          id="authors-title"
-          class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
-        >
-          推動千億大模型落地的先驅者
-        </h2>
+        <p class="text-muted">
+          這場豪賭背後的理論底氣，源於 Jared Kaplan 與 Sam McCandlish 在同年發表的
+          <a
+            href={withBase('/papers/scaling-laws-for-neural-language-models')}
+            class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+          >
+            Scaling Laws
+          </a>
+          實證冪律——他們建立的精確數學曲線，讓研究團隊在尚未點火訓練前，就能精準預測損失函數的收斂軌跡；而時任研發副總裁
+          Dario Amodei
+          則在資源調度、算力投資與安全紅隊評估上全力掌舵，將全機構的命運押注在「尺度規模能自發湧現通用理解」的信念之上。這
+          31 位先驅者的名字，銘刻在人類通往通用人工智慧的歷史里程碑上。
+        </p>
       </div>
-
-      <AuthorGrid authors={paper.authorBriefs} />
-    </section>
+    </AuthorGrid>
 
     <!-- 頁面導航 -->
     <PaperNavigation
@@ -1195,4 +1660,533 @@ const timelineEpochs: TimelineEpoch[] = [
       }}
     />
   </main>
+
+  <script>
+    function initGpt3Lab() {
+      // 1. Tab Switching
+      const tabIcl = document.getElementById('gpt3-tab-icl');
+      const tabScale = document.getElementById('gpt3-tab-scale');
+      const panelIcl = document.getElementById('gpt3-panel-icl');
+      const panelScale = document.getElementById('gpt3-panel-scale');
+
+      if (!tabIcl || !tabScale || !panelIcl || !panelScale) return;
+
+      tabIcl.addEventListener('click', () => {
+        tabIcl.setAttribute('aria-selected', 'true');
+        tabIcl.className =
+          'px-4 py-2 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer';
+        tabScale.setAttribute('aria-selected', 'false');
+        tabScale.className =
+          'px-4 py-2 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+        panelIcl.classList.remove('hidden');
+        panelScale.classList.add('hidden');
+      });
+
+      tabScale.addEventListener('click', () => {
+        tabScale.setAttribute('aria-selected', 'true');
+        tabScale.className =
+          'px-4 py-2 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer';
+        tabIcl.setAttribute('aria-selected', 'false');
+        tabIcl.className =
+          'px-4 py-2 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+        panelScale.classList.remove('hidden');
+        panelIcl.classList.add('hidden');
+      });
+
+      // 2. K-shot ICL Sandbox Logic
+      interface IclTask {
+        id: string;
+        label: string;
+        instruction: string;
+        demonstrations: Array<{ input: string; output: string }>;
+        query: string;
+        kOutputs: Record<
+          number,
+          { output: string; confidence: number; flow: string[]; diagnosis: string }
+        >;
+        mathDesc: string;
+      }
+
+      const iclTasks: Record<string, IclTask> = {
+        novel_word: {
+          id: 'novel_word',
+          label: '罕見新詞靈活造句 (Word Inversion)',
+          instruction: 'To "screeg" something means to smile enthusiastically at someone.',
+          demonstrations: [
+            {
+              input: 'To "yalp" means to jump over a puddle playfully.',
+              output: 'The boy yalped over the rainwater puddle on his way home.',
+            },
+            {
+              input: 'To "flomax" means to organize books alphabetically with great care.',
+              output: 'The librarian flomaxed the entire fiction section in two hours.',
+            },
+            {
+              input: 'To "plinking" means to tap glass rhythmically to make a melody.',
+              output: 'She was plinking on her wine glass until everyone laughed.',
+            },
+          ],
+          query: 'An example sentence using the word "screeg" is:',
+          kOutputs: {
+            0: {
+              output: 'The girl was very happy and smiled at the garden flowers.',
+              confidence: 18.2,
+              flow: [
+                '1. 輸入端未提供任何「新創動詞在句子中充當謂語」的語法對照範例。',
+                '2. 自注意力僅捕捉到 "smile"，退化為生成一般性的高興情緒陳述。',
+                '3. 輸出未能主動使用新詞 "screeg"，零樣本推理失敗。',
+              ],
+              diagnosis:
+                '【K=0 零樣本困境】模型雖然在指示中看到了新詞定義，但由於預訓練語料中從未出現過 "screeg"，缺乏語法槽位範例，自回歸接龍無法自信地將其作為及物動詞使用。',
+            },
+            1: {
+              output: 'She screeged at her best friend when she saw her at the station.',
+              confidence: 64.5,
+              flow: [
+                '1. 注入第 1 個範例：建立「To "X" means Y → 主語 X-ed 賓語」的語法結構。',
+                '2. 誘導頭（Induction Heads）將指示中的 "screeg" 映射至範例的動詞位置。',
+                '3. 信心度激增至 64.5%，成功生成正確句式。',
+              ],
+              diagnosis:
+                '【K=1 單樣本誘導】單一範例便提供了強烈的句法樣板。模型學會了詞形變化（screeg → screeged），並在上下文約束下精準填入受詞。',
+            },
+            3: {
+              output: 'When the grandmother saw the newborn baby, she screeged with pure joy.',
+              confidence: 91.8,
+              flow: [
+                '1. 3 個示範範例徹底收斂了任務假設空間。',
+                '2. 多層自注意力頭跨範例比對，鎖定 "enthusiastically" 與 "screeged with joy"。',
+                '3. 正確語意置信度達到 91.8%，展現出驚人的即時泛化能力！',
+              ],
+              diagnosis:
+                '【K=3 少樣本相變】多個範例消除了格式歧義。模型不僅精確使用了動詞形態，還主動呼應了定義中的「enthusiastically（熱情地）」，生成「with pure joy」，完全不依賴權重更新！',
+            },
+          },
+          mathDesc:
+            '上下文示範透過注意力矩陣在軟體層面動態形成一組任務投影算子，誘導頭（Induction Heads）跨層複製模式，使模型即時掌握未曾見過的新詞彙。',
+        },
+        arithmetic: {
+          id: 'arithmetic',
+          label: '三位數加法 (3-Digit Addition)',
+          instruction: 'Compute the sum of two 3-digit integers without scratchpad:',
+          demonstrations: [
+            { input: '246 + 351 =', output: '597' },
+            { input: '482 + 175 =', output: '657' },
+            { input: '719 + 184 =', output: '903' },
+          ],
+          query: '348 + 579 =',
+          kOutputs: {
+            0: {
+              output: '827',
+              confidence: 1.4,
+              flow: [
+                '1. 348 + 579 的個位數 8+9=17 進位 1。',
+                '2. 0-Shot 模式下，注意力頭未能精確對齊百位、十位與個位數之進位暫存。',
+                '3. 輸出 827（十位 4+7 未加進位，百位 3+5 未加進位），計算錯誤。',
+              ],
+              diagnosis:
+                '【K=0 零樣本盲區】在無範例引導下，自回歸模型僅憑統計直覺估算總數級距，無法在單次前向傳播中維持進位算術的嚴密對齊，準確率趨近於零。',
+            },
+            1: {
+              output: '917',
+              confidence: 34.0,
+              flow: [
+                '1. 注入 1 個範例後，模型注意力聚焦於「等號後輸出純數字」格式。',
+                '2. 成功識別出百位數應跨越 900 大關（300+500+進位）。',
+                '3. 輸出 917，十位數仍漏掉個位進位，但已大幅逼近真值。',
+              ],
+              diagnosis:
+                '【K=1 格式與量級校正】範例立即消除了自然語言混淆，將輸出空間嚴格限制於純數字，並啟動了高位數總和估算機制。',
+            },
+            3: {
+              output: '927',
+              confidence: 88.5,
+              flow: [
+                '1. 3 個具備進位範例的多頭注意力比對：個位 8+9=17 (記 7 進 1)。',
+                '2. 十位 4+7+1=12 (記 2 進 1)。',
+                '3. 百位 3+5+1=9 (記 9)。輸出精確命中 927！',
+              ],
+              diagnosis:
+                '【K=3 少樣本精確解】多個範例啟動了深層注意力頭的「逐位元加法與進位追蹤」迴路，175B 巨獸在此展現出少樣本對算術推理的強大激發作用！',
+            },
+          },
+          mathDesc:
+            '加法運算要求模型在無外部暫存器（Scratchpad）的情況下，於內部隱藏維度（12,288 維）完成逐位平行進位計算。示範範例顯著增強了對齊注意力頭的數值活化強度。',
+        },
+        analogy: {
+          id: 'analogy',
+          label: '概念暗喻與類比 (Analogy Reasoning)',
+          instruction: 'Identify the underlying relational transformation and complete the pair:',
+          demonstrations: [
+            { input: 'Iron is to Rust as Copper is to:', output: 'Patina (Verdigris)' },
+            { input: 'Ice is to Water as Rock is to:', output: 'Magma (Lava)' },
+            { input: 'Seed is to Tree as Idea is to:', output: 'Invention' },
+          ],
+          query: 'Canvas is to Painting as Stage is to:',
+          kOutputs: {
+            0: {
+              output: 'Theater',
+              confidence: 24.6,
+              flow: [
+                '1. 無範例時，"Stage" 與 "Theater"（劇院）具備極高的一般共現頻率。',
+                '2. 模型捕捉到空間關聯，但未理解「載體 vs 載體上的藝術成果」的高階關係。',
+                '3. 輸出普通名詞 "Theater"，類比未達精準。',
+              ],
+              diagnosis:
+                '【K=0 局部關聯干擾】模型僅依賴局部詞彙共現統計，將 Stage 關聯到最常見的建築物 Theater，未能提煉出類比對象背後的抽象映射關係。',
+            },
+            1: {
+              output: 'Drama',
+              confidence: 62.0,
+              flow: [
+                '1. 1 個範例建立了「物質原貌 → 轉化狀態」的關係抽象。',
+                '2. 注意力將 Canvas → Painting 提煉為「舞台媒介 → 呈現的藝術作品」。',
+                '3. 輸出 "Drama"（戲劇），已成功命中藝術表現層面。',
+              ],
+              diagnosis:
+                '【K=1 抽象關係捕捉】範例成功將注意力從具體物理空間（劇院）轉移到抽象的文化產物（戲劇）。',
+            },
+            3: {
+              output: 'Performance (Play)',
+              confidence: 89.4,
+              flow: [
+                '1. 3 個範例確立了精準的泛化維度：載體媒介（Canvas/Stage）所承載的動態實踐。',
+                '2. 注意力權重在 "Painting" 與 "Performance" 之間建立高度對稱同構。',
+                '3. 輸出 "Performance"，置信度達到 89.4%！',
+              ],
+              diagnosis:
+                '【K=3 概念同構收斂】模型在隱向量空間中精確完成了向量位移運算（Vector Offset: Canvas - Painting ≈ Stage - Performance），完美達成類比推理。',
+            },
+          },
+          mathDesc:
+            'Mikolov 詞向量的向量加減法（King - Man + Woman ≈ Queen）在 GPT-3 中演化為高階上下文映射：在範例引導下，Transformer 隱層即時建構了非線性抽象關係流形。',
+        },
+      };
+
+      let activeIclTaskId = 'novel_word';
+      let currentK = 3;
+
+      const iclTaskContainer = document.getElementById('icl-task-container');
+      const iclKSelector = document.getElementById('icl-k-selector');
+      const iclKBadge = document.getElementById('icl-k-badge');
+      const iclPromptStream = document.getElementById('icl-prompt-stream');
+      const iclMathDesc = document.getElementById('icl-math-desc');
+      const iclTargetQueryTitle = document.getElementById('icl-target-query-title');
+      const iclModelOutput = document.getElementById('icl-model-output');
+      const iclConfidenceVal = document.getElementById('icl-confidence-val');
+      const iclConfidenceBar = document.getElementById('icl-confidence-bar');
+      const iclAttentionFlow = document.getElementById('icl-attention-flow');
+      const iclDiagnosisText = document.getElementById('icl-diagnosis-text');
+
+      function renderIclSandbox() {
+        const task = iclTasks[activeIclTaskId];
+        if (
+          !task ||
+          !iclKBadge ||
+          !iclPromptStream ||
+          !iclMathDesc ||
+          !iclTargetQueryTitle ||
+          !iclModelOutput ||
+          !iclConfidenceVal ||
+          !iclConfidenceBar ||
+          !iclAttentionFlow ||
+          !iclDiagnosisText
+        )
+          return;
+
+        iclKBadge.textContent =
+          currentK === 0
+            ? 'K = 0 (零樣本 Zero-Shot)'
+            : currentK === 1
+              ? 'K = 1 (單樣本 One-Shot)'
+              : `K = ${currentK} (少樣本 Few-Shot)`;
+
+        // Render Prompt Stream
+        iclPromptStream.innerHTML = '';
+
+        // Instruction Block
+        const instrDiv = document.createElement('div');
+        instrDiv.className = 'p-2.5 bg-paper-deep border border-line text-ink';
+        instrDiv.innerHTML = `<span class="font-bold text-red block mb-1">【任務指令 / INSTRUCTION】</span><span>${task.instruction}</span>`;
+        iclPromptStream.appendChild(instrDiv);
+
+        // Demonstrations Block (up to K)
+        for (let i = 0; i < currentK && i < task.demonstrations.length; i++) {
+          const demo = task.demonstrations[i];
+          const demoDiv = document.createElement('div');
+          demoDiv.className = 'p-2.5 bg-surface border border-ink/30 text-ink space-y-1';
+          demoDiv.innerHTML = `
+            <div class="text-xs font-bold text-blue flex items-center justify-between">
+              <span>示範範例 0${i + 1} / DEMO</span>
+              <span class="font-mono text-xs uppercase text-muted">In-Context Example</span>
+            </div>
+            <div class="text-xs font-mono"><span class="text-muted">輸入：</span>${demo.input}</div>
+            <div class="text-xs font-mono"><span class="text-muted">輸出：</span><strong class="text-ink">${demo.output}</strong></div>
+          `;
+          iclPromptStream.appendChild(demoDiv);
+        }
+
+        // Query Block
+        const queryDiv = document.createElement('div');
+        queryDiv.className = 'p-2.5 bg-red-soft/30 border-2 border-red text-ink';
+        queryDiv.innerHTML = `
+          <div class="text-xs font-bold text-red mb-1">【當前測試輸入 / TEST QUERY】</div>
+          <div class="font-mono text-xs sm:text-sm font-semibold">${task.query}</div>
+        `;
+        iclPromptStream.appendChild(queryDiv);
+
+        // Output & Confidence
+        const kData = task.kOutputs[currentK] || task.kOutputs[0];
+        iclModelOutput.textContent = kData.output;
+        iclConfidenceVal.textContent = `${kData.confidence.toFixed(1)}%`;
+        iclConfidenceBar.style.width = `${kData.confidence}%`;
+        iclMathDesc.textContent = task.mathDesc;
+        iclDiagnosisText.textContent = kData.diagnosis;
+
+        // Attention flow steps
+        iclAttentionFlow.innerHTML = '';
+        kData.flow.forEach((step) => {
+          const stepDiv = document.createElement('div');
+          stepDiv.className = 'text-xs text-ink leading-relaxed';
+          stepDiv.textContent = step;
+          iclAttentionFlow.appendChild(stepDiv);
+        });
+      }
+
+      // Set up Task buttons
+      if (iclTaskContainer) {
+        iclTaskContainer.innerHTML = '';
+        Object.keys(iclTasks).forEach((key, idx) => {
+          const t = iclTasks[key];
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className =
+            idx === 0
+              ? 'px-3 py-1.5 font-mono text-xs font-bold border-2 border-red bg-red text-surface transition cursor-pointer'
+              : 'px-3 py-1.5 font-mono text-xs font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+          btn.textContent = t.label;
+          btn.addEventListener('click', () => {
+            activeIclTaskId = key;
+            Array.from(iclTaskContainer.children).forEach((c) => {
+              (c as HTMLElement).className =
+                'px-3 py-1.5 font-mono text-xs font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+            });
+            btn.className =
+              'px-3 py-1.5 font-mono text-xs font-bold border-2 border-red bg-red text-surface transition cursor-pointer';
+            renderIclSandbox();
+          });
+          iclTaskContainer.appendChild(btn);
+        });
+      }
+
+      // Set up K buttons
+      if (iclKSelector) {
+        iclKSelector.innerHTML = '';
+        [0, 1, 3].forEach((kVal) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className =
+            kVal === currentK
+              ? 'px-3.5 py-1.5 font-mono text-xs font-bold border-2 border-red bg-red text-surface transition cursor-pointer'
+              : 'px-3.5 py-1.5 font-mono text-xs font-medium border border-ink/40 bg-paper text-ink hover:border-ink transition cursor-pointer';
+          btn.textContent =
+            kVal === 0
+              ? 'K = 0 (Zero-Shot)'
+              : kVal === 1
+                ? 'K = 1 (One-Shot)'
+                : `K = ${kVal} (Few-Shot)`;
+          btn.addEventListener('click', () => {
+            currentK = kVal;
+            Array.from(iclKSelector.children).forEach((c) => {
+              (c as HTMLElement).className =
+                'px-3.5 py-1.5 font-mono text-xs font-medium border border-ink/40 bg-paper text-ink hover:border-ink transition cursor-pointer';
+            });
+            btn.className =
+              'px-3.5 py-1.5 font-mono text-xs font-bold border-2 border-red bg-red text-surface transition cursor-pointer';
+            renderIclSandbox();
+          });
+          iclKSelector.appendChild(btn);
+        });
+      }
+
+      renderIclSandbox();
+
+      // 3. Scale Emergence Logic
+      interface ScaleBenchmark {
+        id: string;
+        label: string;
+        title: string;
+        zeroShot: number[]; // %
+        fewShot: number[]; // %
+        narrative: (modelIdx: number) => string;
+      }
+
+      const modelSizes = [
+        { name: '125M (Small)', params: '1.25 億', layers: 12, heads: 12, dModel: 768 },
+        { name: '350M (Medium)', params: '3.5 億', layers: 24, heads: 16, dModel: 1024 },
+        { name: '760M (Large)', params: '7.6 億', layers: 24, heads: 16, dModel: 1536 },
+        { name: '1.3B (XL)', params: '13 億', layers: 24, heads: 16, dModel: 2048 },
+        { name: '2.7B', params: '27 億', layers: 32, heads: 32, dModel: 2560 },
+        { name: '6.7B', params: '67 億', layers: 32, heads: 32, dModel: 4096 },
+        { name: '13B', params: '130 億', layers: 40, heads: 40, dModel: 5120 },
+        { name: '175B (Flagship)', params: '1750 億', layers: 96, heads: 96, dModel: 12288 },
+      ];
+
+      const xCoords = [60, 110, 160, 210, 260, 320, 390, 460];
+
+      const scaleBenchmarks: Record<string, ScaleBenchmark> = {
+        arithmetic_3d: {
+          id: 'arithmetic_3d',
+          label: '三位數加法 (3-Digit Addition)',
+          title: '基準測試：三位數整數加法（3-Digit Addition without Scratchpad）',
+          zeroShot: [0.0, 0.1, 0.2, 0.2, 0.3, 0.6, 1.2, 8.0],
+          fewShot: [0.1, 0.2, 0.5, 1.1, 2.8, 8.5, 21.3, 80.2],
+          narrative: (idx) => {
+            if (idx < 5) {
+              return `【低於 67 億參數：平坦基底】在 ${modelSizes[idx].name} 規模下，模型內部注意力的有效路徑不足以串聯多重進位邏輯，準確率幾乎錨定於零（< 3%）。無論提供多少範例，模型皆無法自發掌握進位規則。`;
+            } else if (idx === 5) {
+              return '【6.7 億至 13 億參數：湧現預備期】模型開始偶爾命中無進位或單進位算式，少樣本準確率爬升至 8.5%，但面對連續進位依舊頻繁出錯。';
+            } else if (idx === 6) {
+              return '【13 億參數：相變拐點】少樣本準確率劇烈抬升至 21.3%，多頭注意力機制成功在殘差流中形成進位追蹤迴路。';
+            } else {
+              return '【1750 億參數：階躍相變爆發！】當參數量跨入 175B，少樣本準確率出現歷史性的「垂直躍遷」，由 13B 的 21.3% 暴衝至 80.2%！這證明了多步推理能力在特定規模臨界點前完全隱匿，越過閾值後驟然湧現！';
+            }
+          },
+        },
+        trivia_qa: {
+          id: 'trivia_qa',
+          label: 'TriviaQA (世界常識問答)',
+          title: '基準測試：TriviaQA 廣義常識閱讀理解（Closed-Book）',
+          zeroShot: [4.1, 7.6, 12.8, 19.7, 26.4, 34.2, 42.1, 64.3],
+          fewShot: [7.3, 13.5, 21.2, 31.8, 41.5, 51.6, 58.7, 71.2],
+          narrative: (idx) => {
+            return `【平滑規模擴展】在常識記憶型任務中，性能隨參數量呈現典型的冪律（Power-law）對數線性增長。${modelSizes[idx].name} 模型擁有 ${modelSizes[idx].params} 參數量，少樣本準確率達到 ${scaleBenchmarks.trivia_qa.fewShot[idx]}%，充分展示了千億參數量對海量世界事實的強大儲存與檢索容量。`;
+          },
+        },
+        lambada: {
+          id: 'lambada',
+          label: 'LAMBADA (長篇語境結尾預測)',
+          title: '基準測試：LAMBADA 依賴超長依賴關係的句尾單詞預測',
+          zeroShot: [22.0, 32.5, 42.1, 54.3, 62.8, 68.4, 72.5, 76.2],
+          fewShot: [42.3, 54.1, 63.8, 71.2, 76.8, 81.4, 84.2, 86.4],
+          narrative: (idx) => {
+            return `【長程脈絡收斂】LAMBADA 衡量模型追蹤數百詞前伏筆的能力。在 ${modelSizes[idx].name} 下，少樣本準確率達到 ${scaleBenchmarks.lambada.fewShot[idx]}%。即使是中等模型也能透過提示範例迅速聚焦文章關鍵角色，175B 則展現了極高的漸近飽和水準。`;
+          },
+        },
+      };
+
+      let activeBenchId = 'arithmetic_3d';
+      let currentModelIndex = 7; // 175B
+
+      const benchTitle = document.getElementById('scale-benchmark-title');
+      const benchContainer = document.getElementById('scale-bench-container');
+      const modelSlider = document.getElementById('scale-model-slider') as HTMLInputElement | null;
+      const modelBadge = document.getElementById('scale-model-badge');
+      const line0shot = document.getElementById('scale-line-0shot');
+      const lineFewshot = document.getElementById('scale-line-fewshot');
+      const cursorLine = document.getElementById('scale-cursor-line');
+      const point0shot = document.getElementById('scale-point-0shot');
+      const pointFewshot = document.getElementById('scale-point-fewshot');
+      const stat0shot = document.getElementById('stat-0shot');
+      const statFewshot = document.getElementById('stat-fewshot');
+      const statGain = document.getElementById('stat-gain');
+      const narrativeText = document.getElementById('scale-narrative-text');
+
+      function renderScaleLab() {
+        const bench = scaleBenchmarks[activeBenchId];
+        if (
+          !bench ||
+          !benchTitle ||
+          !modelBadge ||
+          !line0shot ||
+          !lineFewshot ||
+          !cursorLine ||
+          !point0shot ||
+          !pointFewshot ||
+          !stat0shot ||
+          !statFewshot ||
+          !statGain ||
+          !narrativeText
+        )
+          return;
+
+        benchTitle.textContent = bench.title;
+        const curModel = modelSizes[currentModelIndex];
+        modelBadge.textContent = `${curModel.name} (${curModel.params}, ${curModel.layers} 層)`;
+
+        function accToY(acc: number): number {
+          return 210 - (acc / 100) * 180;
+        }
+
+        const pts0 = xCoords.map((x, i) => `${x},${accToY(bench.zeroShot[i])}`).join(' ');
+        const ptsFew = xCoords.map((x, i) => `${x},${accToY(bench.fewShot[i])}`).join(' ');
+
+        line0shot.setAttribute('points', pts0);
+        lineFewshot.setAttribute('points', ptsFew);
+
+        const activeX = xCoords[currentModelIndex];
+        const cur0Y = accToY(bench.zeroShot[currentModelIndex]);
+        const curFewY = accToY(bench.fewShot[currentModelIndex]);
+
+        cursorLine.setAttribute('x1', activeX.toString());
+        cursorLine.setAttribute('x2', activeX.toString());
+
+        point0shot.setAttribute('cx', activeX.toString());
+        point0shot.setAttribute('cy', cur0Y.toString());
+
+        pointFewshot.setAttribute('cx', activeX.toString());
+        pointFewshot.setAttribute('cy', curFewY.toString());
+
+        const val0 = bench.zeroShot[currentModelIndex];
+        const valFew = bench.fewShot[currentModelIndex];
+        const gain = valFew - val0;
+
+        stat0shot.textContent = `${val0.toFixed(1)}%`;
+        statFewshot.textContent = `${valFew.toFixed(1)}%`;
+        statGain.textContent = `+${gain.toFixed(1)}%`;
+
+        narrativeText.textContent = bench.narrative(currentModelIndex);
+      }
+
+      if (benchContainer) {
+        benchContainer.innerHTML = '';
+        Object.keys(scaleBenchmarks).forEach((key, idx) => {
+          const b = scaleBenchmarks[key];
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className =
+            idx === 0
+              ? 'px-3 py-1.5 font-mono text-xs font-bold border-2 border-red bg-red text-surface transition cursor-pointer'
+              : 'px-3 py-1.5 font-mono text-xs font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+          btn.textContent = b.label;
+          btn.addEventListener('click', () => {
+            activeBenchId = key;
+            Array.from(benchContainer.children).forEach((c) => {
+              (c as HTMLElement).className =
+                'px-3 py-1.5 font-mono text-xs font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+            });
+            btn.className =
+              'px-3 py-1.5 font-mono text-xs font-bold border-2 border-red bg-red text-surface transition cursor-pointer';
+            renderScaleLab();
+          });
+          benchContainer.appendChild(btn);
+        });
+      }
+
+      if (modelSlider) {
+        modelSlider.addEventListener('input', (e) => {
+          currentModelIndex = parseInt((e.target as HTMLInputElement).value, 10);
+          renderScaleLab();
+        });
+      }
+
+      renderScaleLab();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initGpt3Lab);
+    } else {
+      initGpt3Lab();
+    }
+  </script>
 </BaseLayout>

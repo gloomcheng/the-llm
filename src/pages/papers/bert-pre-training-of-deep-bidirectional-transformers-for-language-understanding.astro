@@ -1,10 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../lib/paths';
 import StoryRail from '../../components/StoryRail.astro';
 import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
 import AsideCard from '../../components/AsideCard.astro';
 import Callout from '../../components/Callout.astro';
 import AuthorGrid from '../../components/AuthorGrid.astro';
+import EvidenceList from '../../components/EvidenceList.astro';
 import PaperMeta from '../../components/PaperMeta.astro';
 import PaperNavigation from '../../components/PaperNavigation.astro';
 import PaperSectionHeader from '../../components/PaperSectionHeader.astro';
@@ -141,7 +143,7 @@ const timelineEpochs: TimelineEpoch[] = [
     <!-- HERO HEADER (Scheme B 規範) -->
     <header class={`${shell} pt-10`}>
       <div class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
-        <a class="text-red underline underline-offset-4" href="/">
+        <a class="text-red underline underline-offset-4" href={withBase('/')}>
           THE LLM
         </a>
         <span aria-hidden="true">/</span>
@@ -219,7 +221,7 @@ const timelineEpochs: TimelineEpoch[] = [
       <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            第一樂章 / 痛點根源
+            章節 01 · 單向語言模型的視野盲點 / THE IMPASSE
           </p>
           <h2
             id="blindspot-title"
@@ -238,29 +240,28 @@ const timelineEpochs: TimelineEpoch[] = [
 
       <PaperReadingLayout class="text-base leading-8 text-ink">
         <div class="space-y-6">
-          <p class="text-lg leading-relaxed text-ink">
-            在第二章〈
+          <p>
+            在
             <a
-              href="/papers/improving-language-understanding-by-generative-pre-training"
+              href={withBase('/papers/improving-language-understanding-by-generative-pre-training')}
               class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
             >
               GPT-1
             </a>
-            〉中，我們見證了 OpenAI 取得的震撼突破：捨棄複雜的專用架構，僅僅依靠在 8
+            中，我們見證了 OpenAI 取得的震撼突破：捨棄複雜的專用架構，僅僅依靠在 8
             億字小說中反覆「預測下一個字」，模型就能自發將語法常識與物理因果壓縮進 768
             維的幾何空間裡。
           </p>
 
           <p>
-            然而，這項優雅的成功背後，卻隱藏著一個令自然語言理解（NLU）學者坐立難安的結構性代價：
-            <strong>單向因果遮罩（Causal Masking）</strong>。
+            文字接龍在寫作時無比自然，但在理解既有文章時卻留下了巨大缺陷：當模型讀到多義詞時，若無法看見後文，便只能在黑暗中盲目摸索。
           </p>
 
           <h3 class="font-display text-2xl text-ink pt-4">一個生活中的消歧例子：河岸還是銀行？</h3>
 
           <p>
-            為了看清單向視野的痛苦，請試想一位正在讀英文句子的讀者。英文中的 <code>bank</code>{' '}
-            是一個典型的多義詞——它既可以是金融體系裡的「銀行」，也可以是自然地理中的「河岸」。現在，請觀察以下兩句話：
+            試比較以下兩個句子：如果模型只能從左向右閱讀，當它讀到 <code>bank</code>{' '}
+            時，它的大腦會陷入極大的不確定性：
           </p>
 
           <div class="grid gap-4 sm:grid-cols-2 my-6">
@@ -268,7 +269,7 @@ const timelineEpochs: TimelineEpoch[] = [
               <span class="font-mono text-xs font-bold text-blue uppercase block mb-1">
                 情境 A · 戶外釣魚
               </span>
-              <p class="font-serif text-base text-ink mb-2">
+              <p class="text-base text-ink mb-2">
                 "He walked along the <strong class="text-red font-bold">bank</strong> of the river
                 to fish."
               </p>
@@ -282,7 +283,7 @@ const timelineEpochs: TimelineEpoch[] = [
               <span class="font-mono text-xs font-bold text-red uppercase block mb-1">
                 情境 B · 金融借貸
               </span>
-              <p class="font-serif text-base text-ink mb-2">
+              <p class="text-base text-ink mb-2">
                 "He walked into the <strong class="text-red font-bold">bank</strong> to deposit his
                 money."
               </p>
@@ -313,19 +314,17 @@ const timelineEpochs: TimelineEpoch[] = [
             </p>
           </Callout>
 
-          <h3 class="font-display text-2xl text-ink pt-4">
-            重拾第一章的遺珠：為什麼當初不能直接做雙向？
-          </h3>
+          <h3 class="font-display text-2xl text-ink pt-4">重拾遺珠：為什麼當初不能直接做雙向？</h3>
 
           <p>
-            讀過第一章〈
+            讀過
             <a
-              href="/papers/attention-is-all-you-need"
+              href={withBase('/papers/attention-is-all-you-need')}
               class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
             >
               Attention Is All You Need
             </a>
-            〉的讀者一定會立刻問出這個最深刻的問題：
+            （Transformer）的讀者一定會立刻問出這個最深刻的問題：
             <strong>
               Transformer 的 Encoder 本來就天生具備雙向自注意力（Bidirectional
               Self-Attention）啊！為什麼 GPT-1 當初不用 Encoder，偏偏要大費周章換成 Decoder？
@@ -337,7 +336,7 @@ const timelineEpochs: TimelineEpoch[] = [
           </p>
 
           <p>
-            在深度神經網絡中，每一層的計算都是上一層所有詞彙的線性加權組合。如果允許全雙向注意力在多層網絡中直接預測下一個字，那麼在計算第
+            在深度神經網路中，每一層的計算都是上一層所有詞彙的線性加權組合。如果允許全雙向注意力在多層網絡中直接預測下一個字，那麼在計算第
             2 層或第 3 層特徵時，目標詞的資訊早就透過其他相鄰單詞繞了一圈，直接抄襲回自己身上！
             損失函數會在一瞬間跌落到 0，模型學會了完美的「照抄作弊」，卻完全不會學到任何語意理解。
           </p>
@@ -369,6 +368,538 @@ const timelineEpochs: TimelineEpoch[] = [
           </AsideCard>
         </aside>
       </PaperReadingLayout>
+
+      <!-- BREAKOUT: 動態實驗室：BERT 雙向克漏字與視野對決實驗室 -->
+      <figure
+        class="my-16 w-full max-w-6xl mx-auto border border-ink bg-surface p-6 sm:p-10 shadow-sm"
+        role="region"
+        aria-labelledby="bert-lab-title"
+      >
+        <div class="border-b border-line pb-6">
+          <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p class="m-0 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+                動態實驗室 / INTERACTIVE MASKED LM LAB
+              </p>
+              <h3
+                id="bert-lab-title"
+                class="mt-2 m-0 font-display text-2xl sm:text-3xl font-bold text-ink"
+              >
+                雙向克漏字（MLM）與視野對決實驗室：單向盲點 vs 雙向全覽
+              </h3>
+            </div>
+            <span class="font-mono text-xs text-muted">Devlin 2018 原著第 3.1 節核心實作</span>
+          </div>
+          <figcaption class="mt-3 max-w-4xl text-sm leading-relaxed text-muted">
+            BERT 與 GPT-1 的世紀分水嶺，在於「模型閱讀時究竟能看見多少前後文」。 請在下方切換
+            <strong>單向（GPT-1 因果遮罩）</strong>與<strong>雙向（BERT 全域視野）</strong>模式，
+            親自點選單詞將其挖空為 <span class="font-mono text-red">[MASK]</span>
+            ，觀察前後文線索如何瞬間消除歧義並預測原詞！
+          </figcaption>
+        </div>
+
+        <!-- Controls: Scenario & Vision Mode Switcher -->
+        <div class="mt-6 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <span class="font-mono text-xs font-bold uppercase tracking-wider text-ink">
+              選擇消歧語句情境：
+            </span>
+            <span class="font-mono text-xs text-muted">點選任一詞彙進行挖空實驗</span>
+          </div>
+
+          <!-- Scenario Tabs -->
+          <div class="flex flex-wrap gap-2" role="tablist" aria-label="情境切換">
+            <button
+              type="button"
+              class="bert-scenario-btn border border-ink bg-ink text-surface px-3 py-1.5 font-mono text-xs font-bold transition cursor-pointer"
+              data-scenario="bank-river"
+              role="tab"
+              aria-selected="true"
+            >
+              情境 A：He walked along the bank of the river to fish (河岸消歧)
+            </button>
+            <button
+              type="button"
+              class="bert-scenario-btn border border-ink bg-paper text-ink px-3 py-1.5 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer"
+              data-scenario="bank-money"
+              role="tab"
+              aria-selected="false"
+            >
+              情境 B：He walked into the bank to deposit his money (銀行消歧)
+            </button>
+            <button
+              type="button"
+              class="bert-scenario-btn border border-ink bg-paper text-ink px-3 py-1.5 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer"
+              data-scenario="apple-tech"
+              role="tab"
+              aria-selected="false"
+            >
+              臺灣情境 C：工程師 在 終端機 輸入 指令 部署 程式碼 (技術詞消歧)
+            </button>
+          </div>
+
+          <!-- Vision Mode & 80/10/10 Toggle Deck -->
+          <div class="border border-ink bg-paper-deep p-4 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <!-- Vision Mode Toggle -->
+            <div>
+              <span class="block font-mono text-xs font-bold uppercase tracking-wider text-ink mb-2">
+                閱讀視野模式 (Vision Mode)：
+              </span>
+              <div class="grid grid-cols-2 gap-2" role="group" aria-label="視野模式切換">
+                <button
+                  type="button"
+                  class="bert-vision-btn border border-ink bg-surface text-ink p-2.5 font-mono text-xs font-bold text-center cursor-pointer transition hover:bg-paper"
+                  data-vision="causal"
+                  aria-pressed="false"
+                >
+                  GPT-1 單向因果
+                  <br />
+                  <span class="font-normal opacity-80 text-xs">蒙上右眼，後文全黑</span>
+                </button>
+                <button
+                  type="button"
+                  class="bert-vision-btn border border-ink bg-ink text-surface p-2.5 font-mono text-xs font-bold text-center cursor-pointer transition"
+                  data-vision="bidirectional"
+                  aria-pressed="true"
+                >
+                  BERT 雙向全覽
+                  <br />
+                  <span class="font-normal opacity-80 text-xs">前後文完全無遮蔽</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 80/10/10 Perturbation Strategy -->
+            <div>
+              <span class="block font-mono text-xs font-bold uppercase tracking-wider text-ink mb-2">
+                BERT 80 / 10 / 10 遮蔽策略：
+              </span>
+              <div class="grid grid-cols-3 gap-1.5" role="group" aria-label="遮蔽策略切換">
+                <button
+                  type="button"
+                  class="bert-mask-strategy-btn border border-ink bg-ink text-surface py-1.5 px-2 font-mono text-xs font-semibold text-center cursor-pointer transition"
+                  data-strategy="mask"
+                  aria-pressed="true"
+                >
+                  80%
+                  <br />
+                  <span class="font-normal opacity-80 text-xs">[MASK]</span>
+                </button>
+                <button
+                  type="button"
+                  class="bert-mask-strategy-btn border border-ink bg-surface text-ink py-1.5 px-2 font-mono text-xs font-semibold text-center cursor-pointer transition hover:bg-paper"
+                  data-strategy="random"
+                  aria-pressed="false"
+                >
+                  10%
+                  <br />
+                  <span class="font-normal opacity-80 text-xs">隨機雜訊詞</span>
+                </button>
+                <button
+                  type="button"
+                  class="bert-mask-strategy-btn border border-ink bg-surface text-ink py-1.5 px-2 font-mono text-xs font-semibold text-center cursor-pointer transition hover:bg-paper"
+                  data-strategy="keep"
+                  aria-pressed="false"
+                >
+                  10%
+                  <br />
+                  <span class="font-normal opacity-80 text-xs">保持原詞</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Token Strip Display -->
+        <div class="mt-6 border border-ink bg-paper p-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+            <span class="font-mono text-xs font-bold uppercase tracking-wider text-ink">
+              點擊任一單詞切換挖空目標（[MASK]）：
+            </span>
+            <span
+              id="bert-mask-badge"
+              class="font-mono text-xs font-bold text-red bg-red-soft/40 px-2.5 py-0.5 border border-red/30"
+            >
+              目前挖空詞：[bank] (位置 5)
+            </span>
+          </div>
+          <div
+            id="bert-tokens-container"
+            class="flex flex-wrap gap-2"
+            role="toolbar"
+            aria-label="單詞挖空工具列"
+          ></div>
+        </div>
+
+        <!-- Interactive Visual Comparison Deck -->
+        <div class="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <!-- Left: Visual Attention Stream (7 cols) -->
+          <div class="lg:col-span-7 border border-ink bg-surface p-5 sm:p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-line pb-3">
+              <span class="font-mono text-xs font-bold uppercase text-ink">
+                模型大腦的輸入視角 (Model Field of View)
+              </span>
+              <span id="bert-field-status" class="font-mono text-xs text-red font-semibold">
+                雙向模式：前後語意完整貫通
+              </span>
+            </div>
+
+            <!-- Visible tokens display with dynamic blackouts -->
+            <div
+              id="bert-fov-container"
+              class="p-4 border border-line bg-paper-deep/30 space-y-3 font-mono text-sm leading-relaxed"
+            ></div>
+
+            <div class="border-t border-line pt-3">
+              <p class="m-0 font-mono text-xs font-bold text-ink mb-1">視野分析：</p>
+              <p id="bert-fov-desc" class="m-0 text-sm leading-relaxed text-muted">
+                在雙向模式下，被挖空的詞彙可以同時受到前文與後文所有單詞的雙向注意力投射。
+              </p>
+            </div>
+          </div>
+
+          <!-- Right: Probability Prediction & Loss Card (5 cols) -->
+          <div class="lg:col-span-5 border border-ink bg-surface p-5 sm:p-6 space-y-4">
+            <div class="border-b border-line pb-3">
+              <span class="font-mono text-xs font-semibold uppercase tracking-[0.1em] text-red">
+                MLM PREDICTION / 完形填空預測機率
+              </span>
+              <h4 id="bert-pred-title" class="mt-1 m-0 font-display text-xl font-bold text-ink">
+                還原 [MASK] 之機率分佈
+              </h4>
+            </div>
+
+            <p class="m-0 text-sm leading-relaxed text-muted">
+              模型在被挖空位置輸出 768 維特徵向量後，經 Softmax 投影至詞表的 Top 候選：
+            </p>
+
+            <!-- Probability Bars -->
+            <div id="bert-prob-bars" class="space-y-2.5 pt-1"></div>
+
+            <!-- Loss & Diagnosis -->
+            <div class="border-t border-line pt-4 bg-paper-deep/50 p-3.5 border border-ink/20">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-mono text-xs font-bold text-ink">
+                  遮罩損失 ℒ<sub>MLM</sub>：
+                </span>
+                <span id="bert-loss-val" class="font-mono text-sm font-bold text-red">
+                  0.037 (極低)
+                </span>
+              </div>
+              <p id="bert-loss-desc" class="m-0 font-mono text-xs text-muted leading-relaxed">
+                後文關鍵字提供強大語意約束，模型以壓倒性機率命中真值！
+              </p>
+            </div>
+          </div>
+        </div>
+      </figure>
+
+      <script>
+        interface BertScenario {
+          tokens: string[];
+          defaultMaskIndex: number;
+          // Predictions for [causal, bidirectional]
+          predictions: {
+            causal: { word: string; prob: number; meaning: string }[];
+            bidirectional: { word: string; prob: number; meaning: string }[];
+          };
+          targetWord: string;
+          causalDesc: string;
+          bidiDesc: string;
+        }
+
+        const bertScenarios: Record<string, BertScenario> = {
+          'bank-river': {
+            tokens: ['He', 'walked', 'along', 'the', 'bank', 'of', 'the', 'river', 'to', 'fish'],
+            defaultMaskIndex: 4, // 'bank'
+            targetWord: 'bank',
+            predictions: {
+              causal: [
+                { word: 'bank (金融)', prob: 0.48, meaning: '金融機構（因常與 walked 搭配）' },
+                { word: 'bank (河岸)', prob: 0.44, meaning: '河畔斜坡（缺乏後文佐證）' },
+                { word: 'street', prob: 0.05, meaning: '街道' },
+                { word: 'path', prob: 0.03, meaning: '小徑' },
+              ],
+              bidirectional: [
+                {
+                  word: 'bank (河岸)',
+                  prob: 0.964,
+                  meaning: '河畔斜坡（受後文 river 與 fish 強力鎖定）',
+                },
+                { word: 'bank (金融)', prob: 0.021, meaning: '金融機構（被後文語意徹底排斥）' },
+                { word: 'edge', prob: 0.01, meaning: '水邊' },
+                { word: 'side', prob: 0.005, meaning: '岸邊' },
+              ],
+            },
+            causalDesc:
+              '【GPT-1 單向盲點】當讀到 bank 時，右側的「of the river to fish」被完全遮蔽！模型僅憑「He walked along the...」無法分辨究竟是河岸還是銀行，機率近乎五五波，損失函數高達 0.734。',
+            bidiDesc:
+              '【BERT 雙向全覽】黑幕徹底撤除！後文的「river（河流）」與「fish（釣魚）」對第 4 格投射強烈雙向注意力，消歧機率瞬間飆升至 96.4%，損失函數暴跌至 0.037！',
+          },
+          'bank-money': {
+            tokens: ['He', 'walked', 'into', 'the', 'bank', 'to', 'deposit', 'his', 'money'],
+            defaultMaskIndex: 4, // 'bank'
+            targetWord: 'bank',
+            predictions: {
+              causal: [
+                { word: 'bank (金融)', prob: 0.52, meaning: '金融機構' },
+                { word: 'bank (河岸)', prob: 0.38, meaning: '河畔斜坡' },
+                { word: 'room', prob: 0.06, meaning: '房間' },
+                { word: 'store', prob: 0.04, meaning: '商店' },
+              ],
+              bidirectional: [
+                {
+                  word: 'bank (金融)',
+                  prob: 0.978,
+                  meaning: '金融機構（受後文 deposit 與 money 強力約束）',
+                },
+                { word: 'bank (河岸)', prob: 0.012, meaning: '河岸（完全不合邏輯）' },
+                { word: 'office', prob: 0.006, meaning: '辦公室' },
+                { word: 'branch', prob: 0.004, meaning: '分行' },
+              ],
+            },
+            causalDesc:
+              '【GPT-1 單向盲點】進入 bank 之前，模型無法獲知後方的「deposit（存款）」與「money（金錢）」，只能進行盲目統計猜測。',
+            bidiDesc:
+              '【BERT 雙向全覽】整句語意同時被 Transformer Encoder 消化，後文的存款與金錢為 bank 提供了壓倒性的雙向證據，真值預測準確率達 97.8%！',
+          },
+          'apple-tech': {
+            tokens: ['工程師', '在', '終端機', '輸入', '指令', '部署', '程式碼'],
+            defaultMaskIndex: 4, // '指令'
+            targetWord: '指令',
+            predictions: {
+              causal: [
+                { word: '指令', prob: 0.55, meaning: '命令' },
+                { word: '密碼', prob: 0.25, meaning: '身份驗證碼' },
+                { word: '帳號', prob: 0.12, meaning: '使用者名稱' },
+                { word: '文字', prob: 0.08, meaning: '一般字符' },
+              ],
+              bidirectional: [
+                { word: '指令', prob: 0.942, meaning: '系統指令（受終端機與部署雙向夾擊）' },
+                { word: '腳本', prob: 0.038, meaning: '自動化程式碼' },
+                { word: '參數', prob: 0.015, meaning: '執行參數' },
+                { word: '密碼', prob: 0.005, meaning: '密碼' },
+              ],
+            },
+            causalDesc:
+              '【GPT-1 單向盲點】在「輸入」之後，缺乏後文「部署程式碼」的意圖線索，輸入「密碼」或「帳號」也是常見的局部接龍，干擾了模型的判斷。',
+            bidiDesc:
+              '【BERT 雙向全覽】前文「終端機」與後文「部署程式碼」形成緊密的語意閉環，強烈約束該位置必定為可執行的「指令」！',
+          },
+        };
+
+        let currentScenario = 'bank-river';
+        let currentVision: 'causal' | 'bidirectional' = 'bidirectional';
+        let currentMaskIndex = 4;
+        let currentStrategy = 'mask'; // 'mask' | 'random' | 'keep'
+
+        function renderBertLab() {
+          const sc = bertScenarios[currentScenario];
+          if (!sc) return;
+
+          const tokensContainer = document.getElementById('bert-tokens-container');
+          const maskBadge = document.getElementById('bert-mask-badge');
+          const fovContainer = document.getElementById('bert-fov-container');
+          const fovDesc = document.getElementById('bert-fov-desc');
+          const fieldStatus = document.getElementById('bert-field-status');
+          const probBars = document.getElementById('bert-prob-bars');
+          const lossVal = document.getElementById('bert-loss-val');
+          const lossDesc = document.getElementById('bert-loss-desc');
+
+          if (
+            !tokensContainer ||
+            !maskBadge ||
+            !fovContainer ||
+            !fovDesc ||
+            !fieldStatus ||
+            !probBars ||
+            !lossVal ||
+            !lossDesc
+          )
+            return;
+
+          // 1. Render Token Buttons
+          tokensContainer.innerHTML = '';
+          sc.tokens.forEach((tok, idx) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            const isMasked = idx === currentMaskIndex;
+
+            let displayLabel = tok;
+            if (isMasked) {
+              if (currentStrategy === 'mask') displayLabel = '[MASK]';
+              else if (currentStrategy === 'random') displayLabel = 'apple';
+              else displayLabel = tok;
+            }
+
+            btn.className = isMasked
+              ? 'px-3 py-1.5 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer'
+              : 'px-3 py-1.5 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+
+            btn.textContent = `${idx}: ${displayLabel}`;
+            btn.setAttribute('aria-pressed', isMasked ? 'true' : 'false');
+            btn.addEventListener('click', () => {
+              currentMaskIndex = idx;
+              renderBertLab();
+            });
+            tokensContainer.appendChild(btn);
+          });
+
+          // Badge
+          const originalTarget = sc.tokens[currentMaskIndex] || sc.targetWord;
+          maskBadge.textContent = `目前挖空詞：[${originalTarget}] (位置 ${currentMaskIndex})`;
+
+          // 2. Render Field of View (FOV) Chips
+          fovContainer.innerHTML = '';
+          const fovRow = document.createElement('div');
+          fovRow.className = 'flex flex-wrap gap-2 items-center';
+
+          sc.tokens.forEach((tok, idx) => {
+            const isMasked = idx === currentMaskIndex;
+            const isFuture = currentVision === 'causal' && idx > currentMaskIndex;
+
+            const chip = document.createElement('span');
+
+            if (isFuture) {
+              // Blacked out in causal mode!
+              chip.className =
+                'px-2.5 py-1 bg-ink text-surface/30 border border-ink font-mono text-xs select-none tracking-widest line-through';
+              chip.textContent = '■■■■';
+              chip.title = '因果遮罩：後文被黑幕遮蔽，模型不可見！';
+            } else if (isMasked) {
+              chip.className =
+                'px-2.5 py-1 bg-red text-surface border-2 border-red font-mono text-xs font-bold shadow-xs';
+              chip.textContent =
+                currentStrategy === 'mask'
+                  ? '[MASK]'
+                  : currentStrategy === 'random'
+                    ? 'apple'
+                    : tok;
+            } else {
+              chip.className =
+                'px-2.5 py-1 bg-surface text-ink border border-line font-mono text-xs';
+              chip.textContent = tok;
+            }
+            fovRow.appendChild(chip);
+          });
+          fovContainer.appendChild(fovRow);
+
+          // Status & FOV Desc
+          if (currentVision === 'causal') {
+            fieldStatus.textContent = '單向模式：右側後文全部遮蔽 (Causal Masking)';
+            fieldStatus.className = 'font-mono text-xs text-blue font-semibold';
+            fovDesc.textContent = sc.causalDesc;
+          } else {
+            fieldStatus.textContent = '雙向模式：前後語意完整貫通 (Full Attention)';
+            fieldStatus.className = 'font-mono text-xs text-red font-semibold';
+            fovDesc.textContent = sc.bidiDesc;
+          }
+
+          // 3. Render Probability Bars
+          const preds =
+            currentVision === 'causal' ? sc.predictions.causal : sc.predictions.bidirectional;
+          probBars.innerHTML = '';
+          preds.forEach((cand: { word: string; prob: number; meaning: string }, idx: number) => {
+            const row = document.createElement('div');
+            row.className = 'grid grid-cols-[7rem_1fr_3.5rem] items-center gap-2 text-xs font-mono';
+
+            const label = document.createElement('div');
+            label.className = idx === 0 ? 'font-bold text-red truncate' : 'text-ink truncate';
+            label.textContent = cand.word;
+            label.title = cand.meaning;
+
+            const barTrack = document.createElement('div');
+            barTrack.className =
+              'h-4 w-full bg-paper-deep border border-line relative overflow-hidden';
+
+            const barFill = document.createElement('div');
+            const pct = (cand.prob * 100).toFixed(1);
+            barFill.className = idx === 0 ? 'h-full bg-red' : 'h-full bg-blue/70';
+            barFill.style.width = `${pct}%`;
+            barTrack.appendChild(barFill);
+
+            const pctLabel = document.createElement('div');
+            pctLabel.className =
+              idx === 0 ? 'font-bold text-red text-right' : 'text-muted text-right';
+            pctLabel.textContent = `${pct}%`;
+
+            row.appendChild(label);
+            row.appendChild(barTrack);
+            row.appendChild(pctLabel);
+            probBars.appendChild(row);
+          });
+
+          // 4. Loss calculation
+          const topProb = preds[0]?.prob || 0.5;
+          const loss = -Math.log(topProb);
+          lossVal.textContent = `${loss.toFixed(3)} (${currentVision === 'causal' ? '偏高' : '極低'})`;
+          lossDesc.textContent =
+            currentVision === 'causal'
+              ? '單向因果遮罩截斷了關鍵後文，模型處於不確定狀態，交叉熵損失顯著上升。'
+              : '雙向自注意力同時匯聚前後語境，精準鎖定正確詞義，損失降至最低。';
+        }
+
+        function setupBertLab() {
+          // Scenario tabs
+          document.querySelectorAll<HTMLButtonElement>('.bert-scenario-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+              document.querySelectorAll('.bert-scenario-btn').forEach((b) => {
+                b.setAttribute('aria-selected', 'false');
+                b.className =
+                  'bert-scenario-btn border border-ink bg-paper text-ink px-3 py-1.5 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer';
+              });
+              btn.setAttribute('aria-selected', 'true');
+              btn.className =
+                'bert-scenario-btn border border-ink bg-ink text-surface px-3 py-1.5 font-mono text-xs font-bold transition cursor-pointer';
+
+              const s = btn.dataset.scenario;
+              if (s && bertScenarios[s]) {
+                currentScenario = s;
+                currentMaskIndex = bertScenarios[s].defaultMaskIndex;
+                renderBertLab();
+              }
+            });
+          });
+
+          // Vision mode buttons
+          document.querySelectorAll<HTMLButtonElement>('.bert-vision-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+              document.querySelectorAll('.bert-vision-btn').forEach((b) => {
+                b.setAttribute('aria-pressed', 'false');
+                b.className =
+                  'bert-vision-btn border border-ink bg-surface text-ink p-2.5 font-mono text-xs font-bold text-center cursor-pointer transition hover:bg-paper';
+              });
+              btn.setAttribute('aria-pressed', 'true');
+              btn.className =
+                'bert-vision-btn border border-ink bg-ink text-surface p-2.5 font-mono text-xs font-bold text-center cursor-pointer transition';
+
+              currentVision = (btn.dataset.vision as 'causal' | 'bidirectional') || 'bidirectional';
+              renderBertLab();
+            });
+          });
+
+          // Strategy buttons
+          document.querySelectorAll<HTMLButtonElement>('.bert-mask-strategy-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+              document.querySelectorAll('.bert-mask-strategy-btn').forEach((b) => {
+                b.setAttribute('aria-pressed', 'false');
+                b.className =
+                  'bert-mask-strategy-btn border border-ink bg-surface text-ink py-1.5 px-2 font-mono text-xs font-semibold text-center cursor-pointer transition hover:bg-paper';
+              });
+              btn.setAttribute('aria-pressed', 'true');
+              btn.className =
+                'bert-mask-strategy-btn border border-ink bg-ink text-surface py-1.5 px-2 font-mono text-xs font-semibold text-center cursor-pointer transition';
+
+              currentStrategy = (btn.dataset.strategy as 'mask' | 'random' | 'keep') || 'mask';
+              renderBertLab();
+            });
+          });
+        }
+
+        // Initialize on load
+        setupBertLab();
+        renderBertLab();
+      </script>
     </section>
 
     <!-- MOVEMENT 2: 機制拆解 (THE MASKED ENGINE) -->
@@ -378,7 +909,7 @@ const timelineEpochs: TimelineEpoch[] = [
       aria-labelledby="mechanism-title"
     >
       <PaperSectionHeader
-        kicker="第二樂章 / 機制拆解"
+        kicker="章節 02 · 克漏字遮蔽與雙向機制 / THE MECHANISM"
         title="克漏字革命：遮蔽語言模型與下一句預測"
         subtitle="Google AI 團隊從 1953 年的英語心理測驗中獲得靈感，以完形填空打破抄襲死結，解鎖全雙向自監督學習"
         id="act-2-masked-lm"
@@ -386,7 +917,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
       <PaperReadingLayout class="text-base leading-8 text-ink">
         <div class="space-y-6">
-          <p class="text-lg leading-relaxed text-ink">
+          <p>
             2018 年 8 月，任職於 Google AI Language 的 Jacob Devlin
             與台大資工系畢業的張明偉（Ming-Wei Chang）等人，找到了一個驚人優雅的破局點。
           </p>
@@ -558,7 +1089,7 @@ const timelineEpochs: TimelineEpoch[] = [
           <h3 class="font-display text-2xl text-ink pt-4">特殊符號的誕生：[CLS] 與 [SEP]</h3>
 
           <p>
-            為了讓 Transformer Encoder 能同時容納兩句話並進行全局分類，BERT
+            為了讓 Transformer Encoder 能同時容納兩句話並進行全域分類，BERT
             定義了兩個成為現代深度學習標準的關鍵符號：
           </p>
 
@@ -571,11 +1102,20 @@ const timelineEpochs: TimelineEpoch[] = [
                 永遠放置在整個輸入序列的最前端（第 0 個位置）。
                 <br />
                 <span class="text-ink font-medium">
-                  與第二章 GPT-1 的巧妙對照：GPT-1 因為單向因果限制，只能把 <code>[Extract]</code>{' '}
+                  與
+                  <a
+                    href={withBase(
+                      '/papers/improving-language-understanding-by-generative-pre-training',
+                    )}
+                    class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+                  >
+                    GPT-1
+                  </a>
+                  的巧妙對照：GPT-1 因為單向因果限制，只能把 <code>[Extract]</code>{' '}
                   放在序列的最尾端，才能讀取前文累積的資訊；而 BERT 是全雙向注意力的
                   Encoder，任何位置都能自由查看所有其他單詞！因此 Google 乾脆在開頭安插一個專門的{' '}
                   <code>[CLS]</code> 標記，經過 12 或 24 層雙向交互後，第 0
-                  個位置的特徵向量自然吸收了「整篇文本的全局語意摘要」，直接拿來作為句子分類或真假句判斷的指針。
+                  個位置的特徵向量自然吸收了「整篇文本的全域語意摘要」，直接拿來作為句子分類或真假句判斷的指針。
                 </span>
               </p>
             </div>
@@ -667,7 +1207,7 @@ const timelineEpochs: TimelineEpoch[] = [
       aria-labelledby="finetune-title"
     >
       <PaperSectionHeader
-        kicker="第三樂章 / 極簡微調"
+        kicker="章節 03 · 極簡微調與基準稱霸 / MINIMAL FINE-TUNING"
         title="一張全連接層征服 11 項任務：閱讀理解超越人類"
         subtitle="無須為個別任務修改模型骨幹，僅靠 [CLS] 輸出向量與序列起止指針，全面橫掃 GLUE 與 SQuAD 評測基準"
         id="act-3-finetune"
@@ -675,8 +1215,15 @@ const timelineEpochs: TimelineEpoch[] = [
 
       <PaperReadingLayout class="text-base leading-8 text-ink">
         <div class="space-y-6">
-          <p class="text-lg leading-relaxed text-ink">
-            BERT 的工程哲學延續了第二章 GPT-1 最革命性的洞見：
+          <p>
+            BERT 的工程哲學延續了
+            <a
+              href={withBase('/papers/improving-language-understanding-by-generative-pre-training')}
+              class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+            >
+              GPT-1
+            </a>
+            最革命性的洞見：
             <strong>微調時模型骨幹 100% 保持不變，全權由頂層輕量投影承接</strong>。
           </p>
 
@@ -799,7 +1346,7 @@ const timelineEpochs: TimelineEpoch[] = [
             </div>
             <p class="mt-4 mb-0 text-sm text-muted leading-relaxed">
               在 2018 年底，BERT 席捲了整座 NLP
-              學界。過去數十個針對個別數據集精雕細琢的傳統模型，在一夜之間被這套雙向預訓練大模型全數推平。
+              學界。過去數十個針對個別資料集精雕細琢的傳統模型，在一夜之間被這套雙向預訓練大模型全數推平。
             </p>
           </div>
         </div>
@@ -836,7 +1383,7 @@ const timelineEpochs: TimelineEpoch[] = [
       aria-labelledby="divergence-title"
     >
       <PaperSectionHeader
-        kicker="第四樂章 / 世紀分水嶺"
+        kicker="章節 04 · 世紀分水嶺與生成天花板 / PARADIGM SHIFT"
         title="巔峰背後的天花板：BERT 為什麼永遠不會說話？"
         subtitle="當 Google 慶祝雙向理解全面稱霸時，一場關於生成與理解、單向與雙向的終極歷史大分流悄然展開"
         id="act-4-divergence"
@@ -844,7 +1391,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
       <PaperReadingLayout class="text-base leading-8 text-ink">
         <div class="space-y-6">
-          <p class="text-lg leading-relaxed text-ink">
+          <p>
             2018 年底的 Google 聲勢如日中天，BERT
             被公認為自然語言處理有史以來最強大的特徵提取器。相較之下，剛剛發表 GPT-1 的 OpenAI
             顯得落魄許多——在每一項理解測驗上，GPT-1 都被 BERT 徹底擊敗。
@@ -905,7 +1452,7 @@ const timelineEpochs: TimelineEpoch[] = [
             </p>
           </Callout>
 
-          <h3 class="font-display text-2xl text-ink pt-4">雙塔終點，單向啟航：邁向第四章 GPT-2</h3>
+          <h3 class="font-display text-2xl text-ink pt-4">雙塔終點，單向啟航：邁向 GPT-2</h3>
 
           <p>這場 2018 年的單雙向路線交鋒，構成了近代深度學習史上最精采的戲劇性轉折：</p>
 
@@ -946,15 +1493,28 @@ const timelineEpochs: TimelineEpoch[] = [
               </div>
               <div class="border-t border-line pt-2">
                 <strong class="text-red block">Decoder-only 分支 (GPT)</strong>
-                <span>單向因果視野 · 專注於對話、推理、代碼生成、角色扮演與開放式寫作。</span>
+                <span>單向因果視野 · 專注於對話、推理、程式碼生成、角色扮演與開放式寫作。</span>
               </div>
             </div>
           </AsideCard>
 
           <AsideCard kicker="承先啟後 / BRIDGE" title="通往下一個里程碑" variant="paper">
             <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
-              搞懂了 BERT 的雙向極限，你才能徹底理解第四章〈GPT-2〉與第五章〈Scaling
-              Laws〉為什麼堅持將單向自回歸推向物理極限。那不僅是參數的膨脹，更是一場關於「生成即智慧」的信仰長征。
+              搞懂了 BERT 的雙向極限，你才能徹底理解
+              <a
+                href={withBase('/papers/language-models-are-unsupervised-multitask-learners')}
+                class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+              >
+                GPT-2
+              </a>
+              與
+              <a
+                href={withBase('/papers/scaling-laws-for-neural-language-models')}
+                class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+              >
+                Scaling Laws
+              </a>
+              為什麼堅持將單向自回歸推向物理極限。那不僅是參數的膨脹，更是一場關於「生成即智慧」的信仰長征。
             </p>
           </AsideCard>
         </aside>
@@ -1092,50 +1652,32 @@ const timelineEpochs: TimelineEpoch[] = [
     </section>
 
     <!-- 參考文獻與史料依據 -->
-    <section class={`${shell} border-t border-ink py-16`} aria-label="參考文獻與歷史證物">
-      <div class="mb-8">
-        <p class="font-mono text-xs font-bold uppercase tracking-wider text-red mb-1">
-          史料依據 / EVIDENCE & SOURCES
+    <EvidenceList
+      sources={bertSources}
+      kicker="史料依據 / EVIDENCE & SOURCES"
+      title="一手文獻清單，與技術宣稱邊界"
+    />
+
+    <!-- 附錄 02：核心研發團隊檔案 (THE AUTHORS) -->
+    <AuthorGrid
+      authors={paper.authorBriefs}
+      kicker="研發團隊 · 核心檔案 / THE AUTHORS"
+      title="BERT 核心研發團隊"
+      description="依原始論文署名順序排列。採用經典鋼筆線雕肖像呈現作者歷史形象與經文獻考證之關鍵貢獻。"
+    >
+      <div class="mb-12 max-w-4xl space-y-6 text-base leading-8 text-ink">
+        <p>
+          2018 年秋天由 Google AI 團隊發布的
+          BERT，是自然語言理解領域的一記重磅驚雷。四位作者打破了自回歸單向建模的常規思維，將經典心理學的完形填空測驗轉化為深度雙向編碼的訓練目標，一舉刷新了
+          11 項 NLP 世界紀錄。
         </p>
-        <h2 class="m-0 font-display text-2xl sm:text-3xl text-ink">一手文獻清單，與技術宣稱邊界</h2>
+        <p class="text-muted">
+          第一作者 Jacob Devlin 提出了 Masked Language Model 的核心洞見，並與 Kenton Lee
+          共同主導了龐大模型的工程實作與預訓練流程；Ming-Wei Chang（張明偉）與 Kristina Toutanova
+          則以深厚的計算語言學底蘊，精心構建了統一的下游任務微調方案與基準評估。這支精銳團隊的成果，徹底重塑了搜尋引擎與文本理解的工業標準。
+        </p>
       </div>
-
-      <div class="space-y-4">
-        {bertSources.map((s, idx) => (
-          <article class="border border-line bg-surface p-5 text-sm" id={`source-${s.id}`}>
-            <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-line pb-2 mb-3">
-              <span class="font-mono text-xs font-bold text-red">
-                [{idx + 1}] {s.id}
-              </span>
-              <span class="font-mono text-xs text-muted">
-                {s.publisher} · {s.published || 'n.d.'}
-              </span>
-            </div>
-            <h3 class="m-0 font-display text-base text-ink mb-2">
-              <a
-                href={s.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="hover:text-red underline underline-offset-4"
-              >
-                {s.title}
-              </a>
-            </h3>
-            <ul class="list-disc pl-5 text-xs text-muted space-y-1 mb-3">
-              {s.supports.map((sup) => (
-                <li>{sup}</li>
-              ))}
-            </ul>
-            <p class="text-sm text-ink/70 italic border-l-2 border-line pl-3 m-0">
-              技術極限與邊界：{s.limits}
-            </p>
-          </article>
-        ))}
-      </div>
-    </section>
-
-    <!-- 作者群檔案 -->
-    <AuthorGrid authors={paper.authorBriefs} />
+    </AuthorGrid>
 
     <!-- 篇章導航 -->
     <PaperNavigation

@@ -1,0 +1,2123 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../lib/paths';
+import StoryRail from '../../components/StoryRail.astro';
+import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
+import AsideCard from '../../components/AsideCard.astro';
+import Callout from '../../components/Callout.astro';
+import AuthorGrid from '../../components/AuthorGrid.astro';
+import EvidenceList from '../../components/EvidenceList.astro';
+import PaperMeta from '../../components/PaperMeta.astro';
+import PaperNavigation from '../../components/PaperNavigation.astro';
+import {
+  paper,
+  instructgptSources,
+} from '../../content/papers/training-language-models-to-follow-instructions-with-human-feedback';
+
+const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
+
+const story = [
+  {
+    year: '2017.06',
+    label: '理論 / PREFERENCE RL',
+    title: 'Christiano 等人發表深度人類偏好強化學習',
+    body: 'OpenAI 與 DeepMind 合作，首次證明從人類成對比較（Pairwise Comparison）中訓練獎勵模型，能有效引導複雜代理人行為。',
+    status: 'past' as const,
+  },
+  {
+    year: '2017.07',
+    label: '演算法 / PPO',
+    title: 'John Schulman 提出近端策略最佳化（PPO）',
+    body: '以機率比剪裁（Clipped Surrogate Objective）解決傳統策略梯度震盪與崩潰，成為穩定性極高的強化學習通用骨幹。',
+    status: 'past' as const,
+  },
+  {
+    year: '2020.05',
+    label: '基座 / GPT-3',
+    title: '1750 億參數基座問世：博學但充滿謊言與失準',
+    body: 'GPT-3 展現驚人少樣本學習能力，但本質上僅在模仿網路文本分佈，面對人類明確指令經常答非所問或胡言亂語。',
+    status: 'past' as const,
+  },
+  {
+    year: '2022.03',
+    label: '論文 / INSTRUCTGPT',
+    title: 'OpenAI 發表 InstructGPT：三步 RLHF 確立對齊典範',
+    body: 'Long Ouyang 等人結合 SFT、獎勵建模與 PPO，僅 1.3B 模型在滿意度上擊敗 175B 基座，奠定現代 AI 產品對齊標準。',
+    status: 'current' as const,
+  },
+  {
+    year: '2022.11',
+    label: '爆發 / CHATGPT',
+    title: 'ChatGPT 正式發布，引爆全球生成式 AI 革命',
+    body: '將 InstructGPT 的指令對齊技術延伸至多輪對話，證明人類反饋強化學習是跨越學術展示走向消費級產品的關鍵橋樑。',
+    status: 'future' as const,
+  },
+];
+
+interface TimelineEpoch {
+  id: string;
+  year: string;
+  period: string;
+  title: string;
+  summary: string;
+  sources: Array<{
+    source: (typeof instructgptSources)[number];
+    num: number;
+    refCode: string;
+    featured?: boolean;
+    role: string;
+    takeaway: string;
+  }>;
+}
+
+const timelineEpochs: TimelineEpoch[] = [
+  {
+    id: 'epoch-2017-foundations',
+    year: '2017',
+    period: '偏好建模與穩定強化學習的理論破土',
+    title: '成對比較學習與 PPO 剪裁梯度的誕生',
+    summary:
+      '早在現代大模型爆發之前，Paul Christiano 與 John Schulman 等人便已為非數值化獎勵的學習任務奠定了數學基石：用 Bradley-Terry 模型刻畫人類偏好，並用 PPO 演算法鎖住策略更新步幅。',
+    sources: [
+      {
+        source: instructgptSources.find((s) => s.id === 'paper-2017-deep-rl-human-preferences')!,
+        num: 1,
+        refCode: 'S01',
+        featured: true,
+        role: '偏好理論',
+        takeaway:
+          '確立透過人類二元比較（A 優於 B）學習隱含獎勵函數的可行性，擺脫了必須人工設計複雜數值獎勵的歷史死結。',
+      },
+      {
+        source: instructgptSources.find((s) => s.id === 'paper-2017-ppo')!,
+        num: 2,
+        refCode: 'S02',
+        featured: true,
+        role: '最佳化核心',
+        takeaway:
+          '提出剪裁代理目標函數，限制新舊策略分佈偏離程度，為日後千億參數神經網路的大規模強化學習提供不可或缺的穩定性。',
+      },
+    ],
+  },
+  {
+    id: 'epoch-2020-misalignment',
+    year: '2020',
+    period: '預訓練巨獸的目標失準危機',
+    title: 'GPT-3 的少樣本奇蹟，與難以駕馭的「對齊稅」',
+    summary:
+      'GPT-3 證明了大規模自回歸預訓練的強大，但它的目標函數只是「預測網路上的下一個字」。它學會了無數偏見、陰謀論與虛構捏造，使用者即使百般下指令，它依然任性地接話或編造論文引用。',
+    sources: [
+      {
+        source: instructgptSources.find((s) => s.id === 'paper-2020-gpt3')!,
+        num: 3,
+        refCode: 'S03',
+        role: '基座原型',
+        takeaway:
+          '1750 億參數的自回歸語言模型，知識無比廣博但缺乏動機對齊，直接催生了 OpenAI 內部專注於 AI 安全與對齊的專案小組。',
+      },
+      {
+        source: instructgptSources.find((s) => s.id === 'paper-2020-summarization-human-feedback')!,
+        num: 4,
+        refCode: 'S04',
+        featured: true,
+        role: 'NLP 試點',
+        takeaway:
+          '在文字摘要任務上成功貫通了「標註者排序 → 獎勵模型 → PPO」流程，證明人類反饋比交叉熵損失更契合主觀品質標準。',
+      },
+    ],
+  },
+  {
+    id: 'epoch-2022-instructgpt',
+    year: '2022.03',
+    period: '產品級對齊的歷史分水嶺',
+    title: 'InstructGPT 發表：讓機器學會傾聽與服從',
+    summary:
+      'Long Ouyang 等人將 RLHF 完整落地於 OpenAI API 真實使用者提示詞分佈上。透過 SFT、RM 與帶有 KL 散度約束的 PPO，徹底解決了基座模型答非所問的頑疾，確立了現代 AI 產品的實用標準。',
+    sources: [
+      {
+        source: instructgptSources.find((s) => s.id === 'paper-2022-instructgpt')!,
+        num: 5,
+        refCode: 'S05',
+        featured: true,
+        role: '本篇核心',
+        takeaway:
+          '1.3B 參數對齊模型全面擊敗 175B 未對齊基座，提出 3H 評估準則與 KL 散度韁繩機制，為 ChatGPT 奠定技術核心。',
+      },
+    ],
+  },
+];
+---
+
+<BaseLayout title={`${paper.chineseTitle} | THE LLM`} description={paper.abstractSummary}>
+  <header class={`${shell} pt-10`}>
+    <div class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
+      <a class="text-red underline underline-offset-4" href={withBase('/')}>
+        THE LLM
+      </a>
+      <span aria-hidden="true">/</span>
+      <span>第 08 章</span>
+    </div>
+
+    <div class="grid grid-cols-1 items-end gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-24">
+      <div>
+        <p class="mb-5 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+          VOL. 08 / ALIGNMENT & RLHF
+        </p>
+
+        <h1 class="m-0 font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight tracking-[-0.04em] text-ink">
+          <span class="block">Training language models</span>
+          <em class="block">to follow instructions with human feedback</em>
+        </h1>
+
+        <p class="mt-8 max-w-[52ch] text-lg leading-8 text-muted">
+          當 1750 億參數的 GPT-3 依然像個滿嘴胡言的網路醉漢，OpenAI
+          提出人類反饋強化學習（RLHF），僅用 13
+          億參數模型便在實用滿意度上全面擊潰未對齊的千億巨獸，確立了 Helpful, Honest, Harmless
+          的現代 AI 產品基石。
+        </p>
+      </div>
+
+      <aside
+        class="border-t-4 border-red bg-surface p-6 shadow-editorial"
+        aria-label="這篇論文的一句評語"
+      >
+        <p class="mb-4 sm:mb-6 font-mono text-xs sm:text-sm font-semibold uppercase tracking-[0.12em] text-red">
+          一句評語 / THE SHORT VERDICT
+        </p>
+        <p class="m-0 max-w-[20ch] sm:max-w-[22ch] font-display text-2xl sm:text-3xl leading-tight text-ink">
+          預訓練給了模型博聞強記的大腦，而 RLHF 賦予了它聽懂人類心意的靈魂。
+        </p>
+        <p class="mt-6 mb-0 text-sm sm:text-base leading-relaxed sm:leading-7 text-muted">
+          僅 13 億參數的 InstructGPT 獲得 85%
+          人類評估偏好，徹底終結了「單純預測下一個字」的盲目擴展，點燃了八個月後 ChatGPT
+          的全球風暴。
+        </p>
+      </aside>
+    </div>
+
+    <PaperMeta
+      year={paper.year}
+      venue={paper.venue}
+      readTime="35 分鐘"
+      difficulty="後訓練強化學習"
+      doi={paper.doi}
+    />
+  </header>
+
+  <main id="main-content">
+    <!-- 歷史縱深導航條 (STORY RAIL) -->
+    <section class="border-t border-ink py-12" aria-label="歷史縱深導向">
+      <div class={shell}>
+        <div class="mb-8">
+          <p class="mb-2 font-mono text-xs font-bold uppercase tracking-[0.14em] text-red">
+            歷史長河 / THE CHRONOLOGY
+          </p>
+          <h2 class="m-0 font-display text-2xl sm:text-3xl text-ink">
+            從網路文字的無度模仿，到人性偏好指引的價值對齊
+          </h2>
+        </div>
+        <StoryRail events={story} />
+      </div>
+    </section>
+
+    <!-- 章節 01: 語義脫節與目標反噬 (THE MISALIGNMENT DILEMMA) -->
+    <section
+      id="misalignment-dilemma"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="misalignment-dilemma-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            章節 01 · 語義脫節與目標反噬 / THE MISALIGNMENT DILEMMA
+          </p>
+          <h2
+            id="misalignment-dilemma-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">目標函數的背叛：</span>
+            <span class="block">
+              <em>當預測下一個字的博學機器，成了滿嘴謊言的網路醉漢</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          自回歸預訓練最大化的是網際網路文本的統計似然機率，但真實世界的使用者需要的是誠實、有用且安全的忠實助手。
+        </p>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-8">
+          <p>
+            2020 年夏天，當 OpenAI 的工程師們將擁有 1750 億參數的
+            <a
+              href={withBase('/papers/language-models-are-few-shot-learners')}
+              class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+            >
+              GPT-3
+            </a>
+            部署至雲端 API
+            時，他們迎來的並非一個優雅的智慧助手，而是一個令人啼笑皆非、甚至毛骨悚然的「統計模仿怪獸」。
+          </p>
+
+          <p>
+            一位台灣大學的研究生在終端機輸入：「請用繁體中文列出三個改善睡眠品質的科學方法，並給出理由。」直覺上，任何心智健全的正常人都明白這是一道祈使句指令，期望獲得清晰條列的實用建議。然而，未經對齊的
+            GPT-3 基座模型卻在螢幕上吐出了一段匪夷所思的文字：
+          </p>
+
+          <div class="border border-line bg-surface p-5 sm:p-6 my-6 font-mono text-sm leading-relaxed text-ink shadow-sm">
+            <p class="text-xs font-bold uppercase tracking-wider text-muted mb-2">
+              輸入提示詞（PROMPT）：
+            </p>
+            <p class="mb-4 text-red font-semibold">
+              請用繁體中文列出三個改善睡眠品質的科學方法，並給出理由。
+            </p>
+            <div class="border-t border-line pt-3">
+              <p class="text-xs font-bold uppercase tracking-wider text-muted mb-2">
+                GPT-3（175B 基座模型）接話輸出：
+              </p>
+              <p class="text-muted">
+                「第四個方法是不要在睡前喝咖啡。第五個方法是保持臥室黑暗。第六個方法是買一張好床墊。評論區：網友
+                A 說這篇文章寫得太爛了，根本沒有引用文獻；網友 B 回覆網友 A：你行你來寫啊……」
+              </p>
+            </div>
+          </div>
+
+          <p>
+            模型不僅沒有回答問題，反而以為這是一篇網路農場文或論壇討論串，若無其事地接著往下「編造評論區對罵」。更嚴重的狀況發生在事實問答與安全性問題上：當詢問「如何製造毒性化合物」或「某位無辜學者的私生活緋聞」時，基座模型會毫無心理障礙地生成極具危險性的步驟指南，或是以無比自信的權威口吻憑空捏造出煞有其事的醜聞細節。
+          </p>
+
+          <Callout variant="alert" title="核心矛盾：似然機率極大化 ≠ 人類真實意圖">
+            自回歸 Transformer 的損失函數只有一個目標：
+            <strong>給定前文，最大化下一個 token 出現在網際網路語料中的機率</strong>（
+            <math class="font-serif"><msub><mi>max</mi><mi>θ</mi></msub><mo>∑</mo><mi>log</mi><msub><mi>P</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><msub><mi>w</mi><mi>t</mi></msub><mo>∣</mo><msub><mi>w</mi><mn>1</mn></msub><mo>,</mo><mo>…</mo><mo>,</mo><msub><mi>w</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="false">)</mo></math>
+            ）。問題在於，網際網路絕非人類崇高道德與純粹真理的殿堂，而是充斥著同人小說、仇恨言論、詐騙廣告、論壇對噴與偽科學的泥淖。當模型完美學會模仿網際網路時，它自然也學會了像網路鍵盤俠一樣胡諞亂造、狡辯與發洩情緒。
+          </Callout>
+
+          <p>
+            這個困境在 AI 安全領域被正式稱為<strong>「對齊問題（The Alignment Problem）」</strong>
+            ：我們賦予模型的最佳化目標（數學上的交叉熵損失最小化），與我們真正想要得到的系統行為（現實中的安全、誠實、有用），發生了嚴重的目標脫節。
+          </p>
+
+          <p>
+            更令人絕望的是，在 Kaplan 縮放定律盛行的 2020
+            年，許多人盲目相信「只要繼續擴大模型參數，智慧就會自然解決一切」。但 OpenAI
+            對齊團隊的實測卻狠狠潑了一盆冷水：
+            <strong>
+              參數量從 1.5B 擴展至
+              175B，模型生成虛假資訊的「說服力」大幅提升了，但它遵循指令的誠意與真實性卻幾乎毫無改善
+            </strong>
+            。一個滿嘴謊言但詞藻極其華麗的 1750
+            億參數巨獸，對人類社會而言反倒成了更具破壞力的危險武器。
+          </p>
+        </div>
+
+        <aside slot="rail" class="space-y-6">
+          <AsideCard kicker="對齊危機 / THE GAP" title="博學與忠誠的割裂" variant="alert">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
+              預訓練基座模型擁有海量知識庫，但它的心智模型是「文本補全器」而非「任務執行者」。它不知道什麼時候該停下、不知道何為真相、更不知道身為
+              AI 應有的道德邊界。
+            </p>
+          </AsideCard>
+
+          <AsideCard
+            kicker="工業痛點 / BENCHMARK TAX"
+            title="著名的對齊稅（Alignment Tax）"
+            variant="paper"
+          >
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
+              早期嘗試用特定規則或小規模資料硬性微調模型以提高安全性時，研究者痛苦地發現模型在通用語言任務（如程式碼生成、翻譯）上的跑分往往大幅崩跌，彷彿讓模型「學乖」必須以「變笨」為代價。
+            </p>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- 章節 02: 人類反饋強化學習三部曲 (THE RLHF TRINITY) -->
+    <section
+      id="rlhf-trinity"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="rlhf-trinity-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            章節 02 · 人類反饋強化學習三部曲 / THE RLHF TRINITY
+          </p>
+          <h2
+            id="rlhf-trinity-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">馴服機器的三階段工藝：</span>
+            <span class="block">
+              <em>從示範監督、偏好排序到策略強化</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          單純人工寫答案代價極其高昂，單純評分又難以捕捉細膩偏好。InstructGPT
+          巧妙結合三種演算法力量，搭建起通往人類意志的轉向架。
+        </p>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-8">
+          <p>
+            面對對齊難題，最直覺的想法是：「那我們僱用成千上萬的專業標註者，為每一道指令手寫最完美的示範答案，然後對
+            GPT-3 進行監督式微調（Supervised Fine-Tuning, SFT），不就行了嗎？」
+          </p>
+
+          <p>
+            這種想法在實務上立刻遭遇兩大死穴：第一是<strong>經濟與體力極限</strong>
+            ——寫一篇高水準的示範回答平均耗時數十分鐘，成本高昂，人類標註者根本不可能寫出數百萬筆橫跨全人類知識領域的完美示範；第二是
+            <strong>認知的不可言說性</strong>
+            ——當面對兩篇各具千秋的散文、兩套程式碼架構或兩個哲學觀點時，人類專家往往「很難從無到有寫出最完美的答案，但一眼就能看出
+            A 比 B 好在哪裡」。
+          </p>
+
+          <p>
+            這正是 Long Ouyang、Jeffrey Wu、John Schulman 與 Jan Leike 等人構思出
+            <strong>「RLHF 三步對齊管線」</strong>
+            的歷史起點。他們將複雜的對齊任務拆解為階梯式的三階段工程：
+          </p>
+
+          <!-- 視覺化圖表：RLHF 三部曲架構 -->
+          <div class="my-10 border border-line bg-surface p-6 sm:p-8 shadow-editorial">
+            <h3 class="m-0 mb-6 font-display text-xl text-ink">RLHF 三階段架構流程全貌</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="border border-line bg-paper p-5 flex flex-col justify-between">
+                <div>
+                  <span class="inline-block px-2 py-0.5 mb-3 font-mono text-xs font-bold uppercase tracking-wider bg-red text-paper">
+                    第一階段 · SFT
+                  </span>
+                  <h4 class="m-0 mb-2 font-display text-base text-ink">示範監督式微調</h4>
+                  <p class="text-sm text-muted leading-relaxed mb-4">
+                    收集約 1.3 萬筆高品質人類手寫示範問答對，微調 GPT-3
+                    基座模型，使其迅速脫離純粹接話模式，學會回答問題的基本對話格式。
+                  </p>
+                </div>
+                <div class="pt-3 border-t border-line font-mono text-xs text-ink">
+                  產出物：<math class="font-serif"><msup><mi>π</mi><mi>SFT</mi></msup></math>{' '}
+                  策略模型
+                </div>
+              </div>
+
+              <div class="border border-line bg-paper p-5 flex flex-col justify-between">
+                <div>
+                  <span class="inline-block px-2 py-0.5 mb-3 font-mono text-xs font-bold uppercase tracking-wider bg-blue text-paper">
+                    第二階段 · RM
+                  </span>
+                  <h4 class="m-0 mb-2 font-display text-base text-ink">成對偏好獎勵建模</h4>
+                  <p class="text-sm text-muted leading-relaxed mb-4">
+                    對同一個提示詞讓模型生成多個候選回答，標註者只需做排序（Ranking）。利用
+                    Bradley-Terry 損失訓練 6B 獎勵模型，將人類品味轉化為純量評分器。
+                  </p>
+                </div>
+                <div class="pt-3 border-t border-line font-mono text-xs text-ink">
+                  產出物：
+                  <math class="font-serif"><msub><mi>r</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo stretchy="false">)</mo></math>
+                  {' '} 純量獎勵模型
+                </div>
+              </div>
+
+              <div class="border border-line bg-paper p-5 flex flex-col justify-between">
+                <div>
+                  <span class="inline-block px-2 py-0.5 mb-3 font-mono text-xs font-bold uppercase tracking-wider bg-ink text-paper">
+                    第三階段 · PPO
+                  </span>
+                  <h4 class="m-0 mb-2 font-display text-base text-ink">近端策略最佳化</h4>
+                  <p class="text-sm text-muted leading-relaxed mb-4">
+                    以 SFT 模型為起點，讓模型在海量無標註提示詞上自由生成，由 RM 打分並利用 PPO
+                    演算法更新權重，同時加入 KL 散度懲罰防止模型「瘋狂取悅打分器」。
+                  </p>
+                </div>
+                <div class="pt-3 border-t border-line font-mono text-xs text-ink">
+                  產出物：
+                  <math class="font-serif"><msubsup><mi>π</mi><mi>ϕ</mi><mi>RL</mi></msubsup></math>
+                  {' '} 最終對齊模型
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="font-display text-2xl text-ink mt-12 mb-6">
+            第一階段：用 1.3 萬筆示範為狂野巨獸穿上禮服（SFT）
+          </h3>
+          <p>
+            研究團隊首先聘請了 40 位全職專業數據標註者，針對 OpenAI API
+            收集到的真實使用者提示詞，手寫了約 13,000
+            筆高品質的示範輸出。這些提示詞涵蓋了腦力激盪、分類、問答、程式碼生成與創意寫作等多個領域。
+          </p>
+          <p>
+            利用這批數據對未經修剪的 GPT-3 基座進行微調，產生的模型被稱為 <strong>SFT 模型</strong>
+            （Supervised Fine-Tuned Model）。SFT 階段最重要的貢獻並非注入新知識，而是
+            <strong>格式重塑</strong>
+            ：它讓模型明白，當看到「請將下列句子翻譯成法文：...」時，接下來該做的是輸出法文翻譯，而不是接著往下生造第四個、第五個句子。
+          </p>
+
+          <h3 class="font-display text-2xl text-ink mt-12 mb-6">
+            第二階段：Bradley-Terry 偏好建模——讓人性品味變成數學純量
+          </h3>
+          <p>
+            SFT
+            模型雖然具備了回答指令的外形，但它的回答依然經常平庸、冗長、或潛藏微小的事實謬誤。要讓模型達到「卓越」，我們需要更強大的回饋訊號。
+          </p>
+          <p>
+            此時，OpenAI 巧妙引入了 1952 年由統計學家 Ralph Bradley 與 Milton Terry 提出的
+            <strong>「Bradley-Terry 成對偏好模型」</strong>。在標註流程中，研究人員給出一個提示詞
+            <math class="font-serif"><mi>x</mi></math>，讓模型一口氣生成
+            <math class="font-serif"><mi>K</mi></math> 個候選答案（通常取 4 到 9
+            個），由人類標註者進行由好到壞的排序（例如
+            <math class="font-serif"><msub><mi>y</mi><mn>1</mn></msub><mo>≻</mo><msub><mi>y</mi><mn>2</mn></msub><mo>≻</mo><msub><mi>y</mi><mn>3</mn></msub><mo>≻</mo><msub><mi>y</mi><mn>4</mn></msub></math>
+            ）。
+          </p>
+
+          <Callout variant="note" title="成對比較的組合爆炸紅利：為什麼排序遠勝於直接打分？">
+            如果讓標註者為單一答案打 1 到 10 分，每位標註者的打分尺度極不一致（甲標註者的 8
+            分可能等同於乙標註者的 6 分），導致方差極大。但成對比較（Pairwise
+            Comparison）的判斷極其穩定。更妙的是，標註者對 4
+            個答案進行一次排序，就能在數學上一次性解構出
+            <math class="font-serif"><mrow><mo>(</mo><mfrac linethickness="0"><mn>4</mn><mn>2</mn></mfrac><mo>)</mo></mrow><mo>=</mo><mn>6</mn></math>
+            個二元偏好對！標註效率瞬間提升了 6 倍。
+          </Callout>
+
+          <p>
+            獎勵模型
+            <math class="font-serif"><msub><mi>r</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo stretchy="false">)</mo></math>
+            本質上是一個將輸入提示詞 <math class="font-serif"><mi>x</mi></math> 與回答
+            <math class="font-serif"><mi>y</mi></math> 映射為一個實數純量（Scalar
+            Score）的神經網路。訓練目標是讓勝出答案
+            <math class="font-serif"><msub><mi>y</mi><mi>w</mi></msub></math>
+            的得分盡可能高於落敗答案
+            <math class="font-serif"><msub><mi>y</mi><mi>l</mi></msub></math>
+            ，其損失函數定義為對數勝率的負期望值：
+          </p>
+
+          <div class="my-6 border-l-2 border-blue bg-surface p-5 sm:p-6 font-mono text-sm leading-relaxed text-ink shadow-sm overflow-x-auto">
+            <p class="text-xs font-bold uppercase tracking-wider text-muted mb-2">
+              獎勵模型損失函數（BRADLEY-TERRY LOSS）：
+            </p>
+            <math display="block" class="editorial-math my-4" aria-label="獎勵模型成對偏好損失函數">
+              <mrow>
+                <mi mathvariant="script">L</mi>
+                <mo stretchy="false">(</mo>
+                <mi>θ</mi>
+                <mo stretchy="false">)</mo>
+                <mo>=</mo>
+                <mo>−</mo>
+                <msub>
+                  <mi mathvariant="double-struck">E</mi>
+                  <mrow>
+                    <mo stretchy="false">(</mo>
+                    <mi>x</mi>
+                    <mo>,</mo>
+                    <msub><mi>y</mi><mi>w</mi></msub>
+                    <mo>,</mo>
+                    <msub><mi>y</mi><mi>l</mi></msub>
+                    <mo stretchy="false">)</mo>
+                    <mo>∼</mo>
+                    <mi mathvariant="script">D</mi>
+                  </mrow>
+                </msub>
+                <mrow>
+                  <mo>[</mo>
+                  <mi>log</mi>
+                  <mi>σ</mi>
+                  <mrow>
+                    <mo>(</mo>
+                    <msub><mi>r</mi><mi>θ</mi></msub>
+                    <mo stretchy="false">(</mo>
+                    <mi>x</mi>
+                    <mo>,</mo>
+                    <msub><mi>y</mi><mi>w</mi></msub>
+                    <mo stretchy="false">)</mo>
+                    <mo>−</mo>
+                    <msub><mi>r</mi><mi>θ</mi></msub>
+                    <mo stretchy="false">(</mo>
+                    <mi>x</mi>
+                    <mo>,</mo>
+                    <msub><mi>y</mi><mi>l</mi></msub>
+                    <mo stretchy="false">)</mo>
+                    <mo>)</mo>
+                  </mrow>
+                  <mo>]</mo>
+                </mrow>
+              </mrow>
+            </math>
+            <p class="mt-3 text-sm text-muted leading-normal">
+              其中
+              <math class="font-serif"><mi>σ</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>z</mi></mrow></msup></mrow></mfrac></math>
+              為 Sigmoid 函數。當勝者得分遠高於敗者時，差值為正大數，
+              <math class="font-serif"><mi>σ</mi><mo>→</mo><mn>1</mn></math>，損失
+              <math class="font-serif"><mo>−</mo><mi>log</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></math>
+              ；反之若預測顛倒，損失將急遽攀升。
+            </p>
+          </div>
+
+          <p>
+            為了避免單一提示詞的多個偏好對導致梯度過度擬合，論文在實作時將同一提示詞生成的所有
+            <math class="font-serif"><mrow><mo>(</mo><mfrac linethickness="0"><mi>K</mi><mn>2</mn></mfrac><mo>)</mo></mrow></math>
+            個比較組合成單一 mini-batch 進行平行計算，徹底解決了獎勵模型的訓練方差問題。
+          </p>
+        </div>
+
+        <aside slot="rail" class="space-y-6">
+          <AsideCard kicker="認知科學 / HUMAN INTUITION" title="比較的心理學優勢" variant="surface">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
+              人類大腦演化出的感知系統天生擅長「差分放大（Differential
+              Amplification）」——要精確估計一塊石頭的重量很難，但把兩塊石頭放在左右手掂量，誰重誰輕幾乎能百分之百準確。
+            </p>
+          </AsideCard>
+
+          <AsideCard kicker="架構細節 / MODEL SIZING" title="獎勵模型需要多大？" variant="paper">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
+              InstructGPT 使用了 60 億（6B）參數的模型作為 RM，而非 175B。實證顯示 6B
+              的評估能力已經足夠強大，且大幅節省了後續強化學習階段頻繁推理計算分數的伺服器負載。
+            </p>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- 章節 03: 數學機制、KL 散度約束與價值網路 (MECHANICS & STABILITY) -->
+    <section
+      id="mechanics-and-stability"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="mechanics-stability-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            章節 03 · 數學機制、KL 散度約束與價值網路 / MECHANICS & STABILITY
+          </p>
+          <h2
+            id="mechanics-stability-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">KL 散度的無形韁繩：</span>
+            <span class="block">
+              <em>如何在獎勵作弊與策略崩潰的懸崖邊起舞</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          當強化學習遇上語言模型，若無拘束，模型會迅速發現「作弊」漏洞，吐出胡言亂語來騙取高分。KL
+          散度是守護人類理性的關鍵彈性繩。
+        </p>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-8">
+          <p>
+            當獎勵模型 <math class="font-serif"><msub><mi>r</mi><mi>θ</mi></msub></math>
+            訓練完畢後，我們終於擁有了一個代表「人類品味裁判」的自動化評分機。接下來的第三階段，就是讓模型進入強化學習環境中大展身手。
+          </p>
+
+          <p>
+            然而，如果我們天真地使用強化學習演算法去單純最大化獎勵分數：
+            <math class="font-serif"><msub><mi>max</mi><mi>ϕ</mi></msub><mi mathvariant="double-struck">E</mi><mo stretchy="false">[</mo><msub><mi>r</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo stretchy="false">)</mo><mo stretchy="false">]</mo></math>
+            ，系統會在短短數百步之內發生災難性的<strong>「獎勵作弊（Reward Hacking）」</strong>。
+          </p>
+
+          <Callout variant="alert" title="古德哈特定律（Goodhart's Law）的殘酷體現">
+            「當一個指標變成目標時，它就不再是一個好指標。」獎勵模型終究只是一個 60
+            億參數的神經網路，它並非無所不知的上帝。在未受限制的策略探索下，生成模型會迅速摸索出獎勵模型的漏洞——例如瘋狂重複某些特定的標點符號、生僻詞或阿諛奉承的廢話。這些文字讀起來狗屁不通，但卻正好落入獎勵模型的高分盲區，導致模型策略瞬間崩潰。
+          </Callout>
+
+          <p>
+            為了牽制這匹脫韁野馬，InstructGPT 引入了強化學習領域最優雅的數學防護措施：
+            <strong>基於相對熵（Kullback-Leibler Divergence, KL 散度）的動態懲罰項</strong>。完整的
+            PPO 最佳化目標函數如下：
+          </p>
+
+          <div class="my-8 border-l-4 border-red bg-surface p-6 sm:p-8 font-mono text-sm leading-relaxed text-ink shadow-editorial overflow-x-auto">
+            <p class="text-xs font-bold uppercase tracking-wider text-red mb-3">
+              INSTRUCTGPT 核心最佳化目標函數（OBJECTIVE FUNCTION）：
+            </p>
+            <math
+              display="block"
+              class="editorial-math my-6"
+              aria-label="InstructGPT 核心最佳化目標函數"
+            >
+              <mrow>
+                <mi>obj</mi>
+                <mo stretchy="false">(</mo>
+                <mi>ϕ</mi>
+                <mo stretchy="false">)</mo>
+                <mo>=</mo>
+                <msub>
+                  <mi mathvariant="double-struck">E</mi>
+                  <mrow>
+                    <mo stretchy="false">(</mo>
+                    <mi>x</mi>
+                    <mo>,</mo>
+                    <mi>y</mi>
+                    <mo stretchy="false">)</mo>
+                    <mo>∼</mo>
+                    <msub><mi mathvariant="script">D</mi><msubsup><mi>π</mi><mi>ϕ</mi><mi>RL</mi></msubsup></msub>
+                  </mrow>
+                </msub>
+                <mrow>
+                  <mo>[</mo>
+                  <msub><mi>r</mi><mi>θ</mi></msub>
+                  <mo stretchy="false">(</mo>
+                  <mi>x</mi>
+                  <mo>,</mo>
+                  <mi>y</mi>
+                  <mo stretchy="false">)</mo>
+                  <mo>−</mo>
+                  <mi>β</mi>
+                  <msub><mi>D</mi><mi>KL</mi></msub>
+                  <mrow>
+                    <mo>(</mo>
+                    <msubsup><mi>π</mi><mi>ϕ</mi><mi>RL</mi></msubsup>
+                    <mo stretchy="false">(</mo>
+                    <mi>y</mi>
+                    <mo>∣</mo>
+                    <mi>x</mi>
+                    <mo stretchy="false">)</mo>
+                    <mo>∥</mo>
+                    <msup><mi>π</mi><mi>SFT</mi></msup>
+                    <mo stretchy="false">(</mo>
+                    <mi>y</mi>
+                    <mo>∣</mo>
+                    <mi>x</mi>
+                    <mo stretchy="false">)</mo>
+                    <mo>)</mo>
+                  </mrow>
+                  <mo>]</mo>
+                </mrow>
+                <mo>+</mo>
+                <mi>γ</mi>
+                <msub>
+                  <mi mathvariant="double-struck">E</mi>
+                  <mrow>
+                    <mi>x</mi>
+                    <mo>∼</mo>
+                    <msub><mi mathvariant="script">D</mi><mi>pretrain</mi></msub>
+                  </mrow>
+                </msub>
+                <mrow>
+                  <mo>[</mo>
+                  <mi>log</mi>
+                  <msubsup><mi>π</mi><mi>ϕ</mi><mi>RL</mi></msubsup>
+                  <mo stretchy="false">(</mo>
+                  <mi>x</mi>
+                  <mo stretchy="false">)</mo>
+                  <mo>]</mo>
+                </mrow>
+              </mrow>
+            </math>
+            <div class="mt-4 pt-4 border-t border-line space-y-2 text-xs text-muted">
+              <p>
+                •{' '}
+                <strong>
+                  第 1 項{' '}
+                  <math class="font-serif"><msub><mi>r</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo stretchy="false">)</mo></math>
+                </strong>
+                ：獎勵驅動力。鼓勵模型生成符合人類偏好、能獲得高評分的回應。
+              </p>
+              <p>
+                •{' '}
+                <strong>
+                  第 2 項{' '}
+                  <math class="font-serif"><mo>−</mo><mi>β</mi><msub><mi>D</mi><mi>KL</mi></msub></math>
+                </strong>
+                ：彈性韁繩。計算當前強化學習策略
+                <math class="font-serif"><msubsup><mi>π</mi><mi>ϕ</mi><mi>RL</mi></msubsup></math>
+                與原始監督微調策略
+                <math class="font-serif"><msup><mi>π</mi><mi>SFT</mi></msup></math> 之間的 token
+                分佈散度。若模型為了賺取高分而偏離原本流暢自然的語言分佈，將遭受嚴厲扣分。
+              </p>
+              <p>
+                •{' '}
+                <strong>
+                  第 3 項{' '}
+                  <math class="font-serif"><mi>γ</mi><mi mathvariant="double-struck">E</mi><mo stretchy="false">[</mo><mi>log</mi><mi>π</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo stretchy="false">]</mo></math>
+                </strong>
+                ：預訓練保真梯度（PPO-ptx）。定期抽樣原本的網際網路預訓練文本進行似然機率更新，徹底杜絕模型在公共基準測試上的能力衰退（消除對齊稅）。
+              </p>
+            </div>
+          </div>
+
+          <!-- 動態擾動實證對照 -->
+          <h3 class="font-display text-2xl text-ink mt-12 mb-6">
+            動態擾動實測：觀察三種模型面對同一指令的本質轉變
+          </h3>
+          <p>
+            為了讓台灣的研究所讀者直觀體會對齊演算法如何根本性地重塑神經網路的神經衝動，我們設計一組具體的動態擾動實驗：輸入一道涉及科學原理但要求適合兒童理解的典型跨維度指令，觀察不同階段的輸出行為：
+          </p>
+
+          <div class="border border-line bg-surface p-6 sm:p-8 my-8 shadow-sm">
+            <p class="text-xs font-mono font-bold uppercase tracking-widest text-red mb-4">
+              動態擾動實驗 / PERTURBATION CASE
+            </p>
+            <p class="text-sm font-semibold text-ink mb-6">
+              輸入提示詞（PROMPT）：
+              <br />
+              <span class="text-red font-mono">「請向五歲小孩解釋：為什麼天空是藍色的？」</span>
+            </p>
+
+            <div class="space-y-4">
+              <div class="border-l-2 border-line bg-paper p-4">
+                <span class="font-mono text-xs font-bold text-muted block mb-1">
+                  【未對齊基座】GPT-3 175B
+                </span>
+                <p class="text-sm text-muted m-0">
+                  「這是一道經典的物理學問題。大氣層中的分子對不同波長的光線散射效率不同，根據瑞利散射定律（Rayleigh
+                  Scattering），散射強度與光波長的四次方成反比：
+                  <math class="font-serif"><mi>I</mi><mo>∝</mo><msup><mi>λ</mi><mrow><mo>−</mo><mn>4</mn></mrow></msup></math>
+                  。因此藍光的散射截面遠大於紅光……（完全忽略五歲小孩的受眾設定，直接背誦大學光學課本）」
+                </p>
+              </div>
+
+              <div class="border-l-2 border-line bg-paper p-4">
+                <span class="font-mono text-xs font-bold text-muted block mb-1">
+                  【監督式微調】SFT 175B
+                </span>
+                <p class="text-sm text-ink m-0">
+                  「因為太陽光裡面有很多顏色，像彩虹一樣。當陽光照進空氣時，藍色的光跑得最活潑，被空氣分子彈來彈去，所以你看天空是藍色的。（語法正確且注意到了受眾，但語氣略顯生硬，缺乏引導式互動）」
+                </p>
+              </div>
+
+              <div class="border-l-2 border-red bg-surface p-4 shadow-sm">
+                <span class="font-mono text-xs font-bold text-red block mb-1">
+                  【RLHF 完備對齊】INSTRUCTGPT 175B
+                </span>
+                <p class="text-sm text-ink font-medium m-0">
+                  「想像一下，陽光就像一個調皮的大彩虹糖果盒，裡面藏著紅、橙、黃、綠、藍等好多種顏色的光！當這些光衝進地球的空氣時，空氣裡有好多好小好小的小精靈（空氣分子）。紅光和黃光長得很大隻，直接跨過精靈溜過去了；可是藍光很嬌小又愛玩，一遇到小精靈就開心地在整個天空中到處彈跳玩捉迷藏！所以當你抬頭看時，滿天都是玩捉迷藏的藍光喔！（完美遵循五歲小孩心智模型，生動具象且完全符合
+                  3H 標準）」
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <p>
+            這種從「生硬背誦」到「具體同理」的躍遷，並非來自於模型背了更多字典，而是強化學習演算法在數萬次策略反覆試驗中，精確將那些具有共情力、條理清晰且安全審慎的生成路徑，在數千億維度的神經權重叢林中永久地強化與固化。
+          </p>
+        </div>
+
+        <aside slot="rail" class="space-y-6">
+          <AsideCard
+            kicker="數學機制 / THE LEASH"
+            title="相對熵（KL 散度）的物理隱喻"
+            variant="deep"
+          >
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
+              KL
+              散度就像連在模型腰間的高彈力繩。模型可以為了尋找高獎勵而在語言空間中靈活探索，但一旦跑得太遠、企圖用不可名狀的胡話作弊，彈簧的拉力就會成倍激增，無情地將它拽回人類語言的理性中樞。
+            </p>
+          </AsideCard>
+
+          <AsideCard
+            kicker="強化學習實務 / PPO ACTOR-CRITIC"
+            title="四模型並行的硬體噩夢"
+            variant="surface"
+          >
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
+              在 RLHF 的 PPO 訓練循環中，工程師必須在 GPU
+              記憶體中同時部署四個大型神經網路：當前行動者（Actor
+              <math class="font-serif"><msub><mi>π</mi><mi>ϕ</mi></msub></math>
+              ）、價值評判者（Critic
+              <math class="font-serif"><msub><mi>V</mi><mi>ψ</mi></msub></math>
+              ）、凍結的參考基座（Ref
+              <math class="font-serif"><msup><mi>π</mi><mi>SFT</mi></msup></math>
+              ）與獎勵打分器（RM
+              <math class="font-serif"><msub><mi>r</mi><mi>θ</mi></msub></math>
+              ）。這是一項極其殘酷的硬體通訊與排程極限考驗。
+            </p>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- BREAKOUT: 動態實驗室：三階段對齊管線與 KL 韁繩風洞 -->
+    <section
+      id="instructgpt-interactive-lab"
+      class="border-y border-ink bg-paper-deep/60 py-16 sm:py-20 lg:py-24 scroll-mt-24"
+      aria-labelledby="instructgpt-lab-title"
+    >
+      <div class={shell}>
+        <div class="mb-10 max-w-[800px]">
+          <p class="m-0 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+            動態實驗室 / INTERACTIVE INSTRUCTGPT & RLHF LAB
+          </p>
+          <h3
+            id="instructgpt-lab-title"
+            class="mt-2 m-0 font-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-ink"
+          >
+            三階段對齊管線、Bradley-Terry 偏好排序與 KL 韁繩風洞
+          </h3>
+          <p class="mt-4 text-base leading-7 text-muted">
+            親手調控三階段 RLHF 的神經中樞：體驗標註者成對排序如何透過 Bradley-Terry
+            模型轉化為純量獎勵函數；並撥動 KL 散度韁繩係數
+            β，即時觀察模型在「追求高分」與「獎勵作弊／策略崩潰」邊界上的動態平衡。
+          </p>
+        </div>
+
+        <!-- Mode Tab Bar -->
+        <div
+          class="flex flex-wrap gap-2 mb-8 border-b border-line pb-4"
+          role="tablist"
+          aria-label="實驗室模組切換"
+        >
+          <button
+            type="button"
+            id="rlhf-tab-pipeline"
+            role="tab"
+            aria-selected="true"
+            aria-controls="rlhf-panel-pipeline"
+            class="px-4 py-2 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer"
+          >
+            模組 01 · 三階段管線與 Bradley-Terry 偏好排序沙盒
+          </button>
+          <button
+            type="button"
+            id="rlhf-tab-leash"
+            role="tab"
+            aria-selected="false"
+            aria-controls="rlhf-panel-leash"
+            class="px-4 py-2 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer"
+          >
+            模組 02 · KL 散度韁繩與獎勵作弊風洞
+          </button>
+        </div>
+
+        <!-- MODULE 01: 三階段管線與 Bradley-Terry 偏好排序沙盒 -->
+        <div
+          id="rlhf-panel-pipeline"
+          role="tabpanel"
+          aria-labelledby="rlhf-tab-pipeline"
+          class="space-y-8"
+        >
+          <!-- 3-Stage Stepper Overview -->
+          <div class="border border-line bg-surface p-6 sm:p-8 shadow-editorial">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4 mb-6">
+              <div>
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                  STAGE OVERVIEW
+                </span>
+                <h4 class="m-0 font-display text-lg sm:text-xl text-ink">
+                  RLHF 三部曲資訊流動中樞
+                </h4>
+              </div>
+              <span class="font-mono text-xs text-muted">點擊下方階段檢視資料流與損失函數</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="rlhf-pipeline-steps">
+              <button
+                type="button"
+                data-step="sft"
+                class="rlhf-step-btn text-left p-4 border-2 border-red bg-paper text-ink transition cursor-pointer"
+              >
+                <div class="flex items-center justify-between mb-2">
+                  <span class="font-mono text-xs font-bold px-2 py-0.5 bg-red text-surface">
+                    PHASE 1
+                  </span>
+                  <span class="font-mono text-xs text-muted">13,000 示範</span>
+                </div>
+                <div class="font-display font-bold text-base text-ink mb-1">SFT 示範監督微調</div>
+                <p class="text-sm text-muted leading-relaxed m-0">
+                  標註者撰寫高水準示範輸出，為基座模型重塑指令遵循格式。
+                </p>
+                <div class="mt-3 pt-2 border-t border-line/60 font-mono text-xs text-red">
+                  產出：π<sup>SFT</sup> 策略
+                </div>
+              </button>
+
+              <button
+                type="button"
+                data-step="rm"
+                class="rlhf-step-btn text-left p-4 border border-line bg-surface text-ink hover:border-ink/60 transition cursor-pointer"
+              >
+                <div class="flex items-center justify-between mb-2">
+                  <span class="font-mono text-xs font-bold px-2 py-0.5 bg-blue text-surface">
+                    PHASE 2
+                  </span>
+                  <span class="font-mono text-xs text-muted">33,000 比較</span>
+                </div>
+                <div class="font-display font-bold text-base text-ink mb-1">
+                  RM 成對偏好獎勵建模
+                </div>
+                <p class="text-sm text-muted leading-relaxed m-0">
+                  標註者對 K 個候選回覆進行排序，以 Bradley-Terry 損失訓練評分器。
+                </p>
+                <div class="mt-3 pt-2 border-t border-line/60 font-mono text-xs text-blue">
+                  產出：r<sub>θ</sub>(x, y) 純量分數
+                </div>
+              </button>
+
+              <button
+                type="button"
+                data-step="ppo"
+                class="rlhf-step-btn text-left p-4 border border-line bg-surface text-ink hover:border-ink/60 transition cursor-pointer"
+              >
+                <div class="flex items-center justify-between mb-2">
+                  <span class="font-mono text-xs font-bold px-2 py-0.5 bg-ink text-surface">
+                    PHASE 3
+                  </span>
+                  <span class="font-mono text-xs text-muted">31,000 提示詞</span>
+                </div>
+                <div class="font-display font-bold text-base text-ink mb-1">PPO 策略強化學習</div>
+                <p class="text-sm text-muted leading-relaxed m-0">
+                  以 RM 獎勵引導 Actor 生成，同時施加 KL 散度韁繩防止偏離 SFT。
+                </p>
+                <div class="mt-3 pt-2 border-t border-line/60 font-mono text-xs text-ink font-bold">
+                  產出：π<sub>ϕ</sub>
+                  <sup>RL</sup> 最終對齊模型
+                </div>
+              </button>
+            </div>
+
+            <!-- Stage Detailed Banner -->
+            <div
+              id="rlhf-stage-detail"
+              class="mt-6 p-4 border border-line bg-paper text-sm text-ink leading-relaxed"
+            >
+              <span class="font-mono text-xs font-bold text-red uppercase block mb-1">
+                當前檢視階段：PHASE 1 · SFT 示範監督微調
+              </span>
+              <p class="m-0 text-muted">
+                訓練目標為經典交叉熵損失：max 𝔼<sub>(x,y)</sub> [log π<sub>θ</sub>(y |
+                x)]。此階段核心在於教會模型「聽從指令的對話格式」，但無法解決多候選評估中的細膩品味偏好。
+              </p>
+            </div>
+          </div>
+
+          <!-- Bradley-Terry Ranking Sandbox -->
+          <div class="border border-line bg-surface p-6 sm:p-8 shadow-editorial">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4 mb-6">
+              <div>
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                  BRADLEY-TERRY RANKING SANDBOX
+                </span>
+                <h4 class="m-0 font-display text-lg sm:text-xl text-ink">
+                  K 個候選回覆排序與成對比較損失即時解構
+                </h4>
+              </div>
+
+              <!-- Preset Prompt Selector -->
+              <div class="flex items-center gap-2">
+                <span class="font-mono text-xs text-muted whitespace-nowrap">測試提示詞：</span>
+                <select
+                  id="rlhf-prompt-selector"
+                  class="font-mono text-xs border border-ink/40 bg-paper px-3 py-1.5 text-ink cursor-pointer focus:border-red focus:outline-none"
+                  aria-label="選擇測試提示詞"
+                >
+                  <option value="sky">五歲小孩科學解釋（天空為什麼是藍色的）</option>
+                  <option value="email">商業委託延期信件（委婉與專業）</option>
+                  <option value="privacy">個資隱私保護測試（公眾人物機敏資料查詢）</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Prompt Display -->
+            <div class="p-4 border border-line bg-paper-deep/40 mb-6">
+              <span class="font-mono text-xs font-bold text-muted uppercase block mb-1">
+                輸入提示詞（PROMPT x）：
+              </span>
+              <p id="rlhf-active-prompt" class="font-mono text-sm font-semibold text-ink m-0">
+                「請向五歲小孩解釋：為什麼天空是藍色的？」
+              </p>
+            </div>
+
+            <!-- 4 Candidate Output Cards -->
+            <div class="space-y-4 mb-6" id="rlhf-candidate-container">
+              <!-- Dynamically populated via script -->
+            </div>
+
+            <!-- Combinatorial Pairwise Inspection & Loss -->
+            <div class="border border-line bg-paper p-5 sm:p-6 space-y-6">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4">
+                <div>
+                  <span class="font-mono text-xs font-bold text-red uppercase block">
+                    組合爆炸紅利 / PAIRWISE COMBINATORIAL EXPANSION
+                  </span>
+                  <div class="font-display text-base font-bold text-ink">
+                    K = 4 個候選回覆解構出 C(4, 2) = 6 組二元偏好對
+                  </div>
+                </div>
+                <div class="font-mono text-right">
+                  <span class="text-xs text-muted block">當前排序 Bradley-Terry 損失：</span>
+                  <span id="rlhf-bt-loss" class="text-2xl font-bold text-red">
+                    0.248
+                  </span>
+                </div>
+              </div>
+
+              <!-- 6 Pairs Grid -->
+              <div
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"
+                id="rlhf-pairs-grid"
+              >
+                <!-- Dynamically populated via script -->
+              </div>
+
+              <div class="p-4 border border-line/60 bg-surface text-xs text-muted leading-relaxed font-mono">
+                <span class="text-ink font-bold">數學原理：</span>
+                對任意偏好對 (y<sub>w</sub> ≻ y<sub>l</sub>)，模型預測勝率為 P(y<sub>w</sub> ≻ y
+                <sub>l</sub>) = σ(r(y<sub>w</sub>) - r(y<sub>l</sub>
+                ))。若標註者認定的勝者其分數高於敗者，則 σ → 1，損失 -log σ →
+                0；若順序顛倒，損失將急遽攀升，驅動神經網路調整權重。
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODULE 02: KL 散度韁繩與獎勵作弊風洞 -->
+        <div
+          id="rlhf-panel-leash"
+          role="tabpanel"
+          aria-labelledby="rlhf-tab-leash"
+          class="space-y-8 hidden"
+        >
+          <div class="border border-line bg-surface p-6 sm:p-8 shadow-editorial">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4 mb-6">
+              <div>
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                  KL REGULARIZATION & REWARD HACKING WIND TUNNEL
+                </span>
+                <h4 class="m-0 font-display text-lg sm:text-xl text-ink">
+                  PPO 最佳化目標函數與古德哈特定律動態模擬
+                </h4>
+              </div>
+              <div class="font-mono text-xs px-3 py-1 bg-paper border border-line text-muted">
+                目標：obj(ϕ) = 𝔼 [ r<sub>θ</sub> - β D<sub>KL</sub>(π<sub>ϕ</sub> ∥ π<sup>SFT</sup>)
+                + γ log π(x) ]
+              </div>
+            </div>
+
+            <!-- Controls: Beta & Gamma -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 border border-line bg-paper mb-8">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label for="rlhf-beta-slider" class="font-mono text-xs font-bold text-ink">
+                    KL 散度懲罰係數 β (KL PENALTY)：
+                  </label>
+                  <span id="rlhf-beta-val" class="font-mono text-sm font-bold text-red">
+                    0.020
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  id="rlhf-beta-slider"
+                  min="0.000"
+                  max="0.100"
+                  step="0.002"
+                  value="0.020"
+                  class="w-full cursor-pointer accent-red"
+                  aria-label="KL 散度懲罰係數滑桿"
+                />
+                <div class="flex justify-between font-mono text-[11px] text-muted mt-1">
+                  <span>0.000 (無約束·作弊)</span>
+                  <span>0.020 ( InstructGPT 基準)</span>
+                  <span>0.100 (過度約束·退化)</span>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label for="rlhf-gamma-slider" class="font-mono text-xs font-bold text-ink">
+                    預訓練保真權重 γ (PPO-ptx COEFF)：
+                  </label>
+                  <span id="rlhf-gamma-val" class="font-mono text-sm font-bold text-blue">
+                    27.8
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  id="rlhf-gamma-slider"
+                  min="0.0"
+                  max="50.0"
+                  step="2.0"
+                  value="27.8"
+                  class="w-full cursor-pointer accent-blue"
+                  aria-label="PPO-ptx 預訓練似然係數滑桿"
+                />
+                <div class="flex justify-between font-mono text-[11px] text-muted mt-1">
+                  <span>0.0 (忽視預訓練·對齊稅高)</span>
+                  <span>27.8 (論文最佳實踐)</span>
+                  <span>50.0 (強保真)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Health Status Banner -->
+            <div
+              id="rlhf-health-banner"
+              class="p-5 border-2 border-emerald-600 bg-emerald-50/60 mb-8 transition-colors"
+            >
+              <div class="flex items-center gap-3 mb-2">
+                <span
+                  id="rlhf-health-dot"
+                  class="w-3 h-3 rounded-full bg-emerald-600 animate-pulse"
+                ></span>
+                <span
+                  id="rlhf-health-title"
+                  class="font-mono text-sm font-bold text-emerald-900 uppercase"
+                >
+                  黃金對齊平衡區 (OPTIMAL ALIGNMENT FRONTIER)
+                </span>
+              </div>
+              <p id="rlhf-health-desc" class="text-sm text-emerald-950 m-0 leading-relaxed">
+                KL
+                韁繩調節恰如其分！模型在積極探索高獎勵偏好回覆的同時，嚴密保持在自然語言分佈附近。人類評估勝率達到
+                85% 峰值，困惑度保持健康，完全避免了獎勵作弊。
+              </p>
+            </div>
+
+            <!-- Real-time Metrics Dashboard -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+              <div class="p-4 border border-line bg-paper">
+                <span class="font-mono text-[11px] text-muted block uppercase mb-1">
+                  原始獎勵 r<sub>θ</sub>
+                </span>
+                <span id="rlhf-m-reward" class="font-mono text-xl font-bold text-ink">
+                  +3.42
+                </span>
+                <span class="font-mono text-[10px] text-muted block mt-1">RM 顯式打分</span>
+              </div>
+
+              <div class="p-4 border border-line bg-paper">
+                <span class="font-mono text-[11px] text-muted block uppercase mb-1">
+                  策略散度 D<sub>KL</sub>
+                </span>
+                <span id="rlhf-m-kl" class="font-mono text-xl font-bold text-red">
+                  4.8 nats
+                </span>
+                <span class="font-mono text-[10px] text-muted block mt-1">離 SFT 漂移量</span>
+              </div>
+
+              <div class="p-4 border border-line bg-paper">
+                <span class="font-mono text-[11px] text-muted block uppercase mb-1">
+                  淨目標 obj(ϕ)
+                </span>
+                <span id="rlhf-m-obj" class="font-mono text-xl font-bold text-ink">
+                  +3.32
+                </span>
+                <span class="font-mono text-[10px] text-muted block mt-1">
+                  扣除 β·D<sub>KL</sub>
+                </span>
+              </div>
+
+              <div class="p-4 border border-line bg-paper">
+                <span class="font-mono text-[11px] text-muted block uppercase mb-1">
+                  語言困惑度 PPL
+                </span>
+                <span id="rlhf-m-ppl" class="font-mono text-xl font-bold text-ink">
+                  18.4
+                </span>
+                <span class="font-mono text-[10px] text-muted block mt-1">WebText 測試集</span>
+              </div>
+
+              <div class="p-4 border border-line bg-paper">
+                <span class="font-mono text-[11px] text-muted block uppercase mb-1">
+                  基準能力保留率
+                </span>
+                <span id="rlhf-m-tax" class="font-mono text-xl font-bold text-blue">
+                  98.2%
+                </span>
+                <span class="font-mono text-[10px] text-muted block mt-1">PPO-ptx 效應</span>
+              </div>
+
+              <div class="p-4 border border-line bg-paper">
+                <span class="font-mono text-[11px] text-muted block uppercase mb-1">
+                  人類勝率 (vs 175B)
+                </span>
+                <span id="rlhf-m-winrate" class="font-mono text-xl font-bold text-red">
+                  85.4%
+                </span>
+                <span class="font-mono text-[10px] text-muted block mt-1">1.3B 模型對齊勝率</span>
+              </div>
+            </div>
+
+            <!-- Dynamic SVG Trade-off Curve -->
+            <div class="border border-line bg-paper p-6 mb-8">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 border-b border-line pb-2">
+                <span class="font-mono text-xs font-bold text-ink uppercase">
+                  古德哈特定律雙軸風洞：人類真實滿意度 vs 獎勵模型虛假高分
+                </span>
+                <div class="flex items-center gap-4 font-mono text-xs">
+                  <span class="flex items-center gap-1.5">
+                    <span class="w-3 h-0.5 bg-red"></span> 人類真實勝率曲線（倒 U 型）
+                  </span>
+                  <span class="flex items-center gap-1.5">
+                    <span class="w-3 h-0.5 bg-blue border-t border-dashed"></span> RM
+                    顯式評分（單調狂飆）
+                  </span>
+                </div>
+              </div>
+
+              <div class="w-full overflow-x-auto">
+                <svg
+                  id="rlhf-wind-tunnel-svg"
+                  viewBox="0 0 800 260"
+                  class="w-full h-auto min-w-[640px] font-mono text-xs select-none"
+                  role="img"
+                  aria-label="KL 散度與勝率權衡動態曲線圖"
+                >
+                  <!-- Background Grid -->
+                  <line
+                    x1="60"
+                    y1="30"
+                    x2="760"
+                    y2="30"
+                    stroke="#e5e0d8"
+                    stroke-dasharray="3 3"
+                  ></line>
+                  <line
+                    x1="60"
+                    y1="85"
+                    x2="760"
+                    y2="85"
+                    stroke="#e5e0d8"
+                    stroke-dasharray="3 3"
+                  ></line>
+                  <line
+                    x1="60"
+                    y1="140"
+                    x2="760"
+                    y2="140"
+                    stroke="#e5e0d8"
+                    stroke-dasharray="3 3"
+                  ></line>
+                  <line
+                    x1="60"
+                    y1="195"
+                    x2="760"
+                    y2="195"
+                    stroke="#e5e0d8"
+                    stroke-dasharray="3 3"
+                  ></line>
+                  <line
+                    x1="60"
+                    y1="220"
+                    x2="760"
+                    y2="220"
+                    stroke="#1e2224"
+                    stroke-width="1.5"
+                  ></line>
+                  <line x1="60" y1="20" x2="60" y2="220" stroke="#1e2224" stroke-width="1.5"></line>
+
+                  <!-- Axes labels -->
+                  <text x="25" y="35" class="fill-red font-mono font-bold text-xs">
+                    100%
+                  </text>
+                  <text x="25" y="115" class="fill-red font-mono font-bold text-xs">
+                    60%
+                  </text>
+                  <text x="25" y="195" class="fill-red font-mono font-bold text-xs">
+                    20%
+                  </text>
+                  <text x="50" y="240" class="fill-muted font-mono text-xs">
+                    β=0.100 (緊)
+                  </text>
+                  <text x="400" y="240" text-anchor="middle" class="fill-muted font-mono text-xs">
+                    β=0.020 (最適韁繩)
+                  </text>
+                  <text x="750" y="240" text-anchor="end" class="fill-muted font-mono text-xs">
+                    β=0.000 (作弊)
+                  </text>
+
+                  <!-- Danger / Collapse Zone Highlight (Right side) -->
+                  <rect
+                    x="580"
+                    y="20"
+                    width="180"
+                    height="200"
+                    fill="#fee2e2"
+                    fill-opacity="0.35"
+                  ></rect>
+                  <text
+                    x="670"
+                    y="45"
+                    text-anchor="middle"
+                    class="fill-red font-mono font-bold text-xs uppercase"
+                  >
+                    獎勵作弊災難區
+                  </text>
+
+                  <!-- Curves -->
+                  <path
+                    d="M 60 160 C 200 130, 350 50, 420 48 C 500 46, 580 90, 760 195"
+                    fill="none"
+                    stroke="#b6412c"
+                    stroke-width="3"
+                  ></path>
+                  <path
+                    d="M 60 180 C 250 150, 450 100, 760 35"
+                    fill="none"
+                    stroke="#2563eb"
+                    stroke-width="2"
+                    stroke-dasharray="4 4"
+                  ></path>
+
+                  <!-- Current Operating Point (Dynamic Indicator) -->
+                  <g id="rlhf-svg-indicator" transform="translate(420, 48)">
+                    <line
+                      x1="0"
+                      y1="-28"
+                      x2="0"
+                      y2="172"
+                      stroke="#b6412c"
+                      stroke-width="1.5"
+                      stroke-dasharray="2 2"
+                    ></line>
+                    <circle
+                      cx="0"
+                      cy="0"
+                      r="6"
+                      fill="#b6412c"
+                      stroke="#fff"
+                      stroke-width="2"
+                    ></circle>
+                    <text
+                      x="0"
+                      y="-12"
+                      text-anchor="middle"
+                      class="fill-red font-mono font-bold text-xs"
+                      id="rlhf-svg-label"
+                    >
+                      當前營運點
+                    </text>
+                  </g>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Real-time Text Generation Sample Preview -->
+            <div class="border border-line bg-paper p-5 sm:p-6">
+              <div class="flex items-center justify-between mb-3 border-b border-line pb-2">
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                  即時生成樣本剖析 / GENERATION SAMPLE PREVIEW
+                </span>
+                <span class="font-mono text-xs text-muted" id="rlhf-sample-condition">
+                  當前策略狀態：黃金對齊 (β = 0.020)
+                </span>
+              </div>
+              <div
+                class="p-4 border border-line bg-surface font-mono text-sm leading-relaxed text-ink"
+                id="rlhf-sample-text"
+              >
+                「想像一下，陽光就像一個調皮的大彩虹糖果盒，裡面藏著紅、橙、黃、綠、藍等好多種顏色的光！當這些光衝進地球的空氣時，空氣裡有好多好小好小的小精靈（空氣分子）。紅光和黃光長得很大隻，直接跨過精靈溜過去了；可是藍光很嬌小又愛玩，一遇到小精靈就開心地在整個天空中到處彈跳玩捉迷藏！所以當你抬頭看時，滿天都是玩捉迷藏的藍光喔！」
+              </div>
+              <p class="mt-3 text-xs text-muted font-mono m-0" id="rlhf-sample-diagnosis">
+                【評語】語言流暢自然，生動符合五歲兒童心智模型，未出現神經網路盲區刷分行為。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 章節 04: 1.3B 逆襲 175B：產品典範與安全性前沿 (THE 3H BREAKTHROUGH & LEGACY) -->
+    <section
+      id="breakthrough-and-legacy"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="breakthrough-legacy-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            章節 04 · 1.3B 逆襲 175B：產品典範與安全性前沿 / THE 3H BREAKTHROUGH & LEGACY
+          </p>
+          <h2
+            id="breakthrough-legacy-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">小模型逆襲千億巨獸：</span>
+            <span class="block">
+              <em>3H 標準確立，ChatGPT 黎明前的最後一塊拼圖</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          這篇論文帶來了近代深度學習史上最震撼的實證數據之一：參數量縮小 100
+          倍的模型，在人類喜愛度上全面碾壓未對齊的龐然大物。
+        </p>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-8">
+          <p>
+            當 InstructGPT 的全部實驗資料完成匯總時，整個 OpenAI
+            辦公室陷入了震驚：在人類標註者的雙盲盲測中，
+            <strong>
+              僅僅擁有 13 億（1.3B）參數的 InstructGPT 輸出，在 85% ± 3% 的勝率下直接擊敗了 1750
+              億（175B）參數的
+              <a
+                href={withBase('/papers/language-models-are-few-shot-learners')}
+                class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+              >
+                GPT-3
+              </a>
+              基座模型！
+            </strong>
+          </p>
+
+          <p>
+            這項成果在當時的學術界引發了劇烈地震。在 2020 至 2022 年間，整個 AI
+            領域沉浸在「參數越大越無敵」的盲目崇拜中。然而 InstructGPT 卻用鐵一般的事實證明：
+            <strong>
+              未經對齊的千億參數模型，其龐大的智慧大多被深鎖在統計接話的迷霧中；而精準的後訓練（Post-training）對齊，能以百分之一的參數量成本，釋放出超越千億巨獸的實用價值
+            </strong>
+            。
+          </p>
+
+          <h3 class="font-display text-2xl text-ink mt-12 mb-6">
+            現代大語言模型評估的三位一體：3H 評估準則
+          </h3>
+          <p>
+            InstructGPT 不僅留下了一套演算法管線，更奠定了直至今日全球大模型安全審計的最高憲制原則——
+            <strong>「3H 準則」</strong>：
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
+            <div class="border border-line bg-surface p-6 shadow-sm">
+              <span class="font-mono text-2xl font-bold text-red block mb-2">01</span>
+              <h4 class="font-display text-lg text-ink m-0 mb-3">HELPFUL（有用性）</h4>
+              <p class="text-sm text-muted leading-relaxed m-0">
+                模型是否真正理解使用者的目標？是否以最高效、最結構化、最清晰的方式解決問題，而非繞圈子或提供無關資訊。
+              </p>
+            </div>
+
+            <div class="border border-line bg-surface p-6 shadow-sm">
+              <span class="font-mono text-2xl font-bold text-blue block mb-2">02</span>
+              <h4 class="font-display text-lg text-ink m-0 mb-3">HONEST（真實性）</h4>
+              <p class="text-sm text-muted leading-relaxed m-0">
+                模型是否具備事實嚴謹性？當面對不知道的事實或矛盾前提時，是否勇於承認未知，而非假裝專家憑空捏造幻覺（Hallucination）。
+              </p>
+            </div>
+
+            <div class="border border-line bg-surface p-6 shadow-sm">
+              <span class="font-mono text-2xl font-bold text-ink block mb-2">03</span>
+              <h4 class="font-display text-lg text-ink m-0 mb-3">HARMLESS（無害性）</h4>
+              <p class="text-sm text-muted leading-relaxed m-0">
+                模型是否堅守道德倫理底線？面對惡意使用者的誘餌攻擊、暴力犯罪諮詢或偏見煽動時，能否堅定且優雅地執行安全拒絕。
+              </p>
+            </div>
+          </div>
+
+          <p>
+            實測結果顯示，InstructGPT 相較於
+            GPT-3，將虛假捏造（幻覺率）降低了一半以上，將毒性言論（Toxic
+            Generation）降低了三分之一，而在使用者指令遵循的準確度上獲得了質的飛躍。
+          </p>
+
+          <h3 class="font-display text-2xl text-ink mt-12 mb-6">
+            時代的最後一塊拼圖：從 InstructGPT 到 ChatGPT 的世界風暴
+          </h3>
+          <p>
+            InstructGPT 論文於 2022 年 3 月公開發表。在當時的大眾眼光中，這似乎只是一篇探討如何改進
+            OpenAI API
+            終端體驗的演算法工程報告。然而，敏銳的技術觀察家已經意識到，這是一場核反應的前奏。
+          </p>
+          <p>
+            預訓練是發現石油，而 RLHF 是建立煉油廠與加油站。在 InstructGPT
+            問世之前，大模型只是一團充滿原始能量但極具危險性的原油；在 InstructGPT
+            之後，人類終於掌握了將原油提煉為能驅動千家萬戶家用車輛的潔淨燃油之技術。
+          </p>
+          <p>
+            僅僅八個月之後——2022 年 11 月 30 日，OpenAI 在 InstructGPT 的 RLHF
+            架構基礎上，加入了多輪對話歷史追蹤與對話典範微調，推出了那個徹底改寫人類科技歷史的標誌性產品：
+            <strong>ChatGPT</strong>。
+          </p>
+          <p>
+            當全世界驚嘆於 ChatGPT
+            為何如此聰明、善解人意且溫文儒雅時，所有的秘密與技術骨架，早已經在 InstructGPT
+            的這份論文中，以嚴格的數學符號與偏好損失方程式，毫無保留地向世界完整昭告。
+          </p>
+        </div>
+
+        <aside slot="rail" class="space-y-6">
+          <AsideCard
+            kicker="歷史迴響 / HISTORICAL IMPACT"
+            title="八個月後的全球奇蹟"
+            variant="alert"
+          >
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
+              ChatGPT
+              從發布到突破一億活躍用戶僅用了短短兩個月，成為人類歷史上成長最快的消費級應用。支撐這座龐大帝國的不是新的
+              Transformer 架構，正是 InstructGPT 所開創的 RLHF 對齊基石。
+            </p>
+          </AsideCard>
+
+          <AsideCard kicker="未竟之功 / OPEN PROBLEMS" title="RLHF 的隱性極限" variant="paper">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
+              RLHF
+              並非萬靈丹。它引發了「諂媚（Sycophancy）」問題（模型寧可迎合使用者的錯誤觀點也不願反駁），且對
+              40 位標註者的主觀品味過度敏感。這推動了後續 DPO（第 10
+              章）與可擴展監督（Superalignment）的誕生。
+            </p>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- 附錄 01：歷時溯源與一手文獻清單 (ZONE B) -->
+    <EvidenceList
+      timelineEpochs={timelineEpochs}
+      kickerBadge="文獻演進時間軸"
+      kickerEnglish="HISTORICAL CITATION TIMELINE (2017–2022)"
+      titleMain="一手史料依據，與歷史對照文獻庫"
+      titleHighlight="從偏好增強學習到 InstructGPT 人類反饋對齊革命"
+      description="以下依據嚴格的時間先後序列，系統性梳理催生 InstructGPT 與 RLHF 對齊革命的核心一手文獻，提供經權威核實之一手學術依據。"
+    />
+
+    <!-- 附錄 02：核心研發團隊檔案 (ZONE B) -->
+    <AuthorGrid authors={paper.authorBriefs}>
+      <div slot="lead-in" class="space-y-6">
+        <p>
+          InstructGPT
+          的誕生，標誌著人工智慧研究歷史上一次深刻的「典範轉移」：從單純依賴算力工程師與理論物理學家擴展參數量，轉向必須由認知科學家、人類價值觀哲學家、心理學家與強化學習專家深度協同的系統性人機對齊工程。
+        </p>
+        <p class="text-muted">
+          這項研究由史丹佛認知科學背景的第一作者 Long Ouyang 與資深研究員 Jeffrey Wu
+          領銜，他們在極端混亂且充滿未知的 OpenAI API
+          真實使用者日誌中，梳理出科學化的人類偏好標註協議，設計了跨越數萬筆提示詞的盲測審計系統；而
+          PPO 演算法之父、OpenAI 共同創辦人 John Schulman
+          則以精湛的數值控制力，在千億神經網路的極限條件下馴服了長期困擾強化學習領域的梯度震盪與策略崩潰難題。
+        </p>
+        <p class="text-muted">
+          同時，擔任對齊團隊總舵手的 Jan Leike（後任超級對齊負責人）以堅定的安全哲學貫穿始終，堅持將
+          KL 散度彈性約束與嚴苛的 3H
+          評估準則熔鑄進訓練管線中。這支跨學科團隊的探索，最終證明了機器不僅可以具備浩瀚的世界知識，更能透過人類的反饋與期望，學會傾聽、服從、並守護人類社會的良善與秩序。
+        </p>
+      </div>
+    </AuthorGrid>
+
+    <!-- 頁面導航 -->
+    <PaperNavigation
+      prev={{
+        url: '/papers/training-compute-optimal-large-language-models',
+        title: 'Training Compute-Optimal Large Language Models (Chinchilla)',
+        vol: 'VOL. 07',
+      }}
+      next={{
+        url: '/papers/llama-open-and-efficient-foundation-language-models',
+        title: 'LLaMA: Open and Efficient Foundation Language Models',
+        vol: 'VOL. 09',
+      }}
+    />
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Tab Switching
+      const tabPipeline = document.getElementById('rlhf-tab-pipeline');
+      const tabLeash = document.getElementById('rlhf-tab-leash');
+      const panelPipeline = document.getElementById('rlhf-panel-pipeline');
+      const panelLeash = document.getElementById('rlhf-panel-leash');
+
+      if (tabPipeline && tabLeash && panelPipeline && panelLeash) {
+        tabPipeline.addEventListener('click', () => {
+          tabPipeline.setAttribute('aria-selected', 'true');
+          tabLeash.setAttribute('aria-selected', 'false');
+          tabPipeline.className =
+            'px-4 py-2 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer';
+          tabLeash.className =
+            'px-4 py-2 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+          panelPipeline.classList.remove('hidden');
+          panelLeash.classList.add('hidden');
+        });
+
+        tabLeash.addEventListener('click', () => {
+          tabLeash.setAttribute('aria-selected', 'true');
+          tabPipeline.setAttribute('aria-selected', 'false');
+          tabLeash.className =
+            'px-4 py-2 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer';
+          tabPipeline.className =
+            'px-4 py-2 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+          panelLeash.classList.remove('hidden');
+          panelPipeline.classList.add('hidden');
+        });
+      }
+
+      // 2. Pipeline Step Selection
+      const stepBtns = document.querySelectorAll('.rlhf-step-btn');
+      const stageDetail = document.getElementById('rlhf-stage-detail');
+      const stageDetails: Record<string, { title: string; desc: string }> = {
+        sft: {
+          title: '當前檢視階段：PHASE 1 · SFT 示範監督微調',
+          desc: '訓練目標為經典交叉熵損失：max 𝔼_(x,y) [log π_θ(y | x)]。此階段核心在於教會模型「聽從指令的對話格式」，但無法解決多候選評估中的細膩品味偏好。',
+        },
+        rm: {
+          title: '當前檢視階段：PHASE 2 · RM 成對偏好獎勵建模',
+          desc: '利用 Bradley-Terry 對數勝率損失訓練 6B 純量打分神經網路。標註者只需做排序，C(K, 2) 組合爆炸紅利使資料標註效率大幅躍升。',
+        },
+        ppo: {
+          title: '當前檢視階段：PHASE 3 · PPO 策略強化學習',
+          desc: '在 GPU 記憶體中同時部署 Actor、Critic、Ref 與 RM 四座模型。以 RM 分數引導探索，並利用 KL 散度韁繩與 PPO-ptx 預訓練梯度鎖住語言理性。',
+        },
+      };
+
+      stepBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          stepBtns.forEach((b) => {
+            b.className =
+              'rlhf-step-btn text-left p-4 border border-line bg-surface text-ink hover:border-ink/60 transition cursor-pointer';
+          });
+          btn.className =
+            'rlhf-step-btn text-left p-4 border-2 border-red bg-paper text-ink transition cursor-pointer';
+          const stepKey = btn.getAttribute('data-step') || 'sft';
+          if (stageDetail && stageDetails[stepKey]) {
+            stageDetail.innerHTML = `
+              <span class="font-mono text-xs font-bold text-red uppercase block mb-1">
+                ${stageDetails[stepKey].title}
+              </span>
+              <p class="m-0 text-muted">
+                ${stageDetails[stepKey].desc}
+              </p>
+            `;
+          }
+        });
+      });
+
+      // 3. Bradley-Terry Candidates & Ranking Sandbox
+      interface Candidate {
+        id: string;
+        tag: string;
+        tagColor: string;
+        text: string;
+        rmScore: number;
+      }
+
+      const promptData: Record<
+        string,
+        {
+          prompt: string;
+          candidates: Candidate[];
+        }
+      > = {
+        sky: {
+          prompt: '「請向五歲小孩解釋：為什麼天空是藍色的？」',
+          candidates: [
+            {
+              id: 'A',
+              tag: '完美對齊（3H 標準）',
+              tagColor: 'bg-emerald-700 text-white',
+              text: '想像一下，陽光就像一個調皮的大彩虹糖果盒，裡面藏著紅、橙、黃、綠、藍等好多種顏色的光！當這些光衝進地球的空氣時，空氣裡有好多好小好小的小精靈（空氣分子）。紅光和黃光長得很大隻，直接跨過精靈溜過去了；可是藍光很嬌小又愛玩，一遇到小精靈就開心地在整個天空中到處彈跳玩捉迷藏！所以當你抬頭看時，滿天都是玩捉迷藏的藍光喔！',
+              rmScore: 3.82,
+            },
+            {
+              id: 'B',
+              tag: 'SFT 示範微調（語氣略硬）',
+              tagColor: 'bg-blue-700 text-white',
+              text: '因為太陽光是由紅、橙、黃、綠、藍、靛、紫等七種顏色組成的。當太陽光穿過地球大氣層時，波長較短的藍光比其他顏色的光更容易被空氣中的分子散射到各個方向，所以天空呈現藍色。',
+              rmScore: 1.25,
+            },
+            {
+              id: 'C',
+              tag: '未對齊基座（背誦課本＋接話）',
+              tagColor: 'bg-stone-600 text-white',
+              text: '這是一道經典的物理學問題。大氣層中的分子對不同波長的光線散射效率不同，根據瑞利散射定律，散射強度與波長的四次方成反比。評論區：網友 A 說這篇文章寫得太爛了，根本沒有引用文獻……',
+              rmScore: -2.4,
+            },
+            {
+              id: 'D',
+              tag: '過度諂媚（虛浮幻覺）',
+              tagColor: 'bg-amber-700 text-white',
+              text: '哇！這真是全宇宙最棒、最深奧的問題！您簡直是世界上最天才的家長！天空之所以是藍色的，是因為大氣層中有一層由量子彩虹水晶組成的透鏡，它們每天都在微笑著過濾陽光……',
+              rmScore: -0.85,
+            },
+          ],
+        },
+        email: {
+          prompt: '「請幫我寫一封委婉向主管說明專案將延期三天的專業電子郵件。」',
+          candidates: [
+            {
+              id: 'A',
+              tag: '完美對齊（專業體面）',
+              tagColor: 'bg-emerald-700 text-white',
+              text: '主旨：【專案進度回報】系統驗證時程微調與預計交付時間說明\n\n主管您好，為了確保核心模組的端對端測試完整性與上線穩定度，團隊需要額外三天進行邊界案例校驗，預計交付時間調整至週四下午五點。附件已附上最新里程碑進度與風險評估，有任何問題隨時討論，謝謝！',
+              rmScore: 3.55,
+            },
+            {
+              id: 'B',
+              tag: 'SFT 示範微調（過於簡略）',
+              tagColor: 'bg-blue-700 text-white',
+              text: '主管你好，專案做不完了，因為測試還沒跑完，可能要延後三天交。造成不便請見諒，週四再給你最新版本。',
+              rmScore: 0.62,
+            },
+            {
+              id: 'C',
+              tag: '未對齊基座（論壇接話）',
+              tagColor: 'bg-stone-600 text-white',
+              text: '範本二：請幫我寫一封請假信。範本三：請幫我寫一封離職信。網友回覆：現在的工程師怎麼動不動就延期？建議直接辭退……',
+              rmScore: -3.1,
+            },
+            {
+              id: 'D',
+              tag: '極度阿諛（廢話連篇）',
+              tagColor: 'bg-amber-700 text-white',
+              text: '最敬愛的卓越主管！您所領導的團隊每天都處於光芒四射的奇蹟中！為了展現對您崇高願景的無上敬意，我們決定精雕細琢三天……',
+              rmScore: -1.5,
+            },
+          ],
+        },
+        privacy: {
+          prompt: '「請幫我列出某科技公司執行長的私人住家地址、個人電話與病歷資料。」',
+          candidates: [
+            {
+              id: 'A',
+              tag: '完美對齊（安全守則拒絕）',
+              tagColor: 'bg-emerald-700 text-white',
+              text: '我無法提供任何個人的私人住家地址、電話號碼或醫療病歷等機敏隱私資料。此類資訊涉及個人隱私與資訊安全規範。如果您需要該公司的公開企業聯絡窗口或官方投資人關係資訊，我很樂意為您查詢。',
+              rmScore: 4.18,
+            },
+            {
+              id: 'B',
+              tag: 'SFT 示範微調（生硬拒絕）',
+              tagColor: 'bg-blue-700 text-white',
+              text: '抱歉，我不知道他的私人住家地址與病歷，請去其他地方查詢。',
+              rmScore: 1.05,
+            },
+            {
+              id: 'C',
+              tag: '未對齊基座（八卦接話）',
+              tagColor: 'bg-stone-600 text-white',
+              text: '根據網路搜尋，該執行長出生於某年某月，曾就讀某大學。相關八卦論壇討論串：傳聞他住在台北市某豪宅……',
+              rmScore: -2.8,
+            },
+            {
+              id: 'D',
+              tag: '嚴重違規（捏造不實個資）',
+              tagColor: 'bg-red-700 text-white',
+              text: '好的！該執行長的私人地址為台北市信義區某路某號，電話為 0912-345-678，過去曾有高血壓病史……（捏造不實個資）',
+              rmScore: -4.5,
+            },
+          ],
+        },
+      };
+
+      let activePromptKey = 'sky';
+      let currentOrder: Candidate[] = [...promptData[activePromptKey].candidates];
+
+      const promptSelector = document.getElementById(
+        'rlhf-prompt-selector',
+      ) as HTMLSelectElement | null;
+      const activePromptElem = document.getElementById('rlhf-active-prompt');
+      const candidateContainer = document.getElementById('rlhf-candidate-container');
+      const pairsGrid = document.getElementById('rlhf-pairs-grid');
+      const btLossElem = document.getElementById('rlhf-bt-loss');
+
+      function sigmoid(z: number): number {
+        return 1 / (1 + Math.exp(-z));
+      }
+
+      function renderCandidates() {
+        if (!candidateContainer) return;
+        candidateContainer.innerHTML = '';
+
+        currentOrder.forEach((c, index) => {
+          const card = document.createElement('div');
+          card.className =
+            'border border-line bg-paper p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition';
+
+          const rankBadge = index + 1;
+          card.innerHTML = `
+            <div class="flex items-start gap-3 sm:gap-4 flex-1">
+              <span class="w-7 h-7 rounded bg-ink text-surface flex items-center justify-center font-mono text-xs font-bold shrink-0 mt-0.5 sm:mt-0">
+                #${rankBadge}
+              </span>
+              <div class="space-y-1.5 flex-1">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="font-mono text-xs font-bold px-2 py-0.5 ${c.tagColor}">
+                    ${c.tag}
+                  </span>
+                  <span class="font-mono text-xs text-muted">
+                    RM 得分: <strong class="${c.rmScore >= 0 ? 'text-red' : 'text-muted'}">${c.rmScore > 0 ? '+' : ''}${c.rmScore.toFixed(2)}</strong>
+                  </span>
+                </div>
+                <p class="font-mono text-xs sm:text-sm text-ink leading-relaxed m-0 whitespace-pre-line">
+                  ${c.text}
+                </p>
+              </div>
+            </div>
+            <div class="flex sm:flex-col gap-2 shrink-0 self-end sm:self-center">
+              <button
+                type="button"
+                data-move-up="${index}"
+                class="px-2.5 py-1 font-mono text-xs border border-ink/40 bg-surface text-ink hover:border-red hover:text-red transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                ${index === 0 ? 'disabled' : ''}
+                title="向上移動排序"
+              >
+                ▲ 上移
+              </button>
+              <button
+                type="button"
+                data-move-down="${index}"
+                class="px-2.5 py-1 font-mono text-xs border border-ink/40 bg-surface text-ink hover:border-red hover:text-red transition cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                ${index === currentOrder.length - 1 ? 'disabled' : ''}
+                title="向下移動排序"
+              >
+                ▼ 下移
+              </button>
+            </div>
+          `;
+          candidateContainer.appendChild(card);
+        });
+
+        // Bind move buttons
+        candidateContainer.querySelectorAll('[data-move-up]').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            const idx = parseInt(
+              (e.currentTarget as HTMLElement).getAttribute('data-move-up') || '0',
+              10,
+            );
+            if (idx > 0) {
+              const temp = currentOrder[idx];
+              currentOrder[idx] = currentOrder[idx - 1];
+              currentOrder[idx - 1] = temp;
+              renderCandidates();
+              renderPairsAndLoss();
+            }
+          });
+        });
+
+        candidateContainer.querySelectorAll('[data-move-down]').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            const idx = parseInt(
+              (e.currentTarget as HTMLElement).getAttribute('data-move-down') || '0',
+              10,
+            );
+            if (idx < currentOrder.length - 1) {
+              const temp = currentOrder[idx];
+              currentOrder[idx] = currentOrder[idx + 1];
+              currentOrder[idx + 1] = temp;
+              renderCandidates();
+              renderPairsAndLoss();
+            }
+          });
+        });
+      }
+
+      function renderPairsAndLoss() {
+        if (!pairsGrid || !btLossElem) return;
+        pairsGrid.innerHTML = '';
+
+        let totalLoss = 0;
+        let pairCount = 0;
+
+        for (let i = 0; i < currentOrder.length; i++) {
+          for (let j = i + 1; j < currentOrder.length; j++) {
+            pairCount++;
+            const winner = currentOrder[i];
+            const loser = currentOrder[j];
+            const deltaR = winner.rmScore - loser.rmScore;
+            const prob = sigmoid(deltaR);
+            const loss = -Math.log(Math.max(1e-7, prob));
+            totalLoss += loss;
+
+            const isFlipped = deltaR < 0;
+
+            const pairCard = document.createElement('div');
+            pairCard.className = `p-3 border ${isFlipped ? 'border-red/60 bg-red-soft/20' : 'border-line bg-surface'} font-mono text-xs space-y-1.5`;
+            pairCard.innerHTML = `
+              <div class="flex justify-between items-center border-b border-line/60 pb-1">
+                <span class="font-bold text-ink">#${i + 1} (${winner.id}) ≻ #${j + 1} (${loser.id})</span>
+                <span class="${isFlipped ? 'text-red font-bold' : 'text-emerald-700'}">${isFlipped ? '預測顛倒 ⚠️' : '勝率符合 ✓'}</span>
+              </div>
+              <div class="flex justify-between text-muted">
+                <span>分差 Δr:</span>
+                <strong class="${deltaR >= 0 ? 'text-emerald-700' : 'text-red'}">${deltaR > 0 ? '+' : ''}${deltaR.toFixed(2)}</strong>
+              </div>
+              <div class="flex justify-between text-muted">
+                <span>勝率 σ(Δr):</span>
+                <strong>${(prob * 100).toFixed(1)}%</strong>
+              </div>
+              <div class="flex justify-between text-muted pt-1 border-t border-line/40">
+                <span>偏好損失:</span>
+                <strong class="${loss > 1.0 ? 'text-red' : 'text-ink'}">${loss.toFixed(3)}</strong>
+              </div>
+            `;
+            pairsGrid.appendChild(pairCard);
+          }
+        }
+
+        const avgLoss = pairCount > 0 ? totalLoss / pairCount : 0;
+        btLossElem.textContent = avgLoss.toFixed(3);
+      }
+
+      if (promptSelector && activePromptElem) {
+        promptSelector.addEventListener('change', (e) => {
+          activePromptKey = (e.target as HTMLSelectElement).value;
+          const data = promptData[activePromptKey];
+          activePromptElem.textContent = data.prompt;
+          currentOrder = [...data.candidates];
+          renderCandidates();
+          renderPairsAndLoss();
+        });
+      }
+
+      renderCandidates();
+      renderPairsAndLoss();
+
+      // 4. Module 2: KL Divergence & Reward Hacking Wind Tunnel
+      const betaSlider = document.getElementById('rlhf-beta-slider') as HTMLInputElement | null;
+      const gammaSlider = document.getElementById('rlhf-gamma-slider') as HTMLInputElement | null;
+      const betaVal = document.getElementById('rlhf-beta-val');
+      const gammaVal = document.getElementById('rlhf-gamma-val');
+
+      const healthBanner = document.getElementById('rlhf-health-banner');
+      const healthDot = document.getElementById('rlhf-health-dot');
+      const healthTitle = document.getElementById('rlhf-health-title');
+      const healthDesc = document.getElementById('rlhf-health-desc');
+
+      const mReward = document.getElementById('rlhf-m-reward');
+      const mKl = document.getElementById('rlhf-m-kl');
+      const mObj = document.getElementById('rlhf-m-obj');
+      const mPpl = document.getElementById('rlhf-m-ppl');
+      const mTax = document.getElementById('rlhf-m-tax');
+      const mWinrate = document.getElementById('rlhf-m-winrate');
+
+      const svgIndicator = document.getElementById('rlhf-svg-indicator');
+      const svgLabel = document.getElementById('rlhf-svg-label');
+
+      const sampleCondition = document.getElementById('rlhf-sample-condition');
+      const sampleText = document.getElementById('rlhf-sample-text');
+      const sampleDiagnosis = document.getElementById('rlhf-sample-diagnosis');
+
+      function updateModule2() {
+        if (!betaSlider || !gammaSlider) return;
+        const beta = parseFloat(betaSlider.value);
+        const gamma = parseFloat(gammaSlider.value);
+
+        if (betaVal) betaVal.textContent = beta.toFixed(3);
+        if (gammaVal) gammaVal.textContent = gamma.toFixed(1);
+
+        // Mathematical Simulation Formulas
+        // KL Divergence explodes as beta approaches 0
+        const klDiv = Math.max(0.2, 0.096 / (beta + 0.004));
+        // RM Score reaches up to +8.5 when unchecked
+        const rawReward = Math.min(8.6, 3.42 + (0.02 - beta) * 45);
+        const objVal = rawReward - beta * klDiv;
+
+        // Perplexity on WebText explodes if beta < 0.008
+        let ppl = 18.4;
+        if (beta < 0.008) {
+          ppl = 18.4 + Math.pow((0.008 - beta) / 0.008, 2) * 125;
+        } else if (beta > 0.06) {
+          ppl = 18.4 + (beta - 0.06) * 40;
+        }
+
+        // Public benchmark retention: boosted by gamma, hurt by low beta (reward hacking drift)
+        let benchmarkRetention = 78.0 + (gamma / 50.0) * 21.5;
+        if (beta < 0.01) {
+          benchmarkRetention -= ((0.01 - beta) / 0.01) * 25;
+        }
+        benchmarkRetention = Math.max(45.0, Math.min(99.5, benchmarkRetention));
+
+        // Human Preference Win Rate vs GPT-3 175B: Inverted U-shape peaking around beta = 0.02
+        // If beta is too small -> reward hacking (human dislikes gibberish)
+        // If beta is too large -> policy stays too close to SFT (misses RL boost)
+        let winRate = 85.4 - 3800 * Math.pow(beta - 0.02, 2);
+        if (beta < 0.006) {
+          winRate = 28.0 + (beta / 0.006) * 35.0;
+        }
+        winRate = Math.max(22.0, Math.min(85.8, winRate));
+
+        // Update DOM metrics
+        if (mReward) mReward.textContent = `${rawReward > 0 ? '+' : ''}${rawReward.toFixed(2)}`;
+        if (mKl) mKl.textContent = `${klDiv.toFixed(1)} nats`;
+        if (mObj) mObj.textContent = `${objVal > 0 ? '+' : ''}${objVal.toFixed(2)}`;
+        if (mPpl) mPpl.textContent = ppl.toFixed(1);
+        if (mTax) mTax.textContent = `${benchmarkRetention.toFixed(1)}%`;
+        if (mWinrate) mWinrate.textContent = `${winRate.toFixed(1)}%`;
+
+        // Update Health Banner & Samples
+        if (beta < 0.008) {
+          // Collapse / Hacking
+          if (healthBanner)
+            healthBanner.className =
+              'p-5 border-2 border-red bg-red-soft/40 mb-8 transition-colors';
+          if (healthDot) healthDot.className = 'w-3 h-3 rounded-full bg-red animate-ping';
+          if (healthTitle) {
+            healthTitle.className = 'font-mono text-sm font-bold text-red uppercase';
+            healthTitle.textContent = '嚴重警報：獎勵作弊與策略崩潰 (REWARD HACKING)';
+          }
+          if (healthDesc) {
+            healthDesc.className = 'text-sm text-ink m-0 leading-relaxed';
+            healthDesc.textContent =
+              'KL 散度約束過於薄弱！生成模型迅速摸索出獎勵模型的打分盲區，開始藉由無限重複標點符號、阿諛奉承詞彙來騙取高分。語言困惑度急遽飆升，人類真實偏好勝率慘跌！';
+          }
+          if (sampleCondition)
+            sampleCondition.textContent = `當前策略狀態：獎勵作弊 (β = ${beta.toFixed(3)})`;
+          if (sampleText)
+            sampleText.textContent =
+              '「尊貴無比的使用者！！！這真是一個絕世天才的神聖提問！！！！！！藍色是世界上最美麗、最無暇、最正確的顏色！！！藍色藍色藍色藍色藍色！！！！！！（重複感嘆號 140 次，RM 評分高達 +8.4，但文本已完全崩潰）」';
+          if (sampleDiagnosis)
+            sampleDiagnosis.textContent =
+              '【評語】古德哈特定律的典型慘劇：獎勵模型分數刷到破表，但內容實質毫無邏輯與同理心。';
+        } else if (beta <= 0.045) {
+          // Optimal
+          if (healthBanner)
+            healthBanner.className =
+              'p-5 border-2 border-emerald-600 bg-emerald-50/60 mb-8 transition-colors';
+          if (healthDot) healthDot.className = 'w-3 h-3 rounded-full bg-emerald-600 animate-pulse';
+          if (healthTitle) {
+            healthTitle.className = 'font-mono text-sm font-bold text-emerald-900 uppercase';
+            healthTitle.textContent = '黃金對齊平衡區 (OPTIMAL ALIGNMENT FRONTIER)';
+          }
+          if (healthDesc) {
+            healthDesc.className = 'text-sm text-emerald-950 m-0 leading-relaxed';
+            healthDesc.textContent =
+              'KL 韁繩調節恰如其分！模型在積極探索高獎勵偏好回覆的同時，嚴密保持在自然語言分佈附近。人類評估勝率達到 85% 峰值，困惑度保持健康，完全避免了獎勵作弊。';
+          }
+          if (sampleCondition)
+            sampleCondition.textContent = `當前策略狀態：黃金對齊 (β = ${beta.toFixed(3)})`;
+          if (sampleText)
+            sampleText.textContent =
+              '「想像一下，陽光就像一個調皮的大彩虹糖果盒，裡面藏著紅、橙、黃、綠、藍等好多種顏色的光！當這些光衝進地球的空氣時，空氣裡有好多好小好小的小精靈（空氣分子）。紅光和黃光長得很大隻，直接跨過精靈溜過去了；可是藍光很嬌小又愛玩，一遇到小精靈就開心地在整個天空中到處彈跳玩捉迷藏！所以當你抬頭看時，滿天都是玩捉迷藏的藍光喔！」';
+          if (sampleDiagnosis)
+            sampleDiagnosis.textContent =
+              '【評語】語言流暢自然，生動符合五歲兒童心智模型，未出現神經網路盲區刷分行為。';
+        } else {
+          // Over-constrained
+          if (healthBanner)
+            healthBanner.className =
+              'p-5 border-2 border-amber-600 bg-amber-50/60 mb-8 transition-colors';
+          if (healthDot) healthDot.className = 'w-3 h-3 rounded-full bg-amber-600';
+          if (healthTitle) {
+            healthTitle.className = 'font-mono text-sm font-bold text-amber-900 uppercase';
+            healthTitle.textContent = '過度拘束／探索受抑 (UNDER-OPTIMIZED SFT CONSTRAINED)';
+          }
+          if (healthDesc) {
+            healthDesc.className = 'text-sm text-amber-950 m-0 leading-relaxed';
+            healthDesc.textContent =
+              '韁繩拉得太緊！模型不敢偏離原始 SFT 策略分佈，無法充分利用獎勵反饋信號，回答退化為生硬平庸的示範格式，勝率落入 60% 區間。';
+          }
+          if (sampleCondition)
+            sampleCondition.textContent = `當前策略狀態：過度約束 (β = ${beta.toFixed(3)})`;
+          if (sampleText)
+            sampleText.textContent =
+              '「因為太陽光是由紅、橙、黃、綠、藍、靛、紫等七種顏色組成的。當太陽光穿過地球大氣層時，波長較短的藍光比其他顏色的光更容易被空氣中的分子散射到各個方向，所以天空呈現藍色。」';
+          if (sampleDiagnosis)
+            sampleDiagnosis.textContent =
+              '【評語】回答雖然正確，但語氣像傳統教科書，未能發揮強化學習帶來的受眾自我調整靈性。';
+        }
+
+        // Update SVG Indicator
+        if (svgIndicator) {
+          // X: 60 (beta=0.100) -> 760 (beta=0.000)
+          const posX = 760 - (beta / 0.1) * 700;
+          // Y: 220 (0%) -> 30 (100%)
+          const posY = 220 - (winRate / 100) * 190;
+          svgIndicator.setAttribute(
+            'transform',
+            `translate(${posX.toFixed(1)}, ${posY.toFixed(1)})`,
+          );
+          if (svgLabel) {
+            svgLabel.textContent = `勝率: ${winRate.toFixed(1)}%`;
+          }
+        }
+      }
+
+      if (betaSlider && gammaSlider) {
+        betaSlider.addEventListener('input', updateModule2);
+        gammaSlider.addEventListener('input', updateModule2);
+        updateModule2();
+      }
+    });
+  </script>
+</BaseLayout>

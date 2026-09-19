@@ -1,0 +1,2165 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../lib/paths';
+import StoryRail from '../../components/StoryRail.astro';
+import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
+import PaperSectionHeader from '../../components/PaperSectionHeader.astro';
+import AsideCard from '../../components/AsideCard.astro';
+import AuthorGrid from '../../components/AuthorGrid.astro';
+import PaperMeta from '../../components/PaperMeta.astro';
+import PaperNavigation from '../../components/PaperNavigation.astro';
+import EvidenceList from '../../components/EvidenceList.astro';
+import {
+  vitPaper,
+  vitTimelineEpochs,
+} from '../../content/papers/an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale';
+
+const paper = vitPaper;
+const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
+
+const story = [
+  {
+    year: '1998–2019',
+    label: '桎梏 / CNN HEGEMONY',
+    title: '卷積壟斷視覺三十年：局部性與平移等變性的黃金枷鎖',
+    body: '從 LeNet-5、AlexNet 到 ResNet，電腦視覺始終依賴滑動卷積核。學界深信圖像本質具有二維空間局部性，而像素級自注意力高達 O(N²) 的二次方記憶體爆炸，使得純 Transformer 跨足視覺看似天方夜譚。',
+    status: 'past' as const,
+  },
+  {
+    year: '2020.10',
+    label: '破局 / THE ViT LEAP',
+    title: '一張圖片等於 16x16 個單字：純 Transformer 全面接管視覺',
+    body: 'Dosovitskiy 等人提出石破天驚的極簡切分：將影像切為 16x16 的非重疊 Patch，直接拉平成視覺單字送入標準 Transformer Encoder。在 3 億張影像預訓練下，ViT 徹底打破 CNN 的上限，且算力開銷大幅降低。',
+    status: 'current' as const,
+  },
+  {
+    year: '2021–至今',
+    label: '大一統 / MULTIMODAL SYNTHESIS',
+    title: '語言與視覺終結學科壁壘：跨模態基礎模型的共同母語',
+    body: 'ViT 引爆了 Swin、MAE、CLIP 與現代多模態大模型（如 LLaVA、GPT-4V、Gemini）。圖像不再需要特化的卷積骨幹，視覺特徵直接化為 Token 與語言流暢對話，宣告多模態大一統時代正式降臨。',
+    status: 'future' as const,
+  },
+];
+---
+
+<BaseLayout
+  title="An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale — ViT (2020)"
+  section="paper"
+  description="深入拆解 Google Brain 2020 年開創性論文 Vision Transformer (ViT)：從 16x16 Patch 切割、線性投影到歸納偏向的尺度分水嶺，見證純 Transformer 如何打破卷積三十年壟斷並奠定多模態大模型基石。"
+>
+  <article>
+    <!-- ========================================== -->
+    <!-- HERO HEADER: 嚴格遵循全域視覺規範 (INVARIANT) -->
+    <!-- ========================================== -->
+    <header class={`${shell} pt-10`}>
+      <div class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
+        <a class="text-red underline underline-offset-4" href={withBase('/')}>
+          THE LLM
+        </a>
+        <span aria-hidden="true">/</span>
+        <span>第 11 章</span>
+      </div>
+
+      <div class="grid grid-cols-1 items-end gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-24">
+        <div>
+          <p class="mb-5 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            VOL. 11 / VISION TRANSFORMER
+          </p>
+
+          <h1 class="m-0 font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight tracking-[-0.04em] text-ink">
+            <span class="block">An Image is Worth 16x16 Words:</span>
+            <em class="block">Transformers for Image Recognition at Scale</em>
+          </h1>
+
+          <p class="mt-8 max-w-[52ch] text-lg leading-8 text-muted">
+            在 2020
+            年以前，電腦視覺與自然語言處理如同隔著一道不可踰越的學科天塹。學者們深信視覺天生必須依賴卷積滑動窗口來捕捉二維局部紋理。直到
+            Google Brain 團隊大膽將照片切成 16x16 像素的小拼圖，直接當作單字送進標準
+            Transformer——一場終結卷積三十年統治、開啟跨模態大一統的革命就此爆發。
+          </p>
+        </div>
+
+        <aside
+          class="border-t-4 border-red bg-surface p-6 shadow-editorial"
+          aria-label="這篇論文的一句評語"
+        >
+          <p class="mb-4 sm:mb-6 font-mono text-xs sm:text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            一句評語 / THE SHORT VERDICT
+          </p>
+          <p class="m-0 max-w-[20ch] sm:max-w-[22ch] font-display text-2xl sm:text-3xl leading-tight text-ink">
+            丟掉滑動卷積核，讓視覺像素直接以單字姿態走入注意力矩陣。
+          </p>
+          <p class="mt-6 mb-0 text-sm sm:text-base leading-relaxed sm:leading-7 text-muted">
+            ViT 首次證明：只要預訓練資料充足，不含任何空間先驗的標準 Transformer 能夠徹底壓制最強
+            CNN，為跨模態多模態模型奠定共同母語。
+          </p>
+        </aside>
+      </div>
+
+      <PaperMeta
+        year={paper.year}
+        venue={paper.venue}
+        readTime="35 分鐘"
+        difficulty="核心奠基"
+        doi={paper.doi}
+      />
+    </header>
+
+    <!-- ========================================== -->
+    <!-- 歷史前後脈絡 (THE ARC) -->
+    <!-- ========================================== -->
+    <section class={`${shell} border-t border-line py-16`} aria-labelledby="story-title">
+      <p class="mb-8 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+        歷史脈絡 / THE ARC
+      </p>
+      <StoryRail events={story} variant="list" label="Vision Transformer 的歷史前後脈絡" />
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 正文區塊：Archetype B 5-Movement 結構 -->
+    <!-- ========================================== -->
+    <main class={`${shell} border-t border-ink py-16 sm:py-24`}>
+      <!-- 章節 01：卷積霸權的雙刃劍 -->
+      <section class="mb-24" id="convolutional-impasse" aria-labelledby="impasse-heading">
+        <PaperSectionHeader
+          id="impasse"
+          kicker="章節 01 · 卷積霸權的雙刃劍 / THE IMPASSE"
+          title="空間歸納偏向，與像素全域比較的二次方爆炸"
+        />
+        <PaperReadingLayout>
+          <div class="space-y-6 text-base leading-8 text-ink">
+            <p>
+              要理解 Vision Transformer (ViT) 帶來的衝擊，必須先回到 2020
+              年前夕電腦視覺的物理現實。從直覺上看，一張數位圖檔本質上是一個三維數值矩陣：高
+              <math class="font-serif"><mi>H</mi></math>、寬
+              <math class="font-serif"><mi>W</mi></math>、色彩通道
+              <math class="font-serif"><mi>C</mi><mo>=</mo><mn>3</mn></math>
+              （紅、綠、藍）。一張日常手機拍攝的照片可能包含上千萬顆像素，即便是經過縮小的標準基準測試影像，例如
+              <math class="font-serif"><mn>224</mn><mo>×</mo><mn>224</mn></math>，其背後也是由整整
+              150,528 個連續數值緊密排列而成。
+            </p>
+
+            <p>
+              自 1998 年 Yann LeCun 提出 LeNet-5、2012 年 Alex Krizhevsky 掀起 AlexNet
+              深度學習狂潮，乃至 2015 年何愷明等人發明 ResNet 以來，整個 AI
+              界達成了一個近乎神聖不可侵犯的共識：
+              <strong>
+                處理視覺訊號，必須仰賴卷積神經網路（Convolutional Neural Networks, CNN）
+              </strong>
+              。
+            </p>
+
+            <p>
+              這種信仰絕非空穴來風，而是源於 CNN
+              深深刻在架構骨髓裡的兩大物理先驗，在機器學習理論中被稱為「歸納偏向（Inductive
+              Bias）」：
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8 not-prose">
+              <div class="border border-line bg-surface p-6 shadow-sm">
+                <div class="flex items-center gap-2 mb-3">
+                  <span class="h-2 w-2 rounded-full bg-red"></span>
+                  <h3 class="m-0 font-display text-lg font-bold text-ink">
+                    二維空間局部性 / 2D Locality
+                  </h3>
+                </div>
+                <p class="m-0 text-sm leading-relaxed text-muted">
+                  CNN 透過細小的滑動卷積核（如
+                  <math class="font-serif"><mn>3</mn><mo>×</mo><mn>3</mn></math> 或
+                  <math class="font-serif"><mn>5</mn><mo>×</mo><mn>5</mn></math>
+                  ）在特徵圖上逐行掃描。它強硬假設：
+                  <strong>
+                    相鄰的像素彼此高度相關（構成輪廓、材質與斑塊），而相距遙遠的像素在初始階段彼此獨立
+                  </strong>
+                  。這使得單個神經元只需與極小的局部區域連線，參數用量大幅減少。
+                </p>
+              </div>
+
+              <div class="border border-line bg-surface p-6 shadow-sm">
+                <div class="flex items-center gap-2 mb-3">
+                  <span class="h-2 w-2 rounded-full bg-blue"></span>
+                  <h3 class="m-0 font-display text-lg font-bold text-ink">
+                    平移等變性 / Translation Equivariance
+                  </h3>
+                </div>
+                <p class="m-0 text-sm leading-relaxed text-muted">
+                  同一個卷積核的權重在整張圖像的所有空間位置上嚴格共享。如果一隻柴犬從照片左下角平移到了右上角，卷積核所產生的特徵活化只會在空間座標上同步平移，神經網路不需要在幾百萬個不同座標位置分別重新學習「柴犬長什麼樣子」。
+                </p>
+              </div>
+            </div>
+
+            <p>
+              既然卷積先驗如此完美契合自然界的光學投影規律，為什麼 2017
+              年在自然語言處理領域稱霸的自注意力機制（Self-Attention）不能順理成章地橫掃電腦視覺？
+            </p>
+
+            <p>
+              答案在於一個殘酷的計算障礙：
+              <strong>全域自注意力對序列長度呈現恐怖的二次方爆炸（Quadratic Complexity）</strong>。
+            </p>
+
+            <p>
+              在語言模型中，一段文字通常包含幾百到幾千個 Token，計算所有詞彙兩兩成對的注意力矩陣
+              <math class="font-serif"><mi>Q</mi><msup><mi>K</mi><mi>T</mi></msup></math>
+              尚在硬體承受範圍內。但若直接將圖像中的「每一個像素」當作一個 Token，以一張
+              <math class="font-serif"><mn>224</mn><mo>×</mo><mn>224</mn></math>
+              的小圖為例，像素序列長度便高達：
+            </p>
+
+            <math display="block" class="editorial-math my-6" aria-label="像素序列長度計算">
+              <mi>N</mi>
+              <mo>=</mo>
+              <mi>H</mi>
+              <mo>×</mo>
+              <mi>W</mi>
+              <mo>=</mo>
+              <mn>224</mn>
+              <mo>×</mo>
+              <mn>224</mn>
+              <mo>=</mo>
+              <mn>50,176</mn>
+            </math>
+
+            <p>
+              長度為 50,176 的序列，其全域成對注意力權重矩陣的大小為
+              <math class="font-serif"><mi>N</mi><mo>×</mo><mi>N</mi><mo>=</mo><mn>50,176</mn><mo>×</mo><mn>50,176</mn><mo>≈</mo><mn>2.5</mn><mo>×</mo><msup><mn>10</mn><mn>9</mn></msup></math>
+              。單單一層 Transformer 的一個注意力頭，就需要儲存超過 25 億個浮點數（約 10 GB
+              視訊記憶體）；若是一張常見的百萬像素（
+              <math class="font-serif"><mn>1024</mn><mo>×</mo><mn>1024</mn></math>）照片，
+              <math class="font-serif"><msup><mi>N</mi><mn>2</mn></msup></math> 將直逼
+              <strong>1 兆筆運算</strong>！在當時的 GPU 記憶體架構下，前向傳播會在百分之一秒內引爆
+              OOM（Out of Memory）癱瘓崩潰。
+            </p>
+
+            <p>
+              為了繞過這個死穴，2018 至 2020 年間的視覺學界做出了各種妥協：有的只在 CNN 頂部加一層
+              Non-local 模組，有的把注意力限制在水平與垂直的軸向（Axial
+              Attention），有的限制在鄰近局部像素小窗內。然而，這些折衷方案充滿了高度特化的客製化
+              CUDA 算子，缺乏現代 GPU 對通用矩陣乘法的硬體加速優勢，非但無法取代
+              CNN，反而使工程實作支離破碎。
+            </p>
+
+            <p>
+              更關鍵的哲學枷鎖在於：<strong>卷積的局部性是優勢，也是無法打破的認知天花板</strong>
+              。在深層 ResNet
+              中，一個位於左上角像素的特徵，要想與右下角像素交流，必須經過數十個卷積層的層層傳遞。在跨越這段漫長的路徑時，低階精細特徵早已被降採樣與池化模糊抹平。視覺學界急需一種能同時維持全域視野、又不被百萬像素壓垮的全新典範。
+            </p>
+          </div>
+
+          <aside slot="rail" class="space-y-6">
+            <AsideCard kicker="硬體代價 / HARDWARE CEILING" title="像素級全域注意力的崩潰邊緣">
+              <p class="text-sm leading-relaxed text-muted">
+                若將圖像中的每個像素都當作獨立 Token 送入 Self-Attention，計算量會隨圖像邊長的四次方
+                <math class="font-serif"><mi>O</mi><mo stretchy="false">(</mo><msup><mi>H</mi><mn>2</mn></msup><msup><mi>W</mi><mn>2</mn></msup><mo stretchy="false">)</mo></math>
+                劇烈膨脹。一張百萬像素圖片的注意力權重矩陣將包含超過 1 兆個參數，消耗數 TB
+                視訊記憶體，這正是 Transformer 過去難以直接踏入視覺領域的核心物理死結。
+              </p>
+            </AsideCard>
+          </aside>
+        </PaperReadingLayout>
+      </section>
+
+      <!-- 章節 02：核心機制拆解 -->
+      <section class="mb-24" id="patch-embeddings-mechanism" aria-labelledby="patch-heading">
+        <PaperSectionHeader
+          id="patch"
+          kicker="章節 02 · 核心機制拆解 / CORE MECHANISM"
+          title="Patch 拼圖、線性投影矩陣與動態注意力擾動"
+        />
+        <PaperReadingLayout>
+          <div class="space-y-6 text-base leading-8 text-ink">
+            <p>
+              2020 年 10 月，Google Brain 柏林與蘇黎世團隊的 Alexey Dosovitskiy、Lucas Beyer
+              等人發表了一篇標題無比詩意的論文：
+              <strong>《An Image is Worth 16x16 Words》（一張圖片等於 16x16 個單字）</strong>
+              。這篇論文破天荒地提出了一個看似極度大膽、甚至略顯粗暴的創見：
+            </p>
+
+            <blockquote class="my-6 border-l-4 border-red bg-surface py-4 px-6 text-lg italic text-ink">
+              既然像素太多算不動，我們為什麼不把整張圖片切成一塊塊拼圖？每一個 16x16
+              像素的小圖塊，不就是一個「視覺單字」嗎？
+            </blockquote>
+
+            <p>
+              這個神來之筆瞬間化解了困擾學界三年的計算死穴。讓我們以嚴格的數學符號逐步拆解這個流程。
+            </p>
+
+            <h3 class="mt-8 mb-4 font-display text-2xl font-bold text-ink">
+              1. 圖像切塊與序列拉平（Patch Extraction & Flattening）
+            </h3>
+
+            <p>
+              給定原始二維彩色圖像
+              <math class="font-serif"><mi mathvariant="bold">x</mi><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mi>H</mi><mo>×</mo><mi>W</mi><mo>×</mo><mi>C</mi></mrow></msup></math>
+              ，設定預設的圖塊邊長為 <math class="font-serif"><mi>P</mi><mo>=</mo><mn>16</mn></math>
+              。模型沿著空間網格將圖像切分成 <math class="font-serif"><mi>N</mi></math>
+              個互不重疊的小圖塊，切出的總圖塊數量為：
+            </p>
+
+            <math display="block" class="editorial-math my-6" aria-label="圖塊數量計算公式">
+              <mi>N</mi>
+              <mo>=</mo>
+              <mfrac>
+                <mrow>
+                  <mi>H</mi>
+                  <mo>·</mo>
+                  <mi>W</mi>
+                </mrow>
+                <msup><mi>P</mi><mn>2</mn></msup>
+              </mfrac>
+            </math>
+
+            <p>
+              以標準輸入尺寸
+              <math class="font-serif"><mn>224</mn><mo>×</mo><mn>224</mn><mo>×</mo><mn>3</mn></math>
+              為例，切塊後的總數量為：
+            </p>
+
+            <math display="block" class="editorial-math my-6" aria-label="標準 ViT 圖塊數量計算">
+              <mi>N</mi>
+              <mo>=</mo>
+              <mfrac>
+                <mrow>
+                  <mn>224</mn>
+                  <mo>×</mo>
+                  <mn>224</mn>
+                </mrow>
+                <mrow>
+                  <mn>16</mn>
+                  <mo>×</mo>
+                  <mn>16</mn>
+                </mrow>
+              </mfrac>
+              <mo>=</mo>
+              <mn>14</mn>
+              <mo>×</mo>
+              <mn>14</mn>
+              <mo>=</mo>
+              <mn>196</mn>
+            </math>
+
+            <p>
+              原本高達 50,176 個像素的窒息序列，瞬間被壓縮成僅有
+              <strong>196 個圖塊（Patches）</strong>！序列長度縮減了整整 256
+              倍，使得後續自注意力矩陣的計算量暴降了
+              <math class="font-serif"><msup><mn>256</mn><mn>2</mn></msup><mo>=</mo><mn>65,536</mn></math>
+              倍。
+            </p>
+
+            <p>
+              每一個小圖塊包含
+              <math class="font-serif"><mn>16</mn><mo>×</mo><mn>16</mn><mo>=</mo><mn>256</mn></math>
+              顆像素，每個像素有 3 個色彩數值，因此每個圖塊拉平成向量後的維度為：
+            </p>
+
+            <math display="block" class="editorial-math my-6" aria-label="圖塊拉平維度計算">
+              <msub><mi>D</mi><mtext>patch</mtext></msub>
+              <mo>=</mo>
+              <msup><mi>P</mi><mn>2</mn></msup>
+              <mo>·</mo>
+              <mi>C</mi>
+              <mo>=</mo>
+              <mn>16</mn>
+              <mo>×</mo>
+              <mn>16</mn>
+              <mo>×</mo>
+              <mn>3</mn>
+              <mo>=</mo>
+              <mn>768</mn>
+            </math>
+
+            <p>
+              整張圖片就此被整齊地重塑為一個矩陣
+              <math class="font-serif"><msub><mi mathvariant="bold">x</mi><mi>p</mi></msub><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mi>N</mi><mo>×</mo><mo stretchy="false">(</mo><msup><mi>P</mi><mn>2</mn></msup><mi>C</mi><mo stretchy="false">)</mo></mrow></msup><mo>=</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mn>196</mn><mo>×</mo><mn>768</mn></mrow></msup></math>
+              。
+            </p>
+
+            <h3 class="mt-8 mb-4 font-display text-2xl font-bold text-ink">
+              2. 線性投影與可學習類別標記（Patch Embedding & [CLS] Token）
+            </h3>
+
+            <p>
+              拉平後的 768 維像素向量還不能直接送入 Transformer，因為模型的隱藏層維度
+              <math class="font-serif"><mi>D</mi></math> 可能不同（例如 ViT-Large 的
+              <math class="font-serif"><mi>D</mi><mo>=</mo><mn>1024</mn></math>，ViT-Huge 的
+              <math class="font-serif"><mi>D</mi><mo>=</mo><mn>1280</mn></math>
+              ）。作者引入了一個可訓練的線性投影矩陣
+              <math class="font-serif"><mi mathvariant="bold">E</mi><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mo stretchy="false">(</mo><msup><mi>P</mi><mn>2</mn></msup><mi>C</mi><mo stretchy="false">)</mo><mo>×</mo><mi>D</mi></mrow></msup></math>
+              ，將每個圖塊映射到統一度量空間中。在工程實作上，這一步完全等價於一個卷積核大小為
+              <math class="font-serif"><mn>16</mn><mo>×</mo><mn>16</mn></math>、步幅（Stride）為 16
+              的標準二維卷積！
+            </p>
+
+            <p>
+              與此同時，ViT 借鑑了 BERT 的經典設計：在所有 196
+              個圖塊之前，額外拼上一個可學習的隨機初始化特殊向量——
+              <strong>
+                類別標記（Class Token,
+                <math class="font-serif"><msub><mi mathvariant="bold">x</mi><mtext>class</mtext></msub><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mi>D</mi></msup></math>
+                ）
+              </strong>
+              。
+            </p>
+
+            <p>
+              為什麼不直接對所有輸出的圖塊做全域平均池化（Global Average
+              Pooling）？這是因為在無歸納偏向的架構中，平均池化會人為賦予每個空間區域等同的權重。而加入一個完全中立、初始無物理位置含義的
+              `[CLS]` 標記，能夠強迫 Transformer
+              的各層自注意力機制，自主將與最終分類最相關的特徵資訊「路由」匯聚到這個標記中。
+            </p>
+
+            <!-- 響應式架構圖 -->
+            <div class="my-8 rounded border border-line bg-surface p-6 sm:p-8 shadow-sm not-prose">
+              <div class="mb-4 flex items-center justify-between border-b border-line pb-3">
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                  架構流向圖 / ARCHITECTURAL PIPELINE
+                </span>
+                <span class="font-mono text-xs text-muted">224x224 RGB 影像至 197 個向量</span>
+              </div>
+
+              <svg
+                viewBox="0 0 800 240"
+                class="w-full h-auto text-ink font-mono text-xs"
+                role="img"
+                aria-label="Vision Transformer Patch 切割與投影架構圖"
+              >
+                <!-- 原始圖片 -->
+                <rect
+                  x="20"
+                  y="40"
+                  width="100"
+                  height="100"
+                  fill="#f5efe4"
+                  stroke="#111"
+                  stroke-width="2"
+                />
+                <path
+                  d="M45 40 v100 M70 40 v100 M95 40 v100 M20 65 h100 M20 90 h100 M20 115 h100"
+                  stroke="#888"
+                  stroke-width="1"
+                  stroke-dasharray="2 2"
+                />
+                <text
+                  x="70"
+                  y="165"
+                  text-anchor="middle"
+                  font-size="11"
+                  fill="#111"
+                  font-weight="bold"
+                >
+                  原始輸入
+                </text>
+                <text x="70" y="180" text-anchor="middle" font-size="10" fill="#666">
+                  224×224×3
+                </text>
+
+                <!-- 箭頭 1 -->
+                <path d="M135 90 h40" stroke="#d93829" stroke-width="2" marker-end="url(#arrow)" />
+                <text x="155" y="80" text-anchor="middle" font-size="9" fill="#d93829">
+                  切分成 196 塊
+                </text>
+
+                <!-- 16x16 Patches -->
+                <rect
+                  x="190"
+                  y="55"
+                  width="70"
+                  height="70"
+                  fill="#fff"
+                  stroke="#111"
+                  stroke-width="1.5"
+                />
+                <rect
+                  x="200"
+                  y="65"
+                  width="70"
+                  height="70"
+                  fill="#fff"
+                  stroke="#111"
+                  stroke-width="1.5"
+                />
+                <rect
+                  x="210"
+                  y="75"
+                  width="70"
+                  height="70"
+                  fill="#fff"
+                  stroke="#d93829"
+                  stroke-width="2"
+                />
+                <text
+                  x="245"
+                  y="165"
+                  text-anchor="middle"
+                  font-size="11"
+                  fill="#111"
+                  font-weight="bold"
+                >
+                  196 個 Patches
+                </text>
+                <text x="245" y="180" text-anchor="middle" font-size="10" fill="#666">
+                  每塊 768 維
+                </text>
+
+                <!-- 箭頭 2 -->
+                <path d="M295 90 h40" stroke="#d93829" stroke-width="2" />
+                <text x="315" y="80" text-anchor="middle" font-size="9" fill="#d93829">
+                  線性投影 E
+                </text>
+
+                <!-- 加上 [CLS] 與 Position Embeddings -->
+                <rect
+                  x="350"
+                  y="60"
+                  width="30"
+                  height="60"
+                  fill="#d93829"
+                  stroke="#111"
+                  stroke-width="1.5"
+                />
+                <text
+                  x="365"
+                  y="95"
+                  text-anchor="middle"
+                  font-size="10"
+                  fill="#fff"
+                  font-weight="bold"
+                >
+                  [CLS]
+                </text>
+
+                <rect
+                  x="385"
+                  y="60"
+                  width="22"
+                  height="60"
+                  fill="#fff"
+                  stroke="#111"
+                  stroke-width="1"
+                />
+                <text x="396" y="95" text-anchor="middle" font-size="9" fill="#666">
+                  1
+                </text>
+                <rect
+                  x="410"
+                  y="60"
+                  width="22"
+                  height="60"
+                  fill="#fff"
+                  stroke="#111"
+                  stroke-width="1"
+                />
+                <text x="421" y="95" text-anchor="middle" font-size="9" fill="#666">
+                  2
+                </text>
+                <text x="445" y="95" text-anchor="middle" font-size="12" fill="#666">
+                  ···
+                </text>
+                <rect
+                  x="460"
+                  y="60"
+                  width="26"
+                  height="60"
+                  fill="#fff"
+                  stroke="#111"
+                  stroke-width="1"
+                />
+                <text x="473" y="95" text-anchor="middle" font-size="9" fill="#666">
+                  196
+                </text>
+
+                <text x="420" y="145" text-anchor="middle" font-size="10" fill="#185abc">
+                  + 1D 位置編碼 E_pos
+                </text>
+                <text
+                  x="420"
+                  y="165"
+                  text-anchor="middle"
+                  font-size="11"
+                  fill="#111"
+                  font-weight="bold"
+                >
+                  197 個 Token 向量
+                </text>
+                <text x="420" y="180" text-anchor="middle" font-size="10" fill="#666">
+                  形狀: (197, D)
+                </text>
+
+                <!-- 箭頭 3 -->
+                <path d="M500 90 h40" stroke="#d93829" stroke-width="2" />
+
+                <!-- Transformer Encoder -->
+                <rect
+                  x="555"
+                  y="40"
+                  width="110"
+                  height="100"
+                  fill="#f8f9fa"
+                  stroke="#111"
+                  stroke-width="2"
+                />
+                <text
+                  x="610"
+                  y="80"
+                  text-anchor="middle"
+                  font-size="11"
+                  font-weight="bold"
+                  fill="#111"
+                >
+                  標準 Transformer
+                </text>
+                <text
+                  x="610"
+                  y="100"
+                  text-anchor="middle"
+                  font-size="11"
+                  font-weight="bold"
+                  fill="#111"
+                >
+                  Encoder
+                </text>
+                <text x="610" y="120" text-anchor="middle" font-size="10" fill="#666">
+                  (L 層 MSA + MLP)
+                </text>
+
+                <!-- 箭頭 4 -->
+                <path d="M680 90 h35" stroke="#d93829" stroke-width="2" />
+
+                <!-- 分類頭 -->
+                <rect
+                  x="730"
+                  y="65"
+                  width="55"
+                  height="50"
+                  fill="#111"
+                  stroke="#111"
+                  stroke-width="1"
+                />
+                <text
+                  x="757"
+                  y="90"
+                  text-anchor="middle"
+                  font-size="10"
+                  fill="#fff"
+                  font-weight="bold"
+                >
+                  MLP
+                </text>
+                <text x="757" y="105" text-anchor="middle" font-size="10" fill="#fff">
+                  Head
+                </text>
+                <text
+                  x="757"
+                  y="140"
+                  text-anchor="middle"
+                  font-size="11"
+                  fill="#d93829"
+                  font-weight="bold"
+                >
+                  分類類別
+                </text>
+              </svg>
+            </div>
+
+            <h3 class="mt-8 mb-4 font-display text-2xl font-bold text-ink">
+              3. 一維位置編碼的自發空間幾何學習（1D Positional Embeddings）
+            </h3>
+
+            <p>
+              將二維圖像拼圖拉成一維佇列後，模型完全丟失了空間幾何位置（誰在誰的左邊、誰在誰的上方）。為了賦予位置感知，必須加上位置編碼
+              <math class="font-serif"><msub><mi mathvariant="bold">E</mi><mtext>pos</mtext></msub><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mo stretchy="false">(</mo><mi>N</mi><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo><mo>×</mo><mi>D</mi></mrow></msup></math>
+              。
+            </p>
+
+            <p>
+              在設計初期，研究者直覺認為應該採用「二維位置編碼」（分別記錄橫縱座標
+              <math class="font-serif"><mi>X</mi><mo>,</mo><mi>Y</mi></math>
+              ）。然而消融實驗帶來了震撼的結果：
+              <strong>
+                使用最簡陋的一維可學習位置編碼（1D Learnable
+                Embeddings），模型在訓練完畢後，其學會的餘弦相似度矩陣竟然自發性地完美拼出了二維網格拓撲！
+              </strong>
+            </p>
+
+            <p>
+              對於任意一個 Patch 的位置向量，它與同一行、同一列鄰近 Patch
+              的位置向量相似度最高，並隨著二維歐幾里得距離增加而平滑遞減。這證明了 Transformer
+              強大的表徵能力：根本不需要人類工程師處心積慮設計二維空間幾何公式，注意力機制自己就能在海量資料中重建二維物理世界的真實幾何。
+            </p>
+
+            <h3 class="mt-8 mb-4 font-display text-2xl font-bold text-ink">
+              4. 動態注意力擾動案例（Dynamic Perturbation Case）
+            </h3>
+
+            <p>
+              為了讓讀者深刻體會 ViT 與 CNN 的本質差異，我們來進行一個具體的「動態輸入擾動」實驗。
+            </p>
+
+            <p>
+              假設輸入一張台灣研究生非常熟悉的照片：
+              <strong>
+                「台灣高鐵車廂內，窗外是嘉南平原綠油油的稻田，前景是一位研究生坐在位子上，手持一台發光的平板電腦。」
+              </strong>
+            </p>
+
+            <p>
+              此時，位於畫面正中央偏下的 <strong>第 142 號 Patch</strong>
+              剛好落在「平板電腦的發光螢幕」上：
+            </p>
+
+            <ul class="list-disc pl-6 space-y-3">
+              <li>
+                <strong>在傳統 CNN 中：</strong>卷積核對第 142
+                號圖塊的運算完全是靜態的——滑動濾波器始終檢測高頻的矩形邊緣和強烈的藍光液晶對比。它無法直接知道
+                50 公分外研究生的臉部在哪裡，必須等待數十層網絡逐層把特徵向外漫延。
+              </li>
+              <li>
+                <strong>在 ViT 的全域自注意力中（Base Case）：</strong>第 142 號 Patch 的 Query
+                向量能直接跨越整張圖片，瞬間與第 143 號 Patch（握著螢幕的手指）以及第 68 號
+                Patch（低頭凝視螢幕的研究生雙眼）產生極高的點積相似度。透過多頭注意力，它同時捕捉了「手持設備」的物體關聯與「注視螢幕」的語義互動。
+              </li>
+              <li>
+                <strong>動態擾動（Perturbed Case）：</strong>
+                現在，我們在像素層面做一個局部擾動——將研究生手中的「發光平板電腦」，換成一本「泛黃的紙本精裝論文專著」。
+              </li>
+              <li>
+                <strong>機制的即時動態響應：</strong>第 142 號 Patch 的數值分佈發生改變，其產生的
+                Query
+                向量瞬間變換了方向。此時，原本高度聚焦於車廂天花板反光與螢幕發光特徵的注意力頭，立即重定向關注到第
+                141 號
+                Patch（書籍翻頁的紙張陰影）與窗外柔和的自然散射光線。自注意力矩陣依據全圖語意動態重新分配了權重，而非像
+                CNN 一樣僵硬套用固定的卷積範本。
+              </li>
+            </ul>
+          </div>
+
+          <aside slot="rail" class="space-y-6">
+            <AsideCard kicker="直覺對比 / CONCEPTUAL SHIFT" title="卷積核 vs 視覺單字">
+              <p class="text-sm leading-relaxed text-muted">
+                CNN 像是帶著放大鏡在照片上爬行的螞蟻，每一步只能看清眼前
+                <math class="font-serif"><mn>3</mn><mo>×</mo><mn>3</mn></math> 的像素；而 ViT
+                則是站在展覽廳中央的觀察者，將 196 張拼圖一覽無遺，在第 1
+                層網絡就能直接建立畫布任意兩角的瞬間對話。
+              </p>
+            </AsideCard>
+          </aside>
+        </PaperReadingLayout>
+      </section>
+
+      <!-- BREAKOUT: 動態實驗室：視覺切片投影與歸納偏向分水嶺實驗室 -->
+      <section
+        id="vit-interactive-lab"
+        class="border-y border-ink bg-paper-deep/60 py-16 sm:py-20 lg:py-24 scroll-mt-24 mb-24"
+        aria-labelledby="vit-lab-title"
+      >
+        <div class={shell}>
+          <div class="mb-10 max-w-[800px]">
+            <p class="m-0 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+              動態實驗室 / INTERACTIVE VISION TRANSFORMER LAB
+            </p>
+            <h3
+              id="vit-lab-title"
+              class="mt-2 m-0 font-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-ink"
+            >
+              視覺切片投影與歸納偏向分水嶺實驗室
+            </h3>
+            <p class="mt-4 text-base leading-7 text-muted">
+              親手拆解 ViT 的極簡優雅：調整切片尺寸 P 觀察二維畫布如何拉平成一維 Token
+              序列，並推動預訓練資料規模從 130 萬張擴展至 3 億張，見證純 Transformer
+              如何打破卷積歸納偏向的黃金枷鎖。
+            </p>
+          </div>
+
+          <!-- Mode Tab Bar -->
+          <div
+            class="flex flex-wrap gap-2 mb-8 border-b border-line pb-4"
+            role="tablist"
+            aria-label="實驗室模組切換"
+          >
+            <button
+              type="button"
+              id="vit-tab-patch"
+              role="tab"
+              aria-selected="true"
+              aria-controls="vit-panel-patch"
+              class="px-4 py-2 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer"
+            >
+              模組 01 · 影像切片與線性投影沙盒
+            </button>
+            <button
+              type="button"
+              id="vit-tab-bias"
+              role="tab"
+              aria-selected="false"
+              aria-controls="vit-panel-bias"
+              class="px-4 py-2 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer"
+            >
+              模組 02 · 歸納偏向與資料規模分水嶺
+            </button>
+          </div>
+
+          <!-- PANEL 01: 影像切片與線性投影沙盒 -->
+          <div
+            id="vit-panel-patch"
+            role="tabpanel"
+            aria-labelledby="vit-tab-patch"
+            class="space-y-8"
+          >
+            <!-- Controls: Presets + Patch Size -->
+            <div class="border border-ink bg-surface p-5 sm:p-6 space-y-4">
+              <div>
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-red block mb-3">
+                  PRESET IMAGE SAMPLES / 測試影像樣式
+                </span>
+                <div class="flex flex-wrap gap-2" id="vit-preset-container">
+                  <!-- Preset buttons rendered by JS -->
+                </div>
+              </div>
+
+              <!-- Patch Size Selector -->
+              <div class="border-t border-line pt-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                  <span class="font-mono text-xs font-bold uppercase tracking-wider text-blue">
+                    切片邊長 P × P (PATCH RESOLUTION):
+                  </span>
+                  <span
+                    id="vit-patch-badge"
+                    class="font-mono text-xs bg-red text-surface px-2.5 py-0.5 font-bold"
+                  >
+                    P = 16 × 16 (標準 ViT-Base/16)
+                  </span>
+                </div>
+                <div class="flex flex-wrap gap-2" id="vit-patch-selector">
+                  <!-- Patch size buttons rendered by JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Visualizer Grid: 2 Columns -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <!-- Left: Image Canvas with Slicing Grid (6 cols) -->
+              <div class="lg:col-span-6 border border-ink bg-surface p-5 sm:p-6 space-y-4">
+                <div class="flex items-center justify-between border-b border-line pb-2">
+                  <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                    224 × 224 影像切片網格 (IMAGE GRID)
+                  </span>
+                  <span
+                    id="vit-patch-count-label"
+                    class="font-mono text-xs bg-paper-deep px-2 py-0.5 border border-line text-ink"
+                  >
+                    14 × 14 = 196 切片
+                  </span>
+                </div>
+
+                <!-- Interactive SVG Image Canvas -->
+                <div class="relative w-full aspect-square border-2 border-ink bg-paper overflow-hidden select-none">
+                  <svg
+                    id="vit-canvas-svg"
+                    viewBox="0 0 224 224"
+                    class="w-full h-full cursor-crosshair"
+                    role="img"
+                    aria-label="ViT 影像切片互動畫布"
+                  >
+                    <!-- Background Image Pattern rendered by JS -->
+                    <g id="vit-image-graphics"></g>
+                    <!-- Grid Overlay Lines rendered by JS -->
+                    <g id="vit-grid-lines"></g>
+                    <!-- Active Patch Highlight rect -->
+                    <rect
+                      id="vit-active-patch-rect"
+                      x="0"
+                      y="0"
+                      width="16"
+                      height="16"
+                      fill="#b6412c"
+                      fill-opacity="0.35"
+                      stroke="#b6412c"
+                      stroke-width="2"
+                    ></rect>
+                  </svg>
+                </div>
+                <p class="m-0 text-xs font-mono text-muted text-center">
+                  可在上方畫布點擊或懸停任意切片，檢視該位置的拉平向量與投影張量。
+                </p>
+              </div>
+
+              <!-- Right: Tensor Math & Token Inspector (6 cols) -->
+              <div class="lg:col-span-6 space-y-6">
+                <!-- Inspector Card -->
+                <div class="border border-ink bg-surface p-5 sm:p-6 space-y-4">
+                  <div class="border-b border-line pb-2 flex items-center justify-between">
+                    <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                      TENSOR PROJECTION INSPECTOR / 張量投影檢驗
+                    </span>
+                    <span
+                      id="vit-active-patch-badge"
+                      class="font-mono text-xs font-bold text-red bg-red-soft/40 px-2 py-0.5 border border-red"
+                    >
+                      切片 [0, 0] (#01)
+                    </span>
+                  </div>
+
+                  <!-- Mathematical Pipeline Steps -->
+                  <div class="space-y-3 font-mono text-xs">
+                    <!-- Step 1: Flattening -->
+                    <div class="border border-line bg-paper p-3">
+                      <span class="text-muted block mb-1">
+                        1. 像素展平向量 x<sub>p</sub>
+                        <sup>k</sup>：
+                      </span>
+                      <div class="text-ink font-bold flex items-center justify-between">
+                        <span id="vit-math-flatten">P² · C = 16 × 16 × 3 = 768 維</span>
+                        <span class="text-muted">[x₁, x₂, ..., x₇₆₈]</span>
+                      </div>
+                    </div>
+
+                    <!-- Step 2: Linear Projection -->
+                    <div class="border border-line bg-paper p-3">
+                      <span class="text-muted block mb-1">
+                        2. 可訓練線性投影矩陣 E (Linear Projection)：
+                      </span>
+                      <div class="text-ink font-bold flex items-center justify-between">
+                        <span>
+                          E ∈ ℝ<sup>768 × 768</sup>
+                        </span>
+                        <span class="text-red">
+                          x<sub>p</sub>
+                          <sup>k</sup> E → 768 維嵌入
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Step 3: Position Embedding -->
+                    <div class="border border-line bg-paper p-3">
+                      <span class="text-muted block mb-1">
+                        3. 一維可學習位置編碼 E<sub>pos</sub>：
+                      </span>
+                      <div class="text-ink font-bold flex items-center justify-between">
+                        <span id="vit-math-pos">
+                          E<sub>pos</sub>
+                          <sup>1</sup> ∈ ℝ<sup>768</sup>
+                        </span>
+                        <span class="text-blue">
+                          z₀<sup>k</sup> = x<sub>p</sub>
+                          <sup>k</sup>E + E<sub>pos</sub>
+                          <sup>k</sup>
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Step 4: CLS Token -->
+                    <div class="border border-line bg-red-soft/30 p-3">
+                      <span class="text-red font-bold block mb-1">
+                        4. [CLS] 類別標記 (Prepended at Index 0)：
+                      </span>
+                      <div class="text-ink text-xs">
+                        獨立可學習向量 x<sub>class</sub> ∈ ℝ<sup>768</sup>
+                        ，在自注意力層中匯聚全域資訊，最後由 MLP Head 輸出影像分類。
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- KPI Metric Bar -->
+                <div class="border border-ink bg-surface p-5 sm:p-6">
+                  <span class="font-mono text-xs font-bold uppercase tracking-wider text-muted block mb-3">
+                    COMPUTATIONAL COMPLEXITY / 計算複雜度指標
+                  </span>
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center font-mono">
+                    <div class="border border-line bg-paper p-3">
+                      <span class="text-muted block text-xs">切片數量 (N)</span>
+                      <span id="metric-vit-n" class="font-bold text-ink text-base">
+                        196
+                      </span>
+                    </div>
+                    <div class="border border-line bg-paper p-3">
+                      <span class="text-muted block text-xs">序列長度 (N+1)</span>
+                      <span id="metric-vit-seq" class="font-bold text-ink text-base">
+                        197
+                      </span>
+                    </div>
+                    <div class="border border-line bg-paper p-3">
+                      <span class="text-muted block text-xs">注意力交互對</span>
+                      <span id="metric-vit-pairs" class="font-bold text-red text-base">
+                        38,809
+                      </span>
+                    </div>
+                    <div class="border border-line bg-paper p-3">
+                      <span class="text-muted block text-xs">空間歸納偏向</span>
+                      <span class="font-bold text-red text-base">無 (全域)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PANEL 02: 歸納偏向與資料規模分水嶺 -->
+          <div
+            id="vit-panel-bias"
+            role="tabpanel"
+            aria-labelledby="vit-tab-bias"
+            class="space-y-8 hidden"
+          >
+            <!-- Controls: Dataset Selector -->
+            <div class="border border-ink bg-surface p-5 sm:p-6 space-y-4">
+              <span class="font-mono text-xs font-bold uppercase tracking-wider text-red block">
+                PRE-TRAINING DATASET SCALE / 預訓練資料規模選擇
+              </span>
+              <div class="flex flex-wrap gap-2" id="vit-scale-dataset-container">
+                <!-- Dataset buttons rendered by JS -->
+              </div>
+            </div>
+
+            <!-- Comparison Breakdown: 2 Columns -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <!-- Left: Model Performance Bar Chart (7 cols) -->
+              <div class="lg:col-span-7 border border-ink bg-surface p-5 sm:p-6 space-y-4">
+                <div class="border-b border-line pb-2 flex items-center justify-between">
+                  <div>
+                    <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                      ACCURACY COMPARISON ON IMAGENET
+                    </span>
+                    <h4
+                      class="mt-1 m-0 font-display text-lg font-bold text-ink"
+                      id="vit-dataset-title"
+                    >
+                      資料集性能評比
+                    </h4>
+                  </div>
+                  <span
+                    id="vit-dataset-scale-badge"
+                    class="font-mono text-xs bg-paper-deep px-2.5 py-1 border border-line text-ink"
+                  >
+                    130 萬張影像
+                  </span>
+                </div>
+
+                <!-- Accuracy Bars -->
+                <div class="space-y-4 pt-2">
+                  <!-- ResNet / BiT Bar -->
+                  <div class="space-y-1 font-mono text-xs">
+                    <div class="flex justify-between">
+                      <span class="font-bold text-ink" id="vit-cnn-model-name">
+                        ResNet-50 (CNN)
+                      </span>
+                      <span id="vit-cnn-acc-val" class="font-bold text-ink">
+                        79.3%
+                      </span>
+                    </div>
+                    <div class="h-5 w-full bg-paper-deep border border-line relative overflow-hidden">
+                      <div
+                        id="vit-cnn-bar"
+                        class="h-full bg-muted transition-all duration-500 w-[79.3%]"
+                      ></div>
+                    </div>
+                    <span class="text-xs text-muted block">
+                      特點：具備強烈的平移等變性與 3×3 局部性先驗（Inductive Bias）
+                    </span>
+                  </div>
+
+                  <!-- ViT-Base Bar -->
+                  <div class="space-y-1 font-mono text-xs">
+                    <div class="flex justify-between">
+                      <span class="font-bold text-red">ViT-Base/16 (Transformer)</span>
+                      <span id="vit-base-acc-val" class="font-bold text-red">
+                        77.9%
+                      </span>
+                    </div>
+                    <div class="h-5 w-full bg-paper-deep border border-line relative overflow-hidden">
+                      <div
+                        id="vit-base-bar"
+                        class="h-full bg-red transition-all duration-500 w-[77.9%]"
+                      ></div>
+                    </div>
+                    <span class="text-xs text-muted block">
+                      特點：無局部性偏向，完全依靠自注意力從海量資料中自主學習二維幾何關係
+                    </span>
+                  </div>
+
+                  <!-- ViT-Huge Bar -->
+                  <div class="space-y-1 font-mono text-xs">
+                    <div class="flex justify-between">
+                      <span class="font-bold text-blue">ViT-Huge/14 (Transformer 旗艦)</span>
+                      <span id="vit-huge-acc-val" class="font-bold text-blue">
+                        74.2%
+                      </span>
+                    </div>
+                    <div class="h-5 w-full bg-paper-deep border border-line relative overflow-hidden">
+                      <div
+                        id="vit-huge-bar"
+                        class="h-full bg-blue transition-all duration-500 w-[74.2%]"
+                      ></div>
+                    </div>
+                    <span class="text-xs text-muted block">
+                      特點：6.3 億參數巨獸，在小資料集上嚴重過度擬合，但在大資料集上徹底爆發
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Theoretical Formula Box -->
+                <div class="border-l-4 border-red bg-paper p-3 text-sm text-ink leading-relaxed">
+                  <span class="font-mono text-xs font-bold text-red uppercase block mb-1">
+                    歸納偏向權衡公式 / THE INDUCTIVE BIAS TRADEOFF
+                  </span>
+                  <p id="vit-bias-formula-desc" class="m-0 text-sm text-muted">
+                    資料不足時：強歸納偏向（CNN）扮演正規化保護傘；資料充沛時：強歸納偏向成為限制性能天花板的枷鎖。
+                  </p>
+                </div>
+              </div>
+
+              <!-- Right: Wind Tunnel Diagnosis (5 cols) -->
+              <div class="lg:col-span-5 border border-ink bg-surface p-5 sm:p-6 space-y-4">
+                <div class="border-b border-line pb-2">
+                  <span class="font-mono text-xs font-semibold uppercase tracking-[0.1em] text-red">
+                    WIND TUNNEL DIAGNOSIS / 尺度風洞診斷
+                  </span>
+                  <h4 class="mt-1 m-0 font-display text-lg font-bold text-ink">現象本質剖析</h4>
+                </div>
+
+                <!-- Diagnosis Content -->
+                <div class="border border-line bg-paper p-4 font-mono text-xs text-muted space-y-3">
+                  <span class="font-bold text-ink block">歷史分水嶺判定：</span>
+                  <p id="vit-scale-diagnosis-text" class="m-0 leading-relaxed text-muted">
+                    診斷分析載入中...
+                  </p>
+                </div>
+
+                <!-- Receptive Field vs Self-Attention Comparison -->
+                <div class="border border-line bg-paper-deep p-4 space-y-2">
+                  <span class="font-mono text-xs font-bold uppercase tracking-wider text-ink block">
+                    視野機制本質差異：
+                  </span>
+                  <ul class="m-0 pl-4 space-y-1.5 font-mono text-xs text-muted">
+                    <li>
+                      <strong class="text-ink">CNN (滑動卷積)：</strong>
+                      感受野受網路深度逐層線性擴大，深層才能看見全圖。
+                    </li>
+                    <li>
+                      <strong class="text-red">ViT (純注意力)：</strong>第 1 層即可跨越 224
+                      像素建立全域連結，注意力距離隨資料規模自發擴展。
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 章節 03：完整的機器結構 -->
+      <section class="mb-24" id="machine-architecture" aria-labelledby="arch-heading">
+        <PaperSectionHeader
+          id="arch"
+          kicker="章節 03 · 完整的機器結構 / COMPLETE ARCHITECTURE"
+          title="Pre-LN 骨幹與二維位置編碼連續性插值"
+        />
+        <PaperReadingLayout>
+          <div class="space-y-6 text-base leading-8 text-ink">
+            <p>
+              在將影像成功轉化為帶有位置資訊的 Token 向量後，ViT 展現了工程上最極致的優雅：
+              <strong>它對 Transformer Encoder 的內部數學架構幾乎未作任何修改</strong>。它完全復用了
+              Vaswani 等人在 2017 年為機器翻譯設計的標準骨幹，這使得原本針對 NLP
+              巨型模型打造的高效並行訓練框架（如 Megatron-LM、TPU Pod
+              Mesh）能夠零成本遷移至視覺任務。
+            </p>
+
+            <h3 class="mt-8 mb-4 font-display text-2xl font-bold text-ink">
+              1. 完整的數學演算方程組（The Complete Governing Equations）
+            </h3>
+
+            <p>整個 Vision Transformer 的前向計算由以下四道核心方程嚴格定義：</p>
+
+            <div class="my-6 rounded border border-line bg-surface p-6 sm:p-8 space-y-6">
+              <div>
+                <p class="font-mono text-xs font-bold uppercase tracking-wider text-red mb-2">
+                  式 (1) 嵌入層組裝 / EMBEDDING ASSEMBLY
+                </p>
+                <math display="block" class="editorial-math my-3" aria-label="式 1 嵌入層組裝">
+                  <msub><mi mathvariant="bold">z</mi><mn>0</mn></msub>
+                  <mo>=</mo>
+                  <mo stretchy="false">[</mo>
+                  <msub><mi mathvariant="bold">x</mi><mtext>class</mtext></msub>
+                  <mo>;</mo>
+                  <msubsup><mi mathvariant="bold">x</mi><mi>p</mi><mn>1</mn></msubsup><mi mathvariant="bold">E</mi>
+                  <mo>;</mo>
+                  <msubsup><mi mathvariant="bold">x</mi><mi>p</mi><mn>2</mn></msubsup><mi mathvariant="bold">E</mi>
+                  <mo>;</mo>
+                  <mo>⋯</mo>
+                  <mo>;</mo>
+                  <msubsup><mi mathvariant="bold">x</mi><mi>p</mi><mi>N</mi></msubsup><mi mathvariant="bold">E</mi>
+                  <mo stretchy="false">]</mo>
+                  <mo>+</mo>
+                  <msub><mi mathvariant="bold">E</mi><mtext>pos</mtext></msub>
+                </math>
+              </div>
+
+              <div class="border-t border-dashed border-line pt-6">
+                <p class="font-mono text-xs font-bold uppercase tracking-wider text-red mb-2">
+                  式 (2) 多頭自注意力子層（含 Pre-LN 與殘差跳躍）/ MULTI-HEAD SELF-ATTENTION
+                </p>
+                <math
+                  display="block"
+                  class="editorial-math my-3"
+                  aria-label="式 2 多頭自注意力子層"
+                >
+                  <msubsup><mi mathvariant="bold">z</mi><mi>l</mi><mo>′</mo></msubsup>
+                  <mo>=</mo>
+                  <mtext>MSA</mtext>
+                  <mo stretchy="false">(</mo>
+                  <mtext>LN</mtext>
+                  <mo stretchy="false">(</mo>
+                  <msub><mi mathvariant="bold">z</mi><mrow><mi>l</mi><mo>−</mo><mn>1</mn></mrow></msub>
+                  <mo stretchy="false">)</mo>
+                  <mo stretchy="false">)</mo>
+                  <mo>+</mo>
+                  <msub><mi mathvariant="bold">z</mi><mrow><mi>l</mi><mo>−</mo><mn>1</mn></mrow></msub>
+                  <mo>,</mo>
+                  <mspace width="1em" />
+                  <mi>l</mi>
+                  <mo>=</mo>
+                  <mn>1</mn>
+                  <mo>,</mo>
+                  <mo>…</mo>
+                  <mo>,</mo>
+                  <mi>L</mi>
+                </math>
+              </div>
+
+              <div class="border-t border-dashed border-line pt-6">
+                <p class="font-mono text-xs font-bold uppercase tracking-wider text-red mb-2">
+                  式 (3) 多層感知機前饋子層（含 Pre-LN 與殘差跳躍）/ MULTI-LAYER PERCEPTRON
+                </p>
+                <math
+                  display="block"
+                  class="editorial-math my-3"
+                  aria-label="式 3 多層感知機前饋子層"
+                >
+                  <msub><mi mathvariant="bold">z</mi><mi>l</mi></msub>
+                  <mo>=</mo>
+                  <mtext>MLP</mtext>
+                  <mo stretchy="false">(</mo>
+                  <mtext>LN</mtext>
+                  <mo stretchy="false">(</mo>
+                  <msubsup><mi mathvariant="bold">z</mi><mi>l</mi><mo>′</mo></msubsup>
+                  <mo stretchy="false">)</mo>
+                  <mo stretchy="false">)</mo>
+                  <mo>+</mo>
+                  <msubsup><mi mathvariant="bold">z</mi><mi>l</mi><mo>′</mo></msubsup>
+                  <mo>,</mo>
+                  <mspace width="1em" />
+                  <mi>l</mi>
+                  <mo>=</mo>
+                  <mn>1</mn>
+                  <mo>,</mo>
+                  <mo>…</mo>
+                  <mo>,</mo>
+                  <mi>L</mi>
+                </math>
+              </div>
+
+              <div class="border-t border-dashed border-line pt-6">
+                <p class="font-mono text-xs font-bold uppercase tracking-wider text-red mb-2">
+                  式 (4) 最終類別輸出讀出 / CLASSIFICATION READOUT
+                </p>
+                <math
+                  display="block"
+                  class="editorial-math my-3"
+                  aria-label="式 4 最終類別輸出讀出"
+                >
+                  <mi mathvariant="bold">y</mi>
+                  <mo>=</mo>
+                  <mtext>LN</mtext>
+                  <mo stretchy="false">(</mo>
+                  <msubsup><mi mathvariant="bold">z</mi><mi>L</mi><mn>0</mn></msubsup>
+                  <mo stretchy="false">)</mo>
+                </math>
+              </div>
+            </div>
+
+            <h3 class="mt-8 mb-4 font-display text-2xl font-bold text-ink">
+              2. 張量規格與符號維度徹底清單
+            </h3>
+
+            <p>
+              為了杜絕空泛的文字敘述，我們將上述四道方程中的每一個符號賦予明確的張量維度與計算語義：
+            </p>
+
+            <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-line pt-4 text-sm leading-relaxed">
+              <div class="border-b border-line/60 pb-3">
+                <dt class="font-mono text-xs font-bold text-red uppercase">
+                  <math class="font-serif"><msub><mi mathvariant="bold">x</mi><mtext>class</mtext></msub><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mn>1</mn><mo>×</mo><mi>D</mi></mrow></msup></math>
+                </dt>
+                <dd class="m-0 text-muted mt-1">
+                  可學習的類別代表標記。在初始階段為隨機浮點數，隨著前向反向傳播，它將聚合整張影像的全域語義。
+                </dd>
+              </div>
+
+              <div class="border-b border-line/60 pb-3">
+                <dt class="font-mono text-xs font-bold text-red uppercase">
+                  <math class="font-serif"><mi mathvariant="bold">E</mi><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mo stretchy="false">(</mo><msup><mi>P</mi><mn>2</mn></msup><mi>C</mi><mo stretchy="false">)</mo><mo>×</mo><mi>D</mi></mrow></msup></math>
+                </dt>
+                <dd class="m-0 text-muted mt-1">
+                  Patch 線性投影權重矩陣。將每個維度為 <math class="font-serif"><mn>768</mn></math>
+                  （若
+                  <math class="font-serif"><mi>P</mi><mo>=</mo><mn>16</mn><mo>,</mo><mi>C</mi><mo>=</mo><mn>3</mn></math>
+                  ）的拉平圖塊映射至模型特徵維度 <math class="font-serif"><mi>D</mi></math>。
+                </dd>
+              </div>
+
+              <div class="border-b border-line/60 pb-3">
+                <dt class="font-mono text-xs font-bold text-red uppercase">
+                  <math class="font-serif"><msub><mi mathvariant="bold">E</mi><mtext>pos</mtext></msub><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mo stretchy="false">(</mo><mi>N</mi><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo><mo>×</mo><mi>D</mi></mrow></msup></math>
+                </dt>
+                <dd class="m-0 text-muted mt-1">
+                  一維可學習位置嵌入矩陣。包含 1 個 `[CLS]` 標記位置與
+                  <math class="font-serif"><mi>N</mi></math> 個空間圖塊位置的連續座標特徵。
+                </dd>
+              </div>
+
+              <div class="border-b border-line/60 pb-3">
+                <dt class="font-mono text-xs font-bold text-red uppercase">
+                  <math class="font-serif"><msub><mi mathvariant="bold">z</mi><mn>0</mn></msub><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mo stretchy="false">(</mo><mi>N</mi><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo><mo>×</mo><mi>D</mi></mrow></msup></math>
+                </dt>
+                <dd class="m-0 text-muted mt-1">
+                  輸入至第 1 層 Transformer Encoder 的完整 Token 嵌入矩陣。以標準配置為例，其形狀為
+                  <math class="font-serif"><mn>197</mn><mo>×</mo><mn>768</mn></math>。
+                </dd>
+              </div>
+
+              <div class="border-b border-line/60 pb-3">
+                <dt class="font-mono text-xs font-bold text-red uppercase">
+                  Pre-LayerNorm (Pre-LN)
+                </dt>
+                <dd class="m-0 text-muted mt-1">
+                  注意式 (2) 與式 (3) 中，層正規化 <math class="font-serif"><mtext>LN</mtext></math>
+                  是在進入 MSA 與 MLP <strong>之前</strong>執行的。這與原始 Transformer 的 Post-LN
+                  不同，Pre-LN 使得梯度能夠藉由純淨的殘差直通車流暢反傳，省去了極度脆弱的學習率
+                  Warmup 調校。
+                </dd>
+              </div>
+
+              <div class="border-b border-line/60 pb-3">
+                <dt class="font-mono text-xs font-bold text-red uppercase">
+                  MLP 結構：兩層線性變換 + GELU
+                </dt>
+                <dd class="m-0 text-muted mt-1">
+                  包含兩層全連接層，中間維度擴張 4 倍（即
+                  <math class="font-serif"><mi>D</mi><mo>→</mo><mn>4</mn><mi>D</mi><mo>→</mo><mi>D</mi></math>
+                  ），並採用 GELU（Gaussian Error Linear Unit）作為非線性激勵函數。
+                </dd>
+              </div>
+            </dl>
+
+            <h3 class="mt-8 mb-4 font-display text-2xl font-bold text-ink">
+              3. 二維位置編碼雙三次插值（2D Bicubic Interpolation）
+            </h3>
+
+            <p>
+              在電腦視覺的實際工業應用中，存在一個極為經典的遷移技巧：
+              <strong>
+                在較低解析度（例如
+                <math class="font-serif"><mn>224</mn><mo>×</mo><mn>224</mn></math>
+                ）下進行大規模預訓練以節省算力，隨後在較高解析度（例如
+                <math class="font-serif"><mn>384</mn><mo>×</mo><mn>384</mn></math>
+                ）下進行微調以提升檢驗精度
+              </strong>
+              。
+            </p>
+
+            <p>
+              對 CNN
+              而言，由於卷積核只關注局部相對滑動，改變輸入圖片解析度只會改變特徵圖大小，完全不需要修改卷積核參數。但對
+              ViT 而言，當輸入圖片從
+              <math class="font-serif"><mn>224</mn><mo>×</mo><mn>224</mn></math> 擴大到
+              <math class="font-serif"><mn>384</mn><mo>×</mo><mn>384</mn></math>
+              時，若維持圖塊大小
+              <math class="font-serif"><mi>P</mi><mo>=</mo><mn>16</mn></math> 不變，Patch
+              序列長度將從
+              <math class="font-serif"><mn>14</mn><mo>×</mo><mn>14</mn><mo>=</mo><mn>196</mn></math>
+              暴增到：
+            </p>
+
+            <math display="block" class="editorial-math my-6" aria-label="高解析度微調圖塊數量計算">
+              <msub><mi>N</mi><mtext>fine</mtext></msub>
+              <mo>=</mo>
+              <mfrac>
+                <mrow>
+                  <mn>384</mn>
+                  <mo>×</mo>
+                  <mn>384</mn>
+                </mrow>
+                <mrow>
+                  <mn>16</mn>
+                  <mo>×</mo>
+                  <mn>16</mn>
+                </mrow>
+              </mfrac>
+              <mo>=</mo>
+              <mn>24</mn>
+              <mo>×</mo>
+              <mn>24</mn>
+              <mo>=</mo>
+              <mn>576</mn>
+            </math>
+
+            <p>
+              原本預訓練時學出的位置矩陣只有 196 個空間向量，面對微調時的 576
+              個位置，維度根本對不上！
+            </p>
+
+            <p>
+              ViT 作者提出了一個精妙的解決之道：
+              <strong>
+                將預訓練學得的 1D 位置編碼重新排回
+                <math class="font-serif"><mn>14</mn><mo>×</mo><mn>14</mn></math>
+                的二維網格上，利用傳統訊號處理中的「二維雙三次插值（2D Bicubic
+                Interpolation）」，將特徵網格連續平滑地內插放大至
+                <math class="font-serif"><mn>24</mn><mo>×</mo><mn>24</mn></math>
+              </strong>
+              。
+            </p>
+
+            <p>
+              令人驚嘆的是，這種純粹的數學幾何插值沒有造成任何災難性遺忘。高解析度微調後的 ViT
+              準確率迎來了爆發式增長。這項實驗有力地印證了：
+              <strong>
+                ViT
+                在訓練過程中所建立的位置感知，本質上是對二維連續物理坐標空間的深層擬合，而非死記硬背離散的索引數字
+              </strong>
+              。
+            </p>
+          </div>
+
+          <aside slot="rail" class="space-y-6">
+            <AsideCard kicker="工程精粹 / ARCHITECTURAL ELEGANCE" title="為什麼使用 Pre-LN？">
+              <p class="text-sm leading-relaxed text-muted">
+                在深達 24 層或 32 層的 ViT-Large/Huge 中，若採用傳統 Post-LN（在殘差相加後才做
+                LayerNorm），輸出端的梯度會隨反向傳播發生嚴重抖動。Pre-LN 將 LayerNorm
+                移入分支內部，保持主幹殘差通道
+                <math class="font-serif"><msub><mi mathvariant="bold">z</mi><mi>l</mi></msub><mo>=</mo><msub><mi mathvariant="bold">z</mi><mrow><mi>l</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>+</mo><mi>f</mi><mo stretchy="false">(</mo><mo>·</mo><mo stretchy="false">)</mo></math>
+                純淨暢通，保證了超深視覺模型在大規模 TPU 集群上的訓練穩定性。
+              </p>
+            </AsideCard>
+          </aside>
+        </PaperReadingLayout>
+      </section>
+
+      <!-- 章節 04：實證消融與尺度定律 -->
+      <section class="mb-24" id="empirical-ablations-scaling" aria-labelledby="scaling-heading">
+        <PaperSectionHeader
+          id="scaling"
+          kicker="章節 04 · 實證消融與尺度定律 / SCALING DYNAMICS"
+          title="打破歸納偏向的數據分水嶺"
+        />
+        <PaperReadingLayout>
+          <div class="space-y-6 text-base leading-8 text-ink">
+            <p>
+              如果說 Patch 切割與標準 Transformer 只是 ViT
+              的骨架，那麼這篇論文真正震撼整個學術界、並改寫往後五年研究版圖的靈魂，是第 4 節揭示的
+              <strong>
+                「歸納偏向與預訓練資料規模的相變法則（Phase Transition of Inductive Bias）」
+              </strong>
+              。
+            </p>
+
+            <h3 class="mt-8 mb-4 font-display text-2xl font-bold text-ink">
+              1. 數據分水嶺：小規模資料 CNN 稱王，大數據 ViT 封神
+            </h3>
+
+            <p>
+              在機器學習的傳統直覺中，一個架構如果內建了優秀的人類先驗知識（如 CNN
+              的平移等變性），理應在任何規模下都表現優異。然而，Google Brain
+              團隊以嚴謹的對照實驗，繪製出了一張震驚學界的三階相變圖：
+            </p>
+
+            <div class="my-8 overflow-x-auto not-prose">
+              <table class="w-full border-collapse border border-line bg-surface text-sm">
+                <thead>
+                  <tr class="border-b-2 border-ink bg-paper-deep text-left">
+                    <th class="p-3.5 font-mono text-xs uppercase font-bold text-ink">
+                      預訓練資料集規模
+                    </th>
+                    <th class="p-3.5 font-mono text-xs uppercase font-bold text-ink">樣本數量</th>
+                    <th class="p-3.5 font-mono text-xs uppercase font-bold text-ink">
+                      ResNet / BiT 表現
+                    </th>
+                    <th class="p-3.5 font-mono text-xs uppercase font-bold text-ink">
+                      Vision Transformer (ViT) 表現
+                    </th>
+                    <th class="p-3.5 font-mono text-xs uppercase font-bold text-red">
+                      勝負分水嶺與機制本質
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-line font-mono text-xs">
+                  <tr>
+                    <td class="p-3.5 font-bold text-ink">ImageNet-1K</td>
+                    <td class="p-3.5 text-muted">約 130 萬張</td>
+                    <td class="p-3.5 font-bold text-ink">Top-1 ~79.9%</td>
+                    <td class="p-3.5 text-muted">Top-1 ~74.2%（落後 5.7%）</td>
+                    <td class="p-3.5 text-ink">
+                      <strong>CNN 完勝</strong>：小規模資料下缺乏先驗的 ViT
+                      自由度過大，陷入嚴重的過度擬合泥淖。
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="p-3.5 font-bold text-ink">ImageNet-21k</td>
+                    <td class="p-3.5 text-muted">約 1,400 萬張</td>
+                    <td class="p-3.5 text-ink">Top-1 ~83.2%</td>
+                    <td class="p-3.5 font-bold text-ink">Top-1 ~84.1%（基本追平）</td>
+                    <td class="p-3.5 text-ink">
+                      <strong>勢均力敵</strong>：數據量跨過千萬門檻，ViT
+                      開始學會基礎視覺幾何，追平成熟調校之 CNN。
+                    </td>
+                  </tr>
+                  <tr class="bg-red/5">
+                    <td class="p-3.5 font-bold text-red">JFT-300M</td>
+                    <td class="p-3.5 text-red font-bold">超過 3 億張</td>
+                    <td class="p-3.5 text-muted">BiT-L Top-1 87.5%</td>
+                    <td class="p-3.5 font-bold text-red">ViT-H/14 Top-1 88.55%（顯著超越）</td>
+                    <td class="p-3.5 text-red font-bold">
+                      <strong>ViT 徹底壓制</strong>：歸納偏向成為束縛 CNN
+                      擴展的瓶頸；純自注意力全面釋放表徵潛能。
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <p>
+              這組數據揭開了一條深刻的科學真理：<strong>歸納偏向是一把雙刃劍</strong>。
+            </p>
+
+            <p>
+              在數據匱乏的中小型任務上，強加的物理先驗（平移等變、局部相鄰）是一道不可或缺的護城河，它限制了模型搜尋解的空間，防止神經網路在小樣本中走火入魔。然而，當訓練資料達到億級規模時，這種硬性規定「相鄰像素必須相同處理」的先驗假設，反而變成了一具僵硬的枷鎖，閹割了模型擬合複雜全域規律的能力。
+            </p>
+
+            <p>
+              相反地，Vision Transformer 從一開始就幾乎沒有任何空間歸納偏向（只知道 196 個抽象
+              Token）。它在龐大的數據汪洋中自由航行，自己摸索出什麼是邊緣、什麼是紋理、什麼是前後景語義。
+            </p>
+
+            <h3 class="mt-8 mb-4 font-display text-2xl font-bold text-ink">
+              2. 運算效率革命：以一半以下的算力擊敗頂級卷積
+            </h3>
+
+            <p>
+              在工程實踐中，比純粹的準確率更讓工業界震撼的，是
+              <strong>訓練算力開銷（Pre-training Compute Efficiency）</strong> 的反轉。
+            </p>
+
+            <p>
+              長期以來，人們誤以為 Transformer 比 CNN
+              更耗電、更慢。然而論文的對照消融證明：在達到相同遷移準確率的前提下，ViT 所消耗的 TPU
+              算力（TPUv3-core-days）僅為最頂尖卷積網路 Big Transfer (BiT-L) 的
+              <strong>四分之一到二分之一</strong>！
+            </p>
+
+            <p>為什麼缺乏先驗的 ViT 反而運算更快？這源於現代計算硬體底層的物理架構：</p>
+
+            <ul class="list-disc pl-6 space-y-3">
+              <li>
+                <strong>CNN 的記憶體存取瓶頸：</strong>
+                卷積運算需要頻繁處理滑動窗口邊界填充（Padding）、非連續記憶體重排（im2col
+                操作）以及步幅跨越，記憶體頻寬利用率（Memory Bound）極易達到瓶頸。
+              </li>
+              <li>
+                <strong>Transformer 的張量核心親和性：</strong>ViT 的自注意力點積與 MLP
+                全連接層，在底層全都是高度密集、規則、超大型的標準矩陣乘法（GEMM）。這種計算模式與
+                Google TPU 的矩陣乘法單元（MXU）以及 NVIDIA GPU 的 Tensor Core
+                具有完美的硬體親和度，算力利用率（Compute Bound）遠高於同等 FLOPs 的卷積網路。
+              </li>
+            </ul>
+
+            <h3 class="mt-8 mb-4 font-display text-2xl font-bold text-ink">
+              3. 注意力距離（Mean Attention Distance）的演進軌跡
+            </h3>
+
+            <p>
+              為了探究 ViT
+              內部究竟如何「看見」世界，作者做了一個精巧的視覺化分析：計算不同網路層中，每個注意力頭所關注之兩點之間的「平均像素距離（Mean
+              Attention Distance）」，這相當於量化 Transformer 內部自適應感受野的大小。
+            </p>
+
+            <p>分析結果令人拍案叫絕：</p>
+
+            <ul class="list-disc pl-6 space-y-3">
+              <li>
+                <strong>在最早期的第 1 到 4 層：</strong>部分注意力頭的平均距離非常小（僅約 10–20
+                像素），這意味著它們在無人引導的情況下，
+                <strong>自發性地學會了扮演 CNN 局部卷積核的角色</strong>
+                ，專注於提取邊緣與局部紋理；但更驚人的是，同時有另一部分注意力頭在第一層就展現出高達
+                100 像素以上的全圖注意力！這在淺層 CNN 中是完全不可能發生的。
+              </li>
+              <li>
+                <strong>在深層網路中（第 16 層以上）：</strong>
+                幾乎所有注意力頭的平均距離都擴展至全圖尺度，完成對整張影像全域構圖、主題與背景關係的深層語義整合。
+              </li>
+            </ul>
+          </div>
+
+          <aside slot="rail" class="space-y-6">
+            <AsideCard kicker="歷史分水嶺 / PARADIGM SHIFT" title="Bitter Lesson 在視覺領域的重演">
+              <p class="text-sm leading-relaxed text-muted">
+                Rich Sutton 著名的《The Bitter Lesson》（苦澀的教訓）指出：七十年間 AI
+                最重要的教訓是，試圖將人類先驗硬編碼進系統的方法，最終都會被通用且擅長利用算力與大數據的方法徹底擊潰。ViT
+                在電腦視覺領域重現了這個定律：通用 Transformer 最終踏平了精心雕琢三十年的卷積先驗。
+              </p>
+            </AsideCard>
+          </aside>
+        </PaperReadingLayout>
+      </section>
+
+      <!-- 章節 05：歷史衝擊波 -->
+      <section class="mb-24" id="historical-shockwave" aria-labelledby="shockwave-heading">
+        <PaperSectionHeader
+          id="shockwave"
+          kicker="章節 05 · 歷史衝擊波 / HISTORICAL SHOCKWAVE"
+          title="視覺典範的破壁與跨模態大一統"
+        />
+        <PaperReadingLayout>
+          <div class="space-y-6 text-base leading-8 text-ink">
+            <p>
+              Vision Transformer 在 2020 年底的誕生，宛如一顆重磅深水炸彈，在原本風平浪靜、已被 CNN
+              統治得近乎停滯的電腦視覺學界掀起了滔天巨浪。它最深遠的貢獻，絕不僅僅是在 ImageNet
+              上刷新了幾個百分點的指標，而是
+              <strong>徹底消除了自然語言處理（NLP）與電腦視覺（CV）長達半個世紀的語言隔閡</strong>。
+            </p>
+
+            <p>
+              在 ViT 出現之前，多模態研究極其痛苦：語言端用的是 Transformer，輸出離散的 Token
+              向量；視覺端用的是
+              ResNet，輸出的是四維連續特徵圖。研究者必須設計極度繁瑣的特化跨模態注意力層，在兩種完全相異的資料結構之間艱難地搭橋牽線。
+            </p>
+
+            <p>而 ViT 一舉將圖像降解為 Patch 序列後，多模態世界的大門瞬間被踹開：</p>
+
+            <div class="space-y-6 my-8 not-prose">
+              <div class="border border-line bg-surface p-6 shadow-sm">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="font-mono text-xs font-bold uppercase text-red">[里程碑 01]</span>
+                  <h4 class="m-0 font-display text-lg font-bold text-ink">
+                    Swin Transformer (2021)：密集預測任務的全面征服
+                  </h4>
+                </div>
+                <p class="m-0 text-sm leading-relaxed text-muted">
+                  原始 ViT
+                  的全域注意力複雜度仍隨輸入圖塊數呈二次方增長，難以直接應用於高解析度的物件偵測（Object
+                  Detection）與語意分割（Semantic Segmentation）。微軟亞研院提出的 Swin Transformer
+                  引入了「階層式特徵圖」與「滑動窗口（Shifted
+                  Windows）」，將自注意力限制在局部窗口內並透過跨窗口循環位移交流，計算複雜度降為線性
+                  <math class="font-serif"><mi>O</mi><mo stretchy="false">(</mo><mi>N</mi><mo stretchy="false">)</mo></math>
+                  ，一舉在 COCO 與 ADE20K 等所有經典視覺密集預測任務上全數擊潰 CNN。
+                </p>
+              </div>
+
+              <div class="border border-line bg-surface p-6 shadow-sm">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="font-mono text-xs font-bold uppercase text-red">[里程碑 02]</span>
+                  <h4 class="m-0 font-display text-lg font-bold text-ink">
+                    Masked Autoencoders (MAE, 2021)：自監督視覺大預訓練
+                  </h4>
+                </div>
+                <p class="m-0 text-sm leading-relaxed text-muted">
+                  何愷明等人敏銳地洞察到：ViT 的 Patch 切塊結構與 BERT 的克漏字遮罩具有天作之合。MAE
+                  提出隨機遮蔽整張圖片高達 75% 的 Patch，僅將剩餘 25% 的可見圖塊送入 ViT
+                  編碼器進行重建。這項研究徹底打破了 ViT 必須依賴 JFT-300M
+                  私有標籤數據的瓶頸，宣告純視覺 Transformer
+                  也能像語言模型一樣，在無標註網際網路圖像上海量進行自監督自學。
+                </p>
+              </div>
+
+              <div class="border border-line bg-surface p-6 shadow-sm">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="font-mono text-xs font-bold uppercase text-red">[里程碑 03]</span>
+                  <h4 class="m-0 font-display text-lg font-bold text-ink">
+                    CLIP 與現代多模態大模型（LLaVA, GPT-4V, Gemini）的統一底座
+                  </h4>
+                </div>
+                <p class="m-0 text-sm leading-relaxed text-muted">
+                  OpenAI 在 2021 年推出的 CLIP 模型，其最強大的視覺主幹正是
+                  ViT。當文字與圖片被相同的 Transformer
+                  架構映射到同一個高維球面上後，圖像不再是孤立的像素陣列，而是被賦予了人類語言的語意座標。今天所有領先的視覺語言大模型（如
+                  LLaVA、GPT-4V、Gemini），本質上都是將 ViT 編碼出的 Patch Tokens
+                  直接拼接到語言模型的輸入佇列中。
+                </p>
+              </div>
+            </div>
+
+            <p>
+              從 1948 年 Claude Shannon 用機率符號定義資訊、2017 年 Vaswani 用自注意力重塑語言，到
+              2020 年 Dosovitskiy 用 16x16
+              的小方塊將視覺世界拆成單字——至此，人類建構通用人工智慧（AGI）的基石架構完成了最關鍵的一次統一：
+              <strong>文本、程式碼、音訊與影像，從此共享同一個注意力數學公式</strong>。
+            </p>
+          </div>
+
+          <aside slot="rail" class="space-y-6">
+            <AsideCard kicker="技術傳承 / HERITAGE" title="多模態大模型的視覺大腦">
+              <p class="text-sm leading-relaxed text-muted">
+                當你今天向 ChatGPT 或 Gemini
+                上傳一張照片並提問時，系統後台第一步執行的，正是將你的照片切成 16x16（或
+                14x14）的小圖塊，透過 ViT 轉換成數百個視覺
+                Token，與你的文字提示詞緊密拼接成同一個序列。ViT 成為了現代 AI
+                眼看大千世界的共同視網膜。
+              </p>
+            </AsideCard>
+          </aside>
+        </PaperReadingLayout>
+      </section>
+    </main>
+
+    <!-- ========================================== -->
+    <!-- 附錄 01：歷時溯源與一手文獻清單 (ZONE B) -->
+    <!-- ========================================== -->
+    <EvidenceList
+      timelineEpochs={vitTimelineEpochs}
+      kickerBadge="文獻演進時間軸"
+      kickerEnglish="HISTORICAL CITATION TIMELINE (1998–2022)"
+      titleMain="一手文獻清單，與技術演進時間軸"
+      titleHighlight="從卷積空間歸納偏向到視覺 Transformer 大一統"
+      description="本章立論嚴格本於 ICLR 2021 原著論文、同期官方技術報告、同儕評審紀錄與相關視覺奠基文獻，依歷史時間線重現技術突破的演進軌跡與一手出處。"
+    />
+
+    <!-- ========================================== -->
+    <!-- 附錄 02：核心研發團隊檔案 (ZONE B) -->
+    <!-- ========================================== -->
+    <AuthorGrid
+      authors={paper.authorBriefs}
+      kicker="研發團隊 · 核心檔案 / THE AUTHORS"
+      title="打破視覺學科壁壘的先驅者"
+      description="原著論文由 Google Research 柏林與蘇黎世腦團隊共同完成。本節呈現主導模型架構發明、大規模 TPU 分散式訓練與評測消融之核心科研人員經文獻考證之關鍵貢獻。"
+    >
+      <div class="mb-12 max-w-4xl space-y-6 text-base leading-8 text-ink">
+        <p>
+          Vision Transformer 的問世，是 Google Brain
+          在歐洲的兩大研究重鎮——柏林與蘇黎世團隊跨地域深度協同的歷史性傑作。在學界被卷積神經網路的「理所當然」籠罩、各家實驗室僅敢於小修小補的保守年代，這支團隊展現了令人肅然起敬的技術勇氣：回歸計算與架構的第一性原理，用最激進、最不妥協的姿態，將看似風馬牛不相及的
+          NLP 標準架構直接拍向二維視覺。
+        </p>
+        <p class="text-muted">
+          第一作者 Alexey Dosovitskiy
+          展現了無與倫比的演算法洞察力。他在德國弗萊堡大學時期便在深度生成模型與光流估算領域深耕，加入
+          Google 柏林後，敏銳捕捉到像素二次方爆炸的痛點，大膽提出了以 16x16 非重疊圖塊拉平為 Token
+          的極簡假設；而來自蘇黎世 Big Vision 團隊的 Lucas Beyer 與 Alexander
+          Kolesnikov，則憑藉此前在 Big Transfer (BiT) 上積累的萬卡集群調度與 JFT-300M
+          超大規模預訓練經驗，為 ViT
+          注入了強大而穩健的工程底座，克服了超大模型在極早期訓練時的數值不穩定難題。
+        </p>
+        <p class="text-muted">
+          視覺團隊負責人 Neil Houlsby
+          在技術路線的長期演進上發揮了決定性的掌舵作用。他頂住了小規模資料上 ViT 表現不如 ResNet
+          的外界質疑，堅定投入資源將模型推向 3
+          億張影像的尺度極限，最終用無法辯駁的實證數據敲響了卷積統治的喪鐘。這支研究團隊的探索，徹底打破了人類對視覺信號「天生特殊」的認知迷思，開啟了自然語言與電腦視覺大一統的壯麗時代。
+        </p>
+      </div>
+    </AuthorGrid>
+
+    <!-- ========================================== -->
+    <!-- 篇章導航 -->
+    <!-- ========================================== -->
+    <PaperNavigation
+      prev={{
+        url: '/papers/direct-preference-optimization-your-language-model-is-secretly-a-reward-model',
+        title:
+          'Direct Preference Optimization: Your Language Model is Secretly a Reward Model (DPO)',
+        vol: 'VOL. 10',
+      }}
+      next={{
+        url: '/papers/learning-transferable-visual-models-from-natural-language-supervision',
+        title: 'Learning Transferable Visual Models From Natural Language Supervision (CLIP)',
+        vol: 'VOL. 12',
+      }}
+    />
+  </article>
+
+  <script>
+    function initVitLab() {
+      // 1. Tab Switching
+      const tabPatch = document.getElementById('vit-tab-patch');
+      const tabBias = document.getElementById('vit-tab-bias');
+      const panelPatch = document.getElementById('vit-panel-patch');
+      const panelBias = document.getElementById('vit-panel-bias');
+
+      if (!tabPatch || !tabBias || !panelPatch || !panelBias) return;
+
+      tabPatch.addEventListener('click', () => {
+        tabPatch.setAttribute('aria-selected', 'true');
+        tabPatch.className =
+          'px-4 py-2 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer';
+        tabBias.setAttribute('aria-selected', 'false');
+        tabBias.className =
+          'px-4 py-2 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+        panelPatch.classList.remove('hidden');
+        panelBias.classList.add('hidden');
+      });
+
+      tabBias.addEventListener('click', () => {
+        tabBias.setAttribute('aria-selected', 'true');
+        tabBias.className =
+          'px-4 py-2 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer';
+        tabPatch.setAttribute('aria-selected', 'false');
+        tabPatch.className =
+          'px-4 py-2 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+        panelBias.classList.remove('hidden');
+        panelPatch.classList.add('hidden');
+      });
+
+      // 2. Patch Splitting & Linear Projection Sandbox
+      const presets = [
+        {
+          name: '幾何抽象構圖',
+          render: (svgG: SVGGElement) => {
+            svgG.innerHTML = `
+              <rect width="224" height="224" fill="#f4f1ea"/>
+              <circle cx="112" cy="112" r="70" fill="#b6412c" fill-opacity="0.8"/>
+              <polygon points="40,180 184,180 112,50" fill="#2d5a7b" fill-opacity="0.7"/>
+              <rect x="70" y="70" width="84" height="84" fill="#d97736" fill-opacity="0.85"/>
+              <circle cx="112" cy="112" r="25" fill="#fffdf8"/>
+            `;
+          },
+        },
+        {
+          name: '高山地平線',
+          render: (svgG: SVGGElement) => {
+            svgG.innerHTML = `
+              <rect width="224" height="130" fill="#2d5a7b" fill-opacity="0.4"/>
+              <circle cx="170" cy="50" r="30" fill="#d97736" fill-opacity="0.8"/>
+              <polygon points="0,170 60,90 130,170" fill="#1e2224" fill-opacity="0.7"/>
+              <polygon points="80,180 150,80 224,180" fill="#1e2224" fill-opacity="0.85"/>
+              <rect y="160" width="224" height="64" fill="#3a5a40" fill-opacity="0.6"/>
+            `;
+          },
+        },
+        {
+          name: '手寫數字 8 (MNIST 風格)',
+          render: (svgG: SVGGElement) => {
+            svgG.innerHTML = `
+              <rect width="224" height="224" fill="#1e2224"/>
+              <circle cx="112" cy="80" r="42" fill="none" stroke="#fffdf8" stroke-width="26"/>
+              <circle cx="112" cy="148" r="50" fill="none" stroke="#fffdf8" stroke-width="28"/>
+            `;
+          },
+        },
+      ];
+
+      let currentPresetIdx = 0;
+      let currentPatchSize = 16; // 8, 16, 32
+      let activePatchR = 0;
+      let activePatchC = 0;
+
+      const presetContainer = document.getElementById('vit-preset-container');
+      const patchSelector = document.getElementById('vit-patch-selector');
+      const patchBadge = document.getElementById('vit-patch-badge');
+      const patchCountLabel = document.getElementById('vit-patch-count-label');
+      const imageGraphics = document.getElementById('vit-image-graphics') as SVGGElement | null;
+      const gridLines = document.getElementById('vit-grid-lines') as SVGGElement | null;
+      const activePatchRect = document.getElementById(
+        'vit-active-patch-rect',
+      ) as SVGRectElement | null;
+      const canvasSvg = document.getElementById('vit-canvas-svg');
+
+      const activePatchBadge = document.getElementById('vit-active-patch-badge');
+      const mathFlatten = document.getElementById('vit-math-flatten');
+      const mathPos = document.getElementById('vit-math-pos');
+      const metricN = document.getElementById('metric-vit-n');
+      const metricSeq = document.getElementById('metric-vit-seq');
+      const metricPairs = document.getElementById('metric-vit-pairs');
+
+      function updatePatchDisplay() {
+        if (
+          !imageGraphics ||
+          !gridLines ||
+          !activePatchRect ||
+          !patchBadge ||
+          !patchCountLabel ||
+          !activePatchBadge ||
+          !mathFlatten ||
+          !mathPos ||
+          !metricN ||
+          !metricSeq ||
+          !metricPairs
+        )
+          return;
+
+        // Render Preset Background
+        presets[currentPresetIdx].render(imageGraphics);
+
+        // Update patch grid
+        const P = currentPatchSize;
+        const gridDim = Math.floor(224 / P);
+        const N = gridDim * gridDim;
+
+        patchBadge.textContent =
+          P === 16
+            ? 'P = 16 × 16 (標準 ViT-Base/16)'
+            : P === 32
+              ? 'P = 32 × 32 (粗粒度 ViT-Base/32)'
+              : 'P = 8 × 8 (超細粒度 ViT-Huge/8)';
+
+        patchCountLabel.textContent = `${gridDim} × ${gridDim} = ${N} 切片`;
+        metricN.textContent = N.toString();
+        metricSeq.textContent = (N + 1).toString();
+        const pairs = (N + 1) * (N + 1);
+        metricPairs.textContent = pairs.toLocaleString();
+
+        const flattenDim = P * P * 3;
+        mathFlatten.textContent = `P² · C = ${P} × ${P} × 3 = ${flattenDim} 維`;
+
+        // Render Grid Lines
+        gridLines.innerHTML = '';
+        for (let i = 1; i < gridDim; i++) {
+          const coord = i * P;
+          // Horizontal line
+          const hLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          hLine.setAttribute('x1', '0');
+          hLine.setAttribute('y1', coord.toString());
+          hLine.setAttribute('x2', '224');
+          hLine.setAttribute('y2', coord.toString());
+          hLine.setAttribute('stroke', '#1e2224');
+          hLine.setAttribute('stroke-opacity', '0.4');
+          hLine.setAttribute('stroke-width', '1');
+          hLine.setAttribute('stroke-dasharray', '2,2');
+          gridLines.appendChild(hLine);
+
+          // Vertical line
+          const vLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          vLine.setAttribute('x1', coord.toString());
+          vLine.setAttribute('y1', '0');
+          vLine.setAttribute('x2', coord.toString());
+          vLine.setAttribute('y2', '224');
+          vLine.setAttribute('stroke', '#1e2224');
+          vLine.setAttribute('stroke-opacity', '0.4');
+          vLine.setAttribute('stroke-width', '1');
+          vLine.setAttribute('stroke-dasharray', '2,2');
+          gridLines.appendChild(vLine);
+        }
+
+        // Keep active patch within boundary
+        if (activePatchR >= gridDim) activePatchR = gridDim - 1;
+        if (activePatchC >= gridDim) activePatchC = gridDim - 1;
+
+        const patchIndex = activePatchR * gridDim + activePatchC + 1;
+        activePatchRect.setAttribute('x', (activePatchC * P).toString());
+        activePatchRect.setAttribute('y', (activePatchR * P).toString());
+        activePatchRect.setAttribute('width', P.toString());
+        activePatchRect.setAttribute('height', P.toString());
+
+        activePatchBadge.textContent = `切片 [${activePatchR}, ${activePatchC}] (#${patchIndex.toString().padStart(2, '0')})`;
+        mathPos.textContent = `E_pos^${patchIndex} ∈ ℝ^768`;
+      }
+
+      // Presets buttons
+      if (presetContainer) {
+        presetContainer.innerHTML = '';
+        presets.forEach((pr, idx) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className =
+            idx === 0
+              ? 'px-3 py-1.5 font-mono text-xs font-bold border-2 border-red bg-red text-surface transition cursor-pointer'
+              : 'px-3 py-1.5 font-mono text-xs font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+          btn.textContent = pr.name;
+          btn.addEventListener('click', () => {
+            currentPresetIdx = idx;
+            Array.from(presetContainer.children).forEach((c) => {
+              (c as HTMLElement).className =
+                'px-3 py-1.5 font-mono text-xs font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+            });
+            btn.className =
+              'px-3 py-1.5 font-mono text-xs font-bold border-2 border-red bg-red text-surface transition cursor-pointer';
+            updatePatchDisplay();
+          });
+          presetContainer.appendChild(btn);
+        });
+      }
+
+      // Patch size selector buttons
+      if (patchSelector) {
+        patchSelector.innerHTML = '';
+        const pSizes = [
+          { p: 16, label: 'P = 16 (標準 196 切片)' },
+          { p: 32, label: 'P = 32 (粗粒度 49 切片)' },
+          { p: 8, label: 'P = 8 (超細粒度 784 切片)' },
+        ];
+        pSizes.forEach((item, idx) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className =
+            idx === 0
+              ? 'px-3.5 py-1.5 font-mono text-xs font-bold border-2 border-red bg-red text-surface transition cursor-pointer'
+              : 'px-3.5 py-1.5 font-mono text-xs font-medium border border-ink/40 bg-paper text-ink hover:border-ink transition cursor-pointer';
+          btn.textContent = item.label;
+          btn.addEventListener('click', () => {
+            currentPatchSize = item.p;
+            Array.from(patchSelector.children).forEach((c) => {
+              (c as HTMLElement).className =
+                'px-3.5 py-1.5 font-mono text-xs font-medium border border-ink/40 bg-paper text-ink hover:border-ink transition cursor-pointer';
+            });
+            btn.className =
+              'px-3.5 py-1.5 font-mono text-xs font-bold border-2 border-red bg-red text-surface transition cursor-pointer';
+            updatePatchDisplay();
+          });
+          patchSelector.appendChild(btn);
+        });
+      }
+
+      // Click on canvas SVG to select patch
+      if (canvasSvg) {
+        canvasSvg.addEventListener('click', (e) => {
+          const rect = canvasSvg.getBoundingClientRect();
+          const clickX = ((e.clientX - rect.left) / rect.width) * 224;
+          const clickY = ((e.clientY - rect.top) / rect.height) * 224;
+          const P = currentPatchSize;
+          activePatchC = Math.max(0, Math.min(Math.floor(224 / P) - 1, Math.floor(clickX / P)));
+          activePatchR = Math.max(0, Math.min(Math.floor(224 / P) - 1, Math.floor(clickY / P)));
+          updatePatchDisplay();
+        });
+      }
+
+      updatePatchDisplay();
+
+      // 3. Inductive Bias vs Dataset Scale Logic
+      interface ScaleDataset {
+        id: string;
+        label: string;
+        title: string;
+        scaleBadge: string;
+        cnnName: string;
+        cnnAcc: number; // %
+        vitBaseAcc: number;
+        vitHugeAcc: number;
+        formulaDesc: string;
+        diagnosis: string;
+      }
+
+      const scaleDatasets: Record<string, ScaleDataset> = {
+        in1k: {
+          id: 'in1k',
+          label: 'ImageNet-1K (130 萬張)',
+          title: '小規模基準：ImageNet-1K 預訓練 (130 萬張影像)',
+          scaleBadge: '1.3M 影像 (低資料量)',
+          cnnName: 'ResNet-50 (CNN)',
+          cnnAcc: 79.3,
+          vitBaseAcc: 77.9,
+          vitHugeAcc: 74.2,
+          formulaDesc:
+            '在小規模資料下，CNN 的 2D 局部性與平移等變性是強大的「正規化先驗」；而 ViT 由於缺乏歸納偏向，必須耗費大量參數從頭摸索空間幾何，ViT-Huge 甚至因嚴重過度擬合而暴跌至 74.2%！',
+          diagnosis:
+            '【卷積壟斷區】此時業界普遍得出「Transformer 不適合電腦視覺」的錯誤結論。事實上並非架構落後，而是缺乏足夠的資料量來填補「歸納偏向的真空」。',
+        },
+        in21k: {
+          id: 'in21k',
+          label: 'ImageNet-21K (1400 萬張)',
+          title: '中規模基準：ImageNet-21K 預訓練 (1400 萬張影像)',
+          scaleBadge: '14M 影像 (中資料量)',
+          cnnName: 'BiT-M R152x2 (強 CNN)',
+          cnnAcc: 84.4,
+          vitBaseAcc: 84.1,
+          vitHugeAcc: 85.1,
+          formulaDesc:
+            '當資料量擴展 10 倍至 1400 萬張時，ViT-Base 追平頂級 CNN，ViT-Huge 開始扭轉劣勢並反超 ResNet！弱歸納偏向的自由度開始展現威力。',
+          diagnosis:
+            '【均勢轉折點】資料量跨越 1000 萬張門檻後，ViT 已經能自行在淺層自注意力中學會類似 Gabor 濾波器的局部紋理特徵，同時保有全圖遠程關聯的能力。',
+        },
+        jft300m: {
+          id: 'jft300m',
+          label: 'JFT-300M (3 億張)',
+          title: '超大規模基準：JFT-300M 預訓練 (3 億張影像)',
+          scaleBadge: '300M 影像 (海量資料)',
+          cnnName: 'BiT-L R152x4 (極限 CNN)',
+          cnnAcc: 87.54,
+          vitBaseAcc: 87.76,
+          vitHugeAcc: 88.55,
+          formulaDesc:
+            '在 3 億張影像的浩瀚宇宙中，CNN 的局部卷積核反而成了抑制性能躍升的「天花板」；純 Transformer 以 88.55% 創下歷史新紀錄，且訓練算力僅為 BiT-L 的四分之一！',
+          diagnosis:
+            '【大一統相變】「大數據 + 大模型 + 弱歸納偏向 = 更高上限」的 Scaling 物理鐵律在視覺領域被徹底證實！純 Transformer 正式登基為跨模態的通用架構。',
+        },
+      };
+
+      let activeDatasetId = 'in1k';
+
+      const datasetContainer = document.getElementById('vit-scale-dataset-container');
+      const datasetTitle = document.getElementById('vit-dataset-title');
+      const datasetScaleBadge = document.getElementById('vit-dataset-scale-badge');
+      const cnnModelName = document.getElementById('vit-cnn-model-name');
+      const cnnAccVal = document.getElementById('vit-cnn-acc-val');
+      const cnnBar = document.getElementById('vit-cnn-bar');
+      const vitBaseAccVal = document.getElementById('vit-base-acc-val');
+      const vitBaseBar = document.getElementById('vit-base-bar');
+      const vitHugeAccVal = document.getElementById('vit-huge-acc-val');
+      const vitHugeBar = document.getElementById('vit-huge-bar');
+      const biasFormulaDesc = document.getElementById('vit-bias-formula-desc');
+      const scaleDiagnosisText = document.getElementById('vit-scale-diagnosis-text');
+
+      function renderScaleDataset() {
+        const d = scaleDatasets[activeDatasetId];
+        if (
+          !d ||
+          !datasetTitle ||
+          !datasetScaleBadge ||
+          !cnnModelName ||
+          !cnnAccVal ||
+          !cnnBar ||
+          !vitBaseAccVal ||
+          !vitBaseBar ||
+          !vitHugeAccVal ||
+          !vitHugeBar ||
+          !biasFormulaDesc ||
+          !scaleDiagnosisText
+        )
+          return;
+
+        datasetTitle.textContent = d.title;
+        datasetScaleBadge.textContent = d.scaleBadge;
+        cnnModelName.textContent = d.cnnName;
+
+        cnnAccVal.textContent = `${d.cnnAcc.toFixed(1)}%`;
+        cnnBar.style.width = `${d.cnnAcc}%`;
+
+        vitBaseAccVal.textContent = `${d.vitBaseAcc.toFixed(1)}%`;
+        vitBaseBar.style.width = `${d.vitBaseAcc}%`;
+
+        vitHugeAccVal.textContent = `${d.vitHugeAcc.toFixed(1)}%`;
+        vitHugeBar.style.width = `${d.vitHugeAcc}%`;
+
+        biasFormulaDesc.textContent = d.formulaDesc;
+        scaleDiagnosisText.textContent = d.diagnosis;
+      }
+
+      if (datasetContainer) {
+        datasetContainer.innerHTML = '';
+        Object.keys(scaleDatasets).forEach((key, idx) => {
+          const ds = scaleDatasets[key];
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className =
+            idx === 0
+              ? 'px-3 py-1.5 font-mono text-xs font-bold border-2 border-red bg-red text-surface transition cursor-pointer'
+              : 'px-3 py-1.5 font-mono text-xs font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+          btn.textContent = ds.label;
+          btn.addEventListener('click', () => {
+            activeDatasetId = key;
+            Array.from(datasetContainer.children).forEach((c) => {
+              (c as HTMLElement).className =
+                'px-3 py-1.5 font-mono text-xs font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+            });
+            btn.className =
+              'px-3 py-1.5 font-mono text-xs font-bold border-2 border-red bg-red text-surface transition cursor-pointer';
+            renderScaleDataset();
+          });
+          datasetContainer.appendChild(btn);
+        });
+      }
+
+      renderScaleDataset();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initVitLab);
+    } else {
+      initVitLab();
+    }
+  </script>
+</BaseLayout>

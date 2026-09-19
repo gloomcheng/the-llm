@@ -1,0 +1,461 @@
+---
+// Interactive Reader Feedback & Annotation Component
+// Allows graduate readers to mark paragraphs ("這段我看不懂", etc.)
+// and export or submit feedback as GitHub Issues so content can evolve.
+---
+
+<!-- FLOATING FEEDBACK TRIGGER BUTTON -->
+<aside aria-label="讀者標註與內容演化功能">
+  <button
+    id="feedback-toggle-btn"
+    type="button"
+    class="fixed bottom-6 right-6 z-40 flex items-center gap-2 border-2 border-ink bg-surface px-4 py-2.5 font-mono text-xs sm:text-sm font-bold text-ink shadow-editorial hover:border-red hover:text-red transition-all cursor-pointer"
+    aria-expanded="false"
+    aria-controls="feedback-drawer"
+  >
+    <span aria-hidden="true">💬</span>
+    <span>讀者標註與演化</span>
+    <span id="feedback-counter" class="ml-1 rounded-full bg-red px-2 py-0.5 text-xs text-white">
+      0
+    </span>
+  </button>
+</aside>
+
+<!-- INLINE PARAGRAPH POPOVER (DYNAMICALLY POSITIONED) -->
+<div
+  id="inline-feedback-popover"
+  class="fixed z-50 hidden w-80 max-w-[calc(100vw-2rem)] border-2 border-ink bg-surface p-4 shadow-editorial transition-opacity"
+  role="dialog"
+  aria-modal="false"
+  aria-label="段落標註表單"
+>
+  <div class="flex items-center justify-between border-b border-line pb-2 mb-3">
+    <p class="font-mono text-xs font-bold uppercase tracking-wider text-red m-0">
+      標註此段落 / ANNOTATE
+    </p>
+    <button
+      id="popover-close-btn"
+      type="button"
+      class="text-muted hover:text-ink font-mono text-xs font-bold cursor-pointer p-1"
+      aria-label="關閉標註視窗"
+    >
+      ✕
+    </button>
+  </div>
+
+  <p id="popover-quote-preview" class="font-serif italic text-xs text-muted mb-3 line-clamp-2">
+    段落預覽...
+  </p>
+
+  <fieldset class="mb-3 border-0 p-0 m-0">
+    <legend class="font-mono text-xs text-ink font-bold mb-2">請選擇回饋類型：</legend>
+    <div class="grid grid-cols-1 gap-1.5 font-mono text-xs">
+      <label class="flex items-center gap-2 p-1.5 border border-line bg-paper/50 cursor-pointer hover:border-red">
+        <input type="radio" name="feedback-type" value="confused" checked class="accent-red" />
+        <span>🤔 這段我看不懂（邏輯跳躍／需補充）</span>
+      </label>
+      <label class="flex items-center gap-2 p-1.5 border border-line bg-paper/50 cursor-pointer hover:border-red">
+        <input type="radio" name="feedback-type" value="clear" class="accent-red" />
+        <span>💡 這裡解釋得很清楚（保留此寫法）</span>
+      </label>
+      <label class="flex items-center gap-2 p-1.5 border border-line bg-paper/50 cursor-pointer hover:border-red">
+        <input type="radio" name="feedback-type" value="derivation" class="accent-red" />
+        <span>🔍 想要更多數學推導或具體範例</span>
+      </label>
+      <label class="flex items-center gap-2 p-1.5 border border-line bg-paper/50 cursor-pointer hover:border-red">
+        <input type="radio" name="feedback-type" value="typo" class="accent-red" />
+        <span>✏️ 發現筆誤、錯字或用詞待商榷</span>
+      </label>
+    </div>
+  </fieldset>
+
+  <div class="mb-3">
+    <label for="popover-note-input" class="block font-mono text-xs text-muted mb-1">
+      補充說明或具體疑問（選填）：
+    </label>
+    <textarea
+      id="popover-note-input"
+      rows="2"
+      class="w-full border border-line bg-paper p-2 font-mono text-xs text-ink focus:border-red focus:outline-none"
+      placeholder="例如：第 2 步的矩陣相乘維度是怎麼對齊的？"
+    ></textarea>
+  </div>
+
+  <div class="flex justify-end gap-2">
+    <button
+      id="popover-cancel-btn"
+      type="button"
+      class="border border-line bg-surface px-3 py-1.5 font-mono text-xs text-muted hover:text-ink cursor-pointer"
+    >
+      取消
+    </button>
+    <button
+      id="popover-save-btn"
+      type="button"
+      class="border-2 border-red bg-red px-3 py-1.5 font-mono text-xs font-bold text-white hover:bg-red/90 cursor-pointer"
+    >
+      儲存標註
+    </button>
+  </div>
+</div>
+
+<!-- SLIDE-OVER FEEDBACK DRAWER -->
+<div
+  id="feedback-drawer-overlay"
+  class="fixed inset-0 z-50 hidden bg-ink/40 backdrop-blur-xs transition-opacity"
+  aria-hidden="true"
+></div>
+
+<div
+  id="feedback-drawer"
+  class="fixed inset-y-0 right-0 z-50 hidden w-full max-w-md border-l-2 border-ink bg-surface shadow-2xl transition-transform"
+  role="dialog"
+  aria-modal="true"
+  aria-label="讀者標註與內容演化抽屜"
+>
+  <div class="flex h-full flex-col justify-between p-6">
+    <div>
+      <!-- Drawer Header -->
+      <div class="flex items-start justify-between border-b border-line pb-4 mb-4">
+        <div>
+          <p class="font-mono text-xs font-semibold uppercase tracking-wider text-red m-0">
+            內容演化中樞 / CONTENT EVOLUTION
+          </p>
+          <h2 class="font-display text-2xl text-ink m-0 mt-1">讀者標註清單</h2>
+        </div>
+        <button
+          id="drawer-close-btn"
+          type="button"
+          class="border border-line p-1 text-muted hover:text-ink hover:border-ink font-mono text-sm cursor-pointer"
+          aria-label="關閉抽屜"
+        >
+          ✕
+        </button>
+      </div>
+
+      <p class="text-sm text-muted leading-relaxed mb-4">
+        您在閱讀時標註的「這段我看不懂」與反饋建議，會儲存在本機瀏覽器中。您可以一鍵複製或直接提交至
+        GitHub Issue，讓作者群依據讀者困惑點持續演化章節內容。
+      </p>
+
+      <!-- Annotation Items Container -->
+      <div
+        id="annotations-list"
+        class="max-h-[50vh] overflow-y-auto space-y-3 pr-1 divide-y divide-line"
+      >
+        <!-- Injected dynamically via JS -->
+      </div>
+
+      <div id="annotations-empty" class="py-8 text-center border border-dashed border-line">
+        <p class="font-mono text-sm text-muted m-0">目前尚無標註紀錄</p>
+        <p class="text-xs text-muted mt-2 mb-0">
+          在文章中滑鼠移至任意段落，點擊出現的「💬 標註」按鈕即可記錄！
+        </p>
+      </div>
+    </div>
+
+    <!-- Drawer Footer Actions -->
+    <div class="border-t border-line pt-4 space-y-2">
+      <div class="grid grid-cols-2 gap-2">
+        <button
+          id="btn-copy-markdown"
+          type="button"
+          class="flex items-center justify-center gap-1.5 border border-ink bg-paper p-2.5 font-mono text-xs font-bold text-ink hover:bg-surface cursor-pointer"
+        >
+          <span>📋</span>
+          <span>複製 Markdown</span>
+        </button>
+        <a
+          id="btn-github-issue"
+          href="https://github.com/gloomcheng/the-llm/issues/new"
+          target="_blank"
+          rel="noreferrer"
+          class="flex items-center justify-center gap-1.5 border-2 border-red bg-red p-2.5 font-mono text-xs font-bold text-white hover:bg-red/90 no-underline cursor-pointer"
+        >
+          <span>🚀</span>
+          <span>提交 GitHub Issue</span>
+        </a>
+      </div>
+      <button
+        id="btn-clear-annotations"
+        type="button"
+        class="w-full border border-line bg-surface p-2 font-mono text-xs text-muted hover:text-red hover:border-red cursor-pointer"
+      >
+        清除本頁標註紀錄
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  interface Annotation {
+    id: string;
+    url: string;
+    pageTitle: string;
+    paragraphIndex: number;
+    quote: string;
+    type: 'confused' | 'clear' | 'derivation' | 'typo';
+    typeLabel: string;
+    note: string;
+    createdAt: string;
+  }
+
+  const STORAGE_KEY = 'the-llm-annotations-v1';
+
+  const typeLabels: Record<string, string> = {
+    confused: '🤔 這段我看不懂',
+    clear: '💡 解釋得很清楚',
+    derivation: '🔍 想要更多推導',
+    typo: '✏️ 發現筆誤／錯字',
+  };
+
+  function loadAnnotations(): Annotation[] {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveAnnotations(list: Annotation[]): void {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    } catch (e) {
+      console.error('Failed to save annotations to localStorage:', e);
+    }
+  }
+
+  function initReaderFeedback(): void {
+    const toggleBtn = document.getElementById('feedback-toggle-btn');
+    const counter = document.getElementById('feedback-counter');
+    const drawer = document.getElementById('feedback-drawer');
+    const overlay = document.getElementById('feedback-drawer-overlay');
+    const drawerCloseBtn = document.getElementById('drawer-close-btn');
+    const listContainer = document.getElementById('annotations-list');
+    const emptyState = document.getElementById('annotations-empty');
+    const btnCopy = document.getElementById('btn-copy-markdown');
+    const btnGithub = document.getElementById('btn-github-issue') as HTMLAnchorElement | null;
+    const btnClear = document.getElementById('btn-clear-annotations');
+
+    // Popover elements
+    const popover = document.getElementById('inline-feedback-popover');
+    const popoverCloseBtn = document.getElementById('popover-close-btn');
+    const popoverCancelBtn = document.getElementById('popover-cancel-btn');
+    const popoverSaveBtn = document.getElementById('popover-save-btn');
+    const popoverQuotePreview = document.getElementById('popover-quote-preview');
+    const popoverNoteInput = document.getElementById(
+      'popover-note-input',
+    ) as HTMLTextAreaElement | null;
+
+    let activeParagraph: HTMLParagraphElement | null = null;
+    let activeParagraphIndex = -1;
+
+    function refreshUI(): void {
+      const allAnnotations = loadAnnotations();
+      const currentPageUrl = window.location.pathname;
+      const pageAnnotations = allAnnotations.filter((a) => a.url === currentPageUrl);
+
+      if (counter) {
+        counter.textContent = String(pageAnnotations.length);
+      }
+
+      // Update drawer list
+      if (listContainer && emptyState) {
+        if (pageAnnotations.length === 0) {
+          listContainer.innerHTML = '';
+          emptyState.classList.remove('hidden');
+        } else {
+          emptyState.classList.add('hidden');
+          listContainer.innerHTML = '';
+
+          pageAnnotations.forEach((item) => {
+            const card = document.createElement('div');
+            card.className = 'py-3 text-xs';
+            card.innerHTML = `
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-mono font-bold text-red">${item.typeLabel}</span>
+                <button type="button" class="del-btn text-muted hover:text-red font-mono cursor-pointer" data-id="${item.id}" aria-label="刪除標註">✕</button>
+              </div>
+              <p class="font-serif italic text-muted m-0 mb-1.5 border-l-2 border-line pl-2 line-clamp-3">"${item.quote}"</p>
+              ${item.note ? `<p class="font-mono text-ink m-0 bg-paper/60 p-1.5 border border-line">${item.note}</p>` : ''}
+              <p class="font-mono text-[10px] text-muted/80 mt-1 m-0">${item.createdAt}</p>
+            `;
+            listContainer.appendChild(card);
+          });
+
+          // Attach delete listeners
+          listContainer.querySelectorAll('.del-btn').forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+              const target = e.currentTarget as HTMLElement;
+              const id = target.getAttribute('data-id');
+              const updated = loadAnnotations().filter((a) => a.id !== id);
+              saveAnnotations(updated);
+              refreshUI();
+            });
+          });
+        }
+      }
+
+      // Update GitHub Issue Link
+      if (btnGithub) {
+        const issueTitle = encodeURIComponent(`[讀者回饋] ${document.title.split('—')[0].trim()}`);
+        let issueBody = `### 讀者標註與內容演化建議\n\n**章節頁面**：${window.location.href}\n\n`;
+        if (pageAnnotations.length > 0) {
+          pageAnnotations.forEach((a, i) => {
+            issueBody += `#### 標註 #${i + 1}：${a.typeLabel}\n`;
+            issueBody += `> ${a.quote}\n\n`;
+            if (a.note) {
+              issueBody += `**讀者疑問/建議**：${a.note}\n\n`;
+            }
+            issueBody += `---\n\n`;
+          });
+        } else {
+          issueBody += `（請在此填寫您對本章節的具體建議或看不懂的段落...）\n`;
+        }
+        btnGithub.href = `https://github.com/gloomcheng/the-llm/issues/new?title=${issueTitle}&body=${encodeURIComponent(issueBody)}`;
+      }
+
+      // Highlight paragraphs on the page
+      document.querySelectorAll<HTMLParagraphElement>('article p').forEach((p) => {
+        p.classList.remove('border-l-4', 'border-red', 'pl-3', 'bg-red-soft/10');
+      });
+      pageAnnotations.forEach((a) => {
+        const paragraphs = document.querySelectorAll<HTMLParagraphElement>('article p');
+        if (paragraphs[a.paragraphIndex]) {
+          paragraphs[a.paragraphIndex].classList.add(
+            'border-l-4',
+            'border-red',
+            'pl-3',
+            'bg-red-soft/10',
+          );
+        }
+      });
+    }
+
+    // Drawer Open / Close
+    function openDrawer(): void {
+      drawer?.classList.remove('hidden');
+      overlay?.classList.remove('hidden');
+      toggleBtn?.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeDrawer(): void {
+      drawer?.classList.add('hidden');
+      overlay?.classList.add('hidden');
+      toggleBtn?.setAttribute('aria-expanded', 'false');
+    }
+
+    toggleBtn?.addEventListener('click', openDrawer);
+    drawerCloseBtn?.addEventListener('click', closeDrawer);
+    overlay?.addEventListener('click', closeDrawer);
+
+    // Popover Close
+    function closePopover(): void {
+      popover?.classList.add('hidden');
+      activeParagraph = null;
+      activeParagraphIndex = -1;
+      if (popoverNoteInput) popoverNoteInput.value = '';
+    }
+
+    popoverCloseBtn?.addEventListener('click', closePopover);
+    popoverCancelBtn?.addEventListener('click', closePopover);
+
+    // Save Annotation
+    popoverSaveBtn?.addEventListener('click', () => {
+      if (!activeParagraph || activeParagraphIndex < 0) return;
+
+      const selectedRadio = document.querySelector<HTMLInputElement>(
+        'input[name="feedback-type"]:checked',
+      );
+      const type = (selectedRadio?.value || 'confused') as Annotation['type'];
+      const note = popoverNoteInput?.value.trim() || '';
+      const quote = activeParagraph.textContent?.trim().slice(0, 200) || '';
+
+      const newAnnotation: Annotation = {
+        id: `ann-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        url: window.location.pathname,
+        pageTitle: document.title,
+        paragraphIndex: activeParagraphIndex,
+        quote,
+        type,
+        typeLabel: typeLabels[type] || '🤔 這段我看不懂',
+        note,
+        createdAt: new Date().toLocaleString('zh-TW', { hour12: false }),
+      };
+
+      const existing = loadAnnotations();
+      existing.push(newAnnotation);
+      saveAnnotations(existing);
+
+      closePopover();
+      refreshUI();
+    });
+
+    // Copy Markdown
+    btnCopy?.addEventListener('click', () => {
+      const pageAnnotations = loadAnnotations().filter((a) => a.url === window.location.pathname);
+      if (pageAnnotations.length === 0) {
+        alert('目前尚無標註紀錄可複製。');
+        return;
+      }
+      let md = `## 讀者標註與內容演化回饋 (${document.title})\n\n`;
+      pageAnnotations.forEach((a, i) => {
+        md += `### ${i + 1}. ${a.typeLabel}\n`;
+        md += `> ${a.quote}\n\n`;
+        if (a.note) md += `**說明**：${a.note}\n\n`;
+      });
+      navigator.clipboard.writeText(md).then(() => {
+        alert('已複製 Markdown 格式的標註清單至剪貼簿！');
+      });
+    });
+
+    // Clear Annotations
+    btnClear?.addEventListener('click', () => {
+      if (confirm('確定要清除本頁的所有標註紀錄嗎？')) {
+        const remaining = loadAnnotations().filter((a) => a.url !== window.location.pathname);
+        saveAnnotations(remaining);
+        refreshUI();
+      }
+    });
+
+    // Attach Inline Trigger Buttons to article paragraphs
+    const paragraphs = document.querySelectorAll<HTMLParagraphElement>('article p');
+    paragraphs.forEach((p, idx) => {
+      // Create a small discreet trigger button
+      const trigger = document.createElement('button');
+      trigger.type = 'button';
+      trigger.className =
+        'feedback-inline-trigger inline-flex items-center gap-1 ml-2 font-mono text-xs text-muted/60 hover:text-red opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer';
+      trigger.setAttribute('aria-label', '標註此段落');
+      trigger.innerHTML = '<span>💬 標註</span>';
+
+      p.classList.add('group', 'relative');
+      p.appendChild(trigger);
+
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        activeParagraph = p;
+        activeParagraphIndex = idx;
+
+        if (popoverQuotePreview) {
+          popoverQuotePreview.textContent = `"${p.textContent?.trim().slice(0, 120)}..."`;
+        }
+
+        if (popover) {
+          popover.classList.remove('hidden');
+          const rect = trigger.getBoundingClientRect();
+          // Position popover near button or center on mobile
+          const top = Math.min(window.innerHeight - 380, Math.max(20, rect.bottom + 8));
+          const left = Math.min(window.innerWidth - 340, Math.max(16, rect.left - 100));
+          popover.style.top = `${top}px`;
+          popover.style.left = `${left}px`;
+        }
+      });
+    });
+
+    refreshUI();
+  }
+
+  document.addEventListener('DOMContentLoaded', initReaderFeedback);
+</script>

@@ -1,10 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../lib/paths';
 import StoryRail from '../../components/StoryRail.astro';
 import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
 import AsideCard from '../../components/AsideCard.astro';
 import Callout from '../../components/Callout.astro';
 import AuthorGrid from '../../components/AuthorGrid.astro';
+import EvidenceList from '../../components/EvidenceList.astro';
 import PaperMeta from '../../components/PaperMeta.astro';
 import PaperNavigation from '../../components/PaperNavigation.astro';
 import PaperSectionHeader from '../../components/PaperSectionHeader.astro';
@@ -20,7 +22,7 @@ const story = [
   {
     year: '2018.10',
     label: '前史 / BERT 雙向霸權',
-    title: '微調典範橫掃，但將模型鎖死在專用數據集',
+    title: '微調典範橫掃，但將模型鎖死在專用資料集',
     body: 'BERT 證明了雙向理解的威力，但每個任務都需要收集專屬標註數據進行微調，各領域模型互不相通。',
     status: 'past' as const,
   },
@@ -35,7 +37,7 @@ const story = [
     year: '2020.01',
     label: '後續 / SCALING LAWS',
     title: '經驗法則升華為精確的物理冪律',
-    body: 'GPT-2 展現的平滑性能跨越，直接催生了第五章 Kaplan 等人的神經語言模型縮放定律。',
+    body: 'GPT-2 展現的平滑性能跨越，直接催生了 Kaplan 等人的神經語言模型縮放定律（Scaling Laws）。',
     status: 'future' as const,
   },
 ];
@@ -114,7 +116,7 @@ const timelineEpochs: TimelineEpoch[] = [
         num: 4,
         refCode: 'S04',
         role: '分詞基石',
-        takeaway: '為現代多語言與代碼混合大模型鋪平了無損符號編碼的通用底座。',
+        takeaway: '為現代多語言與程式碼混合大模型鋪平了無損符號編碼的通用底座。',
       },
     ],
   },
@@ -130,7 +132,7 @@ const timelineEpochs: TimelineEpoch[] = [
     <!-- HERO HEADER (Scheme B 規範) -->
     <header class={`${shell} pt-10`}>
       <div class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
-        <a class="text-red underline underline-offset-4" href="/">
+        <a class="text-red underline underline-offset-4" href={withBase('/')}>
           THE LLM
         </a>
         <span aria-hidden="true">/</span>
@@ -150,7 +152,16 @@ const timelineEpochs: TimelineEpoch[] = [
           </h1>
 
           <p class="mt-8 max-w-[52ch] text-lg leading-8 text-muted">
-            在第三章 BERT 憑藉雙向微調橫掃 11 項 NLP 紀錄的幾個月後，OpenAI
+            在{' '}
+            <a
+              href={withBase(
+                '/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding',
+              )}
+              class="text-primary hover:underline font-medium"
+            >
+              BERT
+            </a>{' '}
+            憑藉雙向微調橫掃 11 項 NLP 紀錄的幾個月後，OpenAI
             展開了一場驚世駭俗的絕地反擊。他們不跟隨業界去收集更多標註資料做微調，而是將單向解碼器參數拉大
             10 倍至 15 億，餵入 40GB 的網路世界。GPT-2
             證明了一件顛覆直覺的事：只要模型足夠龐大，它根本不需要為了個別任務修改任何參數——僅憑輸入一句「提示詞」，它就能在零樣本條件下自發完成問答、翻譯與摘要，開啟了提示詞工程（Prompt
@@ -208,7 +219,7 @@ const timelineEpochs: TimelineEpoch[] = [
       <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            第一樂章 / 標註微調的窮途末路
+            章節 01 · 標註微調的窮途末路 / THE SUPERVISION CLIFF
           </p>
           <h2
             id="supervision-cliff-title"
@@ -221,28 +232,30 @@ const timelineEpochs: TimelineEpoch[] = [
           </h2>
         </div>
         <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
-          微調雖然能在特定榜單上刷出高分，但它本質上是製造了一群彼此割裂的「特種工人」。真實世界有成千上萬種需求，人類不可能為每一種需求都人工標註幾萬筆訓練數據。
+          微調雖然能在特定榜單上刷出高分，但它本質上是製造了一群彼此割裂的「特種工人」。真實世界有成千上萬種需求，人類不可能為每一種需求都人工標註幾萬筆訓練資料。
         </p>
       </div>
 
       <PaperReadingLayout class="text-base leading-8 text-ink">
         <div class="space-y-6">
-          <p class="text-lg leading-relaxed text-ink">
-            回顧第三章〈
+          <p>
+            回顧
             <a
-              href="/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding"
+              href={withBase(
+                '/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding',
+              )}
               class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
             >
               BERT
             </a>
-            〉與第二章〈
+            與
             <a
-              href="/papers/improving-language-understanding-by-generative-pre-training"
+              href={withBase('/papers/improving-language-understanding-by-generative-pre-training')}
               class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
             >
               GPT-1
             </a>
-            〉，當代自然語言處理看似已經找到了「預訓練 +
+            ，當代自然語言處理看似已經找到了「預訓練 +
             微調」的黃金法則：先在海量文章上預訓練底座，再針對下游任務（如情緒分類、問答、推論）進行有監督微調。
           </p>
 
@@ -262,7 +275,7 @@ const timelineEpochs: TimelineEpoch[] = [
               <span class="font-mono text-xs font-bold text-blue uppercase block mb-1">
                 微調路線（BERT / GPT-1 模式）
               </span>
-              <p class="font-serif text-base text-ink mb-2">
+              <p class="text-base text-ink mb-2">
                 招聘進來的大腦一片空靈，每分派一項新工作（例如審查醫療合約），主管必須耗費數週準備
                 5,000 份標準答案，進行「職前魔鬼集訓」。
               </p>
@@ -276,7 +289,7 @@ const timelineEpochs: TimelineEpoch[] = [
               <span class="font-mono text-xs font-bold text-red uppercase block mb-1">
                 零樣本路線（GPT-2 理想模式）
               </span>
-              <p class="font-serif text-base text-ink mb-2">
+              <p class="text-base text-ink mb-2">
                 招聘一位閱遍全人類圖書館的博學秘書。你完全不需要為他舉辦集訓，也不需要給他任何標註教材。
               </p>
               <p class="text-sm text-muted m-0 leading-relaxed">
@@ -289,20 +302,20 @@ const timelineEpochs: TimelineEpoch[] = [
 
           <p>
             Alec Radford 與 Ilya Sutskever 敏銳地意識到：
-            <strong>現實世界中 99.9% 的語言需求，根本沒有現成的標註數據集！</strong>
+            <strong>現實世界中 99.9% 的語言需求，根本沒有現成的標註資料集！</strong>
             如果人類每想讓機器做一件事，就必須耗費數十萬美元去僱工標註資料、微調一套專屬權重，那麼人工智慧就永遠無法成為普及的大眾工具。
           </p>
 
           <Callout variant="editorial" title="典範的大逆轉：從專用微調到通用條件機率">
             <p class="m-0 text-base leading-relaxed text-muted">
-              在第三章的結尾，OpenAI 做出了孤注一擲的戰略決策：
+              在面對 BERT 橫掃微調榜單的強烈衝擊下，OpenAI 做出了孤注一擲的戰略決策：
               <strong>不再跟隨業界去打微調排行榜的巷戰！</strong>
               <br />
               <br />
               Radford 提出了一個大膽至極的科學假設：
               <em>
                 「如果我們把模型做大 10
-                倍，餵入足夠廣闊、包含全人類各領域對話、代碼與文章的語料，那麼神經網路在『預測下一個字』的過程中，自然會學會如何根據上下文的『指令語境』，去執行各式各樣的任務！」
+                倍，餵入足夠廣闊、包含全人類各領域對話、程式碼與文章的語料，那麼神經網路在『預測下一個字』的過程中，自然會學會如何根據上下文的『指令語境』，去執行各式各樣的任務！」
               </em>
             </p>
           </Callout>
@@ -326,7 +339,7 @@ const timelineEpochs: TimelineEpoch[] = [
           <p>
             當主管先要求研究員「把這份德文合約翻譯成中文」，五秒後又改口要求「總結這篇合約的三大法律漏洞」時，研究員的大腦難道需要動開顱手術、重新布線神經元突觸嗎？完全不需要。人類之所以能在數秒內自如切換數百種截然不同的複雜任務，正是因為
             <strong>自然語言本身就是人類智能最高級、最通用的控制介面</strong>
-            。語言文字從來不只是被動等待分類的「輸入資料」，它本質上就是一種即時編程符號：一段指令提示進入大腦，便能瞬間重組工作記憶的注意力焦點，引導龐大的先驗知識庫湧向特定的解決路徑。
+            。語言文字從來不只是被動等待分類的「輸入資料」，它本質上就是一種即時引導符號：一段指令提示進入大腦，便能瞬間重組工作記憶的注意力焦點，引導龐大的先驗知識庫湧向特定的解決路徑。
           </p>
 
           <p>
@@ -338,7 +351,7 @@ const timelineEpochs: TimelineEpoch[] = [
         <aside slot="rail" class="space-y-6">
           <AsideCard kicker="歷史代價 / BOTTLENECK" title="有監督標註的物理極限" variant="surface">
             <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
-              標註數據集（如 SQuAD、MNLI）往往充斥著人為的「標註偏置（Annotation
+              標註資料集（如 SQuAD、MNLI）往往充斥著人為的「標註偏誤（Annotation
               Artifacts）」。模型微調時常常只是學會了走捷徑（例如看見某些特定字詞就猜否定），而非真正理解語言邏輯。
             </p>
           </AsideCard>
@@ -370,7 +383,7 @@ const timelineEpochs: TimelineEpoch[] = [
       aria-labelledby="engine-title"
     >
       <PaperSectionHeader
-        kicker="第二樂章 / 數學引擎與架構精修"
+        kicker="章節 02 · 數學引擎與架構精修 / ARCHITECTURE"
         title="多任務條件機率與 15 億參數巨獸"
         subtitle="將所有任務自然封裝進文字序列；以 Pre-LN 與 Byte-level BPE 重塑深層傳播穩定性"
         id="act-2-multitask-engine"
@@ -378,9 +391,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
       <PaperReadingLayout class="text-base leading-8 text-ink">
         <div class="space-y-6">
-          <p class="text-lg leading-relaxed text-ink">
-            在傳統統計學習中，常規語言模型學習的是單一文本序列的無條件聯合機率分佈：
-          </p>
+          <p>在傳統統計學習中，常規語言模型學習的是單一文本序列的無條件聯合機率分佈：</p>
 
           <div class="my-3 bg-paper-deep p-4 font-mono text-sm overflow-x-auto">
             <math
@@ -535,8 +546,8 @@ const timelineEpochs: TimelineEpoch[] = [
           <h3 class="font-display text-2xl text-ink pt-4">三大關鍵工程精修：為現代 LLM 奠定骨架</h3>
 
           <p>
-            把神經網絡從 12 層堆疊到 48
-            層，絕不是單純修改代碼裡的迴圈數字。在深層網絡中，梯度消失與數值不穩定會讓訓練瞬間發散。GPT-2
+            把神經網路從 12 層堆疊到 48
+            層，絕不是單純修改程式碼裡的迴圈數字。在深層網路中，梯度消失與數值不穩定會讓訓練瞬間發散。GPT-2
             引入了三項至今依然是主流標準的架構改進：
           </p>
 
@@ -547,7 +558,7 @@ const timelineEpochs: TimelineEpoch[] = [
               </strong>
               <p class="m-0 leading-relaxed">
                 在原始 Transformer 與 GPT-1
-                中，正規化是放在殘差相加「之後」（Post-LN）。這導致深層網絡的梯度在反向傳播時必須穿透層層相乘，極易不穩。GPT-2
+                中，正規化是放在殘差相加「之後」（Post-LN）。這導致深層網路的梯度在反向傳播時必須穿透層層相乘，極易不穩。GPT-2
                 將 LayerNorm
                 移至每個自注意力與前饋區塊的「輸入端」（Pre-LN），並在最後一層額外追加一個
                 LayerNorm。這使得殘差主幹保持暢通無阻，為日後百層千億模型打通了生命通道。
@@ -576,10 +587,10 @@ const timelineEpochs: TimelineEpoch[] = [
                 傳統以 Unicode
                 字元為單位的分詞器，遇到罕見漢字、特殊符號或生僻字時，只能無奈輸出未知符號{' '}
                 <code>&lt;unk&gt;</code>。GPT-2 改以電腦最底層的{' '}
-                <strong>256 個原始字節（Byte）</strong>
+                <strong>256 個原始位元組（Byte）</strong>
                 作為基礎詞表，並在此之上進行 BPE 演算法合併，詞表擴充至 50,257。這意味著：
                 <strong>
-                  全世界任何文字、emoji、表情符號甚至二進制代碼，都可以被無損解碼，詞庫裡永遠不會再有任何一個未知詞！
+                  全世界任何文字、emoji、表情符號甚至二進位程式碼，都可以被無損解碼，詞庫裡永遠不會再有任何一個未知詞！
                 </strong>
               </p>
             </div>
@@ -590,7 +601,7 @@ const timelineEpochs: TimelineEpoch[] = [
           <p>
             BERT 訓練在 33
             億詞的書籍與維基百科上；但若想讓模型學會世間萬物的話題，維基百科的語調過於單一刻板。OpenAI
-            開發了全新數據集——<strong>WebText</strong>：
+            開發了全新資料集——<strong>WebText</strong>：
           </p>
           <ul class="list-disc pl-5 space-y-2 text-sm text-muted">
             <li>
@@ -618,14 +629,315 @@ const timelineEpochs: TimelineEpoch[] = [
             </p>
           </AsideCard>
 
-          <AsideCard kicker="分詞革命 / TOKENIZER" title="字節級 BPE 的威能" variant="paper">
+          <AsideCard kicker="分詞革命 / TOKENIZER" title="位元組級 BPE 的威能" variant="paper">
             <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
               以 256
-              個字節作為基底，保證了對所有文字的「通用覆蓋率」。即使遇到一個從未見過的罕見字詞，模型最差也能將其拆解為若干字節組合，絕不會吐出讓系統崩潰的未知符號。
+              個位元組作為基底，保證了對所有文字的「通用覆蓋率」。即使遇到一個從未見過的罕見字詞，模型最差也能將其拆解為若干位元組組合，絕不會吐出讓系統崩潰的未知符號。
             </p>
           </AsideCard>
         </aside>
       </PaperReadingLayout>
+    </section>
+
+    <!-- BREAKOUT: 動態實驗室：位元組級 BPE 與零樣本提示工程實驗室 -->
+    <section
+      id="gpt2-interactive-lab"
+      class="border-y border-ink bg-paper-deep/60 py-16 sm:py-20 lg:py-24 scroll-mt-24"
+      aria-labelledby="gpt2-lab-title"
+    >
+      <div class={shell}>
+        <div class="mb-10 max-w-[800px]">
+          <p class="m-0 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+            動態實驗室 / INTERACTIVE ZERO-SHOT & BPE LAB
+          </p>
+          <h3
+            id="gpt2-lab-title"
+            class="mt-2 m-0 font-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-ink"
+          >
+            位元組級 BPE 分詞與零樣本任務導引模擬器
+          </h3>
+          <p class="mt-4 text-base leading-7 text-muted">
+            親手操作 GPT-2 的兩大核心架構革新：探索 256 位元組基底如何實現 100% 覆蓋率的零
+            &lt;unk&gt; 分詞，並觀察僅憑一段提示詞（Prompt），如何瞬間在條件機率 p(output | input,
+            task) 中翻轉下一個 Token 的機率分佈。
+          </p>
+        </div>
+
+        <!-- Mode Tab Bar -->
+        <div
+          class="flex flex-wrap gap-2 mb-8 border-b border-line pb-4"
+          role="tablist"
+          aria-label="實驗室模組切換"
+        >
+          <button
+            type="button"
+            id="gpt2-tab-bpe"
+            role="tab"
+            aria-selected="true"
+            aria-controls="gpt2-panel-bpe"
+            class="px-4 py-2 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer"
+          >
+            模組 01 · 位元組級 BPE 分詞沙盒
+          </button>
+          <button
+            type="button"
+            id="gpt2-tab-prompt"
+            role="tab"
+            aria-selected="false"
+            aria-controls="gpt2-panel-prompt"
+            class="px-4 py-2 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer"
+          >
+            模組 02 · 零樣本提示詞條件機率導引
+          </button>
+        </div>
+
+        <!-- PANEL 01: BPE 分詞沙盒 -->
+        <div id="gpt2-panel-bpe" role="tabpanel" aria-labelledby="gpt2-tab-bpe" class="space-y-8">
+          <!-- Control & Preset Selector -->
+          <div class="border border-ink bg-surface p-5 sm:p-6">
+            <span class="font-mono text-xs font-bold uppercase tracking-wider text-red block mb-3">
+              PRESET TEXT SAMPLES / 預設測試語句
+            </span>
+            <div class="flex flex-wrap gap-2 mb-4" id="bpe-preset-container">
+              <!-- Presets rendered by JS -->
+            </div>
+
+            <!-- Custom Input Textarea -->
+            <label for="bpe-input-text" class="block font-mono text-xs font-semibold text-ink mb-2">
+              輸入自訂測試文字（支援任意語言、Emoji 與特殊符號）：
+            </label>
+            <textarea
+              id="bpe-input-text"
+              rows="3"
+              class="w-full border border-line bg-paper p-3 font-mono text-sm text-ink focus:border-red focus:outline-hidden resize-y"
+              placeholder="請輸入欲測試分詞的文字..."
+            ></textarea>
+          </div>
+
+          <!-- Pipeline Visualizer: 2 Columns on Desktop -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Left: Bytes & Regex (6 cols) -->
+            <div class="lg:col-span-6 space-y-6">
+              <!-- Stage 1: UTF-8 Bytes -->
+              <div class="border border-ink bg-surface p-5 sm:p-6 space-y-3">
+                <div class="flex items-center justify-between border-b border-line pb-2">
+                  <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                    階段一 · UTF-8 原始位元組流 (Raw Bytes)
+                  </span>
+                  <span
+                    id="bpe-byte-count-badge"
+                    class="font-mono text-xs bg-paper-deep px-2 py-0.5 border border-line text-ink"
+                  >
+                    0 位元組
+                  </span>
+                </div>
+                <p class="m-0 text-sm text-muted">
+                  GPT-2 摒棄以 Unicode 字元為基礎的舊做法，將輸入字串直接編碼為最底層的 256
+                  種位元組（0x00 至 0xFF）。
+                </p>
+                <div
+                  id="bpe-bytes-stream"
+                  class="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto p-3 border border-line bg-paper font-mono text-xs"
+                >
+                  <!-- Rendered by JS -->
+                </div>
+              </div>
+
+              <!-- Stage 2: Regex Pre-tokenization -->
+              <div class="border border-ink bg-surface p-5 sm:p-6 space-y-3">
+                <div class="flex items-center justify-between border-b border-line pb-2">
+                  <span class="font-mono text-xs font-bold uppercase tracking-wider text-blue">
+                    階段二 · 正則前處理規則 (Regex Splitting)
+                  </span>
+                  <span class="font-mono text-xs bg-paper-deep px-2 py-0.5 border border-line text-ink">
+                    規則約束
+                  </span>
+                </div>
+                <p class="m-0 text-sm text-muted">
+                  防止 BPE 演算法將標點符號與單詞跨邊界黏合，確保詞根乾淨：
+                </p>
+                <div class="border border-line bg-paper p-3 font-mono text-xs text-ink overflow-x-auto">
+                  <code>
+                    's|'t|'re|'ve|'m|'ll|'d| ?\p&#123;L&#125;+| ?\p&#123;N&#125;+|
+                    ?[^\s\p&#123;L&#125;\p&#123;N&#125;]+|\s+(?!\S)|\s+
+                  </code>
+                </div>
+                <div id="bpe-regex-chunks" class="flex flex-wrap gap-2 pt-1 font-mono text-xs">
+                  <!-- Rendered by JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: BPE Tokens & Statistics (6 cols) -->
+            <div class="lg:col-span-6 space-y-6">
+              <!-- Stage 3: BPE Tokens Sequence -->
+              <div class="border border-ink bg-surface p-5 sm:p-6 space-y-3">
+                <div class="flex items-center justify-between border-b border-line pb-2">
+                  <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                    階段三 · BPE 合併 Token 序列 (Vocab: 50,257)
+                  </span>
+                  <span
+                    id="bpe-token-count-badge"
+                    class="font-mono text-xs bg-red text-surface px-2 py-0.5 font-bold"
+                  >
+                    0 個 Token
+                  </span>
+                </div>
+                <p class="m-0 text-sm text-muted">
+                  點擊個別 Token 可檢驗其對應之詞庫編號（Token ID）與原始位元組組成：
+                </p>
+                <div
+                  id="bpe-tokens-container"
+                  class="flex flex-wrap gap-2 p-3 border border-line bg-paper min-h-[8rem] max-h-60 overflow-y-auto"
+                >
+                  <!-- Rendered by JS -->
+                </div>
+
+                <!-- Inspector Card -->
+                <div
+                  id="bpe-token-inspector"
+                  class="border border-line bg-paper-deep p-3 font-mono text-xs text-ink"
+                >
+                  點擊上方任意 Token 檢視詳細編碼結構...
+                </div>
+              </div>
+
+              <!-- Metrics Summary Bar -->
+              <div class="border border-ink bg-surface p-5 sm:p-6">
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-muted block mb-3">
+                  TOKENIZATION METRICS / 分詞效率與覆蓋率
+                </span>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center font-mono">
+                  <div class="border border-line bg-paper p-3">
+                    <span class="text-muted block text-xs">原始位元組 (B)</span>
+                    <span id="metric-bytes" class="font-bold text-ink text-base">
+                      0
+                    </span>
+                  </div>
+                  <div class="border border-line bg-paper p-3">
+                    <span class="text-muted block text-xs">生成 Token (T)</span>
+                    <span id="metric-tokens" class="font-bold text-ink text-base">
+                      0
+                    </span>
+                  </div>
+                  <div class="border border-line bg-paper p-3">
+                    <span class="text-muted block text-xs">壓縮比 (B/T)</span>
+                    <span id="metric-ratio" class="font-bold text-red text-base">
+                      0.00
+                    </span>
+                  </div>
+                  <div class="border border-line bg-paper p-3">
+                    <span class="text-muted block text-xs">未知詞 &lt;unk&gt;</span>
+                    <span class="font-bold text-red text-base">0 (絕對零)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL 02: 零樣本提示詞條件機率導引 -->
+        <div
+          id="gpt2-panel-prompt"
+          role="tabpanel"
+          aria-labelledby="gpt2-tab-prompt"
+          class="space-y-8 hidden"
+        >
+          <!-- Task Selector -->
+          <div class="border border-ink bg-surface p-5 sm:p-6">
+            <span class="font-mono text-xs font-bold uppercase tracking-wider text-red block mb-3">
+              ZERO-SHOT DOWNSTREAM TASKS / 零樣本下游任務情境
+            </span>
+            <div class="flex flex-wrap gap-2" id="prompt-task-container">
+              <!-- Task buttons rendered by JS -->
+            </div>
+          </div>
+
+          <!-- Prompt Injection Toggle & Context Inspector -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Left: Document & Prompt Injection (7 cols) -->
+            <div class="lg:col-span-7 border border-ink bg-surface p-5 sm:p-6 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2 border-b border-line pb-3">
+                <div>
+                  <span class="font-mono text-xs font-semibold uppercase tracking-[0.1em] text-red">
+                    PROMPT INJECTION ENGINE
+                  </span>
+                  <h4
+                    class="mt-1 m-0 font-display text-lg font-bold text-ink"
+                    id="prompt-task-title"
+                  >
+                    任務展示
+                  </h4>
+                </div>
+                <!-- Prompt Toggle Button -->
+                <button
+                  type="button"
+                  id="prompt-toggle-btn"
+                  class="px-3.5 py-1.5 font-mono text-xs font-bold border-2 border-red bg-red text-surface transition cursor-pointer hover:opacity-90"
+                >
+                  切換：注入 GPT-2 提示詞
+                </button>
+              </div>
+
+              <!-- Context Box -->
+              <div>
+                <span class="font-mono text-xs text-muted block mb-1">
+                  輸入模型之文字序列（Context Stream）：
+                </span>
+                <div
+                  id="prompt-context-display"
+                  class="border border-line bg-paper p-4 font-mono text-sm leading-relaxed text-ink min-h-[8rem]"
+                >
+                  <!-- Rendered by JS -->
+                </div>
+              </div>
+
+              <!-- Mathematical Insight Callout -->
+              <div class="border-l-4 border-red bg-paper p-3 text-sm text-ink leading-relaxed">
+                <span class="font-mono text-xs font-bold text-red uppercase block mb-1">
+                  條件機率導引原理 / CONDITIONAL DENSITY
+                </span>
+                <p id="prompt-math-explanation" class="m-0 text-sm text-muted">
+                  透過提示詞 p(output | input, task)，文字接龍的概率場發生了本質上的偏折。
+                </p>
+              </div>
+            </div>
+
+            <!-- Right: Next-Token Probability Distribution (5 cols) -->
+            <div class="lg:col-span-5 border border-ink bg-surface p-5 sm:p-6 space-y-4">
+              <div class="border-b border-line pb-3">
+                <span class="font-mono text-xs font-semibold uppercase tracking-[0.1em] text-red">
+                  NEXT TOKEN PREDICTION / 次詞預測分佈
+                </span>
+                <h4 class="mt-1 m-0 font-display text-lg font-bold text-ink">
+                  Top-5 候選詞機率 p(s<sub>n</sub> | s<sub>&lt;n</sub>)
+                </h4>
+              </div>
+
+              <!-- Status Badge -->
+              <div
+                id="prompt-status-badge"
+                class="font-mono text-xs py-1 px-2 border border-line bg-paper-deep text-ink"
+              >
+                目前狀態：已注入提示詞
+              </div>
+
+              <!-- Probability Bars Container -->
+              <div id="prompt-prob-bars" class="space-y-3 pt-2">
+                <!-- Rendered by JS -->
+              </div>
+
+              <!-- Linguistic Diagnosis -->
+              <div class="border border-line bg-paper p-3 font-mono text-xs text-muted">
+                <span class="font-bold text-ink block mb-1">語意導引診斷：</span>
+                <p id="prompt-diagnosis-text" class="m-0 leading-relaxed text-muted">
+                  診斷載入中...
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- MOVEMENT 3: 零微調的奇蹟 (ZERO-SHOT TRANSFER) -->
@@ -635,7 +947,7 @@ const timelineEpochs: TimelineEpoch[] = [
       aria-labelledby="zero-shot-title"
     >
       <PaperSectionHeader
-        kicker="第三樂章 / 零微調的奇蹟"
+        kicker="章節 03 · 零微調的奇蹟 / ZERO-SHOT TRANSFER"
         title="提示詞的萌芽：完全不更新權重，橫掃多領域任務"
         subtitle="無需專用線性層與梯度反向傳播，僅憑輸入文字的引導，1.5B 巨獸在零樣本下湧現令人震撼的跨領域實用能力"
         id="act-3-zero-shot"
@@ -643,7 +955,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
       <PaperReadingLayout class="text-base leading-8 text-ink">
         <div class="space-y-6">
-          <p class="text-lg leading-relaxed text-ink">
+          <p>
             當 15 億參數的 GPT-2 訓練完成後，OpenAI 做了一件在 2019 年看來極度瘋狂的實驗：
             <strong>把下游評測資料集的訓練集全部扔掉！一張標註資料都不給模型看！</strong>
           </p>
@@ -658,7 +970,7 @@ const timelineEpochs: TimelineEpoch[] = [
           </h3>
 
           <p>
-            在史丹佛大學發布的 CoQA 數據集中，包含一篇閱讀材料與多輪問答對話。傳統模型必須在 12
+            在史丹佛大學發布的 CoQA 資料集中，包含一篇閱讀材料與多輪問答對話。傳統模型必須在 12
             萬個問答範例上微調數十個小時；而 GPT-2 的測試方式極其自然：
           </p>
 
@@ -795,7 +1107,7 @@ const timelineEpochs: TimelineEpoch[] = [
       aria-labelledby="divergence-title"
     >
       <PaperSectionHeader
-        kicker="第四樂章 / 世紀分水嶺"
+        kicker="章節 04 · 世紀分水嶺 / PARADIGM SHIFT"
         title="獨角獸震撼與太危險發布：被封印的模型，與通向 Scaling Law 的大道"
         subtitle="一篇關於安地斯山脈說英語獨角獸的合成新聞震撼全球，開啟現代 AI 安全與開源倫理之世紀辯論"
         id="act-4-staged-release"
@@ -803,8 +1115,17 @@ const timelineEpochs: TimelineEpoch[] = [
 
       <PaperReadingLayout class="text-base leading-8 text-ink">
         <div class="space-y-6">
-          <p class="text-lg leading-relaxed text-ink">
-            如果說第三章 BERT 的成就是讓科學家驚嘆於閱讀理解指標，那麼 GPT-2 的問世，則是
+          <p>
+            如果說{' '}
+            <a
+              href={withBase(
+                '/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding',
+              )}
+              class="text-primary hover:underline font-medium"
+            >
+              BERT
+            </a>{' '}
+            的成就是讓科學家驚嘆於閱讀理解指標，那麼 GPT-2 的問世，則是
             <strong>第一次讓整個人類大眾社會感受到了直擊靈魂的恐懼與震撼。</strong>
           </p>
 
@@ -831,7 +1152,7 @@ const timelineEpochs: TimelineEpoch[] = [
           </div>
 
           <p>
-            在此之前，所有神經網絡在生成超過兩句話後，就會開始陷入無意義的胡言亂語或無限自我重複。然而，15
+            在此之前，所有神經網路在生成超過兩句話後，就會開始陷入無意義的胡言亂語或無限自我重複。然而，15
             億參數的 GPT-2 卻以令人毛骨悚然的嚴肅新聞腔調，連續接寫了整整十幾段內容：
           </p>
 
@@ -910,7 +1231,7 @@ const timelineEpochs: TimelineEpoch[] = [
           </p>
 
           <h3 class="font-display text-2xl text-ink pt-4">
-            雙塔已逝，單向啟航：通往第五章縮放定律
+            雙塔已逝，單向啟航：通往神經語言模型縮放定律
           </h3>
 
           <p>至此，回看 2018 至 2019 年的世紀之戰：</p>
@@ -931,15 +1252,14 @@ const timelineEpochs: TimelineEpoch[] = [
           <p>
             更關鍵的是，Radford
             在這篇論文中觀察到的「困惑度與任務表現隨參數量平滑跨越」的幾何現象，深深震撼了一位前理論物理學家
-            Jared Kaplan。在接下來的幾個月裡，Kaplan 帶著極為嚴密的統計物理眼光進駐
-            OpenAI，即將在第五章〈
+            Jared Kaplan。在接下來的幾個月裡，Kaplan 帶著極為嚴密的統計物理眼光進駐 OpenAI，即將在
             <a
-              href="/papers/scaling-laws-for-neural-language-models"
+              href={withBase('/papers/scaling-laws-for-neural-language-models')}
               class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
             >
-              Scaling Laws for Neural Language Models
+              Scaling Laws
             </a>
-            〉中，為全人類正式推導出支配大語言模型演進的終極宇宙物理方程式！
+            中，為全人類正式推導出支配大語言模型演進的終極宇宙物理方程式！
           </p>
         </div>
 
@@ -951,10 +1271,16 @@ const timelineEpochs: TimelineEpoch[] = [
             </p>
           </AsideCard>
 
-          <AsideCard kicker="承先啟後 / BRIDGE" title="通往第五章物理定律" variant="paper">
+          <AsideCard kicker="承先啟後 / BRIDGE" title="通往縮放定律" variant="paper">
             <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
-              GPT-2 讓人們看到了「規模化」的魔法；而下一章〈Scaling
-              Laws〉則要撕開魔法的面紗，用精確的數學冪律告訴大家：需要多少算力、多少資料、多大模型，才能訓練出超越人類的下一個神經網絡。
+              GPT-2 讓人們看到了「規模化」的魔法；而{' '}
+              <a
+                href={withBase('/papers/scaling-laws-for-neural-language-models')}
+                class="text-primary hover:underline font-medium"
+              >
+                Scaling Laws
+              </a>{' '}
+              則要撕開魔法的面紗，用精確的數學冪律告訴大家：需要多少算力、多少資料、多大模型，才能訓練出超越人類的下一個神經網路。
             </p>
           </AsideCard>
         </aside>
@@ -1092,50 +1418,33 @@ const timelineEpochs: TimelineEpoch[] = [
     </section>
 
     <!-- 參考文獻與史料依據 -->
-    <section class={`${shell} border-t border-ink py-16`} aria-label="參考文獻與歷史證物">
-      <div class="mb-8">
-        <p class="font-mono text-xs font-bold uppercase tracking-wider text-red mb-1">
-          史料依據 / EVIDENCE & SOURCES
+    <EvidenceList
+      sources={gpt2Sources}
+      kicker="史料依據 / EVIDENCE & SOURCES"
+      title="一手文獻清單，與技術宣稱邊界"
+    />
+
+    <!-- 附錄 02：核心研發團隊檔案 (THE AUTHORS) -->
+    <AuthorGrid
+      authors={paper.authorBriefs}
+      kicker="研發團隊 · 核心檔案 / THE AUTHORS"
+      title="GPT-2 核心研發團隊"
+      description="依原始論文署名順序排列。採用經典鋼筆線雕肖像呈現作者歷史形象與經文獻考證之關鍵貢獻。"
+    >
+      <div class="mb-12 max-w-4xl space-y-6 text-base leading-8 text-ink">
+        <p>
+          在 2019 年初，當自然語言處理學界仍沉浸在 BERT 雙向微調的榜單狂歡時，OpenAI
+          的小型先鋒團隊卻選擇了一條截然相反的道路。他們堅信：無需任何任務專用微調標籤，只要持續擴展自回歸解碼器的參數規模與高品質語料，模型就能自發學會多任務推理。
         </p>
-        <h2 class="m-0 font-display text-2xl sm:text-3xl text-ink">一手文獻清單，與技術宣稱邊界</h2>
+        <p class="text-muted">
+          第一作者 Alec Radford 與 Jeffrey Wu 等核心研究者將參數推向 15
+          億前所未有之規模，並開創性地以 Byte-level BPE 與 Pre-LN
+          架構攻克了深層殘差網路的傳播難題；而 Dario Amodei 與 Jack Clark
+          則主導了歷史性的分階段發布決策，首度將大型生成模型的安全評估與社會風險防禦置於聚光燈下，為現代前沿
+          AI 治理奠定了先驅典範。
+        </p>
       </div>
-
-      <div class="space-y-4">
-        {gpt2Sources.map((s, idx) => (
-          <article class="border border-line bg-surface p-5 text-sm" id={`source-${s.id}`}>
-            <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-line pb-2 mb-3">
-              <span class="font-mono text-xs font-bold text-red">
-                [{idx + 1}] {s.id}
-              </span>
-              <span class="font-mono text-xs text-muted">
-                {s.publisher} · {s.published || 'n.d.'}
-              </span>
-            </div>
-            <h3 class="m-0 font-display text-base text-ink mb-2">
-              <a
-                href={s.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="hover:text-red underline underline-offset-4"
-              >
-                {s.title}
-              </a>
-            </h3>
-            <ul class="list-disc pl-5 text-xs text-muted space-y-1 mb-3">
-              {s.supports.map((sup) => (
-                <li>{sup}</li>
-              ))}
-            </ul>
-            <p class="text-sm text-ink/70 italic border-l-2 border-line pl-3 m-0">
-              技術極限與邊界：{s.limits}
-            </p>
-          </article>
-        ))}
-      </div>
-    </section>
-
-    <!-- 作者群檔案 -->
-    <AuthorGrid authors={paper.authorBriefs} />
+    </AuthorGrid>
 
     <!-- 篇章導航 -->
     <PaperNavigation
@@ -1148,4 +1457,471 @@ const timelineEpochs: TimelineEpoch[] = [
       }}
     />
   </article>
+
+  <script>
+    function initGpt2Lab() {
+      // 1. Tab Switching
+      const tabBpe = document.getElementById('gpt2-tab-bpe');
+      const tabPrompt = document.getElementById('gpt2-tab-prompt');
+      const panelBpe = document.getElementById('gpt2-panel-bpe');
+      const panelPrompt = document.getElementById('gpt2-panel-prompt');
+
+      if (!tabBpe || !tabPrompt || !panelBpe || !panelPrompt) return;
+
+      tabBpe.addEventListener('click', () => {
+        tabBpe.setAttribute('aria-selected', 'true');
+        tabBpe.className =
+          'px-4 py-2 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer';
+        tabPrompt.setAttribute('aria-selected', 'false');
+        tabPrompt.className =
+          'px-4 py-2 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+        panelBpe.classList.remove('hidden');
+        panelPrompt.classList.add('hidden');
+      });
+
+      tabPrompt.addEventListener('click', () => {
+        tabPrompt.setAttribute('aria-selected', 'true');
+        tabPrompt.className =
+          'px-4 py-2 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer';
+        tabBpe.setAttribute('aria-selected', 'false');
+        tabBpe.className =
+          'px-4 py-2 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+        panelPrompt.classList.remove('hidden');
+        panelBpe.classList.add('hidden');
+      });
+
+      // 2. BPE Sandbox Logic
+      const bpePresets = [
+        {
+          label: '英文經典句',
+          text: 'The quick brown fox jumps over the lazy dog.',
+        },
+        {
+          label: '繁中與 Emoji 🚀',
+          text: '台灣半導體領先全球 🇹🇼 🚀',
+        },
+        {
+          label: '數學式與符號',
+          text: '∀x ∈ ℝ: x² ≥ 0 & <unk>? 絕對零未知詞！',
+        },
+        {
+          label: 'Python 程式碼',
+          text: 'def fib(n):\n    return n if n < 2 else fib(n-1) + fib(n-2)',
+        },
+      ];
+
+      const presetContainer = document.getElementById('bpe-preset-container');
+      const bpeInput = document.getElementById('bpe-input-text') as HTMLTextAreaElement | null;
+      const bytesStream = document.getElementById('bpe-bytes-stream');
+      const byteCountBadge = document.getElementById('bpe-byte-count-badge');
+      const regexChunksContainer = document.getElementById('bpe-regex-chunks');
+      const tokensContainer = document.getElementById('bpe-tokens-container');
+      const tokenCountBadge = document.getElementById('bpe-token-count-badge');
+      const tokenInspector = document.getElementById('bpe-token-inspector');
+      const metricBytes = document.getElementById('metric-bytes');
+      const metricTokens = document.getElementById('metric-tokens');
+      const metricRatio = document.getElementById('metric-ratio');
+
+      function pseudoTokenId(str: string): number {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+          hash = (hash * 31 + str.charCodeAt(i)) >>> 0;
+        }
+        return (hash % 50000) + 256;
+      }
+
+      const tokenBgColors = [
+        'bg-red/10 border-red text-red',
+        'bg-blue/10 border-blue text-blue',
+        'bg-paper-deep border-ink/60 text-ink',
+        'bg-paper border-muted text-muted',
+      ];
+
+      function runBpeTokenizer(text: string) {
+        if (
+          !bytesStream ||
+          !byteCountBadge ||
+          !regexChunksContainer ||
+          !tokensContainer ||
+          !tokenCountBadge ||
+          !tokenInspector ||
+          !metricBytes ||
+          !metricTokens ||
+          !metricRatio
+        )
+          return;
+
+        const encoder = new TextEncoder();
+        const utf8Bytes = encoder.encode(text);
+        const totalBytes = utf8Bytes.length;
+
+        // 1. Render Bytes
+        bytesStream.innerHTML = '';
+        byteCountBadge.textContent = `${totalBytes} 位元組`;
+        metricBytes.textContent = totalBytes.toString();
+
+        if (totalBytes === 0) {
+          bytesStream.innerHTML = '<span class="text-muted">（無輸入資料）</span>';
+        } else {
+          utf8Bytes.forEach((b) => {
+            const hex = '0x' + b.toString(16).toUpperCase().padStart(2, '0');
+            const pill = document.createElement('span');
+            pill.className =
+              'px-1.5 py-0.5 bg-paper-deep border border-line rounded-none text-muted';
+            pill.textContent = hex;
+            pill.title = `十進位: ${b}`;
+            bytesStream.appendChild(pill);
+          });
+        }
+
+        // 2. Regex splitting
+        const regexPattern =
+          /'s|'t|'re|'ve|'m|'ll|'d| ?[\p{L}]+| ?[\p{N}]+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+/gu;
+        const chunks = text.match(regexPattern) || (text ? [text] : []);
+
+        regexChunksContainer.innerHTML = '';
+        chunks.forEach((chunk) => {
+          const chunkSpan = document.createElement('span');
+          chunkSpan.className = 'px-2 py-1 bg-paper border border-line text-ink';
+          chunkSpan.textContent = chunk.replace(/\n/g, '↵').replace(/ /g, '␣');
+          regexChunksContainer.appendChild(chunkSpan);
+        });
+
+        // 3. Simulated Byte-level BPE Merging
+        const tokens: Array<{ tokenText: string; id: number; bytes: number[] }> = [];
+        chunks.forEach((chunk) => {
+          if (chunk.length <= 4) {
+            const chunkBytes = Array.from(encoder.encode(chunk));
+            tokens.push({
+              tokenText: chunk,
+              id: pseudoTokenId(chunk),
+              bytes: chunkBytes,
+            });
+          } else {
+            let remaining = chunk;
+            while (remaining.length > 0) {
+              const takeLen = Math.min(remaining.length, remaining.charCodeAt(0) > 127 ? 1 : 4);
+              const sub = remaining.slice(0, takeLen);
+              remaining = remaining.slice(takeLen);
+              tokens.push({
+                tokenText: sub,
+                id: pseudoTokenId(sub),
+                bytes: Array.from(encoder.encode(sub)),
+              });
+            }
+          }
+        });
+
+        // Render tokens
+        tokensContainer.innerHTML = '';
+        tokenCountBadge.textContent = `${tokens.length} 個 Token`;
+        metricTokens.textContent = tokens.length.toString();
+        const ratio = tokens.length > 0 ? (totalBytes / tokens.length).toFixed(2) : '0.00';
+        metricRatio.textContent = ratio;
+
+        if (tokens.length === 0) {
+          tokensContainer.innerHTML =
+            '<span class="text-muted font-mono text-xs">（無 Token 產生）</span>';
+          tokenInspector.textContent = '點擊上方任意 Token 檢視詳細編碼結構...';
+        } else {
+          tokens.forEach((tok, idx) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            const colorClass = tokenBgColors[idx % tokenBgColors.length];
+            btn.className = `px-2.5 py-1.5 font-mono text-xs border font-semibold cursor-pointer transition hover:opacity-80 flex items-center gap-1.5 ${colorClass}`;
+            const displayStr = tok.tokenText.replace(/\n/g, '↵').replace(/ /g, '␣');
+            btn.innerHTML = `<span>${displayStr}</span><span class="font-mono text-xs opacity-70 border-l border-current pl-1">#${tok.id}</span>`;
+            btn.addEventListener('click', () => {
+              const hexList = tok.bytes
+                .map((b) => '0x' + b.toString(16).toUpperCase().padStart(2, '0'))
+                .join(' ');
+              tokenInspector.innerHTML = `<strong>Token [${displayStr}]</strong> · 詞庫 ID: <code>#${tok.id}</code> · 長度: ${tok.bytes.length} 位元組 · 位元組編碼: <code>${hexList}</code>`;
+            });
+            tokensContainer.appendChild(btn);
+          });
+        }
+      }
+
+      // Set up Presets
+      if (presetContainer && bpeInput) {
+        presetContainer.innerHTML = '';
+        bpePresets.forEach((p, idx) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className =
+            idx === 1
+              ? 'px-3 py-1 font-mono text-xs font-bold border border-red bg-red/10 text-red hover:bg-red hover:text-surface transition cursor-pointer'
+              : 'px-3 py-1 font-mono text-xs font-medium border border-line bg-paper text-ink hover:border-ink transition cursor-pointer';
+          btn.textContent = p.label;
+          btn.addEventListener('click', () => {
+            bpeInput.value = p.text;
+            runBpeTokenizer(p.text);
+          });
+          presetContainer.appendChild(btn);
+        });
+
+        bpeInput.addEventListener('input', () => {
+          runBpeTokenizer(bpeInput.value);
+        });
+
+        bpeInput.value = bpePresets[1].text;
+        runBpeTokenizer(bpePresets[1].text);
+      }
+
+      // 3. Zero-shot Prompt Conditioning Logic
+      interface PromptTask {
+        id: string;
+        label: string;
+        title: string;
+        rawDocument: string;
+        promptTrigger: string;
+        plainPrediction: {
+          tokens: Array<{ word: string; prob: number }>;
+          diagnosis: string;
+          mathDesc: string;
+        };
+        promptedPrediction: {
+          tokens: Array<{ word: string; prob: number }>;
+          diagnosis: string;
+          mathDesc: string;
+        };
+      }
+
+      const promptTasks: Record<string, PromptTask> = {
+        summary: {
+          id: 'summary',
+          label: '長文摘要 (CNN/DM)',
+          title: '任務 01 · 零樣本文章摘要 (Summarization with TL;DR:)',
+          rawDocument:
+            "NASA's James Webb Space Telescope has captured the deepest and highest-resolution infrared image of the distant universe to date, revealing thousands of galaxies that have never been seen before.",
+          promptTrigger: ' TL;DR:',
+          plainPrediction: {
+            tokens: [
+              { word: 'It', prob: 0.142 },
+              { word: 'The', prob: 0.118 },
+              { word: 'These', prob: 0.095 },
+              { word: 'Images', prob: 0.071 },
+              { word: 'Scientists', prob: 0.062 },
+            ],
+            diagnosis:
+              '【無提示詞狀態】模型僅將前文視為一般科學新聞接續。次詞候選大多為代名詞（It, These）或普通名詞（Images），完全缺乏摘要概括的意圖。',
+            mathDesc:
+              '模型評估自回歸條件機率，在缺乏任務指令引導下，機率分佈均勻發散於各種故事延伸路徑。',
+          },
+          promptedPrediction: {
+            tokens: [
+              { word: 'Webb', prob: 0.426 },
+              { word: 'JWST', prob: 0.284 },
+              { word: 'NASA', prob: 0.152 },
+              { word: 'The', prob: 0.081 },
+              { word: 'Deepest', prob: 0.039 },
+            ],
+            diagnosis:
+              "【注入 TL;DR: 提示詞】在 WebText 中，「TL;DR:」（Too Long; Didn't Read）是論壇摘要的強先驗標記！模型注意力機制瞬間高度聚焦於核心主語實體，Webb、JWST 與 NASA 合計奪得 86.2% 的機率，自發啟動高密度濃縮輸出！",
+            mathDesc:
+              '透過注入 TL;DR:，條件機率被強行重定向為 p(output | input, task="summarize")，無需更新任何權重即可精確誘導出摘要行為。',
+          },
+        },
+        translate: {
+          id: 'translate',
+          label: '跨國翻譯 (WMT)',
+          title: '任務 02 · 零樣本機器翻譯 (Translation with English = French)',
+          rawDocument: 'Artificial intelligence will transform the future of humanity.',
+          promptTrigger: ' = Le',
+          plainPrediction: {
+            tokens: [
+              { word: 'and', prob: 0.185 },
+              { word: 'in', prob: 0.131 },
+              { word: 'for', prob: 0.094 },
+              { word: 'according', prob: 0.082 },
+              { word: 'across', prob: 0.068 },
+            ],
+            diagnosis:
+              '【無提示詞狀態】自回歸模型沿著英語文法慣性，持續輸出英文連詞（and, in, for），無法自發進入跨語言轉譯狀態。',
+            mathDesc: '模型僅預測英語連續語流，法語詞彙的條件機率極低。',
+          },
+          promptedPrediction: {
+            tokens: [
+              { word: "l'intelligence", prob: 0.547 },
+              { word: 'futur', prob: 0.223 },
+              { word: 'monde', prob: 0.121 },
+              { word: 'développement', prob: 0.062 },
+              { word: 'progrès', prob: 0.024 },
+            ],
+            diagnosis:
+              "【注入「= Le」提示詞】等號在網路多語文本中頻繁代表「對應同義或翻譯」關係。注入等號與法語冠詞 Le 後，法文核心單詞「l'intelligence」的條件機率瞬間暴漲至 54.7%！",
+            mathDesc:
+              '條件機率成功切換至法語空間：p(French | English, " = ")，展現出預訓練語料中跨語言隱式對齊的驚人威力。',
+          },
+        },
+        qa: {
+          id: 'qa',
+          label: '閱讀問答 (CoQA)',
+          title: '任務 03 · 零樣本閱讀問答 (Reading Comprehension with Q: & A:)',
+          rawDocument:
+            'Marie Curie was a Polish and naturalized-French physicist and chemist who conducted pioneering research on radioactivity. She was the first woman to win a Nobel Prize.\n\nQ: Who was the first woman to win a Nobel Prize?',
+          promptTrigger: '\nA:',
+          plainPrediction: {
+            tokens: [
+              { word: 'She', prob: 0.161 },
+              { word: 'In', prob: 0.148 },
+              { word: 'Her', prob: 0.112 },
+              { word: 'During', prob: 0.096 },
+              { word: 'Later', prob: 0.073 },
+            ],
+            diagnosis:
+              '【無提示詞狀態】在沒有「A:」錨定答案起始點時，模型將最後一句「Q:...」視為普通的陳述句或懸疑反問，接續輸出無關的第三人稱代名詞或時態副詞。',
+            mathDesc: '未建立問答回顧鏈結，輸出位置的注意力發散於文檔整體背景。',
+          },
+          promptedPrediction: {
+            tokens: [
+              { word: 'Marie', prob: 0.783 },
+              { word: 'Curie', prob: 0.142 },
+              { word: 'Madame', prob: 0.045 },
+              { word: 'She', prob: 0.018 },
+              { word: 'Polish', prob: 0.006 },
+            ],
+            diagnosis:
+              '【注入「A:」提示詞】「Q:... A:」構成嚴密的問答條件場！模型自注意力頭回頭追蹤「first woman to win a Nobel Prize」，跨越句意精準鎖定「Marie Curie」，首字命中率高達 92.5%！',
+            mathDesc:
+              '自注意力機制在 A: 處將 Query 向量投射至前文對應主語，使答案條件機率達到壓倒性優勢。',
+          },
+        },
+      };
+
+      let activeTaskId = 'summary';
+      let isPromptInjected = true;
+
+      const taskContainer = document.getElementById('prompt-task-container');
+      const taskTitle = document.getElementById('prompt-task-title');
+      const toggleBtn = document.getElementById('prompt-toggle-btn');
+      const contextDisplay = document.getElementById('prompt-context-display');
+      const mathExpl = document.getElementById('prompt-math-explanation');
+      const statusBadge = document.getElementById('prompt-status-badge');
+      const probBars = document.getElementById('prompt-prob-bars');
+      const diagText = document.getElementById('prompt-diagnosis-text');
+
+      function renderPromptLab() {
+        const task = promptTasks[activeTaskId];
+        if (
+          !task ||
+          !taskTitle ||
+          !toggleBtn ||
+          !contextDisplay ||
+          !mathExpl ||
+          !statusBadge ||
+          !probBars ||
+          !diagText
+        )
+          return;
+
+        taskTitle.textContent = task.title;
+
+        if (isPromptInjected) {
+          toggleBtn.textContent = '已注入提示詞（點擊切換為：無提示詞）';
+          toggleBtn.className =
+            'px-3.5 py-1.5 font-mono text-xs font-bold border-2 border-red bg-red text-surface transition cursor-pointer hover:opacity-90';
+          statusBadge.textContent = '目前狀態：已注入提示詞 (Zero-shot Prompt Active)';
+          statusBadge.className =
+            'font-mono text-xs py-1 px-2 border border-red bg-red-soft/40 text-red font-semibold';
+        } else {
+          toggleBtn.textContent = '無提示詞（點擊切換為：注入 GPT-2 提示詞）';
+          toggleBtn.className =
+            'px-3.5 py-1.5 font-mono text-xs font-medium border border-ink/50 bg-paper text-ink transition cursor-pointer hover:border-ink';
+          statusBadge.textContent = '目前狀態：一般自回歸接續 (Plain Continuation)';
+          statusBadge.className =
+            'font-mono text-xs py-1 px-2 border border-line bg-paper-deep text-muted';
+        }
+
+        contextDisplay.innerHTML = '';
+        const docSpan = document.createElement('span');
+        docSpan.textContent = task.rawDocument;
+        contextDisplay.appendChild(docSpan);
+
+        if (isPromptInjected) {
+          const promptSpan = document.createElement('span');
+          promptSpan.className =
+            'inline-block ml-1 px-2 py-0.5 bg-red text-surface font-bold border border-red rounded-none';
+          promptSpan.textContent = task.promptTrigger;
+          contextDisplay.appendChild(promptSpan);
+        }
+
+        const activePred = isPromptInjected ? task.promptedPrediction : task.plainPrediction;
+        mathExpl.textContent = activePred.mathDesc;
+        diagText.textContent = activePred.diagnosis;
+
+        probBars.innerHTML = '';
+        activePred.tokens.forEach((item, idx) => {
+          const row = document.createElement('div');
+          row.className = 'grid grid-cols-[5.5rem_1fr_3.5rem] items-center gap-2 font-mono text-xs';
+
+          const label = document.createElement('span');
+          label.className = idx === 0 ? 'font-bold text-red truncate' : 'text-ink truncate';
+          label.textContent = item.word;
+
+          const barTrack = document.createElement('div');
+          barTrack.className =
+            'h-4 w-full bg-paper-deep border border-line relative overflow-hidden';
+
+          const barFill = document.createElement('div');
+          const pct = (item.prob * 100).toFixed(1);
+          barFill.className =
+            idx === 0
+              ? 'h-full bg-red transition-all duration-300'
+              : 'h-full bg-blue/70 transition-all duration-300';
+          barFill.style.width = `${pct}%`;
+          barTrack.appendChild(barFill);
+
+          const pctLabel = document.createElement('span');
+          pctLabel.className = 'text-right font-mono text-xs text-muted';
+          pctLabel.textContent = `${pct}%`;
+
+          row.appendChild(label);
+          row.appendChild(barTrack);
+          row.appendChild(pctLabel);
+          probBars.appendChild(row);
+        });
+      }
+
+      if (taskContainer) {
+        taskContainer.innerHTML = '';
+        Object.keys(promptTasks).forEach((key, idx) => {
+          const t = promptTasks[key];
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className =
+            idx === 0
+              ? 'px-3 py-1.5 font-mono text-xs font-bold border-2 border-red bg-red text-surface transition cursor-pointer'
+              : 'px-3 py-1.5 font-mono text-xs font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+          btn.textContent = t.label;
+          btn.addEventListener('click', () => {
+            activeTaskId = key;
+            Array.from(taskContainer.children).forEach((child) => {
+              (child as HTMLElement).className =
+                'px-3 py-1.5 font-mono text-xs font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+            });
+            btn.className =
+              'px-3 py-1.5 font-mono text-xs font-bold border-2 border-red bg-red text-surface transition cursor-pointer';
+            renderPromptLab();
+          });
+          taskContainer.appendChild(btn);
+        });
+      }
+
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+          isPromptInjected = !isPromptInjected;
+          renderPromptLab();
+        });
+      }
+
+      renderPromptLab();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initGpt2Lab);
+    } else {
+      initGpt2Lab();
+    }
+  </script>
 </BaseLayout>

@@ -1,0 +1,2504 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../lib/paths';
+import StoryRail from '../../components/StoryRail.astro';
+import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
+import AsideCard from '../../components/AsideCard.astro';
+import Callout from '../../components/Callout.astro';
+import AuthorGrid from '../../components/AuthorGrid.astro';
+import EvidenceList from '../../components/EvidenceList.astro';
+import PaperMeta from '../../components/PaperMeta.astro';
+import PaperNavigation from '../../components/PaperNavigation.astro';
+import {
+  paper,
+  llamaSources,
+} from '../../content/papers/llama-open-and-efficient-foundation-language-models';
+
+const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
+
+const story = [
+  {
+    year: '2022.03',
+    label: '理論基石 / CHINCHILLA',
+    title: 'Chinchilla 揭示算力分配黃金律：大模型普遍嚴重缺乏數據餵養',
+    body: 'DeepMind 證實模型參數量與訓練 token 數應等比例擴展，打破盲目堆疊參數的舊慣性，為數據驅動預訓練奠定根基。',
+    status: 'past' as const,
+  },
+  {
+    year: '2022.11',
+    label: '閉源壟斷 / CHATGPT',
+    title: 'ChatGPT 席捲全球，前沿模型被嚴密鎖在黑盒 API 圍牆之後',
+    body: '科技巨頭將頂尖權重封存於雲端伺服器，全球學術界與獨立開發者陷入無法審查、無法本地運行的集體失語。',
+    status: 'past' as const,
+  },
+  {
+    year: '2023.02',
+    label: '論文發表 / LLAMA',
+    title: 'Meta 發表 LLaMA：以推論最佳化與公開資料打破閉源壁壘',
+    body: 'Hugo Touvron 等人以 1.4 兆純公開 token 訓練 7B 至 65B 高效模型，13B 擊敗 GPT-3，並向全球學界開放權重。',
+    status: 'current' as const,
+  },
+  {
+    year: '2023.03+',
+    label: '開源爆發 / CAMBRIAN',
+    title: '權重外洩與全生態繁榮：llama.cpp、Alpaca 與本地推論革命',
+    body: '社群在數週內攻克量化微調與本機運行，開源生態以燎原之勢打破閉源壟斷，開啟大模型大航海時代。',
+    status: 'future' as const,
+  },
+];
+
+interface TimelineEpoch {
+  id: string;
+  year: string;
+  period: string;
+  title: string;
+  summary: string;
+  sources: Array<{
+    source: (typeof llamaSources)[number];
+    num: number;
+    refCode: string;
+    featured?: boolean;
+    role: string;
+    takeaway: string;
+  }>;
+}
+
+const timelineEpochs: TimelineEpoch[] = [
+  {
+    id: 'epoch-2019-2021-architecture',
+    year: '2019-2021',
+    period: '現代 Transformer 架構三大基石的醞釀',
+    title: 'RMSNorm、SwiGLU 與旋轉位置編碼的工程奠基',
+    summary:
+      '在千億參數量的大規模訓練中，傳統 Post-LayerNorm 梯度不穩、經典 ReLU/GELU 活化表達力受限、以及絕對位置編碼無法外推的問題相繼浮現。Biao Zhang、Noam Shazeer 與 Jianlin Su 等學者分別獨立提出了針對標準化、前饋網路與位置編碼的革命性改進。',
+    sources: [
+      {
+        source: llamaSources.find((s) => s.id === 'paper-2019-rmsnorm')!,
+        num: 1,
+        refCode: 'S01',
+        featured: true,
+        role: '標準化革新',
+        takeaway:
+          '證明去除 LayerNorm 的均值位移僅保留均方根縮放，能在完全保持訓練收斂特性的同時，降低高達 7% 至 64% 的標準化運算開銷。',
+      },
+      {
+        source: llamaSources.find((s) => s.id === 'paper-2020-swiglu')!,
+        num: 2,
+        refCode: 'S02',
+        role: '前饋門控',
+        takeaway:
+          '將 Swish 激勵函數與門控線性單元（GLU）結合，提供更平滑的梯度傳遞與更豐富的非線性表徵能力。',
+      },
+      {
+        source: llamaSources.find((s) => s.id === 'paper-2021-rope')!,
+        num: 3,
+        refCode: 'S03',
+        featured: true,
+        role: '幾何位置編碼',
+        takeaway:
+          '以二維複數平面正交旋轉矩陣將絕對位置注入 Query 與 Key，內積天然保持相對距離衰減性，為長文本建模奠定幾何理論基礎。',
+      },
+    ],
+  },
+  {
+    id: 'epoch-2022-compute-optimal',
+    year: '2022',
+    period: '計算最佳化與數據驅動的覺醒',
+    title: 'Chinchilla 定律：大模型普遍缺乏數據餵養',
+    summary:
+      'DeepMind 在 2022 年發表 Chinchilla，徹底顛覆了 Kaplan 早期過度偏向參數量擴展的結論。研究指出在固定算力預算下，參數量與訓練 token 數應當以 1:1 的同等比例增長。',
+    sources: [
+      {
+        source: llamaSources.find((s) => s.id === 'paper-2022-chinchilla')!,
+        num: 4,
+        refCode: 'S04',
+        featured: true,
+        role: '理論淵源',
+        takeaway:
+          '70B 參數的 Chinchilla 搭配 1.4 兆 token 完勝 280B 的 Gopher，直接啟發了 LLaMA 團隊將海量 token 灌注於小巧模型的推論最佳化設計哲學。',
+      },
+    ],
+  },
+  {
+    id: 'epoch-2023-llama',
+    year: '2023.02',
+    period: '開源大模型與推論經濟學的歷史分水嶺',
+    title: 'LLaMA：以公開資料訓練的高效開源基礎模型',
+    summary:
+      'Meta AI 的 Hugo Touvron 等人發表 LLaMA 系列，不僅全面整合 RMSNorm、SwiGLU 與 RoPE 三大結構優勢，更貫徹「推論成本最佳化」的過訓練哲學，並將權重向學術界開放，引發全球開源生態大爆炸。',
+    sources: [
+      {
+        source: llamaSources.find((s) => s.id === 'paper-2023-llama')!,
+        num: 5,
+        refCode: 'S05',
+        featured: true,
+        role: '本篇核心',
+        takeaway:
+          '13B 參數模型在常識推理與問答基準測試上全面追平並超越 175B 的 GPT-3，證明純公開資料足以孕育頂尖智慧，徹底打破閉源巨頭的壟斷神話。',
+      },
+    ],
+  },
+];
+---
+
+<BaseLayout title={`${paper.chineseTitle} | THE LLM`} description={paper.abstractSummary}>
+  <header class={`${shell} pt-10`}>
+    <div class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
+      <a class="text-red underline underline-offset-4" href={withBase('/')}>
+        THE LLM
+      </a>
+      <span aria-hidden="true">/</span>
+      <span>第 09 章</span>
+    </div>
+
+    <div class="grid grid-cols-1 items-end gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-24">
+      <div>
+        <p class="mb-5 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+          VOL. 09 / OPEN FOUNDATION
+        </p>
+
+        <h1 class="m-0 font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight tracking-[-0.04em] text-ink">
+          <span class="block">LLaMA: Open and Efficient</span>
+          <em class="block">Foundation Language Models</em>
+        </h1>
+
+        <p class="mt-8 max-w-[52ch] text-lg leading-8 text-muted">
+          當科技巨頭紛紛將千億大模型深鎖於黑盒 API 與高昂計費的圍牆花園之後，Meta AI
+          反其道而行：以純粹公開的數兆語料、極致過訓練的推論經濟學，以及現代 Transformer
+          三大架構基石，打造出能在單張消費級顯示卡上運行的開源基座。這不僅是一篇論文，更是引爆全球開源大航海時代的普羅米修斯之火。
+        </p>
+      </div>
+
+      <aside class="space-y-6">
+        <div class="border border-line bg-surface p-6 sm:p-8">
+          <p class="mb-2 font-mono text-xs font-semibold uppercase tracking-wider text-red">
+            歷史定錨 / HISTORICAL ANCHOR
+          </p>
+          <h2 class="m-0 font-display text-2xl text-ink">推論經濟學與開源大爆炸</h2>
+          <p class="mt-3 text-sm leading-relaxed text-muted">
+            2023 年初，GPT-3 與 ChatGPT
+            樹立了強大能力的標竿，卻也讓全球學術界面臨前所未有的「算力殖民」：研究者無法檢視模型權重、無法審查訓練資料、無法進行可重現的機械式可解釋性實驗。LLaMA
+            的問世，以 13B 擊敗 175B 的震撼實證，證明了「小模型 +
+            海量資料」才是通往下游工業落地與學術平權的真正坦途。
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <PaperMeta
+      year={paper.year}
+      venue={paper.venue}
+      readTime="32 分鐘"
+      difficulty="進階 · 系統架構與推論最佳化"
+      doi={paper.doi}
+    />
+  </header>
+
+  <main id="main-content">
+    <!-- 歷史縱深導航條 (STORY RAIL) -->
+    <section class="border-t border-ink py-12" aria-label="歷史縱深導向">
+      <div class={shell}>
+        <div class="mb-8">
+          <p class="mb-2 font-mono text-xs font-bold uppercase tracking-[0.14em] text-red">
+            歷史長河 / THE CHRONOLOGY
+          </p>
+          <h2 class="m-0 font-display text-2xl sm:text-3xl text-ink">
+            從閉源圍牆與黑盒霸權，到推論經濟學引領的開源大航海
+          </h2>
+        </div>
+        <StoryRail events={story} />
+      </div>
+    </section>
+
+    <!-- 章節 01: 巨頭圍牆與推論經濟學的覺醒 (ZONE A) -->
+    <section
+      id="inference-economics"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="inference-economics-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            章節 01 · 巨頭圍牆與推論經濟學的覺醒 / THE INFERENCE DIVIDEND & OPEN FOUNDATION
+          </p>
+          <h2
+            id="inference-economics-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">算力分配的隱藏盲點：</span>
+            <span class="block">
+              <em>當單次訓練成本遇上下游億萬次推論</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          Chinchilla 追求單次訓練損失最佳化，LLaMA 則以極致過訓練換取終身微薄的推論成本。
+        </p>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p>
+            2022 年底，人工智慧領域正沉浸在一場前所未有的狂歡之中。ChatGPT
+            的爆發讓全世界驚嘆於大語言模型的驚人對話能力與推理火花，但繁榮的表象背後，全球人工智慧學界卻陷入了集體的深層焦慮。
+          </p>
+
+          <p>
+            以 OpenAI 為代表的科技巨頭，將這些最強大的基座模型嚴密鎖在雲端 API
+            的收費黑盒之後。研究人員輸入一段文字、繳納每千個 token
+            數美分的費用，換取一段由未公開權重所吐出的機率預測。你無法看到神經網路內部數百層的活化狀態，無法驗證某個偏見究竟來自預訓練語料還是對齊微調，更無法將模型下載至自己的實驗室伺服器上進行架構魔改或逆向剖析。更嚴峻的是，許多前沿論文所宣稱的卓越表現，皆建立在「私有書籍資料集」或「專利過濾管線」等無法被第三方獨立重現的黑箱之上。人工智慧研究，似乎正在不可逆地蛻變為少數矽谷科技巨擘的特權遊戲。
+          </p>
+
+          <Callout variant="paper" class="my-6">
+            <p class="m-0 text-sm sm:text-base leading-relaxed text-ink">
+              <strong>核心困局：</strong>
+              如果研究者連模型權重都無法儲存於本機硬碟，科學界最引以為傲的「獨立驗證」與「機械性可解釋性研究」將名存實亡。全球數千所大學與獨立實驗室，正在淪為科技巨頭雲端服務的終端付費用戶。
+            </p>
+          </Callout>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            Chinchilla 的盲點：CapEx 與 OpEx 的世紀拉鋸
+          </h3>
+
+          <p>
+            正當整個業界盲目相信「模型越大越好」，爭先恐後訓練 280B 的 Gopher 甚至 530B 的
+            Megatron-Turing NLG 時，DeepMind 的
+            <a
+              href={withBase('/papers/training-compute-optimal-large-language-models')}
+              class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+            >
+              Chinchilla
+            </a>
+            論文宛如一記警鐘，指出參數量與訓練 token 應以 1:1 平衡擴展。然而，Meta AI 的 Hugo
+            Touvron 團隊敏銳地指出了 Chinchilla 擴展定律背後被所有人忽略的致命假設：
+            <strong>Chinchilla 定義的「最佳化」，僅僅是「單次預訓練算力預算下的損失最佳化」</strong>
+            。
+          </p>
+
+          <p>
+            在真實的工業與學術運作中，訓練一個模型是一次性的資本支出（Capital Expenditure,
+            CapEx）；然而，模型一旦被部署上線，它將在數個月甚至數年的生命週期中承載數千萬、數億次前向推論查詢。這後續日復一日所消耗的雲端電費、GPU
+            租賃費與延遲等待，是永無止境的營運成本（Operational Expenditure, OpEx）。
+          </p>
+
+          <p>
+            試設想：如果為追求單次訓練的算力最佳化，訓練了一個 175B
+            的模型，那麼在往後的每一次推論中，即使使用者只問一句「早安」，伺服器也必須將 1750
+            億個參數完整從 High Bandwidth Memory（HBM）載入至計算核心一次。這意味著至少需要 8
+            張昂貴的 80GB A100 GPU 透過高速 NVLink 組成張量並行（Tensor
+            Parallelism），才能勉強跑起一次推論！
+          </p>
+
+          <!-- 圖表 1: 訓練 CapEx vs 終身推論 OpEx 權衡曲線 -->
+          <figure
+            class="my-8 rounded border border-line bg-surface p-4 sm:p-6"
+            role="img"
+            aria-labelledby="capex-opex-fig-title"
+          >
+            <div class="border-b border-line/60 pb-3 mb-4">
+              <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                圖 1 · 架構決策分析 / THE INFERENCE-OPTIMAL TRADEOFF
+              </span>
+              <figcaption id="capex-opex-fig-title" class="mt-1 font-display text-lg text-ink">
+                預訓練算力（CapEx）與累積推論成本（OpEx）的生命週期總量對比
+              </figcaption>
+            </div>
+
+            <div class="space-y-4">
+              <svg
+                viewBox="0 0 900 480"
+                class="w-full h-auto"
+                fill="none"
+                stroke="currentColor"
+                aria-label="CapEx 與 OpEx 成本曲線圖"
+              >
+                <title>推論最佳化過訓練與 Chinchilla 最佳化配置在生命週期中的總成本曲線對比</title>
+                <desc>
+                  橫軸表示下游推論請求次數，縱軸表示總算力支出。Chinchilla 175B
+                  起始訓練成本低但推論斜率極陡，LLaMA 13B
+                  起始過訓練成本稍高但推論斜率極為平緩，在跨過數千萬次請求後總成本優勢呈幾何級放大。
+                </desc>
+
+                <!-- 頂部圖例區 -->
+                <g class="font-sans">
+                  <!-- 175B 圖例 -->
+                  <line
+                    x1="140"
+                    y1="32"
+                    x2="175"
+                    y2="32"
+                    stroke="#b6412c"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                  />
+                  <circle cx="157" cy="32" r="4.5" fill="#b6412c" />
+                  <text x="185" y="36" font-size="12" font-weight="bold" fill="#b6412c">
+                    175B 傳統巨型模型
+                  </text>
+                  <text x="310" y="36" font-size="11" fill="#62665f">
+                    （訓練 300B Tokens · 起始 CapEx 較低，但每查詢推論極昂貴）
+                  </text>
+
+                  <!-- LLaMA 13B 圖例 -->
+                  <line
+                    x1="140"
+                    y1="56"
+                    x2="175"
+                    y2="56"
+                    stroke="#355b70"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                  />
+                  <circle cx="157" cy="56" r="4.5" fill="#355b70" />
+                  <text x="185" y="60" font-size="12" font-weight="bold" fill="#355b70">
+                    LLaMA 13B 推論最佳化
+                  </text>
+                  <text x="330" y="60" font-size="11" fill="#62665f">
+                    （過訓練 1.0 兆 Tokens · 起始 CapEx 偏高，但每查詢節省 ~13.5×）
+                  </text>
+                </g>
+
+                <!-- 網格參考線 -->
+                <line
+                  x1="140"
+                  y1="120"
+                  x2="650"
+                  y2="120"
+                  stroke="#d6cec0"
+                  stroke-dasharray="3 3"
+                  stroke-width="1"
+                />
+                <line
+                  x1="140"
+                  y1="180"
+                  x2="650"
+                  y2="180"
+                  stroke="#d6cec0"
+                  stroke-dasharray="3 3"
+                  stroke-width="1"
+                />
+                <line
+                  x1="140"
+                  y1="240"
+                  x2="650"
+                  y2="240"
+                  stroke="#d6cec0"
+                  stroke-dasharray="3 3"
+                  stroke-width="1"
+                />
+                <line
+                  x1="140"
+                  y1="300"
+                  x2="650"
+                  y2="300"
+                  stroke="#d6cec0"
+                  stroke-dasharray="3 3"
+                  stroke-width="1"
+                />
+
+                <!-- 座標軸線 -->
+                <line x1="140" y1="90" x2="140" y2="360" stroke="#1e2224" stroke-width="1.5" />
+                <line x1="140" y1="360" x2="655" y2="360" stroke="#1e2224" stroke-width="1.5" />
+                <polygon points="140,84 136,94 144,94" fill="#1e2224" />
+                <polygon points="660,360 650,356 650,364" fill="#1e2224" />
+
+                <!-- Y 軸標籤與 CapEx 刻度 -->
+                <text
+                  x="130"
+                  y="82"
+                  text-anchor="end"
+                  font-family="monospace"
+                  font-size="11"
+                  font-weight="bold"
+                  fill="#1e2224"
+                >
+                  總算力支出 (FLOPs)
+                </text>
+                <circle cx="140" cy="295" r="4.5" fill="#b6412c" />
+                <text
+                  x="130"
+                  y="299"
+                  text-anchor="end"
+                  font-family="monospace"
+                  font-size="11"
+                  font-weight="bold"
+                  fill="#b6412c"
+                >
+                  175B CapEx
+                </text>
+                <circle cx="140" cy="235" r="4.5" fill="#355b70" />
+                <text
+                  x="130"
+                  y="239"
+                  text-anchor="end"
+                  font-family="monospace"
+                  font-size="11"
+                  font-weight="bold"
+                  fill="#355b70"
+                >
+                  13B CapEx (過訓練)
+                </text>
+                <text
+                  x="130"
+                  y="364"
+                  text-anchor="end"
+                  font-family="monospace"
+                  font-size="11"
+                  fill="#62665f"
+                >
+                  0
+                </text>
+
+                <!-- 曲線 1: 傳統 175B 模型 (陡峭 OpEx 斜率) -->
+                <path
+                  d="M 140 295 L 350 213 L 650 95"
+                  stroke="#b6412c"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                />
+                <!-- 曲線 2: LLaMA 13B 模型 (平緩 OpEx 斜率) -->
+                <path
+                  d="M 140 235 L 350 213 L 650 181"
+                  stroke="#355b70"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                />
+
+                <!-- 右側終點標註（完全獨立於圖表右側，邊界充裕絕不截斷） -->
+                <g class="font-sans">
+                  <!-- 175B 右側說明 -->
+                  <circle cx="650" cy="95" r="5" fill="#b6412c" />
+                  <line x1="655" y1="95" x2="670" y2="95" stroke="#b6412c" stroke-dasharray="2 2" />
+                  <text x="675" y="88" font-size="13" font-weight="bold" fill="#b6412c">
+                    175B 總成本失控暴增
+                  </text>
+                  <text x="675" y="106" font-size="11" fill="#62665f">
+                    OpEx 累積斜率極陡
+                  </text>
+                  <text x="675" y="122" font-family="monospace" font-size="11" fill="#62665f">
+                    每推論消耗 175B 參數量
+                  </text>
+
+                  <!-- LLaMA 13B 右側說明 -->
+                  <circle cx="650" cy="181" r="5" fill="#355b70" />
+                  <line
+                    x1="655"
+                    y1="181"
+                    x2="670"
+                    y2="181"
+                    stroke="#355b70"
+                    stroke-dasharray="2 2"
+                  />
+                  <text x="675" y="174" font-size="13" font-weight="bold" fill="#355b70">
+                    LLaMA 13B 成本維持平緩
+                  </text>
+                  <text x="675" y="192" font-size="11" fill="#62665f">
+                    單次推論成本大降 ~13.5×
+                  </text>
+                  <text x="675" y="208" font-family="monospace" font-size="11" fill="#62665f">
+                    生命週期越長，累積省下越多
+                  </text>
+                </g>
+
+                <!-- 交叉平衡臨界點 (Break-even Point) 呼出卡片 -->
+                <circle
+                  cx="350"
+                  cy="213"
+                  r="6.5"
+                  fill="#b6412c"
+                  stroke="#fffdf8"
+                  stroke-width="2.5"
+                />
+                <line
+                  x1="350"
+                  y1="213"
+                  x2="350"
+                  y2="360"
+                  stroke="#b6412c"
+                  stroke-width="1.5"
+                  stroke-dasharray="3 3"
+                />
+                <circle cx="350" cy="360" r="3.5" fill="#b6412c" />
+
+                <!-- 懸浮提示卡（放置於無曲線的充裕上方空間） -->
+                <g class="font-sans">
+                  <rect
+                    x="230"
+                    y="110"
+                    width="240"
+                    height="56"
+                    rx="4"
+                    fill="#fffdf8"
+                    stroke="#b6412c"
+                    stroke-width="1.5"
+                  />
+                  <text
+                    x="350"
+                    y="132"
+                    text-anchor="middle"
+                    font-size="12"
+                    font-weight="bold"
+                    fill="#b6412c"
+                  >
+                    經濟平衡臨界點 (Break-even)
+                  </text>
+                  <text x="350" y="152" text-anchor="middle" font-size="11" fill="#1e2224">
+                    累積推論達數千萬次即收回投資
+                  </text>
+                  <!-- 指向箭頭 -->
+                  <line
+                    x1="350"
+                    y1="166"
+                    x2="350"
+                    y2="204"
+                    stroke="#b6412c"
+                    stroke-width="1.5"
+                    stroke-dasharray="2 2"
+                  />
+                  <polygon points="350,208 346,200 354,200" fill="#b6412c" />
+                </g>
+
+                <!-- X 軸刻度與標籤 -->
+                <g font-family="monospace" font-size="11" class="fill-muted">
+                  <!-- 0 刻度 -->
+                  <line x1="140" y1="360" x2="140" y2="366" stroke="#1e2224" stroke-width="1.5" />
+                  <text x="140" y="382" text-anchor="middle">
+                    0 (純訓練)
+                  </text>
+
+                  <!-- 10^6 次 -->
+                  <line x1="245" y1="360" x2="245" y2="366" stroke="#1e2224" stroke-width="1" />
+                  <text x="245" y="382" text-anchor="middle">
+                    10⁶ 次推論
+                  </text>
+
+                  <!-- 臨界點刻度 (強調紅色) -->
+                  <line x1="350" y1="360" x2="350" y2="366" stroke="#b6412c" stroke-width="2" />
+                  <text x="350" y="382" text-anchor="middle" font-weight="bold" fill="#b6412c">
+                    臨界點 (~3×10⁷)
+                  </text>
+
+                  <!-- 10^8 次 -->
+                  <line x1="490" y1="360" x2="490" y2="366" stroke="#1e2224" stroke-width="1" />
+                  <text x="490" y="382" text-anchor="middle">
+                    10⁸ 次推論
+                  </text>
+
+                  <!-- 10^9 次 -->
+                  <line x1="650" y1="360" x2="650" y2="366" stroke="#1e2224" stroke-width="1" />
+                  <text x="650" y="382" text-anchor="middle">
+                    10⁹ 次推論
+                  </text>
+                </g>
+
+                <!-- X 軸大標題與輔助說明 -->
+                <text
+                  x="395"
+                  y="422"
+                  text-anchor="middle"
+                  font-family="monospace"
+                  font-size="12"
+                  font-weight="bold"
+                  fill="#1e2224"
+                >
+                  下游累積推論請求次數 (Inference Queries) →
+                </text>
+                <text
+                  x="395"
+                  y="444"
+                  text-anchor="middle"
+                  font-family="sans-serif"
+                  font-size="11"
+                  fill="#62665f"
+                >
+                  （跨過平衡臨界點後，過訓練小模型每秒省下的推論 OpEx 呈幾何級釋放）
+                </text>
+              </svg>
+
+              <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 pt-2">
+                <div class="rounded border border-line bg-paper p-3 text-sm text-ink leading-relaxed">
+                  <span class="font-bold text-red block mb-1">
+                    傳統 Chinchilla 視角（以訓練為中心）
+                  </span>
+                  追求「在特定訓練算力預算下達到最低困惑度」，推薦 13B 模型只需訓練約 260B
+                  token。但這意味著若想達到更高智慧，就必須放大參數量，直接導致部署時每秒推論成本呈指數攀升。
+                </div>
+                <div class="rounded border border-line bg-paper p-3 text-sm text-ink leading-relaxed">
+                  <span class="font-bold text-blue block mb-1">
+                    LLaMA 推論最佳化視角（以終身為中心）
+                  </span>
+                  刻意違反 Chinchilla 比例，將 13B 模型推向 1 兆 token、65B 推向 1.4 兆
+                  token。雖然訓練代價高出 4 倍，但換取了參數量縮小 13
+                  倍的巨大紅利，使其能直接塞入單張消費級 RTX 3090 顯示卡運行。
+                </div>
+              </div>
+            </div>
+          </figure>
+
+          <p>
+            因此，LLaMA 團隊確立了全新的研發哲學：
+            <strong>「推論最佳化化（Inference-optimal）」</strong>。如果一個小巧的 13B
+            模型在經過足夠龐大的數據「過訓練（Over-training）」之後，能夠展現出與 175B
+            模型同等甚至更強的常識理解與邏輯推理能力，那麼無論在預訓練階段耗費多少額外電力，這筆投資在長遠的商業營運與學術普及維度上，都將帶來無可比擬的超額回報。
+          </p>
+        </div>
+
+        <aside slot="rail" class="space-y-6">
+          <AsideCard kicker="時代痛點 / WALLED GARDEN" title="閉源巨頭的學術封鎖" variant="surface">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
+              2022 年底至 2023 年初，學術界只能透過 OpenAI Web
+              介面或商業付費端點調用模型。研究者無法接觸權重層、無法凍結版本以供同行評議重現，學術界正面臨被邊緣化的危險。
+            </p>
+          </AsideCard>
+
+          <AsideCard kicker="推論經濟學 / OPEX FORMULA" title="推論成本的本質公式" variant="paper">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
+              一次前向傳播的記憶體頻寬開銷與參數總量成正比。一個 175B 的模型在 FP16
+              精度下光是載入權重就需 350GB 視訊記憶體，而 13B 僅需 26GB。在 4-bit 量化後更縮減至 8GB
+              左右，普通筆記型電腦即可流暢推論。
+            </p>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- 章節 02: 現代架構的三大工程基石 (ZONE A) -->
+    <section
+      id="modern-architectural-pillars"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="modern-architectural-pillars-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            章節 02 · 現代架構的三大工程基石 / THREE MODERN ARCHITECTURAL PILLARS
+          </p>
+          <h2
+            id="modern-architectural-pillars-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">告別經典 Transformer：</span>
+            <span class="block">
+              <em>RMSNorm、SwiGLU 與 RoPE 的黃金三角</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          五年間深度學習工程實踐的最佳淬鍊，熔鑄成開源大模型無可動搖的現代標準骨骼。
+        </p>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p>
+            自 2017 年 Vaswani 等人提出
+            <a
+              href={withBase('/papers/attention-is-all-you-need')}
+              class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+            >
+              Transformer
+            </a>
+            架構以來，經典結構一直被奉為不可質疑的聖經。然而在隨後五年間，工程實踐者們在數千億參數的真實集群訓練中遭遇了無數暗礁：梯度震盪、訓練崩潰、長文本外推失效、以及非線性表徵瓶頸。
+          </p>
+
+          <p>
+            LLaMA
+            並非閉門造車，而是以無比務實的工程品味，將近五年來深度學習學界散落各處的最佳創新淬鍊整合，構築了當代開源大模型的黃金標準架構：
+            <strong>RMSNorm 預標準化</strong>、<strong>SwiGLU 門控前饋網路</strong>與
+            <strong>旋轉位置編碼（RoPE）</strong>。
+          </p>
+
+          <!-- 圖表 2: 經典 Transformer vs LLaMA 架構演進對比 -->
+          <figure
+            class="my-8 rounded border border-line bg-surface p-4 sm:p-6"
+            role="img"
+            aria-labelledby="architecture-pillars-fig"
+          >
+            <div class="border-b border-line/60 pb-3 mb-4">
+              <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                圖 2 · 結構對照 / ARCHITECTURAL MODERNIZATION
+              </span>
+              <figcaption id="architecture-pillars-fig" class="mt-1 font-display text-lg text-ink">
+                經典 Transformer（2017）與現代 LLaMA（2023）核心子層改造全貌
+              </figcaption>
+            </div>
+
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <!-- 經典架構 -->
+              <div class="rounded border border-line bg-paper p-4 space-y-3">
+                <div class="flex items-center justify-between border-b border-line/60 pb-2">
+                  <span class="font-display font-bold text-ink">經典 Transformer (2017)</span>
+                  <span class="font-mono text-xs text-muted">GPT-3 / BERT 原型</span>
+                </div>
+                <ul class="space-y-3 text-sm text-muted">
+                  <li class="rounded bg-surface p-2.5 border border-line/40">
+                    <span class="font-mono font-bold text-red block">
+                      1. Post-LN 或 傳統 Pre-LayerNorm
+                    </span>
+                    計算特徵均值 <var>μ</var> 與方差 <var>σ</var>
+                    <sup>2</sup>，包含兩次向量遍歷與均值中心化位移，在大規模 GPU
+                    通訊中造成不必要的記憶體頻寬開銷。
+                  </li>
+                  <li class="rounded bg-surface p-2.5 border border-line/40">
+                    <span class="font-mono font-bold text-red block">
+                      2. 標準前饋網路 (ReLU / GeLU)
+                    </span>
+                    隱藏層擴展為 4<var>d</var> 維度，採用傳統雙層線性矩陣 <var>W</var>
+                    <sub>1</sub> 與 <var>W</var>
+                    <sub>2</sub>，激勵函數非線性表達力有限，深層容易出現神經元死亡。
+                  </li>
+                  <li class="rounded bg-surface p-2.5 border border-line/40">
+                    <span class="font-mono font-bold text-red block">
+                      3. 絕對位置編碼 (Absolute / Sinusoidal)
+                    </span>
+                    將位置向量直接加在詞嵌入上（<var>x</var> + <var>p</var>
+                    ），打亂了詞義幾何結構，且無法有效泛化至預訓練長度之外的長文本。
+                  </li>
+                </ul>
+              </div>
+
+              <!-- LLaMA 現代黃金架構 -->
+              <div class="rounded border-2 border-ink/40 bg-surface p-4 space-y-3">
+                <div class="flex items-center justify-between border-b border-line pb-2">
+                  <span class="font-display font-bold text-ink">LLaMA 現代架構 (2023)</span>
+                  <span class="font-mono text-xs font-bold text-blue">當代開源黃金標準</span>
+                </div>
+                <ul class="space-y-3 text-sm text-ink">
+                  <li class="rounded bg-paper p-2.5 border border-line/60">
+                    <span class="font-mono font-bold text-blue block">
+                      1. Pre-RMSNorm（均方根預標準化）
+                    </span>
+                    徹底捨棄均值位移計算，僅保留均方根縮放 RMS(<var>a</var>)，加速 7% 至
+                    64%，並將標準化置於注意力和 FFN 之前以確保萬卡訓練極致穩定。
+                  </li>
+                  <li class="rounded bg-paper p-2.5 border border-line/60">
+                    <span class="font-mono font-bold text-blue block">2. SwiGLU 門控前饋網路</span>
+                    以三道矩陣運算構建雙路門控機制，隱藏層維度精準降為 (8/3)<var>d</var>
+                    ，在保持相同參數量與 FLOPs 下大幅降低模型困惑度。
+                  </li>
+                  <li class="rounded bg-paper p-2.5 border border-line/60">
+                    <span class="font-mono font-bold text-blue block">3. RoPE（旋轉位置編碼）</span>
+                    放棄相加方式，改在複數二維子空間中以正交旋轉矩陣乘法注入位置資訊，向量內積自然衰減，具備極強的長文本相對位置保持性。
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </figure>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            基石一：RMSNorm —— 去除多餘均值位移的純粹縮放
+          </h3>
+
+          <p>
+            在標準的 LayerNorm
+            中，神經網路在計算標準化特徵時，必須先遍歷一次隱藏層維度以計算純量均值 <var>μ</var>
+            ，接著將每個維度減去均值實現中心化，再計算方差 <var>σ</var>
+            <sup>2</sup> 進行除法縮放：
+          </p>
+
+          <div class="my-4 rounded border border-line bg-paper p-4 font-mono text-sm overflow-x-auto">
+            <math display="block" class="font-serif text-base">
+              <msub><mover><mi>a</mi><mo stretchy="false">^</mo></mover><mi>i</mi></msub>
+              <mo>=</mo>
+              <mfrac>
+                <mrow><msub><mi>a</mi><mi>i</mi></msub><mo>−</mo><mi>μ</mi></mrow>
+                <msqrt><msup><mi>σ</mi><mn>2</mn></msup><mo>+</mo><mi>ϵ</mi></msqrt>
+              </mfrac>
+              <mo>·</mo><msub><mi>γ</mi><mi>i</mi></msub>
+              <mo>+</mo><msub><mi>β</mi><mi>i</mi></msub>
+            </math>
+          </div>
+
+          <p>
+            2019 年，Biao Zhang 與 Rico Sennrich 提出均方根標準化（Root Mean Square Normalization,
+            RMSNorm）。他們透過嚴格的梯度流分析指出：
+            <strong>
+              LayerNorm
+              之所以能維持深層神經網路的穩定訓練，核心在於將特徵向量的尺度（Scaling）約束在合理球面上，均值的位移中心化（Mean
+              Shifting）對收斂穩定性幾乎沒有任何貢獻
+            </strong>
+            。
+          </p>
+
+          <p>既然中心化是多餘的，為何不直接拿掉？RMSNorm 僅計算輸入向量的均方根（RMS）：</p>
+
+          <div class="my-4 rounded border border-line bg-paper p-4 font-mono text-sm overflow-x-auto">
+            <math display="block" class="font-serif text-base">
+              <mtext>RMS</mtext><mo stretchy="false">(</mo><mi>a</mi><mo stretchy="false">)</mo>
+              <mo>=</mo>
+              <msqrt>
+                <mrow>
+                  <mfrac><mn>1</mn><mi>d</mi></mfrac>
+                  <munderover>
+                    <mo>∑</mo>
+                    <mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow>
+                    <mi>d</mi>
+                  </munderover>
+                  <msubsup><mi>a</mi><mi>i</mi><mn>2</mn></msubsup>
+                </mrow>
+              </msqrt>
+              <mspace width="2em" />
+              <msub><mover><mi>a</mi><mo stretchy="false">¯</mo></mover><mi>i</mi></msub>
+              <mo>=</mo>
+              <mfrac><msub><mi>a</mi><mi>i</mi></msub><mrow><mtext>RMS</mtext><mo stretchy="false">(</mo><mi>a</mi><mo stretchy="false">)</mo></mrow></mfrac>
+              <mo>·</mo><msub><mi>g</mi><mi>i</mi></msub>
+            </math>
+          </div>
+
+          <div class="rounded border border-line bg-surface p-4 text-sm text-muted">
+            <strong class="text-ink">數值動態微擾驗證：</strong>
+            假設某隱藏向量 <var>a</var> = [2.0, -4.0, 4.0]，維度 <var>d</var> = 3。 平方和為 2.0
+            <sup>2</sup> + (-4.0)<sup>2</sup> + 4.0<sup>2</sup> = 4 + 16 + 16 = 36； 均方值為 36 / 3
+            = 12，均方根 RMS(<var>a</var>) = &radic;12 &asymp; 3.464。 正規化後向量為 [0.577,
+            -1.155, 1.155]。 計算過程中無需計算平均值，少了一整輪 GPU
+            核心在全域記憶體與暫存器間的讀寫交換，大幅降低了記憶體頻寬負擔。
+          </div>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            基石二：SwiGLU —— 平滑門控與維度重整的藝術
+          </h3>
+
+          <p>
+            在前饋神經網路（Feed-Forward Network, FFN）子層中，經典架構通常透過一個中間維度為 4
+            <var>d</var> 的兩層全連接層實現特徵變換：FFN(<var>x</var>) = ReLU(<var>x</var>
+            <var>W</var>
+            <sub>1</sub> + <var>b</var>
+            <sub>1</sub>)<var>W</var>
+            <sub>2</sub> + <var>b</var>
+            <sub>2</sub>。
+          </p>
+
+          <p>
+            2020 年，Google 傳奇工程師 Noam Shazeer 在《GLU Variants Improve
+            Transformer》一文中探討了將「門控線性單元（Gated Linear Units, GLU）」引入 Transformer
+            的可能性。Shazeer 提出以平滑的 Swish 函數（即 Swish(<var>x</var>) = <var>x</var>{' '}
+            &sigma;(&beta;<var>x</var>)）作為門控調節器，構造了 SwiGLU 結構：
+          </p>
+
+          <div class="my-4 rounded border border-line bg-paper p-4 font-mono text-sm overflow-x-auto">
+            <math display="block" class="font-serif text-base">
+              <msub><mtext>SwiGLU</mtext><mrow><msub><mi>W</mi><mn>1</mn></msub><mo>,</mo><msub><mi>W</mi><mn>2</mn></msub><mo>,</mo><mi>V</mi></mrow></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo>
+              <mo>=</mo>
+              <mo stretchy="true">(</mo>
+                <mtext>Swish</mtext><mo stretchy="false">(</mo><mi>x</mi><msub><mi>W</mi><mn>1</mn></msub><mo stretchy="false">)</mo>
+                <mo>⊗</mo>
+                <mi>x</mi><mi>V</mi>
+              <mo stretchy="true">)</mo>
+              <msub><mi>W</mi><mn>2</mn></msub>
+            </math>
+          </div>
+
+          <p>
+            然而，細心的讀者會立即發現一個嚴重的計算問題：經典 FFN 只有兩道矩陣乘法（<var>W</var>
+            <sub>1</sub> 與 <var>W</var>
+            <sub>2</sub>），但 SwiGLU 卻引入了第三道矩陣 <var>V</var>！如果隱藏維度依然保持傳統的 4
+            <var>d</var>，參數量與計算複雜度將暴增 50%。
+          </p>
+
+          <p>
+            LLaMA 展現了極其優雅的數學平衡手法：<strong>將中間隱藏維度精確縮減至三分之二</strong>
+            ，即：
+          </p>
+
+          <div class="my-4 rounded border border-line bg-paper p-4 font-mono text-sm overflow-x-auto">
+            <math display="block" class="font-serif text-base">
+              <msub><mi>d</mi><mtext>hidden</mtext></msub>
+              <mo>=</mo>
+              <mfrac><mn>2</mn><mn>3</mn></mfrac>
+              <mo>×</mo><mn>4</mn><mi>d</mi>
+              <mo>=</mo>
+              <mfrac><mn>8</mn><mn>3</mn></mfrac><mi>d</mi>
+            </math>
+          </div>
+
+          <p>
+            原本兩道維度為 4<var>d</var> 的矩陣參數量為 2 &times; (<var>d</var> &times; 4
+            <var>d</var>) = 8<var>d</var>
+            <sup>2</sup>；而現在三道維度為 (8/3)<var>d</var> 的矩陣參數量正好是 3 &times; (
+            <var>d</var> &times; (8/3)<var>d</var>) = 8<var>d</var>
+            <sup>2</sup>
+            ！參數量與浮點運算量（FLOPs）完全嚴格守恆，卻憑空獲得了門控機制的動態資訊篩選能力。
+          </p>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            基石三：RoPE —— 複數平面旋轉與相對距離的幾何優雅
+          </h3>
+
+          <p>
+            在語言模型中，文字的「順序」是語意的靈魂。經典 Transformer
+            採用的絕對正弦位置編碼，是直接把一個位置向量 <var>p</var>
+            <sub>
+              <var>m</var>
+            </sub>{' '}
+            與詞嵌入向量 <var>x</var>
+            <sub>
+              <var>m</var>
+            </sub>{' '}
+            進行相加。這種粗暴相加在幾何上破壞了原始詞嵌入在高維空間的內積拓撲，更致命的是，當遇到訓練時未曾見過的高位置索引時，模型極易失常。
+          </p>
+
+          <p>
+            2021 年，中國科學家蘇劍林（Jianlin Su）等人提出旋轉位置編碼（Rotary Position Embedding,
+            RoPE）。RoPE 的思想極其優美：
+            <strong>位置資訊不應該透過加法混入特徵，而應該透過「向量旋轉」來編碼</strong>。
+          </p>
+
+          <p>
+            對於 Query 向量 <var>q</var>
+            <sub>
+              <var>m</var>
+            </sub>{' '}
+            與 Key 向量 <var>k</var>
+            <sub>
+              <var>n</var>
+            </sub>
+            ，我們每兩個維度組成一個二維子平面，並將其視為複數平面上的向量。在位置 <var>m</var>{' '}
+            處，將二維特徵逆時針旋轉角度 <var>m</var>&theta;：
+          </p>
+
+          <div class="my-4 rounded border border-line bg-paper p-4 font-mono text-sm overflow-x-auto">
+            <math display="block" class="font-serif text-base">
+              <msubsup><mi>R</mi><mrow><mi>θ</mi><mo>,</mo><mi>m</mi></mrow><mrow><mo>(</mo><mn>2</mn><mi>d</mi><mo>)</mo></mrow></msubsup>
+              <mo>=</mo>
+              <mrow>
+                <mo>(</mo>
+                <mtable>
+                  <mtr>
+                    <mtd><mo>cos</mo><mo>(</mo><mi>m</mi><mi>θ</mi><mo>)</mo></mtd>
+                    <mtd><mo>−</mo><mo>sin</mo><mo>(</mo><mi>m</mi><mi>θ</mi><mo>)</mo></mtd>
+                  </mtr>
+                  <mtr>
+                    <mtd><mo>sin</mo><mo>(</mo><mi>m</mi><mi>θ</mi><mo>)</mo></mtd>
+                    <mtd><mo>cos</mo><mo>(</mo><mi>m</mi><mi>θ</mi><mo>)</mo></mtd>
+                  </mtr>
+                </mtable>
+                <mo>)</mo>
+              </mrow>
+            </math>
+          </div>
+
+          <p>當注意力矩陣計算 Query 與 Key 的點積時，奇蹟出現了：</p>
+
+          <div class="my-4 rounded border border-line bg-paper p-4 font-mono text-sm overflow-x-auto">
+            <math display="block" class="font-serif text-base">
+              <mo stretchy="false">⟨</mo>
+                <msub><mi>R</mi><mrow><mi>θ</mi><mo>,</mo><mi>m</mi></mrow></msub><msub><mi>q</mi><mi>m</mi></msub>
+                <mo>,</mo>
+                <msub><mi>R</mi><mrow><mi>θ</mi><mo>,</mo><mi>n</mi></mrow></msub><msub><mi>k</mi><mi>n</mi></msub>
+              <mo stretchy="false">⟩</mo>
+              <mo>=</mo>
+              <msubsup><mi>q</mi><mi>m</mi><mi>T</mi></msubsup>
+              <msubsup><mi>R</mi><mrow><mi>θ</mi><mo>,</mo><mi>m</mi></mrow><mi>T</mi></msubsup>
+              <msub><mi>R</mi><mrow><mi>θ</mi><mo>,</mo><mi>n</mi></mrow></msub>
+              <msub><mi>k</mi><mi>n</mi></msub>
+              <mo>=</mo>
+              <msubsup><mi>q</mi><mi>m</mi><mi>T</mi></msubsup>
+              <msub><mi>R</mi><mrow><mi>θ</mi><mo>,</mo><mi>n</mi><mo>−</mo><mi>m</mi></mrow></msub>
+              <msub><mi>k</mi><mi>n</mi></msub>
+            </math>
+          </div>
+
+          <p>
+            旋轉矩陣的正交性使得內積結果
+            <strong>
+              只依賴於相對位移 (<var>n</var> - <var>m</var>)
+            </strong>
+            ！兩個詞不管出現在第 5 個字還是第 500 個字，只要它們相距 3
+            個詞，它們的相對旋轉內積就永遠精確保持不變；且隨著距離拉遠，不同維度的高頻旋轉會發生相位抵消，自注意力權重隨距離自然衰減。這一設計，徹底奠定了當代長上下文處理與上下文擴展（RoPE
+            Scaling）的數學起點。
+          </p>
+        </div>
+
+        <aside slot="rail" class="space-y-6">
+          <AsideCard
+            kicker="架構微調 / PRE-NORM STABILITY"
+            title="Pre-Norm 的穩定性魔法"
+            variant="surface"
+          >
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
+              LLaMA 將 RMSNorm 放置在注意力與前饋層的「輸入端」（Pre-normalization），而非經典
+              Transformer
+              的輸出端（Post-normalization）。這使得殘差主幹保持乾淨無阻，梯度可以直接回傳至底層，即便堆疊
+              80 層也絕不發生數值溢出。
+            </p>
+          </AsideCard>
+
+          <AsideCard kicker="數學巧思 / ROPE DYNAMICS" title="旋轉不改變向量模長" variant="paper">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
+              二維旋轉矩陣的行列式為 1，屬於正交變換。這意味著 RoPE 在注入位置資訊的同時，
+              <strong>完全不改變 Query 與 Key 向量的原始長度（L2 範數）</strong>
+              ，杜絕了絕對位置編碼導致的特徵尺度失真問題。
+            </p>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- BREAKOUT: 動態實驗室：現代 Transformer 三大基石與推論經濟學過訓練風洞 -->
+    <section
+      id="llama-interactive-lab"
+      class="border-y border-ink bg-paper-deep/60 py-16 sm:py-20 lg:py-24 scroll-mt-24"
+      aria-labelledby="llama-lab-title"
+    >
+      <div class={shell}>
+        <div class="mb-10 max-w-[800px]">
+          <p class="m-0 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+            動態實驗室 / INTERACTIVE LLAMA ARCHITECTURE & INFERENCE LAB
+          </p>
+          <h3
+            id="llama-lab-title"
+            class="mt-2 m-0 font-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-ink"
+          >
+            現代 Transformer 三大基石與推論經濟學過訓練風洞
+          </h3>
+          <p class="mt-4 text-base leading-7 text-muted">
+            親手剖析讓千億大模型走出閉源黑盒的工程中樞：在二維複數平面旋轉向量以理解
+            RoPE（旋轉位置編碼）如何天然保持相對距離衰減；並撥動推論查詢量滑桿，動態驗證
+            LLaMA「以海量過訓練換取終身微薄推論成本」的推論經濟學交叉點。
+          </p>
+        </div>
+
+        <!-- Mode Tab Bar -->
+        <div
+          class="flex flex-wrap gap-2 mb-8 border-b border-line pb-4"
+          role="tablist"
+          aria-label="實驗室模組切換"
+        >
+          <button
+            type="button"
+            id="llama-tab-arch"
+            role="tab"
+            aria-selected="true"
+            aria-controls="llama-panel-arch"
+            class="px-4 py-2 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer"
+          >
+            模組 01 · 現代 Transformer 三大基石沙盒 (RoPE / RMSNorm / SwiGLU)
+          </button>
+          <button
+            type="button"
+            id="llama-tab-econ"
+            role="tab"
+            aria-selected="false"
+            aria-controls="llama-panel-econ"
+            class="px-4 py-2 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer"
+          >
+            模組 02 · 推論經濟學與過訓練風洞 (Inference Economics)
+          </button>
+        </div>
+
+        <!-- MODULE 01: 現代架構三大基石沙盒 -->
+        <div
+          id="llama-panel-arch"
+          role="tabpanel"
+          aria-labelledby="llama-tab-arch"
+          class="space-y-8"
+        >
+          <!-- Pillar Sub-Tabs -->
+          <div class="flex flex-wrap gap-2 border-b border-line/60 pb-3">
+            <button
+              type="button"
+              id="llama-subtab-rope"
+              class="px-3 py-1.5 font-mono text-xs font-bold bg-ink text-surface transition cursor-pointer"
+            >
+              1. 旋轉位置編碼 (RoPE 幾何沙盒)
+            </button>
+            <button
+              type="button"
+              id="llama-subtab-norm"
+              class="px-3 py-1.5 font-mono text-xs font-medium border border-line bg-surface text-ink hover:border-ink transition cursor-pointer"
+            >
+              2. RMSNorm 預標準化效率比對
+            </button>
+            <button
+              type="button"
+              id="llama-subtab-swiglu"
+              class="px-3 py-1.5 font-mono text-xs font-medium border border-line bg-surface text-ink hover:border-ink transition cursor-pointer"
+            >
+              3. SwiGLU 前饋門控神經網路
+            </button>
+          </div>
+
+          <!-- SUB-PANEL 1: RoPE Sandbox -->
+          <div
+            id="llama-subpanel-rope"
+            class="border border-line bg-surface p-6 sm:p-8 shadow-editorial"
+          >
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4 mb-6">
+              <div>
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                  ROTARY POSITION EMBEDDING (RoPE)
+                </span>
+                <h4 class="m-0 font-display text-lg sm:text-xl text-ink">
+                  二維複數平面正交旋轉與相對位置內積解構
+                </h4>
+              </div>
+              <div class="font-mono text-xs text-muted">
+                ⟨ R<sub>m</sub>q, R<sub>n</sub>k ⟩ = q<sup>T</sup> R<sub>n-m</sub> k
+              </div>
+            </div>
+
+            <!-- Controls & Visualization Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              <!-- Left: Controls (5 cols) -->
+              <div class="lg:col-span-5 space-y-5">
+                <div class="p-4 border border-line bg-paper space-y-4">
+                  <div>
+                    <div class="flex justify-between items-center mb-1">
+                      <label for="llama-rope-m" class="font-mono text-xs font-bold text-red">
+                        Token 1 (Query) 位置 m：
+                      </label>
+                      <span id="llama-rope-m-val" class="font-mono text-sm font-bold text-red">
+                        2
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      id="llama-rope-m"
+                      min="0"
+                      max="16"
+                      step="1"
+                      value="2"
+                      class="w-full cursor-pointer accent-red"
+                      aria-label="Query token 位置 m 滑桿"
+                    />
+                  </div>
+
+                  <div>
+                    <div class="flex justify-between items-center mb-1">
+                      <label for="llama-rope-n" class="font-mono text-xs font-bold text-blue">
+                        Token 2 (Key) 位置 n：
+                      </label>
+                      <span id="llama-rope-n-val" class="font-mono text-sm font-bold text-blue">
+                        5
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      id="llama-rope-n"
+                      min="0"
+                      max="16"
+                      step="1"
+                      value="5"
+                      class="w-full cursor-pointer accent-blue"
+                      aria-label="Key token 位置 n 滑桿"
+                    />
+                  </div>
+
+                  <div>
+                    <div class="flex justify-between items-center mb-1">
+                      <label for="llama-rope-dim" class="font-mono text-xs font-bold text-ink">
+                        維度子空間頻率 θ<sub>i</sub> = 10000<sup>-2(i-1)/d</sup>：
+                      </label>
+                      <span id="llama-rope-dim-val" class="font-mono text-xs font-bold text-ink">
+                        i = 1 (最高頻)
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      id="llama-rope-dim"
+                      min="1"
+                      max="4"
+                      step="1"
+                      value="1"
+                      class="w-full cursor-pointer accent-ink"
+                      aria-label="維度子空間頻率滑桿"
+                    />
+                    <div class="flex justify-between font-mono text-[11px] text-muted mt-1">
+                      <span>i=1 (快旋轉)</span>
+                      <span>i=2</span>
+                      <span>i=3</span>
+                      <span>i=4 (慢旋轉)</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Mathematical Readouts -->
+                <div class="grid grid-cols-2 gap-3 font-mono text-xs">
+                  <div class="p-3 border border-line bg-paper">
+                    <span class="text-muted block">相對距離 (m - n):</span>
+                    <strong id="llama-rope-delta" class="text-base text-ink">
+                      -3
+                    </strong>
+                  </div>
+                  <div class="p-3 border border-line bg-paper">
+                    <span class="text-muted block">相對夾角 Δϕ:</span>
+                    <strong id="llama-rope-angle" class="text-base text-ink">
+                      -3.00 rad
+                    </strong>
+                  </div>
+                  <div class="p-3 border border-line bg-paper">
+                    <span class="text-muted block">Attention 權重 cos(Δϕ):</span>
+                    <strong id="llama-rope-attn" class="text-base text-red">
+                      -0.990
+                    </strong>
+                  </div>
+                  <div class="p-3 border border-line bg-paper">
+                    <span class="text-muted block">向量長度 (L2 範數):</span>
+                    <strong class="text-base text-emerald-700">1.000 (恆定)</strong>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: 2D Complex Plane SVG (7 cols) -->
+              <div class="lg:col-span-7 border border-line bg-paper p-4 flex flex-col items-center">
+                <span class="font-mono text-xs text-muted mb-2">
+                  2D 複數平面旋轉軌跡（單位圓正交旋轉）
+                </span>
+                <svg
+                  id="llama-rope-svg"
+                  viewBox="0 0 320 280"
+                  class="w-full max-w-[340px] h-auto font-mono text-xs select-none"
+                  role="img"
+                  aria-label="RoPE 複數平面二維旋轉幾何示意圖"
+                >
+                  <!-- Coordinate Axes -->
+                  <line
+                    x1="20"
+                    y1="140"
+                    x2="300"
+                    y2="140"
+                    stroke="#d5d0c8"
+                    stroke-width="1.5"
+                  ></line>
+                  <line
+                    x1="160"
+                    y1="20"
+                    x2="160"
+                    y2="260"
+                    stroke="#d5d0c8"
+                    stroke-width="1.5"
+                  ></line>
+                  <text x="295" y="135" class="fill-muted font-mono text-xs">
+                    Re
+                  </text>
+                  <text x="165" y="30" class="fill-muted font-mono text-xs">
+                    Im
+                  </text>
+
+                  <!-- Unit Circle -->
+                  <circle
+                    cx="160"
+                    cy="140"
+                    r="100"
+                    fill="none"
+                    stroke="#e5e0d8"
+                    stroke-width="1.5"
+                    stroke-dasharray="3 3"
+                  ></circle>
+
+                  <!-- Query Vector (Red) -->
+                  <line
+                    id="llama-vec-q"
+                    x1="160"
+                    y1="140"
+                    x2="230"
+                    y2="70"
+                    stroke="#b6412c"
+                    stroke-width="3"
+                  ></line>
+                  <circle id="llama-pt-q" cx="230" cy="70" r="5" fill="#b6412c"></circle>
+                  <text
+                    id="llama-lbl-q"
+                    x="240"
+                    y="65"
+                    class="fill-red font-mono font-bold text-xs"
+                  >
+                    R(m) q
+                  </text>
+
+                  <!-- Key Vector (Blue) -->
+                  <line
+                    id="llama-vec-k"
+                    x1="160"
+                    y1="140"
+                    x2="90"
+                    y2="210"
+                    stroke="#2563eb"
+                    stroke-width="3"
+                  ></line>
+                  <circle id="llama-pt-k" cx="90" cy="210" r="5" fill="#2563eb"></circle>
+                  <text
+                    id="llama-lbl-k"
+                    x="80"
+                    y="225"
+                    class="fill-blue font-mono font-bold text-xs"
+                  >
+                    R(n) k
+                  </text>
+
+                  <!-- Arc connecting the two -->
+                  <path
+                    id="llama-arc-diff"
+                    d=""
+                    fill="none"
+                    stroke="#1e2224"
+                    stroke-width="1.5"
+                    stroke-dasharray="2 2"
+                  ></path>
+                </svg>
+
+                <div class="mt-4 p-3 border border-line/60 bg-surface text-xs text-muted leading-relaxed font-mono w-full">
+                  <span class="font-bold text-ink">平移不變性證明：</span>
+                  若將兩 token 同步向右平移任意距離 k（位置變為 m+k 與 n+k），相對夾角為 ((m+k) -
+                  (n+k))θ =
+                  (m-n)θ，兩向量相對夾角完全不變！這保證了模型能直接泛化到未曾見過的長序列位置。
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-PANEL 2: RMSNorm (Hidden by default) -->
+          <div
+            id="llama-subpanel-norm"
+            class="border border-line bg-surface p-6 sm:p-8 shadow-editorial hidden"
+          >
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4 mb-6">
+              <div>
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                  ROOT MEAN SQUARE NORMALIZATION
+                </span>
+                <h4 class="m-0 font-display text-lg sm:text-xl text-ink">
+                  LayerNorm vs RMSNorm 計算圖與記憶體頻寬開銷對照
+                </h4>
+              </div>
+              <span class="font-mono text-xs text-emerald-700 font-bold">
+                提升 7% 至 64% 運算效率
+              </span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Classic LayerNorm -->
+              <div class="p-5 border border-line bg-paper space-y-3">
+                <div class="flex justify-between items-center border-b border-line pb-2">
+                  <span class="font-display font-bold text-ink">經典 LayerNorm (2016)</span>
+                  <span class="font-mono text-xs text-red">需兩次記憶體遍歷</span>
+                </div>
+                <div class="font-mono text-xs p-3 bg-surface border border-line text-ink">
+                  y = ((x - μ) / √(σ² + ε)) ⊙ γ + β
+                </div>
+                <ul class="space-y-2 text-sm text-muted">
+                  <li>
+                    • 第一步：遍歷向量計算均值 μ = (1/d) ∑ x<sub>i</sub>
+                  </li>
+                  <li>
+                    • 第二步：再次遍歷計算方差 σ² = (1/d) ∑ (x<sub>i</sub> - μ)²
+                  </li>
+                  <li>• 第三步：均值中心化位移 (x - μ) 並除以標準差</li>
+                  <li>
+                    • 缺點：在數萬張 GPU 跨節點通訊中，均值位移帶來額外的同步延遲與記憶體讀寫。
+                  </li>
+                </ul>
+              </div>
+
+              <!-- LLaMA RMSNorm -->
+              <div class="p-5 border-2 border-red bg-paper space-y-3">
+                <div class="flex justify-between items-center border-b border-line pb-2">
+                  <span class="font-display font-bold text-red">LLaMA RMSNorm (2023)</span>
+                  <span class="font-mono text-xs text-emerald-700 font-bold">僅需單次遍歷</span>
+                </div>
+                <div class="font-mono text-xs p-3 bg-red-soft/30 border border-red/40 text-ink">
+                  y = (x / RMS(x)) ⊙ g，其中 RMS(x) = √( (1/d) ∑ x<sub>i</sub>² + ε )
+                </div>
+                <ul class="space-y-2 text-sm text-muted">
+                  <li>• 第一步：單次遍歷直接計算均方根 RMS(x)</li>
+                  <li>• 第二步：直接縮放 x / RMS(x) 並乘以增益向量 g</li>
+                  <li>• 放棄均值中心化位移（移除 β 偏移量），訓練收斂完全無損</li>
+                  <li>
+                    • 優點：大幅降低 GPU SRAM 與 HBM 之間的記憶體頻寬壓力，為 70B
+                    級訓練奠定極速基礎。
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-PANEL 3: SwiGLU (Hidden by default) -->
+          <div
+            id="llama-subpanel-swiglu"
+            class="border border-line bg-surface p-6 sm:p-8 shadow-editorial hidden"
+          >
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4 mb-6">
+              <div>
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                  SWISH GATED LINEAR UNIT (SwiGLU)
+                </span>
+                <h4 class="m-0 font-display text-lg sm:text-xl text-ink">
+                  雙線性門控機制與非線性表徵躍升
+                </h4>
+              </div>
+              <div class="font-mono text-xs text-muted">
+                FFN<sub>SwiGLU</sub>(x) = (swish(x W) ⊗ x V) W<sub>2</sub>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="p-5 border border-line bg-paper space-y-3">
+                <span class="font-display font-bold text-ink block border-b border-line pb-2">
+                  傳統雙層 MLP (ReLU / GeLU)
+                </span>
+                <div class="font-mono text-xs p-3 bg-surface border border-line text-ink">
+                  y = GELU(x W<sub>1</sub>) W<sub>2</sub>
+                </div>
+                <p class="text-sm text-muted leading-relaxed m-0">
+                  隱藏層擴展維度為
+                  4d。單一非線性活化容易在深層網路中造成梯度消失或神經元死亡，表徵容量受到線性投影瓶頸束縛。
+                </p>
+              </div>
+
+              <div class="p-5 border-2 border-red bg-paper space-y-3">
+                <span class="font-display font-bold text-red block border-b border-line pb-2">
+                  LLaMA 三矩陣 SwiGLU 門控
+                </span>
+                <div class="font-mono text-xs p-3 bg-red-soft/30 border border-red/40 text-ink">
+                  y = ( (x W<sub>1</sub> ⊙ σ(x W<sub>1</sub>)) ⊗ (x W<sub>3</sub>) ) W<sub>2</sub>
+                </div>
+                <p class="text-sm text-muted leading-relaxed m-0">
+                  採用三組權重矩陣。為了保持參數量與傳統 4d 結構嚴格等價，LLaMA
+                  將隱藏層維度精確縮小為 (2/3) × 4d =
+                  (8/3)d。雙線性門控賦予神經網路動態調節資訊通量的能力，表徵力顯著增強。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODULE 02: 推論經濟學與過訓練風洞 -->
+        <div
+          id="llama-panel-econ"
+          role="tabpanel"
+          aria-labelledby="llama-tab-econ"
+          class="space-y-8 hidden"
+        >
+          <div class="border border-line bg-surface p-6 sm:p-8 shadow-editorial">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4 mb-6">
+              <div>
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                  INFERENCE ECONOMICS & OVER-TRAINING WIND TUNNEL
+                </span>
+                <h4 class="m-0 font-display text-lg sm:text-xl text-ink">
+                  單次訓練成本 vs 億萬次推論的生命週期總成本（TCO）風洞
+                </h4>
+              </div>
+              <div class="font-mono text-xs px-3 py-1 bg-paper border border-line text-muted">
+                TCO = 訓練算力 (6ND) + 累計推論算力 (2N · Q · L)
+              </div>
+            </div>
+
+            <!-- Sliders: Queries & Length -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 border border-line bg-paper mb-8">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label for="llama-queries-slider" class="font-mono text-xs font-bold text-ink">
+                    下游累計推論請求次數 Q (LOG SCALE)：
+                  </label>
+                  <span id="llama-queries-val" class="font-mono text-sm font-bold text-red">
+                    10,000,000 (1000 萬次)
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  id="llama-queries-slider"
+                  min="5"
+                  max="9"
+                  step="0.2"
+                  value="7"
+                  class="w-full cursor-pointer accent-red"
+                  aria-label="累計推論請求次數對數滑桿"
+                />
+                <div class="flex justify-between font-mono text-[11px] text-muted mt-1">
+                  <span>10 萬次 (學術測試)</span>
+                  <span>1000 萬次 (中型產品)</span>
+                  <span>10 億次 (全球消費級)</span>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <label for="llama-tokens-slider" class="font-mono text-xs font-bold text-ink">
+                    平均單次請求長度 L (TOKENS / QUERY)：
+                  </label>
+                  <span id="llama-tokens-val" class="font-mono text-sm font-bold text-blue">
+                    512 tokens
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  id="llama-tokens-slider"
+                  min="128"
+                  max="2048"
+                  step="128"
+                  value="512"
+                  class="w-full cursor-pointer accent-blue"
+                  aria-label="平均單次請求長度滑桿"
+                />
+                <div class="flex justify-between font-mono text-[11px] text-muted mt-1">
+                  <span>128 (短指令)</span>
+                  <span>512 (標準問答)</span>
+                  <span>2048 (長文本分析)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4 Model Comparative Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+              <!-- GPT-3 175B -->
+              <div class="p-4 border border-line bg-paper space-y-2">
+                <div class="flex justify-between items-center border-b border-line pb-1">
+                  <span class="font-mono font-bold text-ink">GPT-3 175B</span>
+                  <span class="font-mono text-xs text-muted">閉源基座</span>
+                </div>
+                <div class="space-y-1 font-mono text-xs">
+                  <div class="text-muted">訓練 Token: 300B (1.7×)</div>
+                  <div class="text-muted">
+                    推論硬體: <strong class="text-red">8× A100 (80G)</strong>
+                  </div>
+                  <div class="pt-2 border-t border-line/60">
+                    <span class="text-muted block">累計生命週期 TCO:</span>
+                    <strong id="llama-tco-gpt3" class="text-base text-red font-bold">
+                      $1,240,000
+                    </strong>
+                  </div>
+                </div>
+              </div>
+
+              <!-- LLaMA 65B -->
+              <div class="p-4 border border-line bg-paper space-y-2">
+                <div class="flex justify-between items-center border-b border-line pb-1">
+                  <span class="font-mono font-bold text-ink">LLaMA 65B</span>
+                  <span class="font-mono text-xs text-blue">平衡旗艦</span>
+                </div>
+                <div class="space-y-1 font-mono text-xs">
+                  <div class="text-muted">訓練 Token: 1.4T (21.5×)</div>
+                  <div class="text-muted">
+                    推論硬體: <strong>2× A100 (80G)</strong>
+                  </div>
+                  <div class="pt-2 border-t border-line/60">
+                    <span class="text-muted block">累計生命週期 TCO:</span>
+                    <strong id="llama-tco-65b" class="text-base text-ink font-bold">
+                      $680,000
+                    </strong>
+                  </div>
+                </div>
+              </div>
+
+              <!-- LLaMA 13B (Hero) -->
+              <div class="p-4 border-2 border-red bg-paper space-y-2">
+                <div class="flex justify-between items-center border-b border-line pb-1">
+                  <span class="font-mono font-bold text-red">LLaMA 13B (勝出)</span>
+                  <span class="font-mono text-xs px-1.5 py-0.5 bg-red text-surface font-bold">
+                    逆襲 175B
+                  </span>
+                </div>
+                <div class="space-y-1 font-mono text-xs">
+                  <div class="text-muted">訓練 Token: 1.0T (76.9×)</div>
+                  <div class="text-muted">
+                    推論硬體: <strong class="text-emerald-700">1× 24GB 消費級</strong>
+                  </div>
+                  <div class="pt-2 border-t border-line/60">
+                    <span class="text-muted block">累計生命週期 TCO:</span>
+                    <strong id="llama-tco-13b" class="text-base text-emerald-700 font-bold">
+                      $142,000
+                    </strong>
+                  </div>
+                </div>
+              </div>
+
+              <!-- LLaMA 7B -->
+              <div class="p-4 border border-line bg-paper space-y-2">
+                <div class="flex justify-between items-center border-b border-line pb-1">
+                  <span class="font-mono font-bold text-ink">LLaMA 7B</span>
+                  <span class="font-mono text-xs text-muted">邊緣普及</span>
+                </div>
+                <div class="space-y-1 font-mono text-xs">
+                  <div class="text-muted">訓練 Token: 1.0T (142.8×)</div>
+                  <div class="text-muted">
+                    推論硬體: <strong class="text-emerald-700">單張 RTX 3060</strong>
+                  </div>
+                  <div class="pt-2 border-t border-line/60">
+                    <span class="text-muted block">累計生命週期 TCO:</span>
+                    <strong id="llama-tco-7b" class="text-base text-ink font-bold">
+                      $84,000
+                    </strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dynamic SVG Cost Crossover Graph -->
+            <div class="border border-line bg-paper p-6 mb-8">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 border-b border-line pb-2">
+                <span class="font-mono text-xs font-bold text-ink uppercase">
+                  推論經濟學黃金交叉點：過訓練小模型隨推論次數釋放的驚人成本紅利
+                </span>
+                <div class="flex items-center gap-4 font-mono text-xs">
+                  <span class="flex items-center gap-1.5">
+                    <span class="w-3 h-0.5 bg-red"></span> GPT-3 175B (斜率極陡)
+                  </span>
+                  <span class="flex items-center gap-1.5">
+                    <span class="w-3 h-0.5 bg-emerald-700"></span> LLaMA 13B (平緩紅利)
+                  </span>
+                </div>
+              </div>
+
+              <div class="w-full overflow-x-auto">
+                <svg
+                  id="llama-crossover-svg"
+                  viewBox="0 0 800 260"
+                  class="w-full h-auto min-w-[640px] font-mono text-xs select-none"
+                  role="img"
+                  aria-label="推論經濟學生命週期總成本交叉折線圖"
+                >
+                  <!-- Background Grid -->
+                  <line
+                    x1="60"
+                    y1="30"
+                    x2="760"
+                    y2="30"
+                    stroke="#e5e0d8"
+                    stroke-dasharray="3 3"
+                  ></line>
+                  <line
+                    x1="60"
+                    y1="85"
+                    x2="760"
+                    y2="85"
+                    stroke="#e5e0d8"
+                    stroke-dasharray="3 3"
+                  ></line>
+                  <line
+                    x1="60"
+                    y1="140"
+                    x2="760"
+                    y2="140"
+                    stroke="#e5e0d8"
+                    stroke-dasharray="3 3"
+                  ></line>
+                  <line
+                    x1="60"
+                    y1="195"
+                    x2="760"
+                    y2="195"
+                    stroke="#e5e0d8"
+                    stroke-dasharray="3 3"
+                  ></line>
+                  <line
+                    x1="60"
+                    y1="220"
+                    x2="760"
+                    y2="220"
+                    stroke="#1e2224"
+                    stroke-width="1.5"
+                  ></line>
+                  <line x1="60" y1="20" x2="60" y2="220" stroke="#1e2224" stroke-width="1.5"></line>
+
+                  <!-- Labels -->
+                  <text x="25" y="35" class="fill-red font-mono font-bold text-xs">
+                    $10M
+                  </text>
+                  <text x="25" y="115" class="fill-muted font-mono text-xs">
+                    $1M
+                  </text>
+                  <text x="25" y="195" class="fill-muted font-mono text-xs">
+                    $100K
+                  </text>
+                  <text x="60" y="240" class="fill-muted font-mono text-xs">
+                    10 萬次
+                  </text>
+                  <text x="410" y="240" text-anchor="middle" class="fill-muted font-mono text-xs">
+                    1000 萬次 (黃金交叉點)
+                  </text>
+                  <text x="760" y="240" text-anchor="end" class="fill-muted font-mono text-xs">
+                    10 億次
+                  </text>
+
+                  <!-- Crossover point indicator line -->
+                  <line
+                    x1="410"
+                    y1="20"
+                    x2="410"
+                    y2="220"
+                    stroke="#b6412c"
+                    stroke-width="1"
+                    stroke-dasharray="3 3"
+                  ></line>
+
+                  <!-- GPT-3 175B Curve (Starts lower in training compute relative to 1.4T, but slope is 13.5x higher) -->
+                  <path
+                    d="M 60 195 L 200 185 L 410 140 L 600 70 L 760 25"
+                    fill="none"
+                    stroke="#b6412c"
+                    stroke-width="3"
+                  ></path>
+
+                  <!-- LLaMA 13B Curve (Starts moderate, stays very flat) -->
+                  <path
+                    d="M 60 190 L 200 182 L 410 168 L 600 152 L 760 135"
+                    fill="none"
+                    stroke="#047857"
+                    stroke-width="3"
+                  ></path>
+
+                  <!-- Dynamic Indicator for Current Q -->
+                  <g id="llama-econ-indicator" transform="translate(410, 140)">
+                    <line
+                      x1="0"
+                      y1="-120"
+                      x2="0"
+                      y2="80"
+                      stroke="#1e2224"
+                      stroke-width="1.5"
+                      stroke-dasharray="2 2"
+                    ></line>
+                    <circle
+                      cx="0"
+                      cy="0"
+                      r="6"
+                      fill="#b6412c"
+                      stroke="#fff"
+                      stroke-width="2"
+                    ></circle>
+                    <circle
+                      cx="0"
+                      cy="28"
+                      r="6"
+                      fill="#047857"
+                      stroke="#fff"
+                      stroke-width="2"
+                    ></circle>
+                    <text
+                      x="10"
+                      y="-10"
+                      class="fill-red font-mono font-bold text-xs"
+                      id="llama-indicator-label"
+                    >
+                      省下 88.5% 成本
+                    </text>
+                  </g>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Conclusion Callout -->
+            <div class="p-4 border border-line bg-paper text-sm text-ink leading-relaxed">
+              <span class="font-mono text-xs font-bold text-red uppercase block mb-1">
+                推論經濟學核心結論：
+              </span>
+              <p class="m-0 text-muted">
+                當模型走入真實世界，推論成本將迅速壓倒單次訓練成本。LLaMA
+                團隊寧可在預訓練階段「浪費」算力將 13B 模型過訓練至 1 兆
+                token，也要將參數量壓制在能塞入單張消費級顯示卡的尺寸。這項設計徹底顛覆了「參數量至上」的舊思維，開啟了開源模型在邊緣設備與個人電腦上的大航海時代。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 章節 03: 萬卡叢林的訓練工程與數據煉金術 (ZONE A) -->
+    <section
+      id="training-engineering-data"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="training-engineering-data-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            章節 03 · 萬卡叢林的訓練工程與數據煉金術 / HARDWARE OPTIMIZATIONS & DATA CURATION
+          </p>
+          <h2
+            id="training-engineering-data-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">純公開語料的煉金奇蹟：</span>
+            <span class="block">
+              <em>2048 顆 A100 與 1.4 兆 Token 的高效吞吐</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          無需私有特權資料，嚴格清洗的公開網際網路文字足以孕育世界頂尖智慧。
+        </p>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p>
+            除了架構設計，LLaMA 最為全球研究者津津樂道的突破，在於它向世界證明了一個關鍵事實：
+            <strong>
+              要訓練出世界頂尖的基礎模型，根本不需要依賴科技巨頭隱密不公開的私有專利資料庫
+            </strong>
+            。
+          </p>
+
+          <p>
+            LLaMA 的 1.4 兆預訓練 token
+            全部來自於網際網路上完全公開、透明且可被全世界任何學者檢驗的開源語料。但「公開」並不等於「拿來就用」；如何從充滿垃圾郵件、爬蟲程式碼與廣告灌水的網際網路洪流中，淘洗出黃金般的純淨資料，是
+            Meta AI 數據管線團隊展現的真正實力。
+          </p>
+
+          <!-- 圖表 3: 數據配比與數據清洗管線漏斗 -->
+          <figure
+            class="my-8 rounded border border-line bg-surface p-4 sm:p-6"
+            role="img"
+            aria-labelledby="data-curation-fig"
+          >
+            <div class="border-b border-line/60 pb-3 mb-4">
+              <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                圖 3 · 語料拓撲 / DATA MIX & PIPELINE
+              </span>
+              <figcaption id="data-curation-fig" class="mt-1 font-display text-lg text-ink">
+                LLaMA 1.4 兆 Token 預訓練公開資料集來源配比與清洗過濾架構
+              </figcaption>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div class="rounded border border-line bg-paper p-4">
+                <span class="font-mono text-xs font-bold text-red block mb-1">
+                  CommonCrawl (67%)
+                </span>
+                <p class="text-2xl font-display text-ink m-0">938B Tokens</p>
+                <p class="mt-2 text-sm leading-relaxed text-muted">
+                  經 CCNet 管線深度處理，FastText 語言分類過濾，基於維基百科 n-gram
+                  困惑度評分剔除低品質網頁。
+                </p>
+              </div>
+              <div class="rounded border border-line bg-paper p-4">
+                <span class="font-mono text-xs font-bold text-blue block mb-1">
+                  C4 Cleaned (15%)
+                </span>
+                <p class="text-2xl font-display text-ink m-0">210B Tokens</p>
+                <p class="mt-2 text-sm leading-relaxed text-muted">
+                  啟發自 T5 的嚴格啟發式過濾數據，針對標點符號完整性與重複文本行進行嚴格清理。
+                </p>
+              </div>
+              <div class="rounded border border-line bg-paper p-4">
+                <span class="font-mono text-xs font-bold text-ink block mb-1">
+                  GitHub & Code (4.5%)
+                </span>
+                <p class="text-2xl font-display text-ink m-0">63B Tokens</p>
+                <p class="mt-2 text-sm leading-relaxed text-muted">
+                  精選開源許可證（Apache/MIT/BSD），過濾低品質生成程式碼與重複文件，灌注邏輯符號推理潛力。
+                </p>
+              </div>
+              <div class="rounded border border-line bg-paper p-4">
+                <span class="font-mono text-xs font-bold text-muted block mb-1">
+                  知識書籍與論文 (13.5%)
+                </span>
+                <p class="text-2xl font-display text-ink m-0">189B Tokens</p>
+                <p class="mt-2 text-sm leading-relaxed text-muted">
+                  包含 Wikipedia (4.5%)、Gutenberg & Books3 (4.5%)、ArXiv (2.5%) 與 StackExchange
+                  (2%) 高密度推理語料。
+                </p>
+              </div>
+            </div>
+          </figure>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            萬卡叢林的硬體工程：擊碎記憶體牆的吞吐優化
+          </h3>
+
+          <p>
+            訓練一個 650 億參數的大模型，在 1.4 兆 token 上計算需消耗數十萬 GPU 運算小時。Meta
+            工程團隊動用了 2048 顆 NVIDIA A100-80GB GPU
+            組成龐大的超算叢集。然而在大規模訓練中，阻礙算力發揮的最大瓶頸往往不是晶片的計算運算力（TFLOPS），而是
+            <strong>GPU 視訊記憶體容量（Memory Capacity）與記憶體頻寬（HBM Bandwidth）</strong>。
+          </p>
+
+          <p>LLaMA 整合了多項底層系統優化，將硬體吞吐量壓榨到了極致：</p>
+
+          <ul class="space-y-4 text-base sm:text-lg leading-8 text-ink">
+            <li class="rounded border border-line bg-surface p-4">
+              <strong class="text-ink">
+                1. 高效注意力記憶體平鋪（Efficient Attention Tiling）：
+              </strong>
+              標準注意力計算需要具象化一個長度為 <var>N</var> &times; <var>N</var>{' '}
+              的巨大注意力矩陣（當上下文長度為 2048 時，每個頭需儲存數百萬個浮點數）。LLaMA 採用了
+              Rabe & Staats（2021）的高效記憶體注意力演算法（隨後進一步與 FlashAttention
+              同步），透過分塊平鋪（Tiling）技術，直接在 GPU 高速 SRAM 快取中完成 Softmax
+              局部正規化，完全不將中間注意力圖寫回緩慢的全域
+              HBM，節省了大量視訊記憶體並消除了記憶體讀寫延遲。
+            </li>
+            <li class="rounded border border-line bg-surface p-4">
+              <strong class="text-ink">2. 活化值檢查點重算（Activation Checkpointing）：</strong>
+              在前向傳播過程中，如果把所有層的活化值全部快取在視訊記憶體中等待反向傳播，視訊記憶體將在第幾層就被榨乾。LLaMA
+              選擇性地只保留關鍵層的邊界活化值，在反向傳播需要時現場重新計算局部活化值。這種「以算力換空間」的策略，大幅降低了峰值視訊記憶體佔用。
+            </li>
+            <li class="rounded border border-line bg-surface p-4">
+              <strong class="text-ink">
+                3. 通訊與計算的流水線重疊（Overlapping Communication）：
+              </strong>
+              在多節點分散式訓練中，梯度在跨節點進行 All-Reduce 同步時會阻塞 GPU 計算。LLaMA
+              的底層通訊庫將反向傳播計算與已完成層的梯度通訊非同步重疊，當第 <var>l</var>{' '}
+              層還在計算梯度時，第 <var>l</var> + 1 層的通訊已經在背景網路光纖中疾速傳輸。
+            </li>
+          </ul>
+
+          <p>
+            憑藉這套極致的硬體最佳化，LLaMA 65B 在 2048 顆 A100-80GB 集群上達成了每顆 GPU 每秒處理
+            <strong>380 個 token</strong> 的驚人吞吐率。整整 1.4 兆 token 的龐大訓練，僅耗時約 21
+            天便平穩收官。
+          </p>
+        </div>
+
+        <aside slot="rail" class="space-y-6">
+          <AsideCard
+            kicker="硬體規格 / GPU CLUSTER"
+            title="2048 顆 A100 的電力與吞吐"
+            variant="surface"
+          >
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
+              整個 65B 模型訓練期間耗電約 449 MWh，平均每張 GPU 算力利用率（MFU）超過
+              50%。這一數字在當時的超千億分散式系統工程中堪稱奇蹟。
+            </p>
+          </AsideCard>
+
+          <AsideCard kicker="數據純化 / CCNET QUALITY" title="CCNet 的雙向過濾哲學" variant="paper">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
+              網際網路爬蟲抓取的文本高達 80% 屬於低價值內容。Meta 團隊利用在維基百科上訓練的
+              Kneser-Ney
+              語言模型對網頁行進行困惑度打分，凡是異常晦澀或充斥亂碼的文本均被無情剪除，確保模型吸收高密度知識。
+            </p>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- 章節 04: 開源生態大爆炸與歷史分水嶺 (ZONE A) -->
+    <section
+      id="open-source-explosion"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="open-source-explosion-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            章節 04 · 開源生態大爆炸與歷史分水嶺 / THE OPEN SOURCE EXPLOSION & LEGACY
+          </p>
+          <h2
+            id="open-source-explosion-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">寒武紀大爆發：</span>
+            <span class="block">
+              <em>13B 擊敗 GPT-3 與席捲全球的開源巨浪</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          從 llama.cpp 到 Alpaca 與 QLoRA，開源社群以難以置信的速度跨越了算力階級。
+        </p>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p>
+            2023 年 2 月 27 日，當 Meta AI 正式釋出 LLaMA 論文與學術申請連結時，整個 AI
+            學術界與工業界迎來了震耳欲聾的衝擊。
+          </p>
+
+          <p>
+            在八大核心常識推理基準測試（包括 BoolQ、PIQA、SIQA、HellaSwag、WinoGrande、ARC 等）中，
+            <strong>
+              僅僅只有 130 億參數的 LLaMA-13B，在大部分指標上全面擊敗了參數量高達 1750 億的
+              <a
+                href={withBase('/papers/language-models-are-few-shot-learners')}
+                class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+              >
+                GPT-3
+              </a>
+              ！
+            </strong>
+          </p>
+
+          <!-- 評測基準對照表 -->
+          <div class="my-6 rounded border border-line bg-surface p-4 sm:p-6">
+            <span class="font-mono text-xs font-bold uppercase tracking-wider text-red block mb-3">
+              表 1 · 基準測試對比 / BENCHMARK SCORE COMPARISON (ZERO-SHOT & FEW-SHOT)
+            </span>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm text-ink border-collapse">
+                <thead>
+                  <tr class="border-b border-ink bg-paper font-mono text-xs text-muted">
+                    <th class="p-2.5">模型</th>
+                    <th class="p-2.5">參數規模</th>
+                    <th class="p-2.5">訓練 Tokens</th>
+                    <th class="p-2.5">BoolQ (QA)</th>
+                    <th class="p-2.5">PIQA (常識)</th>
+                    <th class="p-2.5">HellaSwag</th>
+                    <th class="p-2.5">ARC-e (科學)</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-line/60">
+                  <tr>
+                    <td class="p-2.5 font-bold">GPT-3 (Davinci)</td>
+                    <td class="p-2.5 font-mono">175B</td>
+                    <td class="p-2.5 font-mono text-muted">300B</td>
+                    <td class="p-2.5 font-mono">60.5</td>
+                    <td class="p-2.5 font-mono">81.0</td>
+                    <td class="p-2.5 font-mono">78.9</td>
+                    <td class="p-2.5 font-mono">68.8</td>
+                  </tr>
+                  <tr>
+                    <td class="p-2.5 font-bold text-muted">Gopher</td>
+                    <td class="p-2.5 font-mono text-muted">280B</td>
+                    <td class="p-2.5 font-mono text-muted">300B</td>
+                    <td class="p-2.5 font-mono text-muted">79.3</td>
+                    <td class="p-2.5 font-mono text-muted">70.8</td>
+                    <td class="p-2.5 font-mono text-muted">79.2</td>
+                    <td class="p-2.5 font-mono text-muted">65.2</td>
+                  </tr>
+                  <tr class="bg-paper-deep/20 font-bold">
+                    <td class="p-2.5 text-blue">LLaMA-7B</td>
+                    <td class="p-2.5 font-mono">7B</td>
+                    <td class="p-2.5 font-mono">1.0T</td>
+                    <td class="p-2.5 font-mono">76.5</td>
+                    <td class="p-2.5 font-mono">79.8</td>
+                    <td class="p-2.5 font-mono">76.1</td>
+                    <td class="p-2.5 font-mono">72.8</td>
+                  </tr>
+                  <tr class="bg-blue/10 font-bold">
+                    <td class="p-2.5 text-blue">LLaMA-13B</td>
+                    <td class="p-2.5 font-mono">13B</td>
+                    <td class="p-2.5 font-mono">1.0T</td>
+                    <td class="p-2.5 font-mono">78.1</td>
+                    <td class="p-2.5 font-mono">80.1</td>
+                    <td class="p-2.5 font-mono">79.2</td>
+                    <td class="p-2.5 font-mono">77.3</td>
+                  </tr>
+                  <tr class="bg-red-soft/20 font-bold">
+                    <td class="p-2.5 text-red">LLaMA-65B</td>
+                    <td class="p-2.5 font-mono">65B</td>
+                    <td class="p-2.5 font-mono">1.4T</td>
+                    <td class="p-2.5 font-mono">85.3</td>
+                    <td class="p-2.5 font-mono">82.8</td>
+                    <td class="p-2.5 font-mono">84.2</td>
+                    <td class="p-2.5 font-mono">79.8</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="mt-3 text-sm leading-relaxed text-muted m-0">
+              數據來源：Touvron et al. 2023 原始論文表 2 與表 3。LLaMA-13B 參數量僅為 GPT-3
+              的十三分之一，但在大部分推理基準上展現出持平甚至勝出的強大泛化實力。
+            </p>
+          </div>
+
+          <h3 class="font-display text-2xl text-ink pt-4">
+            普羅米修斯之火：權重外洩與開源生態的連鎖反應
+          </h3>
+
+          <p>
+            起初，Meta
+            僅向經過審核的高校學者開放權重申請。然而在發表後短短幾天內，一名研究者將未加密的完整模型權重磁力連結（Magnet
+            Link）發佈到了 4chan 與 GitHub PR
+            上。這場看似意外的「權重外洩」，宛如盜火者普羅米修斯將天火投向人間，瞬間引爆了全球開源社群壓抑已久的創造狂潮：
+          </p>
+
+          <div class="space-y-4">
+            <div class="rounded border border-line bg-paper p-4">
+              <h4 class="font-display text-xl text-ink m-0">
+                1. Georgi Gerganov 與 llama.cpp：邊緣計算的奇蹟
+              </h4>
+              <p class="mt-2 text-sm sm:text-base leading-relaxed text-muted">
+                保加利亞工程師 Georgi Gerganov 在完全沒有 Python 與 PyTorch 依賴的情況下，以純粹的
+                C/C++ 重寫了 LLaMA 的前向推論引擎（<code>llama.cpp</code>）。搭配 4-bit
+                整數整流量化（Int4 Quantization），他成功在一部沒有獨立顯示卡的 13 吋 MacBook Air M1
+                筆記型電腦上，以每秒數十個 token 的速度順暢運行
+                LLaMA-7B。千億神經網路從雲端機房的重裝冷卻塔中被解放，降臨到尋常百姓的膝頭。
+              </p>
+            </div>
+
+            <div class="rounded border border-line bg-paper p-4">
+              <h4 class="font-display text-xl text-ink m-0">
+                2. 史丹佛 Alpaca：500 美元複刻 ChatGPT 體驗
+              </h4>
+              <p class="mt-2 text-sm sm:text-base leading-relaxed text-muted">
+                史丹佛大學研究者透過 Self-Instruct 技術，利用 OpenAI API 生成了 5.2
+                萬條高品質指令對話數據，花費僅約 500 美元算力費用，就在 LLaMA-7B
+                基座上完成了全量指令微調（SFT）。發布的 Alpaca
+                模型展現出了驚人的指令遵循能力，向世界宣告：
+                <strong>後訓練對齊不再是數億美元巨資的專屬遊戲</strong>。
+              </p>
+            </div>
+
+            <div class="rounded border border-line bg-paper p-4">
+              <h4 class="font-display text-xl text-ink m-0">
+                3. LoRA 與 QLoRA：平民顯示卡上的參數高效微調
+              </h4>
+              <p class="mt-2 text-sm sm:text-base leading-relaxed text-muted">
+                隨後，Tim Dettmers 等人提出 QLoRA，將 4-bit 基礎模型凍結並配合 Low-Rank
+                Adaptation（LoRA）可訓練低秩適配器，使得在單張二手 RTX 3090（24GB VRAM）顯示卡上微調
+                33B 甚至 65B
+                模型成為可能。全世界的醫療、法律、金融與多語言在地化微調模型如雨後春筍般破土而出。
+              </p>
+            </div>
+          </div>
+
+          <p>
+            這場由 LLaMA 點燃的野火，最終逼迫科技巨頭徹底改變戰略。2023 年 5 月，一份疑似從 Google
+            內部外洩的備忘錄《We Have No Moat, And Neither Does OpenAI》（我們沒有護城河，OpenAI
+            也沒有）在矽谷引發滔天巨浪。作者直言不諱地警告：當全球開源社群以每天數百個創新的速度在
+            LLaMA 骨架上自我迭代時，任何封閉的付費 API 都不可能建立起牢不可破的壁壘。
+          </p>
+
+          <p>
+            LLaMA
+            的誕生，不僅重構了推論經濟學的理性邊界，更為全人類的人工智慧版圖鐫刻下了不可逆轉的歷史座標：
+            <strong>開源與開放，永遠是推動實證科學跨越階級與壟斷的最強動力</strong>。
+          </p>
+        </div>
+
+        <aside slot="rail" class="space-y-6">
+          <AsideCard kicker="邊緣革命 / LLAMA.CPP" title="純 C/C++ 的暴力美學" variant="surface">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
+              llama.cpp 捨棄了一切笨重的深度學習框架，直接利用 ARM NEON 與 Apple Silicon Metal
+              架構呼叫矩陣加速核心。它證明了當演算法結構足夠簡潔時，通用 CPU
+              具備驚人的端側推論潛力。
+            </p>
+          </AsideCard>
+
+          <AsideCard kicker="歷史迴響 / GOOGLE MEMO" title="「我們沒有護城河」" variant="paper">
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
+              「開源社群正在以令人窒息的速度解決我們長期頭痛的問題：8-bit 量化、個人 LoRA
+              微調、長上下文擴展……他們的解決方案更快、更輕巧，而且完全免費。」這份備忘錄成為開源運動最重要的歷史見證。
+            </p>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- 附錄 01: 歷時溯源與一手文獻清單 (ZONE B) -->
+    <EvidenceList
+      timelineEpochs={timelineEpochs}
+      kickerBadge="文獻演進時間軸"
+      kickerEnglish="HISTORICAL CITATION TIMELINE (2020–2023)"
+      titleMain="一手文獻清單，與技術演進時間軸"
+      titleHighlight="從封閉巨獸到開源生態與推論經濟學革命"
+      description="本章立論嚴格本於原著論文、同期官方技術報告、同儕評審紀錄與核心作者訪談，依歷史時間線重現技術突破的演進軌跡與一手出處。"
+    />
+
+    <!-- 附錄 02: 核心研發團隊檔案 (ZONE B) -->
+    <AuthorGrid
+      authors={paper.authorBriefs}
+      kicker="研發團隊 · 核心檔案 / THE AUTHORS"
+      title="開源大模型與推論經濟學的開拓者"
+      description="原著論文由 Meta AI 的 14 位科研人員共同完成。本節呈現主導模型架構設計、分散式萬卡集群通訊與開源語料純化之核心學者經文獻考證之關鍵貢獻。"
+    >
+      <div class="mb-12 max-w-4xl space-y-6 text-base leading-8 text-ink">
+        <p>
+          LLaMA 的誕生，體現了 Meta 基礎人工智慧研究院（FAIR
+          Paris）在開源技術底蘊、系統工程優化與實證務實品味上的巔峰水準。在封閉巨頭競相構建付費高牆之際，這支駐紮於塞納河畔的團隊選擇了最為艱難卻影響深遠的道路：將每一個架構改動、每一份語料配比與百萬行權重公諸於世。
+        </p>
+        <p class="text-muted">
+          第一作者 Hugo Touvron 領銜了整個 LLaMA
+          系列的架構現代化重塑與多尺度驗證，他敏銳地捕捉到了從訓練算力最佳化跨越至推論營運最佳化的歷史機遇，堅定推動對小巧骨架進行數兆級
+          token 的極致過訓練；而 Thibaut Lavril 與 Xavier Martinet 則以卓越的底層分散式調度技藝，在
+          2048 顆 A100 GPU 組成的高速互聯叢集中實現了高達 380 tokens/sec/GPU
+          的極限吞吐率，馴服了龐大叢集中的數值溢出與通訊阻塞難關。
+        </p>
+        <p class="text-muted">
+          同時，來自巴黎高師的 Gautier Izacard 等專家在數據煉金術維度建立了極為嚴謹的 CCNet
+          語料清洗管線，證明了純粹公開的網際網路數據經過精細純化後，足以孕育出媲美任何私有資料庫的通用智力。這支團隊的勇氣與遠見，不僅打破了資本與閉源對前沿
+          AI
+          技術的壟斷，更為全球無數獨立學者、開源開發者與教育機構點亮了探索人工智慧未來的自由燈塔。
+        </p>
+      </div>
+    </AuthorGrid>
+
+    <!-- 頁面導航 -->
+    <PaperNavigation
+      prev={{
+        url: '/papers/training-language-models-to-follow-instructions-with-human-feedback',
+        title: 'Training language models to follow instructions with human feedback (InstructGPT)',
+        vol: 'VOL. 08',
+      }}
+      next={{
+        url: '/papers/direct-preference-optimization-your-language-model-is-secretly-a-reward-model',
+        title: 'Direct Preference Optimization: Your Language Model is Secretly a Reward Model',
+        vol: 'VOL. 10',
+      }}
+    />
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Main Tab Switching (Architecture vs Inference Economics)
+      const tabArch = document.getElementById('llama-tab-arch');
+      const tabEcon = document.getElementById('llama-tab-econ');
+      const panelArch = document.getElementById('llama-panel-arch');
+      const panelEcon = document.getElementById('llama-panel-econ');
+
+      if (tabArch && tabEcon && panelArch && panelEcon) {
+        tabArch.addEventListener('click', () => {
+          tabArch.setAttribute('aria-selected', 'true');
+          tabEcon.setAttribute('aria-selected', 'false');
+          tabArch.className =
+            'px-4 py-2 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer';
+          tabEcon.className =
+            'px-4 py-2 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+          panelArch.classList.remove('hidden');
+          panelEcon.classList.add('hidden');
+        });
+
+        tabEcon.addEventListener('click', () => {
+          tabEcon.setAttribute('aria-selected', 'true');
+          tabArch.setAttribute('aria-selected', 'false');
+          tabEcon.className =
+            'px-4 py-2 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer';
+          tabArch.className =
+            'px-4 py-2 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+          panelEcon.classList.remove('hidden');
+          panelArch.classList.add('hidden');
+        });
+      }
+
+      // 2. Sub-Tab Switching inside Architecture (RoPE vs RMSNorm vs SwiGLU)
+      const subtabRope = document.getElementById('llama-subtab-rope');
+      const subtabNorm = document.getElementById('llama-subtab-norm');
+      const subtabSwiglu = document.getElementById('llama-subtab-swiglu');
+      const subpanelRope = document.getElementById('llama-subpanel-rope');
+      const subpanelNorm = document.getElementById('llama-subpanel-norm');
+      const subpanelSwiglu = document.getElementById('llama-subpanel-swiglu');
+
+      const subtabs = [
+        { btn: subtabRope, panel: subpanelRope },
+        { btn: subtabNorm, panel: subpanelNorm },
+        { btn: subtabSwiglu, panel: subpanelSwiglu },
+      ];
+
+      subtabs.forEach(({ btn, panel }) => {
+        if (!btn || !panel) return;
+        btn.addEventListener('click', () => {
+          subtabs.forEach((item) => {
+            if (item.btn && item.panel) {
+              item.btn.className =
+                'px-3 py-1.5 font-mono text-xs font-medium border border-line bg-surface text-ink hover:border-ink transition cursor-pointer';
+              item.panel.classList.add('hidden');
+            }
+          });
+          btn.className =
+            'px-3 py-1.5 font-mono text-xs font-bold bg-ink text-surface transition cursor-pointer';
+          panel.classList.remove('hidden');
+        });
+      });
+
+      // 3. RoPE 2D Complex Plane Geometry
+      const ropeMSlider = document.getElementById('llama-rope-m') as HTMLInputElement | null;
+      const ropeNSlider = document.getElementById('llama-rope-n') as HTMLInputElement | null;
+      const ropeDimSlider = document.getElementById('llama-rope-dim') as HTMLInputElement | null;
+
+      const ropeMVal = document.getElementById('llama-rope-m-val');
+      const ropeNVal = document.getElementById('llama-rope-n-val');
+      const ropeDimVal = document.getElementById('llama-rope-dim-val');
+
+      const ropeDelta = document.getElementById('llama-rope-delta');
+      const ropeAngle = document.getElementById('llama-rope-angle');
+      const ropeAttn = document.getElementById('llama-rope-attn');
+
+      const vecQ = document.getElementById('llama-vec-q');
+      const ptQ = document.getElementById('llama-pt-q');
+      const lblQ = document.getElementById('llama-lbl-q');
+
+      const vecK = document.getElementById('llama-vec-k');
+      const ptK = document.getElementById('llama-pt-k');
+      const lblK = document.getElementById('llama-lbl-k');
+
+      const arcDiff = document.getElementById('llama-arc-diff');
+
+      const thetas = [1.0, 0.7499, 0.5623, 0.4217];
+
+      function updateRope() {
+        if (!ropeMSlider || !ropeNSlider || !ropeDimSlider) return;
+
+        const m = parseInt(ropeMSlider.value, 10);
+        const n = parseInt(ropeNSlider.value, 10);
+        const dimIdx = parseInt(ropeDimSlider.value, 10);
+
+        const theta = thetas[dimIdx - 1] || 1.0;
+
+        if (ropeMVal) ropeMVal.textContent = m.toString();
+        if (ropeNVal) ropeNVal.textContent = n.toString();
+        if (ropeDimVal) {
+          const labels = ['i = 1 (最高頻)', 'i = 2 (中高頻)', 'i = 3 (中低頻)', 'i = 4 (最低頻)'];
+          ropeDimVal.textContent = labels[dimIdx - 1];
+        }
+
+        const deltaPos = m - n;
+        const deltaPhi = deltaPos * theta;
+        const cosAttn = Math.cos(deltaPhi);
+
+        if (ropeDelta) ropeDelta.textContent = (deltaPos > 0 ? '+' : '') + deltaPos.toString();
+        if (ropeAngle) ropeAngle.textContent = `${deltaPhi.toFixed(2)} rad`;
+        if (ropeAttn) {
+          ropeAttn.textContent = (cosAttn > 0 ? '+' : '') + cosAttn.toFixed(3);
+          ropeAttn.className = `text-base ${cosAttn >= 0 ? 'text-emerald-700' : 'text-red'} font-bold`;
+        }
+
+        // 2D Rotation Coordinates (Center: 160, 140; Radius: 95)
+        const cx = 160;
+        const cy = 140;
+        const r = 95;
+
+        const phiM = m * theta;
+        const phiN = n * theta;
+
+        const qx = cx + r * Math.cos(phiM);
+        const qy = cy - r * Math.sin(phiM);
+
+        const kx = cx + r * Math.cos(phiN);
+        const ky = cy - r * Math.sin(phiN);
+
+        if (vecQ) {
+          vecQ.setAttribute('x2', qx.toFixed(1));
+          vecQ.setAttribute('y2', qy.toFixed(1));
+        }
+        if (ptQ) {
+          ptQ.setAttribute('cx', qx.toFixed(1));
+          ptQ.setAttribute('cy', qy.toFixed(1));
+        }
+        if (lblQ) {
+          lblQ.setAttribute('x', (qx + 8).toFixed(1));
+          lblQ.setAttribute('y', (qy - 5).toFixed(1));
+          lblQ.textContent = `R(${m}) q`;
+        }
+
+        if (vecK) {
+          vecK.setAttribute('x2', kx.toFixed(1));
+          vecK.setAttribute('y2', ky.toFixed(1));
+        }
+        if (ptK) {
+          ptK.setAttribute('cx', kx.toFixed(1));
+          ptK.setAttribute('cy', ky.toFixed(1));
+        }
+        if (lblK) {
+          lblK.setAttribute('x', (kx - 25).toFixed(1));
+          lblK.setAttribute('y', (ky + 15).toFixed(1));
+          lblK.textContent = `R(${n}) k`;
+        }
+
+        // Connect arc between the two angles
+        if (arcDiff) {
+          const arcR = 45;
+          const arcStartAngle = phiN;
+          const arcEndAngle = phiM;
+          const startX = cx + arcR * Math.cos(arcStartAngle);
+          const startY = cy - arcR * Math.sin(arcStartAngle);
+          const endX = cx + arcR * Math.cos(arcEndAngle);
+          const endY = cy - arcR * Math.sin(arcEndAngle);
+
+          const largeArc = Math.abs(arcEndAngle - arcStartAngle) > Math.PI ? 1 : 0;
+          const sweep = arcEndAngle > arcStartAngle ? 0 : 1;
+
+          arcDiff.setAttribute(
+            'd',
+            `M ${startX.toFixed(1)} ${startY.toFixed(1)} A ${arcR} ${arcR} 0 ${largeArc} ${sweep} ${endX.toFixed(1)} ${endY.toFixed(1)}`,
+          );
+        }
+      }
+
+      if (ropeMSlider && ropeNSlider && ropeDimSlider) {
+        ropeMSlider.addEventListener('input', updateRope);
+        ropeNSlider.addEventListener('input', updateRope);
+        ropeDimSlider.addEventListener('input', updateRope);
+        updateRope();
+      }
+
+      // 4. Module 2: Inference Economics & Over-Training TCO
+      const queriesSlider = document.getElementById(
+        'llama-queries-slider',
+      ) as HTMLInputElement | null;
+      const tokensSlider = document.getElementById(
+        'llama-tokens-slider',
+      ) as HTMLInputElement | null;
+
+      const queriesVal = document.getElementById('llama-queries-val');
+      const tokensVal = document.getElementById('llama-tokens-val');
+
+      const tcoGpt3 = document.getElementById('llama-tco-gpt3');
+      const tco65b = document.getElementById('llama-tco-65b');
+      const tco13b = document.getElementById('llama-tco-13b');
+      const tco7b = document.getElementById('llama-tco-7b');
+
+      const econIndicator = document.getElementById('llama-econ-indicator');
+      const indicatorLabel = document.getElementById('llama-indicator-label');
+
+      function formatMoney(n: number): string {
+        if (n >= 1000000) {
+          return `$${(n / 1000000).toFixed(2)}M`;
+        }
+        return `$${Math.round(n).toLocaleString('en-US')}`;
+      }
+
+      function updateEconomics() {
+        if (!queriesSlider || !tokensSlider) return;
+
+        const logQ = parseFloat(queriesSlider.value);
+        const qCount = Math.pow(10, logQ);
+        const tokenLen = parseInt(tokensSlider.value, 10);
+
+        if (queriesVal) {
+          const labelText =
+            logQ < 6
+              ? `${Math.round(qCount / 1000)} 萬次`
+              : logQ < 8
+                ? `${(qCount / 1000000).toFixed(1)} 百萬次`
+                : `${(qCount / 100000000).toFixed(1)} 億次`;
+          queriesVal.textContent = `${Math.round(qCount).toLocaleString('en-US')} (${labelText})`;
+        }
+        if (tokensVal) tokensVal.textContent = `${tokenLen} tokens`;
+
+        // TCO Calculation:
+        // Training fixed cost ($):
+        // GPT-3 175B: 300B tokens -> ~ $380,000
+        // LLaMA 65B: 1.4T tokens -> ~ $655,000
+        // LLaMA 13B: 1.0T tokens -> ~ $95,000
+        // LLaMA 7B: 1.0T tokens -> ~ $48,000
+
+        // Marginal inference cost per query:
+        // GPT-3: 175B parameters * 2 * tokenLen FLOPs -> ~$0.025 per 1K tokens
+        const costPerK_GPT3 = 0.024;
+        const costPerK_65B = 0.0072;
+        const costPerK_13B = 0.0014;
+        const costPerK_7B = 0.00075;
+
+        const totalGPT3 = 380000 + qCount * (tokenLen / 1000) * costPerK_GPT3;
+        const total65B = 655000 + qCount * (tokenLen / 1000) * costPerK_65B;
+        const total13B = 95000 + qCount * (tokenLen / 1000) * costPerK_13B;
+        const total7B = 48000 + qCount * (tokenLen / 1000) * costPerK_7B;
+
+        if (tcoGpt3) tcoGpt3.textContent = formatMoney(totalGPT3);
+        if (tco65b) tco65b.textContent = formatMoney(total65B);
+        if (tco13b) tco13b.textContent = formatMoney(total13B);
+        if (tco7b) tco7b.textContent = formatMoney(total7B);
+
+        // Calculate savings percentage
+        const savings = Math.max(0, ((totalGPT3 - total13B) / totalGPT3) * 100);
+
+        // Update SVG Indicator Position
+        // X maps logQ from 5 (60px) to 9 (760px)
+        const posX = 60 + ((logQ - 5) / 4) * 700;
+
+        // Y maps log-cost of GPT-3 from $50K (220) to $10M (30)
+        // Log10 scale: $50K = 4.7, $10M = 7.0
+        const logCost = Math.log10(Math.max(50000, Math.min(15000000, totalGPT3)));
+        const posY = 220 - ((logCost - 4.7) / (7.0 - 4.7)) * 190;
+
+        if (econIndicator) {
+          econIndicator.setAttribute(
+            'transform',
+            `translate(${posX.toFixed(1)}, ${posY.toFixed(1)})`,
+          );
+        }
+        if (indicatorLabel) {
+          indicatorLabel.textContent = `省下 ${savings.toFixed(1)}% 成本`;
+        }
+      }
+
+      if (queriesSlider && tokensSlider) {
+        queriesSlider.addEventListener('input', updateEconomics);
+        tokensSlider.addEventListener('input', updateEconomics);
+        updateEconomics();
+      }
+    });
+  </script>
+</BaseLayout>

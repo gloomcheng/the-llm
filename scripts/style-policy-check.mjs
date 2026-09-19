@@ -37,6 +37,14 @@ for (const filePath of filesIn(sourceRoot)) {
     }
   }
 
+  if (filePath.endsWith('.astro')) {
+    for (const match of source.matchAll(/\b(?:bg|text|border|ring)-cool\b/g)) {
+      failures.push(
+        `${relativePath}: undefined color utility “${match[0]}” is not allowed (use “blue” instead)`,
+      );
+    }
+  }
+
   if (filePath.endsWith('.css')) {
     for (const match of source.matchAll(/^\s*\.([A-Za-z][\w-]*)/gm)) {
       failures.push(`${relativePath}: custom CSS selector “.${match[1]}” is not allowed`);

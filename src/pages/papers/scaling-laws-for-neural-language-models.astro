@@ -1,10 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../lib/paths';
 import StoryRail from '../../components/StoryRail.astro';
 import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
 import AsideCard from '../../components/AsideCard.astro';
 import Callout from '../../components/Callout.astro';
 import AuthorGrid from '../../components/AuthorGrid.astro';
+import EvidenceList from '../../components/EvidenceList.astro';
 import PaperMeta from '../../components/PaperMeta.astro';
 import PaperNavigation from '../../components/PaperNavigation.astro';
 import {
@@ -62,7 +64,7 @@ const timelineEpochs: TimelineEpoch[] = [
     period: '深度學習的試誤與煉金術時代',
     title: '規模擴展初露鋒芒，但面臨天文數字級投資風險',
     summary:
-      'GPT-2 證實了擴大模型帶來的多任務能力，但缺乏嚴謹理論支持。各大實驗室因擔憂過擬合與效益遞減，對百億以上參數望而卻步。',
+      'GPT-2 證實了擴大模型帶來的多任務能力，但缺乏嚴謹理論支持。各大實驗室因擔憂過度擬合與效益遞減，對百億以上參數望而卻步。',
     sources: [
       {
         source: scalingLawsSources.find((s) => s.id === 'paper-2019-gpt2')!,
@@ -103,7 +105,7 @@ const timelineEpochs: TimelineEpoch[] = [
   {
     id: 'epoch-2020-gpt3-chinchilla',
     year: '2020–2022',
-    period: '千億參數爆發與計算最優修正',
+    period: '千億參數爆發與計算最佳化修正',
     title: 'GPT-3 驗證風洞外推，DeepMind Chinchilla 修正數據分配',
     summary:
       'OpenAI 依循定律成功研製 175B GPT-3；兩年後 DeepMind 指出學習率排程盲點，將算力分配修正為 1:1 對稱等比擴展。',
@@ -122,7 +124,7 @@ const timelineEpochs: TimelineEpoch[] = [
         refCode: 'S05',
         role: '後續修正',
         takeaway:
-          '修正了 Kaplan 原論文對數據量的低估，確立現代開源模型（如 LLaMA）必備的 Chinchilla 算力最優法則。',
+          '修正了 Kaplan 原論文對數據量的低估，確立現代開源模型（如 LLaMA）必備的 Chinchilla 算力最佳化法則。',
       },
     ],
   },
@@ -138,7 +140,7 @@ const timelineEpochs: TimelineEpoch[] = [
     <!-- 1. Hero Header Visual Anatomy (Universal Invariant) -->
     <header class={`${shell} pt-10`}>
       <div class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
-        <a class="text-red underline underline-offset-4" href="/">
+        <a class="text-red underline underline-offset-4" href={withBase('/')}>
           THE LLM
         </a>
         <span aria-hidden="true">/</span>
@@ -158,7 +160,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
           <p class="mt-8 max-w-[52ch] text-lg leading-8 text-muted">
             在 2020 年以前，訓練大型神經網路宛如走鋼索的煉金術：耗資數百萬美元、調度上千顆 GPU
-            訓練一個模型，誰也無法保證它最終會收斂出驚艷智慧，還是陷入過擬合與效益遞減的深淵。Jared
+            訓練一個模型，誰也無法保證它最終會收斂出驚艷智慧，還是陷入過度擬合與效益遞減的深淵。Jared
             Kaplan 等理論物理學家跨越 6
             個數量級展開密集測量，首度證實語言模型性能受控於嚴格的物理冪律——自此，大模型研發徹底告別盲目試誤，擁有了可精確計算與外推的科學導航圖。
           </p>
@@ -214,7 +216,7 @@ const timelineEpochs: TimelineEpoch[] = [
       <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            第一樂章 / 豪賭千萬美元的困境
+            章節 01 · 豪賭千萬美元的困境 / THE IMPASSE
           </p>
           <h2
             id="gambling-crisis-title"
@@ -233,15 +235,21 @@ const timelineEpochs: TimelineEpoch[] = [
 
       <PaperReadingLayout class="text-base leading-8 text-ink">
         <div class="space-y-6">
-          <p class="text-lg leading-relaxed text-ink">
+          <p>
             在傳統軟體工程中，工程師修改一行程式碼，點擊編譯，數秒內就能得到測試回饋；即便系統崩潰，代價也不過是幾次除錯中斷。然而，在
-            2019 年底的深度學習領域，工程師面臨的是完全不同的殘酷物理法則：OpenAI 在第四章剛以 15
-            億參數的 GPT-2 震驚了學界，但如果想要更進一步，將模型擴展到 100 億、甚至 1000
+            2019 年底的深度學習領域，工程師面臨的是完全不同的殘酷物理法則：OpenAI 剛以 15 億參數的{' '}
+            <a
+              href={withBase('/papers/language-models-are-unsupervised-multitask-learners')}
+              class="text-primary hover:underline font-medium"
+            >
+              GPT-2
+            </a>{' '}
+            震驚了學界，但如果想要更進一步，將模型擴展到 100 億、甚至 1000
             億參數，需要投入多少運算資源？需要收集多少網頁文本？沒有人知道答案。
           </p>
 
           <p>
-            當時業界普遍籠罩在三大直覺恐懼之中：其一是「過擬合深淵」——經典統計學習理論警告，模型參數若遠遠超過訓練樣本數，網路將迅速記住噪聲而喪失泛化能力；其二是「效益遞減天花板」——神經網路的性能提升是否會像傳統機器學習模型一樣，在參數量達到某個閥值後迅速飽和、陷入平頂；其三是「算力黑洞」——在數千顆
+            當時業界普遍籠罩在三大直覺恐懼之中：其一是「過度擬合深淵」——經典統計學習理論警告，模型參數若遠遠超過訓練樣本數，網路將迅速記住噪聲而喪失泛化能力；其二是「效益遞減天花板」——神經網路的性能提升是否會像傳統機器學習模型一樣，在參數量達到某個閥值後迅速飽和、陷入平頂；其三是「算力黑洞」——在數千顆
             GPU
             叢集上連續運算數個月，耗資數百萬美元電費與硬體折舊，如果最終損失函數紋風不動甚至中途發散，任何研究機構都難以承受這樣的戰略災難。
           </p>
@@ -263,7 +271,7 @@ const timelineEpochs: TimelineEpoch[] = [
             <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
               在傳統統計學中，VC 維度理論與偏差-方差權衡（Bias-Variance
               Tradeoff）告訴我們模型參數量必須嚴格受限於樣本容量。但在自回歸 Transformer
-              的世界裡，研究人員驚訝地發現模型哪怕參數量擴大十倍，只要訓練數據同步微調，測試集上的交叉熵損失（Cross-Entropy
+              的世界裡，研究人員驚訝地發現模型哪怕參數量擴大十倍，只要訓練資料同步微調，測試集上的交叉熵損失（Cross-Entropy
               Loss）居然平滑下降。這種違背古典統計直覺的現象，讓當時的 AI
               研發宛如缺乏航海圖的冒險：所有人都在賭，但誰也說不清勝率幾何。
             </p>
@@ -281,7 +289,7 @@ const timelineEpochs: TimelineEpoch[] = [
       <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            第二樂章 / 統治神經網路的物理定律
+            章節 02 · 統治神經網路的物理定律 / POWER LAWS
           </p>
           <h2
             id="power-laws-title"
@@ -300,12 +308,12 @@ const timelineEpochs: TimelineEpoch[] = [
 
       <PaperReadingLayout class="text-base leading-8 text-ink">
         <div class="space-y-6">
-          <p class="text-lg leading-relaxed text-ink">
+          <p>
             為了測量神經語言模型的宏觀物理規律，Kaplan
             等人展開了一場極其奢華且系統化的實證測量：他們訓練了數百個不同規模的自回歸 Transformer
             模型，參數量橫跨從 700（700 個參數的小玩具）到 16 億（1.6B
             參數的當時頂尖規模），訓練文本橫跨數千萬到數十億 token，浮點計算量跨越 6
-            個數量級。當他們將所有實驗數據繪製在「雙對數座標系（Log-Log
+            個數量級。當他們將所有實驗資料繪製在「雙對數座標系（Log-Log
             Plot）」時，令人屏息的物理規律浮現了——所有數據點匯聚成一條條近乎完美的筆直直線。
           </p>
 
@@ -314,7 +322,7 @@ const timelineEpochs: TimelineEpoch[] = [
             Law）」。論文指出，決定語言模型測試損失（Test Loss）
             <math class="font-serif"><mi>L</mi></math>
             的，是三個互相關聯但各自獨立起作用的物理維度：非詞表參數量{' '}
-            <math class="font-serif"><mi>N</mi></math>、數據集大小
+            <math class="font-serif"><mi>N</mi></math>、資料集大小
             <math class="font-serif"><mi>D</mi></math> 以及總計算量{' '}
             <math class="font-serif"><mi>C</mi></math>。
           </p>
@@ -410,12 +418,12 @@ const timelineEpochs: TimelineEpoch[] = [
                 </p>
               </div>
               <div>
-                <span class="font-serif font-semibold text-ink">計算量冪律軸線（最優配置）：</span>
+                <span class="font-serif font-semibold text-ink">計算量冪律軸線（最佳配置）：</span>
                 <p class="text-muted mt-1 m-0">
                   <math class="font-serif"><msub><mi>α</mi><mi>C</mi></msub><mo>≈</mo><mn>0.050</mn></math>
                   ，特徵尺度
                   <math class="font-serif"><msub><mi>C</mi><mi>c</mi></msub><mo>≈</mo><mn>3.1</mn><mo>×</mo><msup><mn>10</mn><mn>8</mn></msup></math>
-                  {' '} PF-days。總算力每擴展 10 倍，最優損失穩定下降約 0.10 nats。
+                  {' '} PF-days。總算力每擴展 10 倍，最佳損失穩定下降約 0.10 nats。
                 </p>
               </div>
             </div>
@@ -755,6 +763,583 @@ const timelineEpochs: TimelineEpoch[] = [
           </AsideCard>
         </aside>
       </PaperReadingLayout>
+
+      <!-- BREAKOUT: 動態實驗室：縮放定律算力風洞模擬器 -->
+      <figure
+        class="my-16 w-full max-w-6xl mx-auto border border-ink bg-surface p-6 sm:p-10 shadow-sm"
+        role="region"
+        aria-labelledby="scaling-lab-title"
+      >
+        <div class="border-b border-line pb-6">
+          <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p class="m-0 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+                動態實驗室 / INTERACTIVE SCALING LAWS LAB
+              </p>
+              <h3
+                id="scaling-lab-title"
+                class="mt-2 m-0 font-display text-2xl sm:text-3xl font-bold text-ink"
+              >
+                縮放定律算力風洞模擬器：參數量、數據量與損失收斂推導
+              </h3>
+            </div>
+            <span class="font-mono text-xs text-muted">Kaplan 2020 原著第 3 與第 4 節核心實作</span>
+          </div>
+          <figcaption class="mt-3 max-w-4xl text-sm leading-relaxed text-muted">
+            在投入數百萬美元訓練超大模型之前，OpenAI 依靠一套「算力風洞」精確預測損失收斂點。
+            請在下方切換經典歷史模型，或自由拖動
+            <strong>
+              參數量 <span class="font-mono">N</span>
+            </strong>{' '}
+            與
+            <strong>
+              訓練資料量 <span class="font-mono">D</span>
+            </strong>{' '}
+            滑桿， 即時檢驗總算力預算 <span class="font-mono">C ≈ 6ND</span>、預測測試損失與 Shannon
+            極限不可約減熵的赤字分解。
+          </figcaption>
+        </div>
+
+        <!-- Presets Bar -->
+        <div class="mt-6 space-y-3">
+          <span class="font-mono text-xs font-bold uppercase tracking-wider text-ink block">
+            選擇經典歷史模型規格（一鍵載入參數）：
+          </span>
+          <div class="flex flex-wrap gap-2" role="tablist" aria-label="模型規格預設">
+            <button
+              type="button"
+              class="scaling-preset-btn border border-ink bg-paper text-ink px-3 py-1.5 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer"
+              data-params="1500000000"
+              data-tokens="40000000000"
+              data-name="GPT-2 (1.5B)"
+            >
+              GPT-2 (1.5B 參數 / 40B tokens)
+            </button>
+            <button
+              type="button"
+              class="scaling-preset-btn border border-ink bg-ink text-surface px-3 py-1.5 font-mono text-xs font-bold transition cursor-pointer"
+              data-params="175000000000"
+              data-tokens="300000000000"
+              data-name="GPT-3 (175B)"
+            >
+              GPT-3 (175B 參數 / 300B tokens)
+            </button>
+            <button
+              type="button"
+              class="scaling-preset-btn border border-ink bg-paper text-ink px-3 py-1.5 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer"
+              data-params="65000000000"
+              data-tokens="1400000000000"
+              data-name="LLaMA-1 (65B)"
+            >
+              LLaMA-1 (65B 參數 / 1.4T tokens)
+            </button>
+            <button
+              type="button"
+              class="scaling-preset-btn border border-ink bg-paper text-ink px-3 py-1.5 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer"
+              data-params="70000000000"
+              data-tokens="1400000000000"
+              data-name="Chinchilla (70B)"
+            >
+              Chinchilla (70B 參數 / 1.4T tokens)
+            </button>
+          </div>
+        </div>
+
+        <!-- Sliders & Simulation Dashboard -->
+        <div class="mt-6 border border-ink bg-paper-deep p-4 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+          <!-- Slider 1: Parameters N (log10) -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <label for="scaling-params-slider" class="font-mono text-xs font-bold text-ink">
+                參數量 <span class="text-red">N</span>：
+                <span id="scaling-params-val" class="text-red">
+                  175.0B
+                </span>
+              </label>
+              <span id="scaling-params-exp" class="font-mono text-xs text-muted">
+                1.75 × 10¹¹
+              </span>
+            </div>
+            <input
+              id="scaling-params-slider"
+              type="range"
+              min="7.0"
+              max="12.0"
+              step="0.05"
+              value="11.24"
+              class="w-full accent-red cursor-pointer"
+              aria-label="參數量對數滑桿"
+            />
+            <div class="flex justify-between font-mono text-xs text-muted mt-1">
+              <span>10M (10⁷)</span>
+              <span>1B (10⁹)</span>
+              <span>100B (10¹¹)</span>
+              <span>1T (10¹²)</span>
+            </div>
+          </div>
+
+          <!-- Slider 2: Tokens D (log10) -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <label for="scaling-tokens-slider" class="font-mono text-xs font-bold text-ink">
+                訓練資料量 <span class="text-blue">D</span>：
+                <span id="scaling-tokens-val" class="text-blue">
+                  300.0B tokens
+                </span>
+              </label>
+              <span id="scaling-tokens-exp" class="font-mono text-xs text-muted">
+                3.00 × 10¹¹
+              </span>
+            </div>
+            <input
+              id="scaling-tokens-slider"
+              type="range"
+              min="8.0"
+              max="13.0"
+              step="0.05"
+              value="11.48"
+              class="w-full accent-blue cursor-pointer"
+              aria-label="訓練資料量對數滑桿"
+            />
+            <div class="flex justify-between font-mono text-xs text-muted mt-1">
+              <span>100M (10⁸)</span>
+              <span>10B (10¹⁰)</span>
+              <span>1T (10¹²)</span>
+              <span>10T (10¹³)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Output Grid -->
+        <div class="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <!-- Left: Log-Log Curve & FLOPs (7 cols) -->
+          <div class="lg:col-span-7 border border-ink bg-surface p-5 sm:p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-line pb-3">
+              <span class="font-mono text-xs font-bold uppercase text-ink">
+                對數線性收斂圖 (Log-Log Convergence Plot)
+              </span>
+              <span id="scaling-model-badge" class="font-mono text-xs text-red font-semibold">
+                目前規格：GPT-3 (175B)
+              </span>
+            </div>
+
+            <!-- SVG Log-Log Plot -->
+            <svg
+              id="scaling-plot-svg"
+              class="w-full h-56 bg-paper-deep/30 border border-line"
+              viewBox="0 0 500 220"
+              preserveAspectRatio="xMidYMid meet"
+            >
+              <!-- Axes -->
+              <line x1="50" y1="180" x2="470" y2="180" stroke="#d6cec0" stroke-width="1.5"></line>
+              <line x1="50" y1="180" x2="50" y2="20" stroke="#d6cec0" stroke-width="1.5"></line>
+              <!-- Ticks -->
+              <text
+                x="45"
+                y="185"
+                text-anchor="end"
+                font-family="monospace"
+                font-size="11"
+                fill="#62665f"
+              >
+                1.69
+              </text>
+              <text
+                x="45"
+                y="100"
+                text-anchor="end"
+                font-family="monospace"
+                font-size="11"
+                fill="#62665f"
+              >
+                3.00
+              </text>
+              <text
+                x="45"
+                y="25"
+                text-anchor="end"
+                font-family="monospace"
+                font-size="11"
+                fill="#62665f"
+              >
+                5.00
+              </text>
+              <text
+                x="50"
+                y="200"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="11"
+                fill="#62665f"
+              >
+                10⁷
+              </text>
+              <text
+                x="190"
+                y="200"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="11"
+                fill="#62665f"
+              >
+                10⁹
+              </text>
+              <text
+                x="330"
+                y="200"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="11"
+                fill="#62665f"
+              >
+                10¹¹
+              </text>
+              <text
+                x="470"
+                y="200"
+                text-anchor="middle"
+                font-family="monospace"
+                font-size="11"
+                fill="#62665f"
+              >
+                10¹²
+              </text>
+              <!-- Baseline L_∞ line -->
+              <line
+                x1="50"
+                y1="180"
+                x2="470"
+                y2="180"
+                stroke="#b6412c"
+                stroke-dasharray="4,4"
+                stroke-width="1.5"
+              ></line>
+              <text
+                x="465"
+                y="174"
+                text-anchor="end"
+                font-family="monospace"
+                font-size="10"
+                fill="#b6412c"
+              >
+                Shannon 極限 L_∞
+              </text>
+              <!-- Curve path -->
+              <path id="scaling-curve-path" fill="none" stroke="#1e2224" stroke-width="2.5"></path>
+              <!-- Active point -->
+              <circle
+                id="scaling-curve-point"
+                cx="330"
+                cy="110"
+                r="6"
+                fill="#b6412c"
+                stroke="#fffdf8"
+                stroke-width="2"
+              ></circle>
+            </svg>
+
+            <!-- Compute Metric Bar -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 font-mono text-xs border border-line bg-paper p-3">
+              <div>
+                <span class="text-muted block text-xs">總浮點運算量 C (6ND)：</span>
+                <span id="scaling-calc-c" class="font-bold text-ink text-sm">
+                  3.15 × 10²³ FLOPs
+                </span>
+              </div>
+              <div>
+                <span class="text-muted block text-xs">相當於算力天數：</span>
+                <span id="scaling-calc-pfd" class="font-bold text-ink text-sm">
+                  3,645 PF-days
+                </span>
+              </div>
+              <div class="col-span-2 sm:col-span-1">
+                <span class="text-muted block text-xs">過度擬合安全餘量：</span>
+                <span id="scaling-calc-overfit" class="font-bold text-ink text-sm">
+                  安全 (D 充足)
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Loss Breakdown & Analysis (5 cols) -->
+          <div class="lg:col-span-5 border border-ink bg-surface p-5 sm:p-6 space-y-4">
+            <div class="border-b border-line pb-3">
+              <span class="font-mono text-xs font-semibold uppercase tracking-[0.1em] text-red">
+                LOSS BUDGET / 損失預算分解
+              </span>
+              <h4 class="mt-1 m-0 font-display text-xl font-bold text-ink">三大物理赤字拆解</h4>
+            </div>
+
+            <!-- Shannon Limit Base -->
+            <div class="border border-ink/20 bg-paper p-3">
+              <div class="flex items-center justify-between font-mono text-xs">
+                <span class="text-muted">1. 不可約減熵 (L_∞)：</span>
+                <span class="font-bold text-ink">1.690 nats (2.44 bits)</span>
+              </div>
+              <p class="m-0 mt-1 text-sm text-muted">
+                自然語言固有的隨機不確定性，任何模型皆無法跨越的宇宙極限。
+              </p>
+            </div>
+
+            <!-- Parameter Deficit -->
+            <div class="border border-ink/20 bg-paper p-3">
+              <div class="flex items-center justify-between font-mono text-xs">
+                <span class="text-muted">2. 參數容量赤字 (Nc/N)^0.076：</span>
+                <span id="scaling-loss-param-deficit" class="font-bold text-red">
+                  0.245 nats
+                </span>
+              </div>
+              <p class="m-0 mt-1 text-sm text-muted">
+                受限於神經網路參數量，尚未完全記憶與壓縮的世界常識。
+              </p>
+            </div>
+
+            <!-- Data Deficit -->
+            <div class="border border-ink/20 bg-paper p-3">
+              <div class="flex items-center justify-between font-mono text-xs">
+                <span class="text-muted">3. 數據吞吐赤字 (Dc/D)^0.095：</span>
+                <span id="scaling-loss-data-deficit" class="font-bold text-blue">
+                  0.312 nats
+                </span>
+              </div>
+              <p class="m-0 mt-1 text-sm text-muted">
+                受限於訓練讀取的 token 總量，未能充分接觸全部語境的多樣性。
+              </p>
+            </div>
+
+            <!-- Total Loss Card -->
+            <div class="border-2 border-red bg-red-soft/30 p-4">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-mono text-xs font-bold text-red uppercase">
+                  預測測試損失 L(N, D)
+                </span>
+                <span id="scaling-total-loss" class="font-mono text-base font-bold text-red">
+                  2.247 nats
+                </span>
+              </div>
+              <p class="m-0 mt-1 font-mono text-xs text-ink leading-relaxed">
+                L = 1.69 + (8.8×10¹³ / N)⁰·⁰⁷⁶ + (5.4×10¹³ / D)⁰·⁰⁹⁵
+              </p>
+            </div>
+
+            <!-- Narrative -->
+            <div class="border-t border-line pt-3">
+              <p class="m-0 font-mono text-xs font-bold text-ink mb-1">風洞診斷：</p>
+              <p id="scaling-diagnosis" class="m-0 text-sm leading-relaxed text-muted">
+                在當前 175B 參數與 300B tokens
+                設定下，模型獲得極度均衡的收斂效果。在投入數百萬美元之前，風洞已準確命中真實測試損失！
+              </p>
+            </div>
+          </div>
+        </div>
+      </figure>
+
+      <script>
+        // Kaplan Constants
+        const L_INF = 1.69;
+        const NC = 8.8e13;
+        const ALPHA_N = 0.076;
+        const DC = 5.4e13;
+        const ALPHA_D = 0.095;
+
+        let currentN = 1.75e11; // 175B
+        let currentD = 3.0e11; // 300B
+        let currentModelName = 'GPT-3 (175B)';
+
+        function computeScaling(N: number, D: number) {
+          const paramDeficit = Math.pow(NC / N, ALPHA_N);
+          const dataDeficit = Math.pow(DC / D, ALPHA_D);
+          const totalLoss = L_INF + paramDeficit + dataDeficit;
+          const C = 6 * N * D; // FLOPs
+          const pfDays = C / (1e15 * 86400); // 1 PF-day = 10^15 * 86400 FLOPs
+
+          // Overfitting check: D should be >= 5e-4 * N^0.74 (approx rule from Kaplan 2020)
+          const minD = 5e-4 * Math.pow(N, 0.74);
+          const isOverfitRisk = D < minD;
+
+          return { paramDeficit, dataDeficit, totalLoss, C, pfDays, isOverfitRisk };
+        }
+
+        function formatNumber(num: number): string {
+          if (num >= 1e12) return `${(num / 1e12).toFixed(1)}T`;
+          if (num >= 1e9) return `${(num / 1e9).toFixed(1)}B`;
+          if (num >= 1e6) return `${(num / 1e6).toFixed(1)}M`;
+          return num.toLocaleString();
+        }
+
+        function formatScientific(num: number): string {
+          const exp = Math.floor(Math.log10(num));
+          const lead = num / Math.pow(10, exp);
+          return `${lead.toFixed(2)} × 10${toSuperscript(exp)}`;
+        }
+
+        function toSuperscript(num: number): string {
+          const chars: Record<string, string> = {
+            '0': '⁰',
+            '1': '¹',
+            '2': '²',
+            '3': '³',
+            '4': '⁴',
+            '5': '⁵',
+            '6': '⁶',
+            '7': '⁷',
+            '8': '⁸',
+            '9': '⁹',
+            '-': '⁻',
+          };
+          return num
+            .toString()
+            .split('')
+            .map((c) => chars[c] || c)
+            .join('');
+        }
+
+        function renderScalingLab() {
+          const res = computeScaling(currentN, currentD);
+
+          const paramsVal = document.getElementById('scaling-params-val');
+          const paramsExp = document.getElementById('scaling-params-exp');
+          const tokensVal = document.getElementById('scaling-tokens-val');
+          const tokensExp = document.getElementById('scaling-tokens-exp');
+          const badge = document.getElementById('scaling-model-badge');
+          const calcC = document.getElementById('scaling-calc-c');
+          const calcPfd = document.getElementById('scaling-calc-pfd');
+          const calcOverfit = document.getElementById('scaling-calc-overfit');
+          const lossParam = document.getElementById('scaling-loss-param-deficit');
+          const lossData = document.getElementById('scaling-loss-data-deficit');
+          const totalLossEl = document.getElementById('scaling-total-loss');
+          const diagnosis = document.getElementById('scaling-diagnosis');
+          const point = document.getElementById('scaling-curve-point');
+
+          if (paramsVal) paramsVal.textContent = formatNumber(currentN);
+          if (paramsExp) paramsExp.textContent = formatScientific(currentN);
+          if (tokensVal) tokensVal.textContent = `${formatNumber(currentD)} tokens`;
+          if (tokensExp) tokensExp.textContent = formatScientific(currentD);
+          if (badge) badge.textContent = `目前規格：${currentModelName}`;
+          if (calcC) calcC.textContent = formatScientific(res.C) + ' FLOPs';
+          if (calcPfd) calcPfd.textContent = `${Math.round(res.pfDays).toLocaleString()} PF-days`;
+
+          if (calcOverfit) {
+            if (res.isOverfitRisk) {
+              calcOverfit.textContent = '警告：數據匱乏！';
+              calcOverfit.className = 'font-bold text-red text-sm';
+            } else {
+              calcOverfit.textContent = '安全 (D 充足)';
+              calcOverfit.className = 'font-bold text-ink text-sm';
+            }
+          }
+
+          if (lossParam) lossParam.textContent = `${res.paramDeficit.toFixed(3)} nats`;
+          if (lossData) lossData.textContent = `${res.dataDeficit.toFixed(3)} nats`;
+          if (totalLossEl) totalLossEl.textContent = `${res.totalLoss.toFixed(3)} nats`;
+
+          // Diagnosis narrative
+          if (diagnosis) {
+            if (res.isOverfitRisk) {
+              diagnosis.innerHTML =
+                '<span class="text-red font-semibold">【過度擬合警報】</span>相對於龐大的參數量，訓練資料量過少，模型即將吞入噪聲、喪失泛化能力！請擴充數據量以壓低數據赤字。';
+            } else if (currentN > 5e11) {
+              diagnosis.textContent =
+                '【兆級參數前沿】參數量極度巨大，參數容量赤字已降至極低水準；此時算力預算的主要瓶頸在於數據吞吐量與通訊頻寬。';
+            } else {
+              diagnosis.textContent = `在此配置下，預測測試損失為 ${res.totalLoss.toFixed(3)} nats。距離宇宙極限 Shannon 不可約減熵僅剩 ${(res.paramDeficit + res.dataDeficit).toFixed(3)} nats 之可約減差距。`;
+            }
+          }
+
+          // Update SVG Point
+          if (point) {
+            // Mapping: N from 10^7 to 10^12 -> x from 50 to 470
+            const logN = Math.log10(currentN);
+            const cx = 50 + ((logN - 7.0) / 5.0) * 420;
+            // Loss from 1.69 to 5.0 -> y from 180 to 20
+            const clampedLoss = Math.min(5.0, Math.max(1.69, res.totalLoss));
+            const cy = 180 - ((clampedLoss - 1.69) / (5.0 - 1.69)) * 160;
+            point.setAttribute('cx', cx.toString());
+            point.setAttribute('cy', cy.toString());
+          }
+        }
+
+        function initScalingPlot() {
+          const path = document.getElementById('scaling-curve-path');
+          if (!path) return;
+
+          // Draw baseline curve for D = 300B fixed, varying N from 10^7 to 10^12
+          let dStr = 'M ';
+          for (let i = 0; i <= 50; i++) {
+            const logN = 7.0 + (i / 50) * 5.0;
+            const n = Math.pow(10, logN);
+            const { totalLoss } = computeScaling(n, 3e11);
+            const cx = 50 + (i / 50) * 420;
+            const clamped = Math.min(5.0, Math.max(1.69, totalLoss));
+            const cy = 180 - ((clamped - 1.69) / (5.0 - 1.69)) * 160;
+            dStr += `${cx.toFixed(1)} ${cy.toFixed(1)} `;
+            if (i === 0) dStr += 'L ';
+          }
+          path.setAttribute('d', dStr);
+        }
+
+        function setupScalingListeners() {
+          // Presets
+          document.querySelectorAll<HTMLButtonElement>('.scaling-preset-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+              document.querySelectorAll('.scaling-preset-btn').forEach((b) => {
+                b.className =
+                  'scaling-preset-btn border border-ink bg-paper text-ink px-3 py-1.5 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer';
+              });
+              btn.className =
+                'scaling-preset-btn border border-ink bg-ink text-surface px-3 py-1.5 font-mono text-xs font-bold transition cursor-pointer';
+
+              currentN = parseFloat(btn.dataset.params || '175000000000');
+              currentD = parseFloat(btn.dataset.tokens || '300000000000');
+              currentModelName = btn.dataset.name || '自訂模型';
+
+              const pSlider = document.getElementById(
+                'scaling-params-slider',
+              ) as HTMLInputElement | null;
+              const tSlider = document.getElementById(
+                'scaling-tokens-slider',
+              ) as HTMLInputElement | null;
+              if (pSlider) pSlider.value = Math.log10(currentN).toFixed(2);
+              if (tSlider) tSlider.value = Math.log10(currentD).toFixed(2);
+
+              renderScalingLab();
+            });
+          });
+
+          // Sliders
+          const pSlider = document.getElementById(
+            'scaling-params-slider',
+          ) as HTMLInputElement | null;
+          const tSlider = document.getElementById(
+            'scaling-tokens-slider',
+          ) as HTMLInputElement | null;
+
+          if (pSlider) {
+            pSlider.addEventListener('input', () => {
+              currentN = Math.pow(10, parseFloat(pSlider.value));
+              currentModelName = `自訂模型 (${formatNumber(currentN)})`;
+              // deselect presets
+              document.querySelectorAll('.scaling-preset-btn').forEach((b) => {
+                b.className =
+                  'scaling-preset-btn border border-ink bg-paper text-ink px-3 py-1.5 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer';
+              });
+              renderScalingLab();
+            });
+          }
+
+          if (tSlider) {
+            tSlider.addEventListener('input', () => {
+              currentD = Math.pow(10, parseFloat(tSlider.value));
+              renderScalingLab();
+            });
+          }
+        }
+
+        // Initialize on load
+        initScalingPlot();
+        setupScalingListeners();
+        renderScalingLab();
+      </script>
     </section>
 
     <!-- MOVEMENT 3: 算力預算最佳分配 (OPTIMAL ALLOCATION) -->
@@ -766,7 +1351,7 @@ const timelineEpochs: TimelineEpoch[] = [
       <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            第三樂章 / 算力預算最佳分配
+            章節 03 · 算力預算最佳分配 / RESOURCE ALLOCATION
           </p>
           <h2
             id="optimal-allocation-title"
@@ -774,20 +1359,20 @@ const timelineEpochs: TimelineEpoch[] = [
           >
             <span class="block">算力預算的最佳分配：</span>
             <span class="block">
-              <em>Kaplan 處方、臨界批次大小與 Chinchilla 修正伏筆</em>
+              <em>參數量優先於數據量，大模型反而更省算力</em>
             </span>
           </h2>
         </div>
         <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
-          在 C ≈ 6ND 的硬性約束下，算力應該按什麼比例分給參數與數據？這條處方直接決定了 GPT-3 175B
-          的誕生格局。
+          給定固定的總計算預算 C，該把算力拿去練大模型但少看點數據，還是練小模型但多看幾輪？Kaplan
+          給出了石破天驚的答案。
         </p>
       </div>
 
       <PaperReadingLayout class="text-base leading-8 text-ink">
         <div class="space-y-6">
-          <p class="text-lg leading-relaxed text-ink">
-            既然模型參數量 <math class="font-serif"><mi>N</mi></math> 和訓練數據量{' '}
+          <p>
+            既然模型參數量 <math class="font-serif"><mi>N</mi></math> 和訓練資料量{' '}
             <math class="font-serif"><mi>D</mi></math>
             都能降低損失，那麼當一家 AI 實驗室籌集到一筆固定算力預算（例如 100 萬美元的 GPU
             浮點總運算量
@@ -849,9 +1434,9 @@ const timelineEpochs: TimelineEpoch[] = [
             <p class="text-sm sm:text-base text-muted leading-relaxed m-0 mt-3">
               這個分配關係式宣告了一種極端偏向模型的擴展哲學：
               <strong>
-                當總算力預算擴大 10 倍時，最優策略是將模型參數量擴大 5.4 倍（
+                當總算力預算擴大 10 倍時，最佳策略是將模型參數量擴大 5.4 倍（
                 <math class="font-serif"><msup><mn>10</mn><mn>0.73</mn></msup></math>
-                ），而訓練數據量僅需擴大 1.86 倍（
+                ），而訓練資料量僅需擴大 1.86 倍（
                 <math class="font-serif"><msup><mn>10</mn><mn>0.27</mn></msup></math>）。
               </strong>
             </p>
@@ -930,14 +1515,20 @@ const timelineEpochs: TimelineEpoch[] = [
             title="歷史大伏筆：Kaplan 處方的盲點與 2022 年 Chinchilla 修正案"
           >
             <p class="text-sm sm:text-base leading-relaxed text-ink/80 m-0">
-              兩年後的 2022 年，DeepMind 的 Jordan Hoffmann 等人在第七章《Chinchilla》論文中發現了
-              Kaplan 實驗的一個關鍵致命瑕疵：Kaplan 在 2020
+              兩年後的 2022 年，DeepMind 的 Jordan Hoffmann 等人在
+              <a
+                href={withBase('/papers/training-compute-optimal-large-language-models')}
+                class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+              >
+                Chinchilla
+              </a>
+              論文中發現了 Kaplan 實驗的一個關鍵致命瑕疵：Kaplan 在 2020
               年的實驗中，對所有不同尺寸的模型統一使用了固定的「10
               萬步餘弦學習率排程」，並且在訓練中途提前終止（Early
               Stopping）。這項做法人為壓制了較大模型在長序列數據下的收斂潛力，導致 Kaplan
               大幅低估了數據量的效益。DeepMind 修正學習率排程後證明：
               <strong>
-                最優分配其實是參數量與數據量對等增加（各佔{' '}
+                最佳分配其實是參數量與數據量對等增加（各佔{' '}
                 <math class="font-serif"><msup><mi>C</mi><mn>0.50</mn></msup></math>）
               </strong>
               。然而，這項後續修正絲毫不減損 Kaplan 首次開創物理縮放定律的歷史地位。
@@ -956,7 +1547,7 @@ const timelineEpochs: TimelineEpoch[] = [
       <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            第四樂章 / 風洞試驗與工業軍備
+            章節 04 · 風洞試驗與工業軍備 / INDUSTRIAL IMPACT
           </p>
           <h2
             id="wind-tunnel-title"
@@ -976,7 +1567,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
       <PaperReadingLayout class="text-base leading-8 text-ink">
         <div class="space-y-6">
-          <p class="text-lg leading-relaxed text-ink">
+          <p>
             在現代航空工業中，波音或空中巴士在製造一架造價數億美元的全新噴射客機之前，絕對不可能直接組裝原型機推上跑道試飛。工程師會先在實驗室打造
             1:50 比例的精密木質模型，放入「風洞（Wind
             Tunnel）」中測量高速氣流下的升力、阻力與渦流數據，並運用空氣動力學方程式精確外推全尺寸客機的飛行性能。
@@ -1010,7 +1601,13 @@ const timelineEpochs: TimelineEpoch[] = [
 
           <p>
             縮放定律留下了一個最迷人且至今仍在深化的科學謎題：縮放定律描繪的是宏觀「交叉熵損失（Cross-Entropy
-            Loss）」的平滑、連續、可預測下降；然而，當我們在第六章觀察 GPT-3
+            Loss）」的平滑、連續、可預測下降；然而，當我們觀察
+            <a
+              href={withBase('/papers/language-models-are-few-shot-learners')}
+              class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+            >
+              GPT-3
+            </a>
             時，我們會看到下游具體任務（如三位數乘法、解題推理、程式碼編寫）卻呈現出戲劇性的「階躍式湧現（Emergent
             Abilities）」。
           </p>
@@ -1055,7 +1652,7 @@ const timelineEpochs: TimelineEpoch[] = [
             </h2>
             <p class="m-0 mt-2 max-w-[65ch] text-sm text-muted">
               串聯 2019 年 GPT-2 的經驗啟發、2020 年初 Kaplan 等人的物理縮放定律，以及 GPT-3 驗證與
-              2022 年 Chinchilla 算力最優修正。
+              2022 年 Chinchilla 算力最佳化修正。
             </p>
           </div>
 
@@ -1173,48 +1770,33 @@ const timelineEpochs: TimelineEpoch[] = [
     </section>
 
     <!-- 參考文獻與史料依據 -->
-    <section class={`${shell} border-t border-ink py-16`} aria-label="參考文獻與歷史證物">
-      <div class="mb-8">
-        <p class="font-mono text-xs font-bold uppercase tracking-wider text-red mb-1">
-          史料依據 / EVIDENCE & SOURCES
+    <EvidenceList
+      sources={scalingLawsSources}
+      kicker="史料依據 / EVIDENCE & SOURCES"
+      title="一手文獻清單，與技術宣稱邊界"
+    />
+
+    <!-- 附錄 02：核心研發團隊檔案 (THE AUTHORS) -->
+    <AuthorGrid
+      authors={paper.authorBriefs}
+      kicker="研發團隊 · 核心檔案 / THE AUTHORS"
+      title="Scaling Laws 核心研發團隊"
+      description="依原始論文署名順序排列。採用經典鋼筆線雕肖像呈現作者歷史形象與經文獻考證之關鍵貢獻。"
+    >
+      <div class="mb-12 max-w-4xl space-y-6 text-base leading-8 text-ink">
+        <p>
+          2020 年初發布的《Scaling Laws for Neural Language
+          Models》，徹底終結了深度學習長達數十年的盲目試誤。由理論物理學家與資深系統工程師組成的跨學科團隊，首度以統計物理學的嚴密視角審視神經網路，為千億參數大模型的軍備競賽繪製了第一張精確的導航地圖。
         </p>
-        <h2 class="m-0 font-display text-2xl sm:text-3xl text-ink">一手文獻清單，與技術宣稱邊界</h2>
+        <p class="text-muted">
+          第一作者 Jared Kaplan 將高能理論物理中的標度不變性（Scale
+          Invariance）與重整化思想注入模型訓練，與 Sam McCandlish、Tom Henighan
+          等人透過橫跨數個數量級的地毯式消融實驗，確立了損失函數隨參數量、數據量與算力平滑收斂的跨尺度冪律；而
+          Dario Amodei 則敏銳洞察到這些數學曲線背後的戰略價值，果斷將其實踐於隨後的 GPT-3
+          百億級訓練排程中。這支團隊的實證發現，直接將現代 AI 推進至工程科學的嶄新紀元。
+        </p>
       </div>
-
-      <div class="mt-8 space-y-6">
-        {scalingLawsSources.map((s) => (
-          <article class="border border-line bg-surface p-5 rounded-sm">
-            <div class="flex items-center justify-between mb-2">
-              <span class="font-mono text-xs uppercase tracking-wider text-red">{s.kind}</span>
-              <span class="font-mono text-xs text-muted">
-                {s.publisher} · {s.published || 'n.d.'}
-              </span>
-            </div>
-            <h3 class="m-0 font-display text-base text-ink mb-2">
-              <a
-                href={s.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="hover:text-red underline underline-offset-4"
-              >
-                {s.title}
-              </a>
-            </h3>
-            <ul class="list-disc pl-5 text-xs text-muted space-y-1 mb-3">
-              {s.supports.map((sup) => (
-                <li>{sup}</li>
-              ))}
-            </ul>
-            <p class="text-sm text-ink/70 italic border-l-2 border-line pl-3 m-0">
-              技術極限與邊界：{s.limits}
-            </p>
-          </article>
-        ))}
-      </div>
-    </section>
-
-    <!-- 作者群檔案 -->
-    <AuthorGrid authors={paper.authorBriefs} />
+    </AuthorGrid>
 
     <!-- 篇章導航 -->
     <PaperNavigation

@@ -12,7 +12,7 @@ interface Props {
 
 const {
   authors,
-  kicker = '第四部分 · 團隊特寫 / THE AUTHORS',
+  kicker = '研發團隊 · 核心檔案 / THE AUTHORS',
   title = '作者團隊特寫',
   description = '依原始論文署名順序排列。採用經典鋼筆線雕肖像呈現作者歷史形象與經文獻考證之關鍵貢獻。',
   id = 'authors',
@@ -37,6 +37,8 @@ const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
     </h2>
     {description && <p class="mt-3 text-sm text-muted leading-relaxed">{description}</p>}
   </div>
+
+  <slot />
 
   <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4" data-slot="author-grid">
     {authors.map((author) => (

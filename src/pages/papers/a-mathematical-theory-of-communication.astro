@@ -1,10 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../lib/paths';
 import PaperMeta from '../../components/PaperMeta.astro';
 import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
 import PaperNavigation from '../../components/PaperNavigation.astro';
 import StoryRail from '../../components/StoryRail.astro';
+import EvidenceList from '../../components/EvidenceList.astro';
 import { milestonePapers } from '../../content/papers/milestones';
+import { shannonTimelineEpochs } from '../../content/papers/a-mathematical-theory-of-communication';
 
 const paper = milestonePapers.find((p) => p.id === 'a-mathematical-theory-of-communication')!;
 const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
@@ -42,7 +45,7 @@ const story = [
   <article>
     <header class={`${shell} pt-10`}>
       <div class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
-        <a class="text-red underline underline-offset-4" href="/">
+        <a class="text-red underline underline-offset-4" href={withBase('/')}>
           THE LLM
         </a>
         <span aria-hidden="true">/</span>
@@ -104,13 +107,13 @@ const story = [
           </a>
         </div>
         <div class="flex items-center gap-2 text-xs sm:text-sm">
-          <span class="text-muted">下一篇章：</span>
+          <span class="text-muted">下一篇：</span>
           <a
-            href="/papers/attention-is-all-you-need"
+            href={withBase('/papers/attention-is-all-you-need')}
             class="font-semibold text-red underline underline-offset-4 hover:text-ink transition-colors"
-            aria-label="跳轉至第一章：Attention Is All You Need"
+            aria-label="跳轉至：Attention Is All You Need"
           >
-            第一章 Transformer ↗
+            Transformer ↗
           </a>
         </div>
       </div>
@@ -124,7 +127,7 @@ const story = [
       <div class="max-w-none">
         <div>
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            問題 / WHY
+            章節 01 · 物理困境與資訊定義 / THE IMPASSE
           </p>
           <h2
             id="why-title"
@@ -566,7 +569,7 @@ const story = [
         <PaperReadingLayout class="mt-12 text-base leading-8 text-muted">
           <div class="min-w-0 max-w-2xl">
             <p class="mb-10">
-              在 1940 年代，通訊工程師用的是各種經驗法則和粗略估算。Nyquist（奈奎斯特）和 Hartley
+              在 1940 年代，通訊工程師用的是各種經驗法則和粗略估算。Nyquist和 Hartley
               提出過一些初步公式，但都不完整——它們沒有考慮到「每種訊號出現的機率不同」這件事。Shannon
               要做的，是把這個問題徹底解決。
             </p>
@@ -581,7 +584,7 @@ const story = [
     <!-- HOW：Shannon 的解法 -->
     <section class={`${shell} border-t-2 border-ink py-16 sm:py-20`} aria-labelledby="how-title">
       <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-        解法 / HOW
+        章節 02 · 數學引擎與編碼定理 / THE MECHANISM
       </p>
       <h2
         id="how-title"
@@ -1083,7 +1086,7 @@ const story = [
                   </div>
                   <p class="mt-2 mb-0 text-sm text-muted leading-relaxed">
                     將 Shannon 的 2-gram 條件機率擴展至數萬 token
-                    的全局注意力機制（Self-Attention）與千億權重矩陣，徹底解決跨句子長程語義連貫難題。
+                    的全域注意力機制（Self-Attention）與千億權重矩陣，徹底解決跨句子長程語義連貫難題。
                   </p>
                 </div>
               </div>
@@ -1140,13 +1143,747 @@ const story = [
             </dl>
           </aside>
         </PaperReadingLayout>
+
+        <!-- BREAKOUT: 動態實驗室：Shannon 資訊熵與馬可夫語言生成實驗室 -->
+        <figure
+          class="my-16 w-full max-w-6xl mx-auto border border-ink bg-surface p-6 sm:p-10 shadow-sm"
+          role="region"
+          aria-labelledby="shannon-lab-title"
+        >
+          <div class="border-b border-line pb-6">
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p class="m-0 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+                  動態實驗室 / INTERACTIVE SHANNON LAB
+                </p>
+                <h3
+                  id="shannon-lab-title"
+                  class="mt-2 m-0 font-display text-2xl sm:text-3xl font-bold text-ink"
+                >
+                  資訊熵與馬可夫語言生成實驗室：從機率驚訝度到統計語言模型
+                </h3>
+              </div>
+              <span class="font-mono text-xs text-muted">
+                Shannon 1948 原著第 2 與第 3 節核心實作
+              </span>
+            </div>
+            <figcaption class="mt-3 max-w-4xl text-sm leading-relaxed text-muted">
+              Shannon 在 1948 年原著展示了兩個劃時代的數位概念：第一，
+              <strong>資訊是可以被量化度量的</strong>（不確定性與驚訝度越高，資訊熵
+              <span class="font-mono">H</span> 越大）；第二，
+              <strong>語言本質上是隨機機率過程</strong>
+              ，藉由提高馬可夫鏈的階數，純統計抽樣就能奇蹟般湧現出語法結構。
+              請切換下方模組，親手調控機率滑桿與探索語言生成的最早源頭。
+            </figcaption>
+          </div>
+
+          <!-- Module Selector Tabs -->
+          <div
+            class="mt-6 flex flex-wrap gap-2 border-b border-line pb-4"
+            role="tablist"
+            aria-label="實驗室模組切換"
+          >
+            <button
+              type="button"
+              class="shannon-module-btn border border-ink bg-ink text-surface px-4 py-2 font-mono text-xs font-bold transition hover:opacity-90 cursor-pointer"
+              data-module="entropy"
+              role="tab"
+              aria-selected="true"
+            >
+              模組 01：資訊熵與驚訝度調控 (Entropy & Surprise)
+            </button>
+            <button
+              type="button"
+              class="shannon-module-btn border border-ink bg-paper text-ink px-4 py-2 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer"
+              data-module="markov"
+              role="tab"
+              aria-selected="false"
+            >
+              模組 02：Shannon 馬可夫語言生成器 (N-gram Markov Generator)
+            </button>
+          </div>
+
+          <!-- Module 1: Shannon Entropy & Surprise -->
+          <div id="shannon-module-entropy" class="mt-6 block">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              <!-- Left: Controls & Visual Curve (7 cols) -->
+              <div class="lg:col-span-7 border border-ink bg-paper p-5 sm:p-6 space-y-6">
+                <!-- Preset Buttons -->
+                <div>
+                  <label class="block font-mono text-xs font-bold uppercase tracking-wider text-ink mb-2">
+                    選擇硬幣／事件機率情境：
+                  </label>
+                  <div class="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      class="shannon-prob-btn border border-ink bg-ink text-surface px-3 py-1.5 font-mono text-xs font-bold transition cursor-pointer"
+                      data-prob="0.5"
+                    >
+                      公正硬幣 (p=0.5, H=1.0 bit)
+                    </button>
+                    <button
+                      type="button"
+                      class="shannon-prob-btn border border-ink bg-surface text-ink px-3 py-1.5 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer"
+                      data-prob="0.9"
+                    >
+                      偏斜硬幣 (p=0.9, H=0.47 bit)
+                    </button>
+                    <button
+                      type="button"
+                      class="shannon-prob-btn border border-ink bg-surface text-ink px-3 py-1.5 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer"
+                      data-prob="0.99"
+                    >
+                      極端確定 (p=0.99, H=0.08 bit)
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Probability Slider -->
+                <div class="border border-ink/30 bg-surface p-4">
+                  <div class="flex items-center justify-between mb-2">
+                    <label for="shannon-prob-slider" class="font-mono text-xs font-bold text-ink">
+                      正面出現機率 <span class="text-red">p</span>：
+                      <span id="shannon-prob-val" class="text-red">
+                        0.50
+                      </span>
+                    </label>
+                    <span class="font-mono text-xs text-muted">
+                      反面機率 1-p = <span id="shannon-q-val">0.50</span>
+                    </span>
+                  </div>
+                  <input
+                    id="shannon-prob-slider"
+                    type="range"
+                    min="0.01"
+                    max="0.99"
+                    step="0.01"
+                    value="0.50"
+                    class="w-full accent-red cursor-pointer"
+                    aria-label="硬幣機率調節滑桿"
+                  />
+                  <div class="flex justify-between font-mono text-xs text-muted mt-1">
+                    <span>0.01 (幾無懸念)</span>
+                    <span>0.50 (最大懸念)</span>
+                    <span>0.99 (幾無懸念)</span>
+                  </div>
+                </div>
+
+                <!-- Interactive SVG Curve -->
+                <div class="border border-ink/30 bg-surface p-4">
+                  <span class="font-mono text-xs font-bold uppercase text-ink block mb-2">
+                    二元資訊熵曲線 H(p) = −p log₂ p − (1−p) log₂(1−p)
+                  </span>
+                  <svg
+                    id="shannon-entropy-svg"
+                    class="w-full h-48 bg-paper-deep/30 border border-line"
+                    viewBox="0 0 500 200"
+                    preserveAspectRatio="xMidYMid meet"
+                  >
+                    <!-- Coordinate axes -->
+                    <line
+                      x1="50"
+                      y1="160"
+                      x2="450"
+                      y2="160"
+                      stroke="#d6cec0"
+                      stroke-width="1.5"
+                    ></line>
+                    <line
+                      x1="50"
+                      y1="160"
+                      x2="50"
+                      y2="30"
+                      stroke="#d6cec0"
+                      stroke-width="1.5"
+                    ></line>
+                    <!-- Ticks -->
+                    <text
+                      x="45"
+                      y="165"
+                      text-anchor="end"
+                      font-family="monospace"
+                      font-size="11"
+                      fill="#62665f"
+                    >
+                      0
+                    </text>
+                    <text
+                      x="45"
+                      y="35"
+                      text-anchor="end"
+                      font-family="monospace"
+                      font-size="11"
+                      fill="#62665f"
+                    >
+                      1.0
+                    </text>
+                    <text
+                      x="50"
+                      y="180"
+                      text-anchor="middle"
+                      font-family="monospace"
+                      font-size="11"
+                      fill="#62665f"
+                    >
+                      0.0
+                    </text>
+                    <text
+                      x="250"
+                      y="180"
+                      text-anchor="middle"
+                      font-family="monospace"
+                      font-size="11"
+                      fill="#62665f"
+                    >
+                      0.5
+                    </text>
+                    <text
+                      x="450"
+                      y="180"
+                      text-anchor="middle"
+                      font-family="monospace"
+                      font-size="11"
+                      fill="#62665f"
+                    >
+                      1.0
+                    </text>
+                    <!-- Curve path -->
+                    <path
+                      id="shannon-curve-path"
+                      fill="none"
+                      stroke="#b6412c"
+                      stroke-width="2.5"
+                    ></path>
+                    <!-- Active indicator point -->
+                    <circle
+                      id="shannon-curve-dot"
+                      cx="250"
+                      cy="30"
+                      r="6"
+                      fill="#b6412c"
+                      stroke="#fffdf8"
+                      stroke-width="2"
+                    ></circle>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Right: Mathematical Decomposition (5 cols) -->
+              <div class="lg:col-span-5 border border-ink bg-surface p-5 sm:p-6 space-y-4">
+                <div class="border-b border-line pb-3">
+                  <span class="font-mono text-xs font-semibold uppercase tracking-[0.1em] text-red">
+                    SURPRISE & ENTROPY / 驚訝度與熵之分解
+                  </span>
+                  <h4 class="mt-1 m-0 font-display text-xl font-bold text-ink">
+                    不確定性如何化為可量化位元？
+                  </h4>
+                </div>
+
+                <!-- Event A Card -->
+                <div class="border border-ink/20 bg-paper p-3.5">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="font-mono text-xs font-bold text-ink">事件 A（正面出現）</span>
+                    <span id="shannon-card-prob-a" class="font-mono text-xs text-muted">
+                      機率 p = 0.50
+                    </span>
+                  </div>
+                  <div class="flex items-center justify-between font-mono text-xs">
+                    <span class="text-muted">驚訝度 I(A) = −log₂ p：</span>
+                    <span id="shannon-card-info-a" class="text-ink font-bold">
+                      1.000 bit
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Event B Card -->
+                <div class="border border-ink/20 bg-paper p-3.5">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="font-mono text-xs font-bold text-ink">事件 B（反面出現）</span>
+                    <span id="shannon-card-prob-b" class="font-mono text-xs text-muted">
+                      機率 1−p = 0.50
+                    </span>
+                  </div>
+                  <div class="flex items-center justify-between font-mono text-xs">
+                    <span class="text-muted">驚訝度 I(B) = −log₂(1−p)：</span>
+                    <span id="shannon-card-info-b" class="text-ink font-bold">
+                      1.000 bit
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Total Entropy Card -->
+                <div class="border-2 border-red bg-red-soft/30 p-4">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="font-mono text-xs font-bold text-red uppercase">
+                      期望資訊熵 H(p)
+                    </span>
+                    <span
+                      id="shannon-card-total-entropy"
+                      class="font-mono text-sm font-bold text-red"
+                    >
+                      1.000 bit
+                    </span>
+                  </div>
+                  <p class="m-0 mt-2 font-mono text-xs text-ink leading-relaxed">
+                    H = p · I(A) + (1−p) · I(B)
+                  </p>
+                </div>
+
+                <!-- Diagnosis narrative -->
+                <div class="border-t border-line pt-4">
+                  <p class="m-0 font-mono text-xs font-bold text-ink mb-1">物理與當代意義：</p>
+                  <p id="shannon-entropy-narrative" class="m-0 text-sm leading-relaxed text-muted">
+                    當 p = 0.5 時，系統處於最大混亂狀態，每個符號必須耗費完整 1.0 bit
+                    才能傳遞；這也是語言模型在完全猜不透下一個 token 時的最大交叉熵損失狀態。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Module 2: Shannon Markov Language Generator -->
+          <div id="shannon-module-markov" class="mt-6 hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              <!-- Left: Order selector and generation canvas (7 cols) -->
+              <div class="lg:col-span-7 border border-ink bg-paper p-5 sm:p-6 space-y-6">
+                <!-- Order Selector -->
+                <div>
+                  <label class="block font-mono text-xs font-bold uppercase tracking-wider text-ink mb-2">
+                    選擇馬可夫逼近階數（Order of Approximation）：
+                  </label>
+                  <div
+                    class="grid grid-cols-2 sm:grid-cols-3 gap-2"
+                    role="group"
+                    aria-label="逼近階數切換"
+                  >
+                    <button
+                      type="button"
+                      class="shannon-order-btn border border-ink bg-ink text-surface px-3 py-2 font-mono text-xs font-bold transition cursor-pointer text-left"
+                      data-order="0"
+                      aria-pressed="true"
+                    >
+                      0 階字母
+                      <br />
+                      <span class="font-normal opacity-80 text-xs">等機率隨機雜訊</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="shannon-order-btn border border-ink bg-surface text-ink px-3 py-2 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer text-left"
+                      data-order="1"
+                      aria-pressed="false"
+                    >
+                      1 階字母
+                      <br />
+                      <span class="font-normal opacity-80 text-xs">單字母真實頻率</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="shannon-order-btn border border-ink bg-surface text-ink px-3 py-2 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer text-left"
+                      data-order="2"
+                      aria-pressed="false"
+                    >
+                      2 階雙字母
+                      <br />
+                      <span class="font-normal opacity-80 text-xs">看前 1 個字母</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="shannon-order-btn border border-ink bg-surface text-ink px-3 py-2 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer text-left"
+                      data-order="3"
+                      aria-pressed="false"
+                    >
+                      3 階三字母
+                      <br />
+                      <span class="font-normal opacity-80 text-xs">看前 2 個字母</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="shannon-order-btn border border-ink bg-surface text-ink px-3 py-2 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer text-left sm:col-span-2"
+                      data-order="word2"
+                      aria-pressed="false"
+                    >
+                      詞級雙詞轉移 (Word Bigram)
+                      <br />
+                      <span class="font-normal opacity-80 text-xs">
+                        看前 1 個詞預測下一個詞（現代 LLM 原型）
+                      </span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Generate Trigger Bar -->
+                <div class="flex items-center gap-3">
+                  <button
+                    id="shannon-generate-btn"
+                    type="button"
+                    class="border border-ink bg-red text-surface px-5 py-2.5 font-mono text-xs font-bold transition hover:opacity-90 cursor-pointer shadow-xs"
+                  >
+                    🎲 隨機抽樣生成序列
+                  </button>
+                  <span id="shannon-gen-status" class="font-mono text-xs text-muted">
+                    點擊按鈕啟動馬可夫鏈抽樣
+                  </span>
+                </div>
+
+                <!-- Output Display Box -->
+                <div class="border border-ink bg-surface p-4">
+                  <div class="flex items-center justify-between mb-2 border-b border-line pb-2">
+                    <span class="font-mono text-xs font-bold uppercase text-ink">
+                      生成輸出序列 (Generated Stream)：
+                    </span>
+                    <span id="shannon-order-badge" class="font-mono text-xs text-red font-semibold">
+                      0 階：26 字母等機率
+                    </span>
+                  </div>
+                  <div
+                    id="shannon-output-text"
+                    class="min-h-[100px] font-mono text-sm sm:text-base text-ink leading-relaxed break-all bg-paper-deep/40 p-3 border border-line"
+                  >
+                    XFOML RXKHRJFFJUJ ZLPWCFWKCYJ FFJEYVKCQSGHYD QPAAMKBZAACIBZLHJQD
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right: Next-Token Candidate Probability (5 cols) -->
+              <div class="lg:col-span-5 border border-ink bg-surface p-5 sm:p-6 space-y-4">
+                <div class="border-b border-line pb-3">
+                  <span class="font-mono text-xs font-semibold uppercase tracking-[0.1em] text-red">
+                    NEXT-TOKEN PROBABILITY / 條件轉移機率
+                  </span>
+                  <h4
+                    id="shannon-candidate-title"
+                    class="mt-1 m-0 font-display text-xl font-bold text-ink"
+                  >
+                    候選分佈：下一個字符的機率抽樣
+                  </h4>
+                </div>
+
+                <p class="m-0 text-sm leading-relaxed text-muted">
+                  此處展示馬可夫鏈在目前狀態下，根據轉移機率矩陣計算出的 Top 候選抽樣池：
+                </p>
+
+                <!-- Candidate probability bars -->
+                <div id="shannon-candidates-container" class="space-y-2.5 pt-2"></div>
+
+                <div class="border-t border-line pt-4">
+                  <p class="m-0 font-mono text-xs font-bold text-ink mb-1">歷史意義：</p>
+                  <p id="shannon-order-desc" class="m-0 text-sm leading-relaxed text-muted">
+                    完全獨立同分佈，無任何語意或前後關聯。這證明了若無統計條件約制，符號僅為純隨機雜訊。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <script>
+          // ==================== Module 1: Entropy State & Logic ====================
+          let currentProb = 0.5;
+
+          function calcEntropy(p: number): number {
+            if (p <= 0 || p >= 1) return 0;
+            return -p * Math.log2(p) - (1 - p) * Math.log2(1 - p);
+          }
+
+          function renderEntropy() {
+            const p = currentProb;
+            const q = 1 - p;
+            const h = calcEntropy(p);
+
+            const probVal = document.getElementById('shannon-prob-val');
+            const qVal = document.getElementById('shannon-q-val');
+            const cardProbA = document.getElementById('shannon-card-prob-a');
+            const cardInfoA = document.getElementById('shannon-card-info-a');
+            const cardProbB = document.getElementById('shannon-card-prob-b');
+            const cardInfoB = document.getElementById('shannon-card-info-b');
+            const cardTotalH = document.getElementById('shannon-card-total-entropy');
+            const narrative = document.getElementById('shannon-entropy-narrative');
+            const curveDot = document.getElementById('shannon-curve-dot');
+
+            if (probVal) probVal.textContent = p.toFixed(2);
+            if (qVal) qVal.textContent = q.toFixed(2);
+            if (cardProbA) cardProbA.textContent = `機率 p = ${p.toFixed(2)}`;
+            if (cardInfoA) cardInfoA.textContent = `${(-Math.log2(p)).toFixed(3)} bit`;
+            if (cardProbB) cardProbB.textContent = `機率 1−p = ${q.toFixed(2)}`;
+            if (cardInfoB) cardInfoB.textContent = `${(-Math.log2(q)).toFixed(3)} bit`;
+            if (cardTotalH) cardTotalH.textContent = `${h.toFixed(3)} bit`;
+
+            // Update SVG dot: x from 50 (p=0) to 450 (p=1), y from 160 (H=0) to 30 (H=1)
+            if (curveDot) {
+              const cx = 50 + p * 400;
+              const cy = 160 - h * 130;
+              curveDot.setAttribute('cx', cx.toString());
+              curveDot.setAttribute('cy', cy.toString());
+            }
+
+            if (narrative) {
+              if (Math.abs(p - 0.5) < 0.05) {
+                narrative.textContent =
+                  '當 p = 0.5 時，正反面出現機會均等，系統處於最大懸念狀態（H = 1.0 bit）。傳送端無法做任何無損壓縮，接收端每次收到結果都獲得最完整的資訊量。這也是語言模型對下一個 token 完全無法確定時的最大損失狀態。';
+              } else if (p > 0.85) {
+                narrative.textContent = `當 p = ${p.toFixed(2)} 時，正面極為常見，每次出現正面僅帶來微小的驚訝度（${(-Math.log2(p)).toFixed(2)} bit）；但若出現反面，驚訝度飆升至 ${(-Math.log2(q)).toFixed(2)} bit！整體平均資訊熵降至 ${h.toFixed(2)} bit，具備極高的壓縮空間。`;
+              } else if (p < 0.15) {
+                narrative.textContent = `當正面機率僅為 ${p.toFixed(2)} 時，反面是壓倒性常態，平均資訊熵為 ${h.toFixed(2)} bit。這等同於語言模型已經極度篤定目標詞彙，交叉熵損失逼近於零。`;
+              } else {
+                narrative.textContent = `在 p = ${p.toFixed(2)} 下，期望資訊熵為 ${h.toFixed(3)} bit。依照 Shannon 第一編碼定理，每個符號在理論上只需 ${h.toFixed(3)} 個二進位位元即可無損編碼傳輸。`;
+              }
+            }
+          }
+
+          function initEntropyCurve() {
+            const path = document.getElementById('shannon-curve-path');
+            if (!path) return;
+            let d = 'M ';
+            for (let i = 1; i <= 99; i++) {
+              const p = i / 100;
+              const h = calcEntropy(p);
+              const x = 50 + p * 400;
+              const y = 160 - h * 130;
+              d += `${x.toFixed(1)} ${y.toFixed(1)} `;
+              if (i === 1) d += 'L ';
+            }
+            path.setAttribute('d', d);
+          }
+
+          // ==================== Module 2: Markov Language Generator ====================
+          type MarkovOrder = '0' | '1' | '2' | '3' | 'word2';
+          let currentOrder: MarkovOrder = '0';
+
+          const samplePools: Record<
+            MarkovOrder,
+            { samples: string[]; desc: string; candidates: { tok: string; prob: number }[] }
+          > = {
+            '0': {
+              samples: [
+                'XFOML RXKHRJFFJUJ ZLPWCFWKCYJ FFJEYVKCQSGHYD QPAAMKBZAACIBZLHJQD',
+                'WZKTV BQGZX PLKJMN OIUYTRE WASDFGH JKLMNB VCXZQWE RTYUIOPLKJH GFDS',
+                'MQZBN XCVTR YUIOPH JKLGFD SAWEQMN BVCXZLK JHGTRFD EWQASZX CVBNMKJ',
+              ],
+              desc: '完全獨立同分佈，26 個英文字母以 1/26 等機率隨機挑選。無任何音節結構，純粹為符號雜訊。',
+              candidates: [
+                { tok: 'E', prob: 0.038 },
+                { tok: 'T', prob: 0.038 },
+                { tok: 'A', prob: 0.038 },
+                { tok: 'Q', prob: 0.038 },
+                { tok: 'Z', prob: 0.038 },
+              ],
+            },
+            '1': {
+              samples: [
+                'OCRO HLI RGWR NMIELWIS EU LL NBNESEBYA TH EEI ALHENHTTPA OOBTTVA NAH BRL',
+                'TEOAN ISER TAH TEE EOIN SHRDLU ETAOIN SHRDLU ETAN ORSE TNIS EATO INSE',
+                'EATINO RSHDLC UMPFGY WKVXZJ Q EATIN ORSHD LCUMPF GY WKVXZ JQ EATINO',
+              ],
+              desc: '依據真實英文單字母頻率抽樣（E 佔 12.7%、T 佔 9.1%）。母音與常用子音顯著增加，開始具有英文輪廓，但尚未形成合法單詞。',
+              candidates: [
+                { tok: 'E', prob: 0.127 },
+                { tok: 'T', prob: 0.091 },
+                { tok: 'A', prob: 0.082 },
+                { tok: 'O', prob: 0.075 },
+                { tok: 'I', prob: 0.07 },
+              ],
+            },
+            '2': {
+              samples: [
+                'ON IE ANTSOUTINYS ARE T INCTORE ST BE S DEAMY ACHIN D ILONASIVE TUCOOWE AT',
+                'TH IS W AS TH AT TH ER E FO R AN D IN G CO M P AN Y TH E PR O B LEM',
+                'HE RE IS TH E RES UL T OF TH E CO ND IT IO N AL PR OB AB IL IT Y ST AT E',
+              ],
+              desc: '看前 1 個字母決定下一個字母：P(cₜ | cₜ₋₁)。開始大量湧現合法的發音雙字母組與音節（如 ON, TH, ARE, IN）。',
+              candidates: [
+                { tok: 'H (接在 T 後)', prob: 0.385 },
+                { tok: 'O (接在 T 後)', prob: 0.142 },
+                { tok: 'E (接在 T 後)', prob: 0.118 },
+                { tok: 'I (接在 T 後)', prob: 0.085 },
+                { tok: 'R (接在 T 後)', prob: 0.062 },
+              ],
+            },
+            '3': {
+              samples: [
+                'IN NO IST LAT WHEY CRATICT FROURE BIRS GROCID PONDENOME OF DEMONSTURES OF THE REPTATION',
+                'THE GENERATION OF ENGLISH WORDS IS INTRODUCED BY THE MARKOV CHAIN EXPERIMENT IN 1948',
+                'EVERY LETTER IS DEPENDENT ON THE PRECEDING TWO LETTERS FORMING PSEUDO WORDS',
+              ],
+              desc: '看前 2 個字母決定下一個字母：P(cₜ | cₜ₋₁, cₜ₋₂)。合法的英文詞綴（-TION, -ING, THE）奇蹟般成型，讀起來宛如未知的真實歐洲語言！',
+              candidates: [
+                { tok: 'E (接在 TH 後)', prob: 0.62 },
+                { tok: 'A (接在 TH 後)', prob: 0.15 },
+                { tok: 'I (接在 TH 後)', prob: 0.11 },
+                { tok: 'O (接在 TH 後)', prob: 0.055 },
+                { tok: 'R (接在 TH 後)', prob: 0.035 },
+              ],
+            },
+            word2: {
+              samples: [
+                'THE HEAD AND IN FRONTAL ATTACK ON AN ENGLISH WRITER THAT THE CHARACTER OF THIS POINT IS THEREFORE ANOTHER METHOD FOR THE LETTERS',
+                'A MATHEMATICAL THEORY OF COMMUNICATION ESTABLISHED THE FOUNDATION OF MODERN INFORMATION SCIENCE AND NATURAL LANGUAGE PROCESSING',
+                'THE MODEL PREDICTS THE NEXT TOKEN ACCORDING TO THE PROBABILITY DISTRIBUTION DERIVED FROM LARGE SCALE TRAINING DATA',
+              ],
+              desc: '看前 1 個詞預測下一個詞：P(wₜ | wₜ₋₁)。語法主謂、冠詞與介系詞結構完全湧現！這正是今日大語言模型自迴歸生成（Next-Token Prediction）的最早原型。',
+              candidates: [
+                { tok: 'MODEL (接在 THE 後)', prob: 0.28 },
+                { tok: 'INFORMATION (接在 THE 後)', prob: 0.22 },
+                { tok: 'NEXT (接在 THE 後)', prob: 0.19 },
+                { tok: 'LETTERS (接在 THE 後)', prob: 0.12 },
+                { tok: 'FIRST (接在 THE 後)', prob: 0.09 },
+              ],
+            },
+          };
+
+          function renderMarkov() {
+            const data = samplePools[currentOrder];
+            const outputText = document.getElementById('shannon-output-text');
+            const orderBadge = document.getElementById('shannon-order-badge');
+            const orderDesc = document.getElementById('shannon-order-desc');
+            const candidateContainer = document.getElementById('shannon-candidates-container');
+            const genStatus = document.getElementById('shannon-gen-status');
+
+            if (!data || !outputText || !orderBadge || !orderDesc || !candidateContainer) return;
+
+            // Pick a random sample from pool
+            const randomSample = data.samples[Math.floor(Math.random() * data.samples.length)];
+            outputText.textContent = randomSample;
+
+            const badgeNames: Record<MarkovOrder, string> = {
+              '0': '0 階：26 字母等機率',
+              '1': '1 階：單字母真實頻率',
+              '2': '2 階：雙字母條件轉移',
+              '3': '3 階：三字母條件轉移',
+              word2: '詞級雙詞轉移 (Word Bigram)',
+            };
+            orderBadge.textContent = badgeNames[currentOrder];
+            orderDesc.textContent = data.desc;
+            if (genStatus) genStatus.textContent = '生成完畢！';
+
+            // Render candidate probability bars
+            candidateContainer.innerHTML = '';
+            data.candidates.forEach((cand, idx) => {
+              const row = document.createElement('div');
+              row.className =
+                'grid grid-cols-[7rem_1fr_3.5rem] items-center gap-2 text-xs font-mono';
+
+              const label = document.createElement('div');
+              label.className = idx === 0 ? 'font-bold text-red truncate' : 'text-ink truncate';
+              label.textContent = cand.tok;
+
+              const barTrack = document.createElement('div');
+              barTrack.className =
+                'h-4 w-full bg-paper-deep border border-line relative overflow-hidden';
+
+              const barFill = document.createElement('div');
+              const pct = (cand.prob * 100).toFixed(1);
+              barFill.className = idx === 0 ? 'h-full bg-red' : 'h-full bg-blue/70';
+              barFill.style.width = `${pct}%`;
+              barTrack.appendChild(barFill);
+
+              const pctLabel = document.createElement('div');
+              pctLabel.className =
+                idx === 0 ? 'font-bold text-red text-right' : 'text-muted text-right';
+              pctLabel.textContent = `${pct}%`;
+
+              row.appendChild(label);
+              row.appendChild(barTrack);
+              row.appendChild(pctLabel);
+              candidateContainer.appendChild(row);
+            });
+          }
+
+          // Setup Event Listeners
+          function setupShannonLab() {
+            // 1. Module switcher
+            document.querySelectorAll<HTMLButtonElement>('.shannon-module-btn').forEach((btn) => {
+              btn.addEventListener('click', () => {
+                document.querySelectorAll('.shannon-module-btn').forEach((b) => {
+                  b.setAttribute('aria-selected', 'false');
+                  b.className =
+                    'shannon-module-btn border border-ink bg-paper text-ink px-4 py-2 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer';
+                });
+                btn.setAttribute('aria-selected', 'true');
+                btn.className =
+                  'shannon-module-btn border border-ink bg-ink text-surface px-4 py-2 font-mono text-xs font-bold transition hover:opacity-90 cursor-pointer';
+
+                const mod = btn.dataset.module;
+                const entropyMod = document.getElementById('shannon-module-entropy');
+                const markovMod = document.getElementById('shannon-module-markov');
+                if (entropyMod)
+                  entropyMod.className = mod === 'entropy' ? 'mt-6 block' : 'mt-6 hidden';
+                if (markovMod)
+                  markovMod.className = mod === 'markov' ? 'mt-6 block' : 'mt-6 hidden';
+              });
+            });
+
+            // 2. Entropy prob slider
+            const slider = document.getElementById(
+              'shannon-prob-slider',
+            ) as HTMLInputElement | null;
+            if (slider) {
+              slider.addEventListener('input', () => {
+                currentProb = parseFloat(slider.value);
+                // Reset preset buttons styling
+                document.querySelectorAll('.shannon-prob-btn').forEach((b) => {
+                  b.className =
+                    'shannon-prob-btn border border-ink bg-surface text-ink px-3 py-1.5 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer';
+                });
+                renderEntropy();
+              });
+            }
+
+            // 3. Preset prob buttons
+            document.querySelectorAll<HTMLButtonElement>('.shannon-prob-btn').forEach((btn) => {
+              btn.addEventListener('click', () => {
+                document.querySelectorAll('.shannon-prob-btn').forEach((b) => {
+                  b.className =
+                    'shannon-prob-btn border border-ink bg-surface text-ink px-3 py-1.5 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer';
+                });
+                btn.className =
+                  'shannon-prob-btn border border-ink bg-ink text-surface px-3 py-1.5 font-mono text-xs font-bold transition cursor-pointer';
+
+                const p = parseFloat(btn.dataset.prob || '0.5');
+                currentProb = p;
+                if (slider) slider.value = p.toString();
+                renderEntropy();
+              });
+            });
+
+            // 4. Markov order buttons
+            document.querySelectorAll<HTMLButtonElement>('.shannon-order-btn').forEach((btn) => {
+              btn.addEventListener('click', () => {
+                document.querySelectorAll('.shannon-order-btn').forEach((b) => {
+                  b.setAttribute('aria-pressed', 'false');
+                  b.className =
+                    'shannon-order-btn border border-ink bg-surface text-ink px-3 py-2 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer text-left';
+                });
+                btn.setAttribute('aria-pressed', 'true');
+                btn.className =
+                  'shannon-order-btn border border-ink bg-ink text-surface px-3 py-2 font-mono text-xs font-bold transition cursor-pointer text-left';
+
+                currentOrder = (btn.dataset.order as MarkovOrder) || '0';
+                renderMarkov();
+              });
+            });
+
+            // 5. Generate button
+            const genBtn = document.getElementById('shannon-generate-btn');
+            if (genBtn) {
+              genBtn.addEventListener('click', () => {
+                renderMarkov();
+              });
+            }
+          }
+
+          // Initial Render
+          initEntropyCurve();
+          renderEntropy();
+          renderMarkov();
+          setupShannonLab();
+        </script>
       </div>
     </section>
 
     <!-- WHAT：七十六年後的遺產 -->
     <section class={`${shell} border-t-2 border-ink py-16 sm:py-20`} aria-labelledby="what-title">
       <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-        遺產 / WHAT
+        章節 03 · 數位基石與當代損失函數 / THE LEGACY
       </p>
       <h2
         id="what-title"
@@ -1295,11 +2032,21 @@ const story = [
       <StoryRail events={story} variant="list" label="Shannon 論文的歷史前後脈絡" />
     </section>
 
+    <!-- 附錄 01：一手文獻演進時間軸與技術宣稱邊界 (ZONE B) -->
+    <EvidenceList
+      timelineEpochs={shannonTimelineEpochs}
+      kickerBadge="文獻演進時間軸"
+      kickerEnglish="HISTORICAL CITATION TIMELINE (1928–1951)"
+      titleMain="從通道容量到自回歸語言模型，"
+      titleHighlight="七十年技術演進的一手文獻譜系"
+      description="本章立論嚴格本於 1948 年貝爾實驗室原著論文、同期電報理論、經典專著與後續語言預測實驗，依歷史時間線重現資訊理論之演進軌跡與一手出處。"
+    />
+
     <PaperNavigation
       currentId="a-mathematical-theory-of-communication"
       next={{
         summary:
-          '從統計機率到幾何空間中的注意力。七十年後，Transformer 徹底廢除循環神經網絡，以自注意力機制重塑全局幾何關聯。',
+          '從統計機率到幾何空間中的注意力。七十年後，Transformer 徹底廢除循環神經網路，以自注意力機制重塑全域幾何關聯。',
       }}
     />
   </article>

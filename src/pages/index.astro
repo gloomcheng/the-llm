@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import StoryRail from '../components/StoryRail.astro';
 import { milestonePapers } from '../content/papers/milestones';
+import { withBase } from '../lib/paths';
 
 const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
 
@@ -116,7 +117,7 @@ const timeline = [
 
           <div class="mt-8 space-y-5 text-base sm:text-lg leading-8 text-muted font-sans">
             <p class="m-0">
-              在漫長的計算史中，人類曾無數次嘗試教導機器理解自己的語言。我們曾試圖將語法寫成密密麻麻的規則樹，曾試圖將詞彙編纂成冰冷的辭典，也曾試圖讓神經網絡像吟遊詩人一樣，將前一個詞的記憶在一條看不見盡頭的循環鏈上艱難地傳遞給下一個詞。
+              在漫長的計算史中，人類曾無數次嘗試教導機器理解自己的語言。我們曾試圖將語法寫成密密麻麻的規則樹，曾試圖將詞彙編纂成冰冷的辭典，也曾試圖讓神經網路像吟遊詩人一樣，將前一個詞的記憶在一條看不見盡頭的循環鏈上艱難地傳遞給下一個詞。
             </p>
             <p class="m-0">
               然而，時間是記憶的敵人。在那條依序等待的鏈條上，句子越長，最初的思緒就越迅速地被沖淡磨滅。
@@ -137,9 +138,9 @@ const timeline = [
           <div class="mt-10 flex flex-wrap items-center gap-6 border-t border-line pt-8">
             <a
               class="inline-flex items-center gap-3 border border-ink bg-ink px-8 py-5 font-mono text-sm uppercase tracking-[0.08em] text-surface no-underline hover:bg-red hover:border-red transition-colors"
-              href="/papers/attention-is-all-you-need"
+              href={withBase('/papers/attention-is-all-you-need')}
             >
-              進入第一樂章：探索注意力機制的誕生 <span aria-hidden="true">↗</span>
+              進入第一章：探索注意力機制的誕生 <span aria-hidden="true">↗</span>
             </a>
             <span class="font-mono text-xs text-muted">
               28 分鐘深度研讀・逐句拆解與手工數學推演
@@ -215,7 +216,7 @@ const timeline = [
           </span>
           <h3 class="mt-4 mb-3 font-display text-2xl leading-snug text-ink">意義如何獲得形狀？</h3>
           <p class="m-0 text-sm leading-7 text-muted font-sans">
-            人類的符號原本是孤立離散的記號。神經網絡是如何在高達數千維的幾何空間裡，將世間所有詞彙編織成一張連續的拓撲地圖？當「概念」可以用向量加減運算時，機器究竟是真的理解了意義，還是掌握了語言最精密的投影？
+            人類的符號原本是孤立離散的記號。神經網路是如何在高達數千維的幾何空間裡，將世間所有詞彙編織成一張連續的拓撲地圖？當「概念」可以用向量加減運算時，機器究竟是真的理解了意義，還是掌握了語言最精密的投影？
           </p>
         </div>
         <p class="mt-6 pt-4 border-t border-line font-mono text-xs text-blue m-0">
@@ -342,13 +343,13 @@ const timeline = [
                 VOL. {paper.vol} / {paper.year} / {paper.org}
               </span>
               <span class="bg-ink text-surface font-mono text-xs px-2.5 py-1 uppercase tracking-wider font-semibold">
-                序章・思想根源・完整導讀已上線
+                序章・思想根源
               </span>
             </div>
             <div class="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_0.8fr] items-start">
               <div>
                 <h4 class="m-0 font-display text-3xl sm:text-4xl text-ink leading-snug">
-                  <a class="no-underline text-ink hover:text-red" href={paper.url}>
+                  <a class="no-underline text-ink hover:text-red" href={withBase(paper.url)}>
                     {paper.title}
                   </a>
                 </h4>
@@ -381,7 +382,7 @@ const timeline = [
                 </p>
                 <a
                   class="mt-8 inline-block font-mono text-sm font-bold text-red uppercase underline underline-offset-4 hover:text-ink"
-                  href={paper.url}
+                  href={withBase(paper.url)}
                 >
                   進入序章開始閱讀 ↗
                 </a>
@@ -410,13 +411,13 @@ const timeline = [
                 VOL. {paper.vol} / {paper.year} / {paper.org}
               </span>
               <span class="bg-red text-surface font-mono text-xs px-2.5 py-1 uppercase tracking-wider font-semibold">
-                核心巨著・完整導讀已上線
+                核心巨著・結構奠基
               </span>
             </div>
             <div class="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_0.8fr] items-start">
               <div>
                 <h4 class="m-0 font-display text-3xl sm:text-4xl text-ink leading-snug">
-                  <a class="no-underline text-ink hover:text-red" href={paper.url}>
+                  <a class="no-underline text-ink hover:text-red" href={withBase(paper.url)}>
                     {paper.title}
                   </a>
                 </h4>
@@ -449,7 +450,7 @@ const timeline = [
                 </p>
                 <a
                   class="mt-8 inline-block font-mono text-sm font-bold text-red uppercase underline underline-offset-4 hover:text-ink"
-                  href={paper.url}
+                  href={withBase(paper.url)}
                 >
                   進入章節開始閱讀 ↗
                 </a>
@@ -485,18 +486,11 @@ const timeline = [
                 <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
                   VOL. {paper.vol}
                 </span>
-                <div class="flex items-center gap-2">
-                  {paper.status === 'published' && (
-                    <span class="bg-red text-white font-mono text-[10px] px-1.5 py-0.5 uppercase tracking-wider font-semibold">
-                      導讀已上線
-                    </span>
-                  )}
-                  <span class="font-mono text-xs text-muted">{paper.year}</span>
-                </div>
+                <span class="font-mono text-xs text-muted">{paper.year}</span>
               </div>
               <p class="mt-4 mb-1 font-mono text-xs text-blue uppercase">{paper.theme}</p>
               <h4 class="m-0 font-display text-2xl leading-snug text-ink">
-                <a class="no-underline text-ink hover:text-red" href={paper.url}>
+                <a class="no-underline text-ink hover:text-red" href={withBase(paper.url)}>
                   {paper.title}
                 </a>
               </h4>
@@ -515,7 +509,7 @@ const timeline = [
             <div class="mt-6 border-t border-line pt-3 font-mono text-xs">
               <a
                 class="font-bold text-red uppercase underline underline-offset-4 hover:text-ink"
-                href={paper.url}
+                href={withBase(paper.url)}
               >
                 {paper.status === 'published' ? '進入章節開始閱讀 ↗' : '查閱章節大綱 ↗'}
               </a>
@@ -537,7 +531,14 @@ const timeline = [
       </div>
       <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
         {epoch3Papers.map((paper) => (
-          <article class="flex flex-col justify-between border-2 border-ink bg-paper p-6 sm:p-8 hover:bg-surface transition-colors">
+          <article
+            class:list={[
+              'flex flex-col justify-between border-2 p-6 sm:p-8 transition-colors',
+              paper.status === 'published'
+                ? 'border-red bg-surface shadow-editorial'
+                : 'border-ink bg-paper hover:bg-surface',
+            ]}
+          >
             <div>
               <div class="flex items-center justify-between border-b border-line pb-3">
                 <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
@@ -547,7 +548,7 @@ const timeline = [
               </div>
               <p class="mt-4 mb-1 font-mono text-xs text-blue uppercase">{paper.theme}</p>
               <h4 class="m-0 font-display text-2xl leading-snug text-ink">
-                <a class="no-underline text-ink hover:text-red" href={paper.url}>
+                <a class="no-underline text-ink hover:text-red" href={withBase(paper.url)}>
                   {paper.title}
                 </a>
               </h4>
@@ -566,9 +567,9 @@ const timeline = [
             <div class="mt-6 border-t border-line pt-3 font-mono text-xs">
               <a
                 class="font-bold text-red uppercase underline underline-offset-4 hover:text-ink"
-                href={paper.url}
+                href={withBase(paper.url)}
               >
-                查閱章節大綱 ↗
+                {paper.status === 'published' ? '進入章節開始閱讀 ↗' : '查閱章節大綱 ↗'}
               </a>
             </div>
           </article>
@@ -588,17 +589,29 @@ const timeline = [
       </div>
       <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         {epoch4Papers.map((paper) => (
-          <article class="flex flex-col justify-between border-2 border-ink/40 bg-surface p-6 hover:border-red transition-colors shadow-sm">
+          <article
+            class:list={[
+              'flex flex-col justify-between border-2 p-6 transition-colors shadow-sm',
+              paper.status === 'published'
+                ? 'border-red bg-surface hover:border-ink shadow-editorial'
+                : 'border-ink/40 bg-paper hover:bg-surface opacity-90',
+            ]}
+          >
             <div>
               <div class="flex items-center justify-between border-b border-line pb-2">
                 <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
                   VOL. {paper.vol}
                 </span>
-                <span class="font-mono text-xs text-muted">{paper.year}</span>
+                <div class="flex items-center gap-2 font-mono text-xs">
+                  {paper.status !== 'published' && (
+                    <span class="text-muted/60 tracking-wider">準備中</span>
+                  )}
+                  <span class="text-muted">{paper.year}</span>
+                </div>
               </div>
               <p class="mt-3 mb-1 font-mono text-xs text-blue uppercase">{paper.theme}</p>
               <h4 class="m-0 font-display text-xl leading-snug text-ink">
-                <a class="no-underline text-ink hover:text-red" href={paper.url}>
+                <a class="no-underline text-ink hover:text-red" href={withBase(paper.url)}>
                   {paper.title}
                 </a>
               </h4>
@@ -608,9 +621,9 @@ const timeline = [
             <div class="mt-6 border-t border-line pt-3 font-mono text-xs">
               <a
                 class="font-bold text-red uppercase underline underline-offset-4 hover:text-ink"
-                href={paper.url}
+                href={withBase(paper.url)}
               >
-                查閱大綱與草稿 ↗
+                {paper.status === 'published' ? '進入章節開始閱讀 ↗' : '查閱大綱與草稿 ↗'}
               </a>
             </div>
           </article>
@@ -631,7 +644,7 @@ const timeline = [
         </h2>
       </div>
       <p class="m-0 max-w-[36ch] font-sans text-sm text-muted">
-        從 1948 年資訊理論奠定資訊的度量，到當代通用多模態智能體的誕生。
+        從 1948 年資訊理論奠定資訊的度量，到當代通用多模態智慧代理的誕生。
       </p>
     </div>
     <StoryRail events={timeline} variant="list" label="LLM 發展時間線，可使用鍵盤瀏覽" />
@@ -657,15 +670,15 @@ const timeline = [
     <div class="flex flex-col gap-4 shrink-0">
       <a
         class="inline-flex items-center gap-3 border border-red bg-red px-9 py-5 font-mono text-sm uppercase tracking-[0.1em] text-surface no-underline hover:bg-surface hover:text-ink hover:border-surface transition-colors"
-        href={prologuePaper?.url}
+        href={withBase(prologuePaper?.url ?? '#')}
       >
         進入序章：資訊理論的誕生 ↗
       </a>
       <a
         class="inline-flex items-center gap-3 border border-surface/30 px-9 py-4 font-mono text-xs uppercase tracking-[0.1em] text-surface/60 no-underline hover:text-surface hover:border-surface transition-colors"
-        href={epoch1Papers[0]?.url}
+        href={withBase(epoch1Papers[0]?.url ?? '#')}
       >
-        或直接跳至第一樂章：Attention ↗
+        或直接跳至第一章：Attention ↗
       </a>
     </div>
   </section>

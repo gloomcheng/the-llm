@@ -1,0 +1,1824 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../lib/paths';
+import StoryRail from '../../components/StoryRail.astro';
+import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
+import AsideCard from '../../components/AsideCard.astro';
+import Callout from '../../components/Callout.astro';
+import AuthorGrid from '../../components/AuthorGrid.astro';
+import EvidenceList from '../../components/EvidenceList.astro';
+import PaperMeta from '../../components/PaperMeta.astro';
+import PaperNavigation from '../../components/PaperNavigation.astro';
+import {
+  chinchillaPaper,
+  chinchillaSources,
+} from '../../content/papers/training-compute-optimal-large-language-models';
+
+const paper = chinchillaPaper;
+const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
+
+const story = [
+  {
+    year: '2020.01',
+    label: '理論 / SCALING LAWS',
+    title: 'Kaplan 冪律公式誕生：低估數據重要性，建議算力偏向參數',
+    body: 'OpenAI 提出 N ∝ C^0.73 與 D ∝ C^0.27，引導整個學界與工業界將算力極端傾斜於模型參數量擴充。',
+    status: 'past' as const,
+  },
+  {
+    year: '2020.05',
+    label: '里程碑 / GPT-3',
+    title: '1750 億參數 GPT-3 問世，千億參數軍備競賽全面爆發',
+    body: 'GPT-3 僅訓練 3000 億 token，但憑藉少樣本湧現能力震撼全球，隨後業界爭相訓練 280B Gopher 與 530B MT-NLG。',
+    status: 'past' as const,
+  },
+  {
+    year: '2022.03',
+    label: '論文 / CHINCHILLA',
+    title: 'DeepMind 發表 Chinchilla：以 1:1 黃金律重寫算力最佳化分配',
+    body: 'Jordan Hoffmann 等人訓練 400 餘組模型，證實大模型嚴重「吃不飽數據」；70B Chinchilla 以相同算力完勝 280B Gopher。',
+    status: 'current' as const,
+  },
+  {
+    year: '2023.02',
+    label: '開源 / LLAMA 浪潮',
+    title: 'Meta LLaMA 繼承並超越 Chinchilla，開創推論最佳化過訓練典範',
+    body: '為追求終身推論極致性價比，小模型搭配數兆 token 成為現代開源基座標配，彻底改變生成式 AI 工業經濟學。',
+    status: 'future' as const,
+  },
+];
+
+interface TimelineEpoch {
+  id: string;
+  year: string;
+  period: string;
+  title: string;
+  summary: string;
+  sources: Array<{
+    source: (typeof chinchillaSources)[number];
+    num: number;
+    refCode: string;
+    featured?: boolean;
+    role: string;
+    takeaway: string;
+  }>;
+}
+
+const timelineEpochs: TimelineEpoch[] = [
+  {
+    id: 'epoch-2020-scaling',
+    year: '2020',
+    period: '縮放定律的指引與早期偏差',
+    title: 'Kaplan 冪律公式與千億模型擴展熱潮',
+    summary:
+      'Kaplan 等人首次確立自回歸語言模型跨越數個數量級的冪律行為。然而因實驗採用固定步數學習率調度，導致模型在較少 token 時尚未充分收斂，誤導業界認為「模型參數比數據量重要得多」。',
+    sources: [
+      {
+        source: chinchillaSources.find((s) => s.id === 'paper-2020-scaling-laws')!,
+        num: 1,
+        refCode: 'S01',
+        featured: true,
+        role: '理論前驅',
+        takeaway:
+          '提出 N ∝ C^0.73 與 D ∝ C^0.27 的算力分配處方，促使各大實驗室爭先恐後將模型參數推向千億規模。',
+      },
+      {
+        source: chinchillaSources.find((s) => s.id === 'paper-2020-gpt3')!,
+        num: 2,
+        refCode: 'S02',
+        role: '標誌實踐',
+        takeaway:
+          '1750 億參數的 GPT-3 僅搭配 3000 億 token 預訓練，雖然湧現強大能力，但以計算效率審視屬於典型嚴重訓練不足。',
+      },
+    ],
+  },
+  {
+    id: 'epoch-2021-giants',
+    year: '2021',
+    period: '參數軍備競賽與推論維運困境',
+    title: 'Gopher 與 MT-NLG 登上千億巔峰，硬體成本不堪重負',
+    summary:
+      'DeepMind 打造 280B Gopher，微軟與 NVIDIA 聯手推出 530B Megatron-Turing NLG。這些龐然大物在推論時需動輒數十張甚至上百張 GPU 組成複雜管線並行，吞吐量低下且部署極為昂貴。',
+    sources: [
+      {
+        source: chinchillaSources.find((s) => s.id === 'paper-2021-gopher')!,
+        num: 3,
+        refCode: 'S03',
+        featured: true,
+        role: '基準對照',
+        takeaway:
+          'DeepMind 的 280B 旗艦模型，訓練於 3000 億 token MassiveText 上，成為後續 Chinchilla 相同算力對決之核心標靶。',
+      },
+    ],
+  },
+  {
+    id: 'epoch-2022-chinchilla',
+    year: '2022.03',
+    period: '計算最佳化化定律的全面修訂',
+    title: 'Jordan Hoffmann 等人發表 Chinchilla，破除參數迷信',
+    summary:
+      '透過對 400 餘個模型的精密實證，證明參數量與訓練 token 數應以 1:1 等比例增長。70B 參數、訓練 1.4 兆 token 的 Chinchilla 在完全相同算力下全面戰勝 280B Gopher。',
+    sources: [
+      {
+        source: chinchillaSources.find((s) => s.id === 'paper-2022-chinchilla')!,
+        num: 4,
+        refCode: 'S04',
+        featured: true,
+        role: '本篇核心',
+        takeaway:
+          '提出最小損失包絡線、IsoFLOP 與參數化擬合三種方法，確立 N ∝ C^0.50 與 D ∝ C^0.50，開啟以高數據比訓練小基座的全新篇章。',
+      },
+    ],
+  },
+  {
+    id: 'epoch-2023-llama',
+    year: '2023–至今',
+    period: '開源基座大航海與推論最佳化化',
+    title: 'LLaMA 與 Mistral 全面採納高密度數據訓練',
+    summary:
+      'Meta AI 的 LLaMA 團隊將 Chinchilla 思維推向極致：為降低下游百萬次推論成本，故意對 7B 與 13B 輕量基座進行數兆 token 的深度過訓練，現代開源 AI 生態就此奠定。',
+    sources: [
+      {
+        source: chinchillaSources.find((s) => s.id === 'paper-2023-llama')!,
+        num: 5,
+        refCode: 'S05',
+        featured: true,
+        role: '工業演化',
+        takeaway:
+          '從訓練算力最佳化跨越至推論成本最佳化，7B 模型訓練 1.4 兆 token 匹敵 GPT-3，印證了數據擴充的無盡紅利。',
+      },
+    ],
+  },
+];
+---
+
+<BaseLayout title={`${paper.chineseTitle} | THE LLM`} description={paper.abstractSummary}>
+  <header class={`${shell} pt-10`}>
+    <div class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
+      <a class="text-red underline underline-offset-4" href={withBase('/')}>
+        THE LLM
+      </a>
+      <span aria-hidden="true">/</span>
+      <span>第 07 章</span>
+    </div>
+
+    <div class="grid grid-cols-1 items-end gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-24">
+      <div>
+        <p class="mb-5 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+          VOL. 07 / COMPUTE-OPTIMAL
+        </p>
+
+        <h1 class="m-0 font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight tracking-[-0.04em] text-ink">
+          <span class="block">Training Compute-Optimal</span>
+          <em class="block">Large Language Models</em>
+        </h1>
+
+        <p class="mt-8 max-w-[52ch] text-lg leading-8 text-muted">
+          當全世界科技巨頭盲目追逐數千億參數的龐然巨獸，DeepMind 重新審視了 400
+          餘個模型的訓練軌跡，發現所有千億模型都在「數據飢餓」中嚴重空轉。Chinchilla
+          以四分之一參數量擊潰巨獸，確立了參數與數據 1:1 平衡擴展的黃金定律。
+        </p>
+      </div>
+
+      <aside
+        class="border-t-4 border-red bg-surface p-6 shadow-editorial"
+        aria-label="這篇論文的一句評語"
+      >
+        <p class="mb-4 sm:mb-6 font-mono text-xs sm:text-sm font-semibold uppercase tracking-[0.12em] text-red">
+          一句評語 / THE SHORT VERDICT
+        </p>
+        <p class="m-0 max-w-[20ch] sm:max-w-[22ch] font-display text-2xl sm:text-3xl leading-tight text-ink">
+          大模型不是越大越聰明，餵飽數據的小模型才是算力與推論的真正王者。
+        </p>
+        <p class="mt-6 mb-0 text-sm sm:text-base leading-relaxed sm:leading-7 text-muted">
+          70B 參數搭配 1.4 兆 token 的 Chinchilla，以完全相同算力全面超越 280B 的 Gopher 與 175B 的
+          GPT-3，扭轉了全球大模型的研發航向。
+        </p>
+      </aside>
+    </div>
+
+    <PaperMeta
+      year={paper.year}
+      venue={paper.venue}
+      readTime="30 分鐘"
+      difficulty="進階實證理論"
+      doi={paper.doi}
+    />
+  </header>
+
+  <main id="main-content">
+    <!-- 歷史縱深導航條 (STORY RAIL) -->
+    <section class="border-t border-ink py-12" aria-label="歷史縱深導向">
+      <div class={shell}>
+        <div class="mb-8">
+          <p class="mb-2 font-mono text-xs font-bold uppercase tracking-[0.14em] text-red">
+            歷史長河 / THE CHRONOLOGY
+          </p>
+          <h2 class="m-0 font-display text-2xl sm:text-3xl text-ink">
+            從盲目參數軍備，到算力與數據對稱擴展的理性覺醒
+          </h2>
+        </div>
+        <StoryRail events={story} />
+      </div>
+    </section>
+
+    <!-- 章節 01: 盲目軍備與算力錯覺 (THE IMPASSE) -->
+    <section
+      id="compute-impasse"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="compute-impasse-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            章節 01 · 盲目軍備與算力錯覺 / THE IMPASSE
+          </p>
+          <h2
+            id="compute-impasse-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">千億參數的虛火與盲目軍備：</span>
+            <span class="block">
+              <em>當龐然巨獸在數據飢餓中空轉</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          Kaplan
+          縮放定律將全球研發力量導向了參數量的大躍進，但昂貴的千億巨獸卻背負著難以承受的推論代價。
+        </p>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p>
+            在 2020 年初，OpenAI 的 Jared Kaplan 等人發表了劃時代的
+            <a
+              href={withBase('/papers/scaling-laws-for-neural-language-models')}
+              class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
+            >
+              Scaling Laws
+            </a>
+            縮放定律。那篇論文以嚴謹的物理測量視角向全世界宣稱：給定新增的浮點運算預算（FLOPs），最佳的分配策略是將高達
+            73% 的資源投注於擴大模型參數量（
+            <math class="font-serif">
+              <mi>N</mi>
+              <mo>∝</mo>
+              <msup>
+                <mi>C</mi>
+                <mn>0.73</mn>
+              </msup>
+            </math>
+            ），而僅將微不足道的 27% 分配給訓練資料集（
+            <math class="font-serif">
+              <mi>D</mi>
+              <mo>∝</mo>
+              <msup>
+                <mi>C</mi>
+                <mn>0.27</mn>
+              </msup>
+            </math>
+            ）。換言之，計算資源每增長 10 倍，模型參數量應當膨脹 5.4 倍，而訓練資料量只需要增加區區
+            1.86 倍。
+          </p>
+
+          <p>
+            這份數學處方迅速成為全球人工智慧實驗室奉若神明的圭臬。在隨後的兩年裡，一場人類計算史上罕見的千億參數軍備競賽全面爆發：OpenAI
+            率先推出 1750 億參數的 GPT-3，僅僅投餵了 3000 億 token 的數據；AI21 Labs 緊隨其後推出
+            1780 億參數的 Jurassic-1；DeepMind 耗費巨資打造了 2800 億參數的 Gopher，數據量同樣停留在
+            3000 億 token；而微軟與 NVIDIA 更將這場狂熱推向頂點，聯手發表了參數量高達 5300 億的
+            Megatron-Turing NLG（MT-NLG），訓練語料甚至只有可憐的 2700 億 token。
+          </p>
+
+          <p>
+            然而，這場看似壯觀的技術競逐，卻在工程落地層面撞上了一堵無比堅硬的高牆。一個 5300
+            億參數的模型，光是儲存其 FP16 浮點權重就需要超過 1 TB
+            的高頻寬記憶體（HBM）。在推論階段，即使不考慮上下文的 KV
+            快取，單次前向傳播也必須動用數十台搭載頂級 NVIDIA A100 GPU
+            的昂貴伺服器，依賴跨節點的張量並行（Tensor Parallelism）與管線並行（Pipeline
+            Parallelism）進行極其繁複的通訊切分。推論延遲居高不下，單次查詢成本宛如吞金怪獸，使得這些千億模型幾乎無法大規模商業化服務一般用戶。
+          </p>
+
+          <p>
+            更深刻的理論質疑開始在少數學者心中萌生：當我們耗費數百萬美元的電力，讓一個擁有數千億連接的神經網路僅僅匆匆翻閱過
+            3000 億個詞元時，這個模型真的「學會」充分利用其龐大的記憶體空間了嗎？如果將 5300
+            億參數的模型比喻為一個擁有萬卷書庫的學者，那麼他一生閱讀的文字量，竟然與一個僅有幾十億參數的小學生相差無幾。這種「參數巨碩、數據飢餓」的畸形狀態，究竟是自然法則的必然，還是我們打從一開始就讀錯了縮放定律的導航地圖？
+          </p>
+        </div>
+
+        <aside slot="rail" class="space-y-6">
+          <AsideCard
+            kicker="工程代價 / INFERENCE BOTTLENECK"
+            title="千億巨獸的推論詛咒：記憶體頻寬與跨節點延遲"
+            variant="surface"
+          >
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
+              大語言模型在推論生成每個 token 時，本質上是一個受限於記憶體頻寬（Memory Bandwidth
+              Bound）的過程：GPU 必須將全部模型權重從 HBM 完整載入運算單元一次。對於 530B
+              模型，每生成一個字就得搬運 1.06 TB 資料。若模型無法塞進單一伺服器節點（8 張
+              GPU），跨節點網路的通訊延遲將使推論吞吐量暴跌，維運成本呈幾何級數飆升。
+            </p>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- 章節 02: 算力邊界的實證重構 (THE MECHANISM) -->
+    <section
+      id="empirical-reconstruction"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="empirical-reconstruction-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            章節 02 · 算力邊界的實證重構 / THE MECHANISM
+          </p>
+          <h2
+            id="empirical-reconstruction-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">破除神話的三重實證：</span>
+            <span class="block">
+              <em>學習率調度陷阱、IsoFLOP 剖面與 1:1 黃金律</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          DeepMind 以超過 400 組密集實驗揭開 Kaplan
+          原定律的調度偏差，確立參數量與數據量對稱擴展的數學真理。
+        </p>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p>
+            2022 年初，DeepMind 的 Jordan Hoffmann、Sebastian Borgeaud、Arthur Mensch 與 Laurent
+            Sifre 等人決定重探大模型擴展的底層數學。他們首先抓住了 Kaplan
+            原論文中一個致命但長期被忽視的實驗細節：
+            <strong>學習率衰減排程（Learning Rate Schedule）的固定步數陷阱</strong>。
+          </p>
+
+          <p>
+            在現代深度 Transformer 的訓練中，餘弦學習率衰減（Cosine Learning Rate
+            Decay）扮演著決定性的角色。當學習率在訓練末期逐漸退火至峰值的 10%
+            時，模型權重才會真正沉降至最佳的局部損失極小值谷底。然而，Kaplan 等人在 2020
+            年的實驗中，為了節省算力，使用了一個統一固定為 10 萬步（100k
+            steps）的學習率退火排程，並在不同步數提前截取中間檢查點來評估模型。
+          </p>
+
+          <p>
+            這種偷工減料的做法帶來了毀滅性的系統偏差：對於一個只訓練了 2
+            萬步的小規模資料實驗，其學習率根本還在高位震盪，尚未經歷關鍵的退火收斂，因此其最終損失被嚴重劣化；相反地，參數量較大的模型由於學習速度快，即使在學習率較高時也能展現相對較好的初期適應力。這個調度上的系統誤差，人為製造了「數據量增長的收益極低、唯有堆砌參數量才能穩定降損」的假象。
+          </p>
+
+          <!-- 視覺化圖表：Kaplan 學習率陷阱 vs Chinchilla 精確退火 -->
+          <div
+            class="my-8 rounded border border-line bg-surface p-6 sm:p-8"
+            aria-label="學習率排程偏差比較圖"
+          >
+            <h3 class="font-display text-xl text-ink mb-2">
+              學習率調度陷阱：Kaplan 原方法與 Chinchilla 修正方案
+            </h3>
+            <p class="text-sm text-muted mb-6">
+              Kaplan 採用固定 10 萬步衰減並提前截斷，導致小步數運行尚未進入退火區；Chinchilla
+              針對每個目標 token 量獨立調度，確保在預算結束點精確完成餘弦退火。
+            </p>
+            <div class="overflow-x-auto">
+              <svg
+                viewBox="0 0 760 260"
+                class="w-full h-auto max-w-full font-mono text-xs"
+                role="img"
+                aria-label="學習率退火排程對比圖表"
+              >
+                <!-- 坐標軸 -->
+                <line x1="60" y1="220" x2="720" y2="220" stroke="#1e2224" stroke-width="2" />
+                <line x1="60" y1="20" x2="60" y2="220" stroke="#1e2224" stroke-width="2" />
+
+                <text x="60" y="242" text-anchor="middle" fill="#5e625f">
+                  0 步
+                </text>
+                <text x="240" y="242" text-anchor="middle" fill="#5e625f">
+                  2 萬步 (截點 A)
+                </text>
+                <text x="480" y="242" text-anchor="middle" fill="#5e625f">
+                  6 萬步 (截點 B)
+                </text>
+                <text x="700" y="242" text-anchor="middle" fill="#5e625f">
+                  10 萬步 (總排程)
+                </text>
+                <text x="50" y="25" text-anchor="end" fill="#5e625f">
+                  學習率 η
+                </text>
+
+                <!-- Kaplan 曲線 (虛線) -->
+                <path
+                  d="M 60 40 Q 300 60 700 210"
+                  fill="none"
+                  stroke="#5e625f"
+                  stroke-width="2.5"
+                  stroke-dasharray="6,4"
+                />
+                <circle cx="240" cy="62" r="5" fill="#5e625f" />
+                <text x="250" y="55" fill="#5e625f" font-weight="bold">
+                  Kaplan 提早截斷：η 仍高達 85%！
+                </text>
+
+                <!-- Chinchilla 針對 2 萬步專門設計的完整退火曲線 -->
+                <path d="M 60 40 Q 120 50 240 210" fill="none" stroke="#b6412c" stroke-width="3" />
+                <circle cx="240" cy="210" r="5" fill="#b6412c" />
+                <text x="250" y="205" fill="#b6412c" font-weight="bold">
+                  Chinchilla 專屬排程：剛好衰減至 10% 充分收斂
+                </text>
+              </svg>
+            </div>
+          </div>
+
+          <p>
+            為了獲得不可動搖的科學真理，DeepMind
+            進行了深度學習歷史上最浩大的實證掃描：他們訓練了超過 400 個自回歸 Transformer
+            模型，參數量橫跨 1600 萬（16M）到 100 億（10B），訓練 token 數橫跨 50 億（5B）到 5000
+            億（500B）。更關鍵的是，<strong>每一個模型的學習率調度排程都經過單獨設定</strong>
+            ，確保餘弦退火的最低點精確落在該模型的目標 token 步數上。
+          </p>
+
+          <p>
+            在密集採集了數百組訓練軌跡後，研究團隊設計了三種互相獨立、互為印證的數學方法來推導算力最佳化前沿：
+          </p>
+
+          <div class="my-6 space-y-4">
+            <div class="rounded border border-line bg-paper p-5">
+              <h4 class="m-0 font-display text-lg font-bold text-ink">
+                方法一：固定 token 預算下的最小損失包絡線（Minimum Loss Envelope）
+              </h4>
+              <p class="mt-2 mb-0 text-sm leading-relaxed text-muted">
+                針對不同的固定訓練 token
+                規模，訓練多個不同尺寸的模型，繪製出每組規模下的訓練損失曲線。透過提取所有曲線在不同總運算量
+                <math class="font-serif"><mi>C</mi></math> 下的下包絡線（Lower
+                Envelope），直接測量出對應最小損失的模型參數量。該方法推導出：
+                <math class="font-serif">
+                  <mi>N</mi>
+                  <mo>∝</mo>
+                  <msup>
+                    <mi>C</mi>
+                    <mn>0.50</mn>
+                  </msup>
+                </math>，<math class="font-serif">
+                  <mi>D</mi>
+                  <mo>∝</mo>
+                  <msup>
+                    <mi>C</mi>
+                    <mn>0.50</mn>
+                  </msup>
+                </math>。
+              </p>
+            </div>
+
+            <div class="rounded border border-line bg-paper p-5">
+              <h4 class="m-0 font-display text-lg font-bold text-ink">
+                方法二：等算力剖面拋物線擬合（IsoFLOP Profiles）
+              </h4>
+              <p class="mt-2 mb-0 text-sm leading-relaxed text-muted">
+                將總計算量 <math class="font-serif"><mi>C</mi></math> 嚴格固定在離散級數（例如
+                <math class="font-serif">
+                  <msup>
+                    <mn>10</mn>
+                    <mn>19</mn>
+                  </msup>
+                </math>、<math class="font-serif">
+                  <msup>
+                    <mn>10</mn>
+                    <mn>20</mn>
+                  </msup>
+                </math>、<math class="font-serif">
+                  <msup>
+                    <mn>10</mn>
+                    <mn>21</mn>
+                  </msup>
+                </math> FLOPs），在每個給定預算下變化參數量
+                <math class="font-serif"><mi>N</mi></math> 與 token 數
+                <math class="font-serif"><mi>D</mi></math>。將測試損失對參數量作圖，呈現出平滑的 U
+                型拋物線。透過拋物線極小值頂點提取最佳配置點
+                <math class="font-serif">
+                  <mo>(</mo>
+                  <msup>
+                    <mi>N</mi>
+                    <mo>*</mo>
+                  </msup>
+                  <mo>,</mo>
+                  <msup>
+                    <mi>D</mi>
+                    <mo>*</mo>
+                  </msup>
+                  <mo>)</mo>
+                </math>
+                。實證擬合結果為：
+                <math class="font-serif">
+                  <mi>N</mi>
+                  <mo>∝</mo>
+                  <msup>
+                    <mi>C</mi>
+                    <mn>0.49</mn>
+                  </msup>
+                </math>，<math class="font-serif">
+                  <mi>D</mi>
+                  <mo>∝</mo>
+                  <msup>
+                    <mi>C</mi>
+                    <mn>0.51</mn>
+                  </msup>
+                </math>。
+              </p>
+            </div>
+
+            <div class="rounded border border-line bg-paper p-5">
+              <h4 class="m-0 font-display text-lg font-bold text-ink">
+                方法三：參數化損失函數擬合（Parametric Loss Model Fitting）
+              </h4>
+              <p class="mt-2 mb-0 text-sm leading-relaxed text-muted">
+                將自然語言的交叉熵損失直接建模為參數量
+                <math class="font-serif"><mi>N</mi></math>
+                與數據量
+                <math class="font-serif"><mi>D</mi></math>
+                的聯合雙變數函數，使用 L-BFGS 演算法在全部實驗資料上進行 Huber 損失最小化擬合。
+              </p>
+            </div>
+          </div>
+
+          <p>
+            特別是方法三，為大語言模型的擴展行為提供了極其優美的解析數學形式。論文提出如下的聯合損失函數模型：
+          </p>
+
+          <math
+            display="block"
+            class="editorial-math my-6"
+            aria-label="Chinchilla 參數化損失函數方程式：L(N, D) = E + A 除以 N 的 alpha 次方 + B 除以 D 的 beta 次方"
+          >
+            <mrow>
+              <mover>
+                <mi>L</mi>
+                <mo>^</mo>
+              </mover>
+              <mo>(</mo>
+              <mi>N</mi>
+              <mo>,</mo>
+              <mi>D</mi>
+              <mo>)</mo>
+              <mo>=</mo>
+              <mi>E</mi>
+              <mo>+</mo>
+              <mfrac>
+                <mi>A</mi>
+                <msup>
+                  <mi>N</mi>
+                  <mi>α</mi>
+                </msup>
+              </mfrac>
+              <mo>+</mo>
+              <mfrac>
+                <mi>B</mi>
+                <msup>
+                  <mi>D</mi>
+                  <mi>β</mi>
+                </msup>
+              </mfrac>
+            </mrow>
+          </math>
+
+          <div class="my-6 rounded border border-line bg-surface p-5">
+            <h4 class="m-0 font-display text-base font-bold text-ink">
+              公式變數與實證擬合參數詳解
+            </h4>
+            <ul class="mt-3 mb-0 space-y-2 text-sm leading-relaxed text-muted">
+              <li>
+                <strong class="text-ink">
+                  <math class="font-serif"><mi>E</mi><mo>≈</mo><mn>1.69</mn></math> nats/token
+                </strong>
+                ：不可約減熵（Irreducible Entropy），代表自然語言文本本身的理論資訊極限（Shannon
+                熵下界）。
+              </li>
+              <li>
+                <strong class="text-ink">
+                  <math class="font-serif"><mi>A</mi><mo>≈</mo><mn>406.4</mn></math>、
+                  <math class="font-serif"><mi>α</mi><mo>≈</mo><mn>0.34</mn></math>
+                </strong>
+                ：參數量懲罰項。當模型參數量
+                <math class="font-serif"><mi>N</mi></math>
+                有限時，容量瓶頸帶來的額外損失。
+              </li>
+              <li>
+                <strong class="text-ink">
+                  <math class="font-serif"><mi>B</mi><mo>≈</mo><mn>410.7</mn></math>、
+                  <math class="font-serif"><mi>β</mi><mo>≈</mo><mn>0.28</mn></math>
+                </strong>
+                ：數據量懲罰項。當訓練 token 數<math class="font-serif"><mi>D</mi></math>
+                有限時，採樣不足帶來的額外損失。
+              </li>
+            </ul>
+          </div>
+
+          <p>
+            根據自回歸 Transformer 的前向與反向傳播計算量定理，在無額外重計算（Activation
+            Checkpointing）下，每處理一個 token，模型前向傳播需要約
+            <math class="font-serif"><mn>2</mn><mi>N</mi></math>
+            次浮點運算，反向傳播計算梯度需要約
+            <math class="font-serif"><mn>4</mn><mi>N</mi></math>
+            次浮點運算，因此總計算預算約束方程為：
+          </p>
+
+          <math
+            display="block"
+            class="editorial-math my-6"
+            aria-label="Transformer 訓練計算量約束方程：C 約等於 6 倍的 N 乘 D"
+          >
+            <mrow>
+              <mi>C</mi>
+              <mo>≈</mo>
+              <mn>6</mn>
+              <mi>N</mi>
+              <mi>D</mi>
+            </mrow>
+          </math>
+
+          <p>
+            在固定算力預算
+            <math class="font-serif"><mi>C</mi></math>
+            的約束下（即令
+            <math class="font-serif"><mi>D</mi><mo>=</mo><mfrac><mi>C</mi><mrow><mn>6</mn><mi>N</mi></mrow></mfrac></math>
+            ），對目標損失函數
+            <math class="font-serif"><mover><mi>L</mi><mo>^</mo></mover><mo>(</mo><mi>N</mi><mo>,</mo><mi>D</mi><mo>)</mo></math>
+            關於參數量
+            <math class="font-serif"><mi>N</mi></math>
+            求一階導數並令其為零（
+            <math class="font-serif"><mfrac><mrow><mo>∂</mo><mover><mi>L</mi><mo>^</mo></mover></mrow><mrow><mo>∂</mo><mi>N</mi></mrow></mfrac><mo>=</mo><mn>0</mn></math>
+            ），即可推導出解析極值解：
+          </p>
+
+          <math
+            display="block"
+            class="editorial-math my-6"
+            aria-label="算力最佳化分配指數推導：N 比例於 C 的 a 次方，D 比例於 C 的 b 次方"
+          >
+            <mrow>
+              <msup>
+                <mi>N</mi>
+                <mo>*</mo>
+              </msup>
+              <mo>(</mo>
+              <mi>C</mi>
+              <mo>)</mo>
+              <mo>∝</mo>
+              <msup>
+                <mi>C</mi>
+                <mi>a</mi>
+              </msup>
+              <mo>,</mo>
+              <mspace width="1em" />
+              <msup>
+                <mi>D</mi>
+                <mo>*</mo>
+              </msup>
+              <mo>(</mo>
+              <mi>C</mi>
+              <mo>)</mo>
+              <mo>∝</mo>
+              <msup>
+                <mi>C</mi>
+                <mi>b</mi>
+              </msup>
+              <mspace width="1em" />
+              <mtext>其中</mtext>
+              <mspace width="0.5em" />
+              <mi>a</mi>
+              <mo>=</mo>
+              <mfrac>
+                <mi>β</mi>
+                <mrow>
+                  <mi>α</mi>
+                  <mo>+</mo>
+                  <mi>β</mi>
+                </mrow>
+              </mfrac>
+              <mo>,</mo>
+              <mspace width="0.5em" />
+              <mi>b</mi>
+              <mo>=</mo>
+              <mfrac>
+                <mi>α</mi>
+                <mrow>
+                  <mi>α</mi>
+                  <mo>+</mo>
+                  <mi>β</mi>
+                </mrow>
+              </mfrac>
+            </mrow>
+          </math>
+
+          <p>
+            將實證擬合出的數值
+            <math class="font-serif"><mi>α</mi><mo>≈</mo><mn>0.34</mn></math>與
+            <math class="font-serif"><mi>β</mi><mo>≈</mo><mn>0.28</mn></math>
+            代入公式：
+          </p>
+
+          <math
+            display="block"
+            class="editorial-math my-6"
+            aria-label="代入數值計算最佳化指數：a 約等於 0.45，b 約等於 0.55"
+          >
+            <mrow>
+              <mi>a</mi>
+              <mo>=</mo>
+              <mfrac>
+                <mn>0.28</mn>
+                <mrow>
+                  <mn>0.34</mn>
+                  <mo>+</mo>
+                  <mn>0.28</mn>
+                </mrow>
+              </mfrac>
+              <mo>≈</mo>
+              <mn>0.45</mn>
+              <mo>,</mo>
+              <mspace width="1.5em" />
+              <mi>b</mi>
+              <mo>=</mo>
+              <mfrac>
+                <mn>0.34</mn>
+                <mrow>
+                  <mn>0.34</mn>
+                  <mo>+</mo>
+                  <mn>0.28</mn>
+                </mrow>
+              </mfrac>
+              <mo>≈</mo>
+              <mn>0.55</mn>
+            </mrow>
+          </math>
+
+          <p>
+            三種方法匯聚出同一個不容置疑的結論：
+            <strong>參數量與訓練資料量的擴展指數極度接近，均約為 0.50（1:1 的等比例分配）</strong>
+            。這徹底推翻了 Kaplan 2020 年聲稱的 0.73 : 0.27 偏態分佈！
+          </p>
+
+          <Callout variant="editorial">
+            <strong class="text-ink">
+              Chinchilla 計算最佳化黃金法則（Compute-Optimal Rule）：
+            </strong>
+            在給定的訓練算力預算下，
+            <strong>模型參數量與訓練 token 數應當以 1:1 的等比例同步增長</strong>。算力預算每提升 10
+            倍，模型參數量與訓練資料量應各自擴展約 3.16 倍（
+            <math class="font-serif"><msqrt><mn>10</mn></msqrt></math>
+            ），維持平均<strong>每 1 個模型參數搭配約 20 個訓練 token</strong> 的黃金比例（
+            <math class="font-serif"><mi>D</mi><mo>/</mo><mi>N</mi><mo>≈</mo><mn>20</mn></math>
+            ）。
+          </Callout>
+        </div>
+
+        <aside slot="rail" class="space-y-6">
+          <AsideCard
+            kicker="實證對比 / SCALING EXPONENTS"
+            title="算力分配的歷史轉折：Kaplan 2020 vs Chinchilla 2022"
+            variant="surface"
+          >
+            <div class="space-y-3 text-xs sm:text-sm text-muted m-0">
+              <div class="border-b border-line pb-2">
+                <span class="font-bold text-ink">Kaplan (2020)：</span>
+                <p class="m-0 mt-1">
+                  <math class="font-serif"><mi>N</mi><mo>∝</mo><msup><mi>C</mi><mn>0.73</mn></msup></math>
+                  ，
+                  <math class="font-serif"><mi>D</mi><mo>∝</mo><msup><mi>C</mi><mn>0.27</mn></msup></math>
+                </p>
+                <p class="m-0 text-red mt-1">算力翻倍時，大幅增加參數，數據幾乎不變。</p>
+              </div>
+              <div>
+                <span class="font-bold text-ink">Chinchilla (2022)：</span>
+                <p class="m-0 mt-1">
+                  <math class="font-serif"><mi>N</mi><mo>∝</mo><msup><mi>C</mi><mn>0.50</mn></msup></math>
+                  ，
+                  <math class="font-serif"><mi>D</mi><mo>∝</mo><msup><mi>C</mi><mn>0.50</mn></msup></math>
+                </p>
+                <p class="m-0 text-ink mt-1 font-semibold">
+                  算力翻倍時，參數與數據嚴格 1:1 等比例倍增。
+                </p>
+              </div>
+            </div>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- BREAKOUT: 動態實驗室：算力最佳化與 IsoFLOP 雙星對決模擬器 -->
+    <section
+      id="chinchilla-interactive-lab"
+      class="border-y border-ink bg-paper-deep/60 py-16 sm:py-20 lg:py-24 scroll-mt-24"
+      aria-labelledby="chinchilla-lab-title"
+    >
+      <div class={shell}>
+        <div class="mb-10 max-w-[800px]">
+          <p class="m-0 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+            動態實驗室 / INTERACTIVE CHINCHILLA SCALING LAB
+          </p>
+          <h3
+            id="chinchilla-lab-title"
+            class="mt-2 m-0 font-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-ink"
+          >
+            算力最佳化與 IsoFLOP 雙星對決模擬器
+          </h3>
+          <p class="mt-4 text-base leading-7 text-muted">
+            親手撥動固定算力預算（IsoFLOP）的分配滑桿：探索給定 C = 6ND
+            的物理約束下，將算力分配給模型參數量 N 還是訓練資料 Token 數 D；並見證 70B Chinchilla
+            如何以相同的算力預算與 4 倍更低的推論成本，全面碾壓 280B Gopher。
+          </p>
+        </div>
+
+        <!-- Mode Tab Bar -->
+        <div
+          class="flex flex-wrap gap-2 mb-8 border-b border-line pb-4"
+          role="tablist"
+          aria-label="實驗室模組切換"
+        >
+          <button
+            type="button"
+            id="chinchilla-tab-isoflop"
+            role="tab"
+            aria-selected="true"
+            aria-controls="chinchilla-panel-isoflop"
+            class="px-4 py-2 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer"
+          >
+            模組 01 · IsoFLOP 等算力分配風洞 (Equal-Compute Profile)
+          </button>
+          <button
+            type="button"
+            id="chinchilla-tab-battle"
+            role="tab"
+            aria-selected="false"
+            aria-controls="chinchilla-panel-battle"
+            class="px-4 py-2 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer"
+          >
+            模組 02 · Kaplan vs Hoffmann 擴展處方對決
+          </button>
+        </div>
+
+        <!-- PANEL 01: IsoFLOP 等算力分配風洞 -->
+        <div
+          id="chinchilla-panel-isoflop"
+          role="tabpanel"
+          aria-labelledby="chinchilla-tab-isoflop"
+          class="space-y-8"
+        >
+          <!-- Controls: Compute Budget Selector + Parameter Slider -->
+          <div class="border border-ink bg-surface p-5 sm:p-6 space-y-4">
+            <div>
+              <span class="font-mono text-xs font-bold uppercase tracking-wider text-red block mb-3">
+                COMPUTE BUDGET / 算力預算基準 (C = 6ND)
+              </span>
+              <div class="flex flex-wrap gap-2" id="chinchilla-budget-container">
+                <!-- Budget buttons rendered by JS -->
+              </div>
+            </div>
+
+            <!-- Parameter Slider -->
+            <div class="border-t border-line pt-4">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <label
+                  for="chinchilla-param-slider"
+                  class="font-mono text-xs font-bold text-ink uppercase"
+                >
+                  模型參數量 N 分配滑桿（決定資料 Token 數 D = C / 6N）：
+                </label>
+                <span
+                  id="chinchilla-param-badge"
+                  class="font-mono text-xs font-bold text-red bg-red-soft/40 px-2.5 py-0.5 border border-red"
+                >
+                  N = 700 億 (70B) · Chinchilla 最佳平衡點
+                </span>
+              </div>
+              <input
+                id="chinchilla-param-slider"
+                type="range"
+                min="10"
+                max="300"
+                step="5"
+                value="70"
+                class="w-full accent-red cursor-pointer"
+              />
+              <div class="flex justify-between font-mono text-xs text-muted mt-1 px-1">
+                <span>10B (極小模型/巨量資料)</span>
+                <span class="font-bold text-red">70B (Chinchilla 1:1)</span>
+                <span>175B (GPT-3)</span>
+                <span>280B (Gopher/嚴重訓練不足)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Visualizer: 2 Columns -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Left: IsoFLOP U-Curve (7 cols) -->
+            <div class="lg:col-span-7 border border-ink bg-surface p-5 sm:p-6 space-y-3">
+              <div class="flex items-center justify-between border-b border-line pb-2">
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                  ISOFLOP LOSS PROFILE / 等算力損失 U 型曲線
+                </span>
+                <span class="font-mono text-xs text-muted">C 固定下的 L(N, D)</span>
+              </div>
+
+              <!-- SVG U-Curve -->
+              <svg
+                id="chinchilla-isoflop-svg"
+                viewBox="0 0 500 240"
+                class="w-full h-auto bg-paper border border-line"
+                role="img"
+                aria-label="IsoFLOP 等算力損失拋物線與最佳谷底"
+              >
+                <!-- Grid lines -->
+                <line
+                  x1="50"
+                  y1="40"
+                  x2="470"
+                  y2="40"
+                  stroke="#e0ded6"
+                  stroke-dasharray="2,2"
+                ></line>
+                <line
+                  x1="50"
+                  y1="90"
+                  x2="470"
+                  y2="90"
+                  stroke="#e0ded6"
+                  stroke-dasharray="2,2"
+                ></line>
+                <line
+                  x1="50"
+                  y1="140"
+                  x2="470"
+                  y2="140"
+                  stroke="#e0ded6"
+                  stroke-dasharray="2,2"
+                ></line>
+                <line x1="50" y1="190" x2="470" y2="190" stroke="#1e2224" stroke-width="1.5"></line>
+                <line x1="50" y1="30" x2="50" y2="190" stroke="#1e2224" stroke-width="1.5"></line>
+
+                <!-- Y labels -->
+                <text
+                  x="42"
+                  y="44"
+                  text-anchor="end"
+                  font-family="monospace"
+                  font-size="10"
+                  fill="#62665f"
+                >
+                  2.4
+                </text>
+                <text
+                  x="42"
+                  y="94"
+                  text-anchor="end"
+                  font-family="monospace"
+                  font-size="10"
+                  fill="#62665f"
+                >
+                  2.2
+                </text>
+                <text
+                  x="42"
+                  y="144"
+                  text-anchor="end"
+                  font-family="monospace"
+                  font-size="10"
+                  fill="#62665f"
+                >
+                  2.0
+                </text>
+                <text
+                  x="42"
+                  y="194"
+                  text-anchor="end"
+                  font-family="monospace"
+                  font-size="10"
+                  fill="#62665f"
+                >
+                  1.8
+                </text>
+
+                <!-- X labels -->
+                <text x="60" y="206" font-family="monospace" font-size="9" fill="#62665f">
+                  10B
+                </text>
+                <text
+                  x="175"
+                  y="206"
+                  font-family="monospace"
+                  font-size="9"
+                  fill="#b6412c"
+                  font-weight="bold"
+                >
+                  70B (最佳)
+                </text>
+                <text x="320" y="206" font-family="monospace" font-size="9" fill="#62665f">
+                  175B
+                </text>
+                <text x="440" y="206" font-family="monospace" font-size="9" fill="#62665f">
+                  280B
+                </text>
+
+                <!-- U-Curve Path -->
+                <path id="chinchilla-u-path" fill="none" stroke="#1e2224" stroke-width="2.5"></path>
+
+                <!-- Minimum / Optimal marker -->
+                <circle id="chinchilla-opt-point" cx="175" cy="155" r="5" fill="#2d5a7b"></circle>
+                <text
+                  id="chinchilla-opt-text"
+                  x="175"
+                  y="145"
+                  text-anchor="middle"
+                  font-family="monospace"
+                  font-size="9"
+                  fill="#2d5a7b"
+                  font-weight="bold"
+                >
+                  Chinchilla 谷底
+                </text>
+
+                <!-- Active point & crosshair -->
+                <line
+                  id="chinchilla-cursor-line"
+                  x1="175"
+                  y1="30"
+                  x2="175"
+                  y2="190"
+                  stroke="#b6412c"
+                  stroke-width="1.5"
+                  stroke-dasharray="2,2"
+                ></line>
+                <circle
+                  id="chinchilla-active-point"
+                  cx="175"
+                  cy="155"
+                  r="6"
+                  fill="#b6412c"
+                  stroke="#fffdf8"
+                  stroke-width="2"
+                ></circle>
+              </svg>
+
+              <!-- Curve Explanation -->
+              <div class="flex items-center justify-between font-mono text-xs text-muted">
+                <span>← 左側：模型太小、資料過多</span>
+                <span class="text-red font-bold">谷底：1:1 最佳化 (20 Tokens/Param)</span>
+                <span>右側：模型太大、資料匱乏 →</span>
+              </div>
+            </div>
+
+            <!-- Right: Model Economics & Spec Inspector (5 cols) -->
+            <div class="lg:col-span-5 border border-ink bg-surface p-5 sm:p-6 space-y-4">
+              <div class="border-b border-line pb-2">
+                <span class="font-mono text-xs font-semibold uppercase tracking-[0.1em] text-red">
+                  MODEL ECONOMICS & HARDWARE SPEC
+                </span>
+                <h4 class="mt-1 m-0 font-display text-lg font-bold text-ink">
+                  模型架構與推論成本審計
+                </h4>
+              </div>
+
+              <!-- Spec KPI Grid -->
+              <div class="grid grid-cols-2 gap-3 font-mono text-xs">
+                <div class="border border-line bg-paper p-3">
+                  <span class="text-muted block">參數量 (N)：</span>
+                  <span id="spec-n-val" class="font-bold text-ink text-base">
+                    70B
+                  </span>
+                </div>
+                <div class="border border-line bg-paper p-3">
+                  <span class="text-muted block">訓練資料量 (D)：</span>
+                  <span id="spec-d-val" class="font-bold text-ink text-base">
+                    1.40 兆
+                  </span>
+                </div>
+                <div class="border border-line bg-paper p-3">
+                  <span class="text-muted block">資料 / 參數比 (D/N)：</span>
+                  <span id="spec-ratio-val" class="font-bold text-red text-base">
+                    20.0×
+                  </span>
+                </div>
+                <div class="border border-line bg-paper p-3">
+                  <span class="text-muted block">預測測試損失 (L)：</span>
+                  <span id="spec-loss-val" class="font-bold text-ink text-base">
+                    1.936 nats
+                  </span>
+                </div>
+              </div>
+
+              <!-- Inference Hardware Cost Box -->
+              <div class="border border-ink/30 bg-paper p-4 space-y-2 font-mono text-xs">
+                <span class="font-bold text-ink block uppercase text-red">
+                  推論硬體代價（Inference Cost）：
+                </span>
+                <div class="flex justify-between">
+                  <span class="text-muted">FP16 靜態權重視訊記憶體：</span>
+                  <span id="spec-vram-val" class="font-bold text-ink">
+                    140 GB
+                  </span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-muted">A100 (80GB) 部署門檻：</span>
+                  <span id="spec-gpu-val" class="font-bold text-ink">
+                    2 張 GPU
+                  </span>
+                </div>
+                <div class="flex justify-between border-t border-line pt-2">
+                  <span class="text-muted">相對 280B 節省倍率：</span>
+                  <span id="spec-savings-val" class="font-bold text-red">
+                    推論成本節省 75%
+                  </span>
+                </div>
+              </div>
+
+              <!-- Economic Diagnosis -->
+              <div class="border-l-4 border-red bg-paper-deep p-3 font-mono text-xs text-muted">
+                <span class="font-bold text-ink block mb-1">算力經濟學診斷：</span>
+                <p id="chinchilla-diagnosis-text" class="m-0 leading-relaxed text-muted">
+                  診斷載入中...
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL 02: Kaplan vs Hoffmann 擴展處方對決 -->
+        <div
+          id="chinchilla-panel-battle"
+          role="tabpanel"
+          aria-labelledby="chinchilla-tab-battle"
+          class="space-y-8 hidden"
+        >
+          <!-- Historic Giant Model Cards -->
+          <div class="border border-ink bg-surface p-5 sm:p-6 space-y-4">
+            <span class="font-mono text-xs font-bold uppercase tracking-wider text-red block mb-2">
+              HISTORICAL GIANTS AUDIT / 歷史大模型算力重構審計
+            </span>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-xs">
+              <!-- GPT-3 Card -->
+              <div class="border border-line bg-paper p-4 space-y-2">
+                <div class="flex justify-between items-center border-b border-line pb-1">
+                  <span class="font-bold text-ink text-sm">GPT-3 (2020)</span>
+                  <span class="text-muted">OpenAI</span>
+                </div>
+                <p class="m-0 text-muted">歷史規格：175B 參數 · 300B Tokens (D/N = 1.7×)</p>
+                <div class="p-2 bg-paper-deep border border-red/30 text-ink">
+                  <span class="font-bold text-red block">Chinchilla 最佳重構：</span>
+                  <span>
+                    <strong>67B 參數 · 780B Tokens</strong>
+                  </span>
+                </div>
+                <p class="m-0 text-muted text-sm">
+                  節省 62% 參數量，推論吞吐提升 2.6 倍且損失更低！
+                </p>
+              </div>
+
+              <!-- Gopher Card -->
+              <div class="border-2 border-red bg-paper p-4 space-y-2">
+                <div class="flex justify-between items-center border-b border-line pb-1">
+                  <span class="font-bold text-red text-sm">Gopher (2021)</span>
+                  <span class="text-muted">DeepMind</span>
+                </div>
+                <p class="m-0 text-muted">歷史規格：280B 參數 · 300B Tokens (D/N = 1.1×)</p>
+                <div class="p-2 bg-red-soft/40 border border-red text-ink">
+                  <span class="font-bold text-red block">Chinchilla 70B 實測：</span>
+                  <span>
+                    <strong>70B 參數 · 1.40 兆 Tokens</strong>
+                  </span>
+                </div>
+                <p class="m-0 text-muted text-sm">
+                  完全相同的訓練算力，70B 在 MMLU 領先 Gopher 7.3%！
+                </p>
+              </div>
+
+              <!-- MT-NLG Card -->
+              <div class="border border-line bg-paper p-4 space-y-2">
+                <div class="flex justify-between items-center border-b border-line pb-1">
+                  <span class="font-bold text-ink text-sm">MT-NLG (2021)</span>
+                  <span class="text-muted">MS / NVIDIA</span>
+                </div>
+                <p class="m-0 text-muted">歷史規格：530B 參數 · 270B Tokens (D/N = 0.5×)</p>
+                <div class="p-2 bg-paper-deep border border-red/30 text-ink">
+                  <span class="font-bold text-red block">Chinchilla 最佳重構：</span>
+                  <span>
+                    <strong>140B 參數 · 4.20 兆 Tokens</strong>
+                  </span>
+                </div>
+                <p class="m-0 text-muted text-sm">
+                  嚴重訓練不足之極致，推論需 16 張 80GB GPU 並行。
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mathematical Root Cause Breakdown -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Left: Why Kaplan Was Wrong (6 cols) -->
+            <div class="lg:col-span-6 border border-ink bg-surface p-5 sm:p-6 space-y-4">
+              <span class="font-mono text-xs font-bold uppercase tracking-wider text-muted block">
+                KAPLAN (2020) 的致命盲點 / THE LR SCHEDULE FLAW
+              </span>
+              <h4 class="mt-1 m-0 font-display text-lg font-bold text-ink">
+                為什麼 OpenAI 會得出 N ∝ C⁰·⁷³？
+              </h4>
+              <p class="text-sm text-muted leading-relaxed m-0">
+                Kaplan 等人在 2020 年的實驗中，採用了<strong>固定步數（如 300,000 步）</strong>
+                的學習率退火排程。當測試較小的資料量（Token
+                數較少）時，訓練進程過早被截斷，學習率尚未衰減至最低點，導致模型尚未收斂就被記錄下過高的損失值！
+              </p>
+              <div class="border border-line bg-paper p-3 font-mono text-xs text-muted space-y-1">
+                <div class="text-ink font-bold">Kaplan 處方：</div>
+                <div>N ∝ C⁰·⁷³ ··· 算力每增加 10 倍，模型增大 5.4 倍</div>
+                <div>D ∝ C⁰·²⁷ ··· 算力每增加 10 倍，資料僅增加 1.8 倍</div>
+                <div class="text-red font-semibold">後果：將千億巨獸困在資料飢餓的泥淖中。</div>
+              </div>
+            </div>
+
+            <!-- Right: Why Hoffmann Was Right (6 cols) -->
+            <div class="lg:col-span-6 border border-ink bg-surface p-5 sm:p-6 space-y-4">
+              <span class="font-mono text-xs font-bold uppercase tracking-wider text-red block">
+                HOFFMANN (2022) 的嚴謹校準 / INDEPENDENT APPROACHES
+              </span>
+              <h4 class="mt-1 m-0 font-display text-lg font-bold text-ink">
+                三種獨立方法驗證：1:1 等比例擴展律
+              </h4>
+              <p class="text-sm text-muted leading-relaxed m-0">
+                DeepMind 團隊為<strong>每一組訓練 Token 數客製化其獨立的餘弦退火排程</strong>
+                ，並透過三種完全獨立的數學方法（IsoFLOP
+                輪廓擬合、等步數切片、參數化曲面建模），無可置疑地證實：
+              </p>
+              <div class="border-2 border-red bg-red-soft/30 p-3 font-mono text-xs text-ink space-y-1">
+                <div class="text-red font-bold">Chinchilla 處方：</div>
+                <div>N ∝ C⁰·⁵⁰ ··· 算力每增加 10 倍，模型增大 3.16 倍</div>
+                <div>D ∝ C⁰·⁵⁰ ··· 算力每增加 10 倍，資料同樣增加 3.16 倍</div>
+                <div class="text-red font-semibold">
+                  黃金比例：每 1 個參數必須餵入 20 個 Token！
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 章節 03: 70B 逆襲 280B 的實證驗證 (EMPIRICAL EVIDENCE) -->
+    <section
+      id="empirical-triumph"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="empirical-triumph-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            章節 03 · 70B 逆襲 280B 的實證驗證 / EMPIRICAL EVIDENCE
+          </p>
+          <h2
+            id="empirical-triumph-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">Chinchilla 的跨代逆襲：</span>
+            <span class="block">
+              <em>四分之一參數量擊潰千億巨獸的實測震撼</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          在相同的 5.76 × 10^23 FLOPs 算力天秤上，700 億參數的 Chinchilla 全面橫掃 2800 億參數的
+          Gopher。
+        </p>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p>
+            提出理論是一回事，將其在真實世界中兌現則是另一回事。為了給這套計算最佳化定律提供決定性的判決性證據（Experimentum
+            Crucis），DeepMind 團隊發動了一場深度學習歷史上最引人注目的「同等算力對決」。
+          </p>
+
+          <p>
+            對決的擂台被設定在嚴格平等的物理條件下：算力預算鎖定為 <math class="font-serif">
+              <mn>5.76</mn>
+              <mo>×</mo>
+              <msup>
+                <mn>10</mn>
+                <mn>23</mn>
+              </msup>
+            </math> FLOPs——這正是 DeepMind 此前訓練其 2800 億參數旗艦模型 Gopher
+            所消耗的總算力。如果按照舊有的 Kaplan 定律，Gopher 將這筆巨額算力分配為 2800 億參數搭配
+            3000 億 token；而根據 Chinchilla 計算最佳化方程式，相同算力下的最佳配置應當是：
+            <strong>
+              700 億參數（70B，恰為 Gopher 的四分之一）搭配 1.4 兆 token（1.4T，逾 Gopher
+              的四倍數據量）
+            </strong>
+            。
+          </p>
+
+          <p>
+            這個全新的 70B 模型被命名為 <strong>Chinchilla</strong>
+            （南美栗鼠）。當訓練完成的那一刻，實測結果令整個 AI
+            學界為之屏息：在跨越常識推理、專業知識問答、數學符號運算與語言理解的數十項嚴格基準測試中，70B
+            的 Chinchilla 以壓倒性優勢全面戰勝了 2800 億參數的 Gopher，同時也將 1750 億參數的 GPT-3
+            遠遠甩在身後！
+          </p>
+
+          <!-- 實證對比表格：Gopher vs Chinchilla vs GPT-3 -->
+          <div
+            class="my-8 overflow-hidden rounded border border-line bg-surface"
+            aria-label="核心模型實測對比表格"
+          >
+            <div class="border-b border-line bg-paper px-6 py-4">
+              <h3 class="m-0 font-display text-lg text-ink">同算力與千億級基座基準對比表</h3>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm">
+                <thead class="border-b border-line font-mono uppercase text-muted">
+                  <tr>
+                    <th class="px-6 py-3">模型名稱</th>
+                    <th class="px-6 py-3">參數量 (N)</th>
+                    <th class="px-6 py-3">訓練 Token (D)</th>
+                    <th class="px-6 py-3">訓練算力 (FLOPs)</th>
+                    <th class="px-6 py-3 text-red">MMLU 綜合準確度</th>
+                    <th class="px-6 py-3">BIG-bench 勝率</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-line text-ink">
+                  <tr>
+                    <td class="px-6 py-4 font-bold">GPT-3</td>
+                    <td class="px-6 py-4">175B</td>
+                    <td class="px-6 py-4">300B</td>
+                    <td class="px-6 py-4">
+                      3.14 × 10<sup>23</sup>
+                    </td>
+                    <td class="px-6 py-4">43.9%</td>
+                    <td class="px-6 py-4">基準線</td>
+                  </tr>
+                  <tr>
+                    <td class="px-6 py-4 font-bold">Gopher</td>
+                    <td class="px-6 py-4">280B</td>
+                    <td class="px-6 py-4">300B</td>
+                    <td class="px-6 py-4 font-mono font-bold">
+                      5.76 × 10<sup>23</sup>
+                    </td>
+                    <td class="px-6 py-4">60.0%</td>
+                    <td class="px-6 py-4">38.0%</td>
+                  </tr>
+                  <tr class="bg-red/5 font-semibold">
+                    <td class="px-6 py-4 font-bold text-red">Chinchilla</td>
+                    <td class="px-6 py-4 text-red">70B (減少 75%)</td>
+                    <td class="px-6 py-4 text-red">1.4T (增加 360%)</td>
+                    <td class="px-6 py-4 font-mono font-bold">
+                      5.76 × 10<sup>23</sup> (完全相同)
+                    </td>
+                    <td class="px-6 py-4 font-bold text-red">67.5% (+7.5%)</td>
+                    <td class="px-6 py-4 font-bold text-red">62.0% 勝出</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <p>
+            尤其在被譽為大模型通識智慧終極考驗的 MMLU（大規模多任務語言理解基準）上，Chinchilla
+            取得了 67.5% 的驚人成績，相較於 Gopher 的 60.0% 提升了整整 7.5 個百分點，相較於 GPT-3 的
+            43.9% 更是跨越式的碾壓。在 BIG-bench 綜合評測中，Chinchilla 在超過 62% 的任務上表現優於
+            Gopher；在閱讀理解基準 LAMBADA 上，Chinchilla 的準確率達到 77.4%，顯著高於 Gopher 的
+            74.5% 與 GPT-3 的 76.2%。
+          </p>
+
+          <p>
+            比性能提升更具破壞性的是<strong>推論經濟學的跨界顛覆</strong>。Gopher 的 2800 億參數在
+            FP16 權重下需要高達 560 GB 記憶體，必須跨越至少 8 到 16 顆 A100 GPU 才能載入；而
+            Chinchilla 的 700 億參數僅需 140 GB 記憶體，意味著僅憑單台配備 8 張 A100
+            的標準伺服器節點，就能將完整模型常駐於記憶體內高速運算，完全消除節點間頻寬限制。
+          </p>
+
+          <p>
+            模型參數量縮減為四分之一，直接轉化為推論記憶體頻寬負擔降低 4 倍、前向傳播浮點計算量降低
+            4 倍、推論生成延遲大幅縮短，以及伺服器租賃成本劇降 75% 以上。Chinchilla
+            用無可辯駁的實證數據宣告：此前以參數量論英雄的時代徹底終結，盲目追求大參數只是一種昂貴的工程幻覺。
+          </p>
+        </div>
+
+        <aside slot="rail" class="space-y-6">
+          <AsideCard
+            kicker="推論紅利 / INFERENCE DIVIDEND"
+            title="小基座的終身優勢：從訓練算力到部署營運成本"
+            variant="surface"
+          >
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
+              模型的訓練算力只是一次性資本支出（CapEx），而推論成本則是伴隨產品生命週期的持續營運支出（OpEx）。對於一個預期服務數百萬用戶的基座模型而言，推論階段累積消耗的算力將遠遠超過預訓練算力。Chinchilla
+              證明：用更多的訓練 token 換取更小巧的參數量，是商業化部署的最佳解。
+            </p>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- 章節 04: 現代開源基座的大道 (PARADIGM SHIFT) -->
+    <section
+      id="open-foundation-legacy"
+      class={`${shell} border-t border-ink py-16 sm:py-20 lg:py-24 scroll-mt-24`}
+      aria-labelledby="open-foundation-legacy-title"
+    >
+      <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+            章節 04 · 現代開源基座的大道 / PARADIGM SHIFT
+          </p>
+          <h2
+            id="open-foundation-legacy-title"
+            class="m-0 font-display text-3xl sm:text-4xl lg:text-5xl leading-tight tracking-tight text-ink"
+          >
+            <span class="block">從小模型到海量資料：</span>
+            <span class="block">
+              <em>開源基座大航海時代的深遠啟蒙</em>
+            </span>
+          </h2>
+        </div>
+        <p class="m-0 max-w-[34ch] text-base leading-8 text-muted">
+          Chinchilla 的思想火種直接催生了 LLaMA、Mistral
+          與現代輕量端側模型，引爆全球開源大模型的繁盛生態。
+        </p>
+      </div>
+
+      <PaperReadingLayout class="text-base leading-8 text-ink">
+        <div class="space-y-6">
+          <p>
+            Chinchilla 的發表，在當時閉源大廠林立的 AI
+            界投下了一枚震撼彈。然而，這篇論文最具歷史意義的遺產，並非單純在於指正了一個縮放公式的指數，而在於它
+            <strong>徹底解放了後續開源社群與學術界的研發思維</strong>。
+          </p>
+
+          <p>
+            在 Chinchilla 問世之前，中小研究機構與開源開發者普遍瀰漫著一種無力感：面對 GPT-3 的 1750
+            億參數與 MT-NLG 的 5300
+            億參數，除了科技巨頭外沒有任何機構有財力訓練或託管此類龐然大物。但 Chinchilla
+            證明了：一個 70B
+            甚至更小的模型，只要給予足夠豐富、高品質的資料滋養，其智力天花板足以凌駕數倍於其體積的巨獸。
+          </p>
+
+          <p>
+            這一洞見在 2023 年初由 Meta AI 的 Hugo Touvron 等人推向了極致——這便是震動全球開源界的
+            <strong>LLaMA</strong>
+            家族。Meta 團隊敏銳地意識到：Chinchilla 給出的「參數與數據 1:1 擴展」是
+            <strong>單次訓練算力固定時的損失最佳解</strong>；但如果我們的終極目標是讓模型在消費級
+            GPU 甚至筆記型電腦上運行數億次推論，那麼最佳策略應該是
+            <strong>
+              刻意偏離 Chinchilla 最佳點，對小模型進行極度的「過訓練（Over-training）」
+            </strong>
+            ！
+          </p>
+
+          <p>
+            於是，LLaMA 團隊將僅有 70 億參數（7B）與 130 億參數（13B）的輕巧模型，硬生生投餵了高達 1
+            兆（1.0T）至 1.4 兆的語料——其數據對參數比率達到了驚人的 100 到 200 倍（遠遠超過
+            Chinchilla 的 20 倍基準）。實驗證明，經過海量過訓練的 13B LLaMA
+            模型在大部分基準測試上直接追平了 1750 億的 GPT-3，甚至可以在單張 RTX 3090
+            顯示卡上流暢運行。開源社群圍繞 LLaMA 展開了波瀾壯闊的魔改、微調與量化大爆發，現代生成式
+            AI 的民主化浪潮由此正式起航。
+          </p>
+
+          <p>
+            Chinchilla 的理論餘波同樣深刻塑造了後續歐洲最具代表性的大模型新創 Mistral AI。身為
+            Chinchilla 原作者之一的 Arthur Mensch，在創立 Mistral 後迅速推出了驚豔業界的 Mistral 7B
+            與 Mixtral 8x7B，延續的正是「極致小巧模型 + 海量高純度數據 +
+            稀疏混合專家（MoE）」的精準工程哲學。
+          </p>
+
+          <p>
+            從 2020 年盲信參數量萬能的粗放擴張，到 2022 年 Chinchilla
+            確立的計算最佳化理性平衡，再到如今數兆、十幾兆 token
+            深度蒸餾的現代輕量基座，人工智慧的工程演進史完成了一次漂亮的螺旋上升：真正的力量從不在於神經網路盲目膨脹的骨架，而在於穿透萬卷文字、沉澱在每一顆緊湊權重中的智慧純度。
+          </p>
+        </div>
+
+        <aside slot="rail" class="space-y-6">
+          <AsideCard
+            kicker="開源引線 / THE OPEN REVOLUTION"
+            title="從 Chinchilla 到 LLaMA：過訓練與終端推論革命"
+            variant="surface"
+          >
+            <p class="text-sm sm:text-base leading-relaxed text-muted m-0">
+              若說 Kaplan 定律開啟了千億雲端巨獸的中心化時代，那麼 Chinchilla
+              與隨後的過訓練哲學則將力量重新還給了全世界的普通開發者。7B 與 13B
+              模型得以塞入個人電腦、手機與邊緣設備，徹底引爆了全球開源本地部署的大繁榮。
+            </p>
+          </AsideCard>
+        </aside>
+      </PaperReadingLayout>
+    </section>
+
+    <!-- 附錄 01: 歷時溯源與一手文獻清單 (ZONE B) -->
+    <EvidenceList
+      timelineEpochs={timelineEpochs}
+      kickerBadge="文獻演進時間軸"
+      kickerEnglish="HISTORICAL CITATION TIMELINE (2020–2022)"
+      titleMain="一手文獻清單，與技術演進時間軸"
+      titleHighlight="從參數虛胖到 Compute-Optimal 計算最佳化縮放定律"
+      description="本章立論嚴格本於原著論文、同期官方技術報告、同儕評審紀錄與核心作者訪談，依歷史時間線重現技術突破的演進軌跡與一手出處。"
+    />
+
+    <!-- 附錄 02: 核心研發團隊檔案 (AUTHORS) -->
+    <AuthorGrid
+      authors={paper.authorBriefs}
+      kicker="研發團隊 · 核心檔案 / THE AUTHORS"
+      title="算力邊界與實證科學的重構者"
+      description="原著論文由 DeepMind 的 22 位學者共同完成。本節呈現主導 400+ 實證模型訓練、IsoFLOP 分析與基準評估之核心科研人員經文獻考證之關鍵貢獻。"
+    >
+      <div class="mb-12 max-w-4xl space-y-6 text-base leading-8 text-ink">
+        <p>
+          Chinchilla 的實證壯舉，展現了 DeepMind
+          在理論建模、超大規模工程協同與嚴謹實驗規範上的極致水準。要在數百個不同架構配置與數據尺度下穩定執行超過
+          400
+          次大規模訓練，並且對每一次運行的學習率退火進行毫秒級的客製化排程，需要整個分散式系統團隊、數值演算法專家與評估工程師緊密無縫的合作。
+        </p>
+        <p class="text-muted">
+          由第一作者 Jordan Hoffmann
+          領銜的實證分析團隊，以應用數學家對誤差的敏銳嗅覺，揪出了早期文獻中因學習率截斷而引發的長期系統偏差；Sebastian
+          Borgeaud 與 Arthur Mensch 則在分散式 TPU
+          叢集調度、管線通訊最佳化與參數化損失曲面擬合上完成了扎實的數值推導，使整套擴展定律具備了極其堅實的統計物理基礎。Arthur
+          Mensch 更在隨後將這套務實的計算效率哲學帶入歐洲，創辦 Mistral AI。
+        </p>
+        <p class="text-muted">
+          而在龐大的下游驗證陣線，Elena Buchatskaya 等人帶領評估團隊跨越
+          MMLU、BIG-bench、常識問答與數學推論等多個複雜維度，對 Chinchilla 與 Gopher
+          進行了地毯式的盲測與統計顯著性檢驗，確保每一項能力的勝出都建立在不可動搖的客觀數據之上。這群科學家的探索，不僅為深度學習撥正了前進的航標，更為全人類探索人工智慧通用能力的征途確立了珍貴的理性基石。
+        </p>
+      </div>
+    </AuthorGrid>
+
+    <!-- 頁面導航 -->
+    <PaperNavigation
+      prev={{
+        url: '/papers/language-models-are-few-shot-learners',
+        title: 'Language Models are Few-Shot Learners (GPT-3)',
+        vol: 'VOL. 06',
+      }}
+      next={{
+        url: '/papers/training-language-models-to-follow-instructions-with-human-feedback',
+        title: 'Training language models to follow instructions with human feedback (InstructGPT)',
+        vol: 'VOL. 08',
+      }}
+    />
+  </main>
+
+  <script>
+    function initChinchillaLab() {
+      // 1. Tab Switching
+      const tabIsoflop = document.getElementById('chinchilla-tab-isoflop');
+      const tabBattle = document.getElementById('chinchilla-tab-battle');
+      const panelIsoflop = document.getElementById('chinchilla-panel-isoflop');
+      const panelBattle = document.getElementById('chinchilla-panel-battle');
+
+      if (!tabIsoflop || !tabBattle || !panelIsoflop || !panelBattle) return;
+
+      tabIsoflop.addEventListener('click', () => {
+        tabIsoflop.setAttribute('aria-selected', 'true');
+        tabIsoflop.className =
+          'px-4 py-2 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer';
+        tabBattle.setAttribute('aria-selected', 'false');
+        tabBattle.className =
+          'px-4 py-2 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+        panelIsoflop.classList.remove('hidden');
+        panelBattle.classList.add('hidden');
+      });
+
+      tabBattle.addEventListener('click', () => {
+        tabBattle.setAttribute('aria-selected', 'true');
+        tabBattle.className =
+          'px-4 py-2 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer';
+        tabIsoflop.setAttribute('aria-selected', 'false');
+        tabIsoflop.className =
+          'px-4 py-2 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+        panelBattle.classList.remove('hidden');
+        panelIsoflop.classList.add('hidden');
+      });
+
+      // 2. IsoFLOP U-Curve & Economics Logic
+      interface ComputeBudget {
+        id: string;
+        label: string;
+        flops: number; // FLOPs
+        flopsFormatted: string;
+        optN: number; // in billions (B)
+        optD: number; // in trillions (T)
+        desc: string;
+      }
+
+      const budgets: Record<string, ComputeBudget> = {
+        gopher: {
+          id: 'gopher',
+          label: 'Gopher / Chinchilla 算力預算 (5.76 × 10²³ FLOPs)',
+          flops: 5.76e23,
+          flopsFormatted: '5.76 × 10²³ FLOPs',
+          optN: 70, // 70B
+          optD: 1.4, // 1.4T
+          desc: 'DeepMind 投入約 4,000 TPU-days 之旗艦算力。歷史上 Gopher 選擇了 280B + 300B Tokens，而 Chinchilla 證實 70B + 1.4T 才是此預算下的絕對最佳解！',
+        },
+        gpt3: {
+          id: 'gpt3',
+          label: 'GPT-3 算力預算 (3.15 × 10²³ FLOPs)',
+          flops: 3.15e23,
+          flopsFormatted: '3.15 × 10²³ FLOPs',
+          optN: 67, // 67B
+          optD: 0.78, // 780B
+          desc: 'OpenAI 訓練 175B GPT-3 所耗費之總算力。若依據 Chinchilla 處方重新分配，僅需 67B 參數搭配 780B Tokens 即可達到更低損失。',
+        },
+        llama: {
+          id: 'llama',
+          label: 'LLaMA-65B 算力預算 (1.20 × 10²⁴ FLOPs)',
+          flops: 1.2e24,
+          flopsFormatted: '1.20 × 10²⁴ FLOPs',
+          optN: 140, // 140B
+          optD: 1.43, // 1.43T
+          desc: 'Meta 訓練 LLaMA-65B 之算力池。Meta 刻意選擇以 65B 搭配 1.4T Tokens 進行「超前過度訓練」，以極致壓縮終端推論成本。',
+        },
+      };
+
+      let activeBudgetId = 'gopher';
+      let currentN = 70; // billions
+
+      const budgetContainer = document.getElementById('chinchilla-budget-container');
+      const paramSlider = document.getElementById(
+        'chinchilla-param-slider',
+      ) as HTMLInputElement | null;
+      const paramBadge = document.getElementById('chinchilla-param-badge');
+      const uPath = document.getElementById('chinchilla-u-path');
+      const optPoint = document.getElementById('chinchilla-opt-point');
+      const optText = document.getElementById('chinchilla-opt-text');
+      const cursorLine = document.getElementById('chinchilla-cursor-line');
+      const activePoint = document.getElementById('chinchilla-active-point');
+
+      const specN = document.getElementById('spec-n-val');
+      const specD = document.getElementById('spec-d-val');
+      const specRatio = document.getElementById('spec-ratio-val');
+      const specLoss = document.getElementById('spec-loss-val');
+      const specVram = document.getElementById('spec-vram-val');
+      const specGpu = document.getElementById('spec-gpu-val');
+      const specSavings = document.getElementById('spec-savings-val');
+      const diagText = document.getElementById('chinchilla-diagnosis-text');
+
+      function calcLoss(nBillions: number, dTokens: number): number {
+        const E = 1.6934;
+        const A = 406.4;
+        const B = 410.7;
+        const alpha = 0.3392;
+        const beta = 0.2849;
+        const nActual = nBillions * 1e9;
+        return E + A / Math.pow(nActual, alpha) + B / Math.pow(dTokens, beta);
+      }
+
+      function renderIsoflopLab() {
+        const bg = budgets[activeBudgetId];
+        if (
+          !bg ||
+          !paramBadge ||
+          !uPath ||
+          !optPoint ||
+          !optText ||
+          !cursorLine ||
+          !activePoint ||
+          !specN ||
+          !specD ||
+          !specRatio ||
+          !specLoss ||
+          !specVram ||
+          !specGpu ||
+          !specSavings ||
+          !diagText
+        )
+          return;
+
+        const nActual = currentN * 1e9;
+        const dActual = bg.flops / (6 * nActual);
+        const dTrillions = dActual / 1e12;
+        const ratio = dActual / nActual;
+        const currentLoss = calcLoss(currentN, dActual);
+
+        const optN = bg.optN;
+        const optDActual = bg.flops / (6 * optN * 1e9);
+        const optLoss = calcLoss(optN, optDActual);
+
+        paramBadge.textContent = `N = ${currentN} 億 (${currentN}B) · ${
+          Math.abs(currentN - optN) <= 10
+            ? 'Chinchilla 最佳平衡點'
+            : currentN < optN
+              ? '模型偏小 · 資料負擔重'
+              : '模型偏大 · 嚴重訓練不足'
+        }`;
+
+        function nToX(n: number): number {
+          return 60 + ((n - 10) / 290) * 400;
+        }
+
+        function lossToY(l: number): number {
+          const clamped = Math.max(1.8, Math.min(2.4, l));
+          return 190 - ((clamped - 1.8) / 0.6) * 150;
+        }
+
+        const samples = 30;
+        let pathStr = '';
+        for (let i = 0; i <= samples; i++) {
+          const sampleN = 10 + (i / samples) * 290;
+          const sampleD = bg.flops / (6 * sampleN * 1e9);
+          const sampleL = calcLoss(sampleN, sampleD);
+          const px = nToX(sampleN);
+          const py = lossToY(sampleL);
+          pathStr +=
+            i === 0
+              ? `M ${px.toFixed(1)} ${py.toFixed(1)}`
+              : ` L ${px.toFixed(1)} ${py.toFixed(1)}`;
+        }
+        uPath.setAttribute('d', pathStr);
+
+        const optX = nToX(optN);
+        const optY = lossToY(optLoss);
+        optPoint.setAttribute('cx', optX.toFixed(1));
+        optPoint.setAttribute('cy', optY.toFixed(1));
+        optText.setAttribute('x', optX.toFixed(1));
+        optText.setAttribute('y', (optY - 10).toFixed(1));
+
+        const curX = nToX(currentN);
+        const curY = lossToY(currentLoss);
+        cursorLine.setAttribute('x1', curX.toFixed(1));
+        cursorLine.setAttribute('x2', curX.toFixed(1));
+        activePoint.setAttribute('cx', curX.toFixed(1));
+        activePoint.setAttribute('cy', curY.toFixed(1));
+
+        specN.textContent = `${currentN}B`;
+        specD.textContent = `${dTrillions.toFixed(2)} 兆`;
+        specRatio.textContent = `${ratio.toFixed(1)}×`;
+        specLoss.textContent = `${currentLoss.toFixed(3)} nats`;
+
+        const vramGb = currentN * 2;
+        specVram.textContent = `${vramGb} GB`;
+        const a100Count = Math.ceil(vramGb / 70);
+        specGpu.textContent = `${a100Count} 張 A100 (80GB)`;
+
+        if (currentN <= 70) {
+          specSavings.textContent = '推論成本相較 280B 節省 75%';
+          specSavings.className = 'font-bold text-red';
+        } else if (currentN <= 175) {
+          specSavings.textContent = '推論成本相較 280B 節省 38%';
+          specSavings.className = 'font-bold text-blue';
+        } else {
+          specSavings.textContent = '推論成本極高（需跨節點多卡並行）';
+          specSavings.className = 'font-bold text-muted';
+        }
+
+        if (Math.abs(currentN - optN) <= 10) {
+          diagText.textContent = `【黃金平衡點】在 ${bg.flopsFormatted} 算力下，${currentN}B 參數搭配 ${dTrillions.toFixed(2)} 兆 Token 完美落於 IsoFLOP 拋物線谷底（損失 ${currentLoss.toFixed(3)} nats）！資料 / 參數比恰為 20:1，達成訓練與推論的雙重最佳化。`;
+        } else if (currentN > optN) {
+          const wastePercent = (((currentLoss - optLoss) / optLoss) * 100).toFixed(1);
+          diagText.textContent = `【嚴重訓練不足（Gopher / GPT-3 陷阱）】將過多算力堆砌在參數量（${currentN}B），導致每個參數僅分配到 ${ratio.toFixed(1)} 個 Token（遠低於 20:1）。模型因「吃不飽數據」損失偏高（+${wastePercent}%），且推論時需要背負龐大的視訊記憶體開銷。`;
+        } else {
+          diagText.textContent = `【過訓練（LLaMA 實用主義）】將模型縮小至 ${currentN}B，並餵入超額的 ${dTrillions.toFixed(2)} 兆 Token（D/N = ${ratio.toFixed(1)}×）。雖然訓練損失略高於理論谷底，但模型體積極小，在終端設備部署與高並發推論時性價比極高！`;
+        }
+      }
+
+      if (budgetContainer) {
+        budgetContainer.innerHTML = '';
+        Object.keys(budgets).forEach((key, idx) => {
+          const bg = budgets[key];
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className =
+            idx === 0
+              ? 'px-3 py-1.5 font-mono text-xs font-bold border-2 border-red bg-red text-surface transition cursor-pointer'
+              : 'px-3 py-1.5 font-mono text-xs font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+          btn.textContent = bg.label;
+          btn.addEventListener('click', () => {
+            activeBudgetId = key;
+            Array.from(budgetContainer.children).forEach((c) => {
+              (c as HTMLElement).className =
+                'px-3 py-1.5 font-mono text-xs font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+            });
+            btn.className =
+              'px-3 py-1.5 font-mono text-xs font-bold border-2 border-red bg-red text-surface transition cursor-pointer';
+            renderIsoflopLab();
+          });
+          budgetContainer.appendChild(btn);
+        });
+      }
+
+      if (paramSlider) {
+        paramSlider.addEventListener('input', (e) => {
+          currentN = parseInt((e.target as HTMLInputElement).value, 10);
+          renderIsoflopLab();
+        });
+      }
+
+      renderIsoflopLab();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initChinchillaLab);
+    } else {
+      initChinchillaLab();
+    }
+  </script>
+</BaseLayout>

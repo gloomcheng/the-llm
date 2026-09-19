@@ -10,6 +10,9 @@ const pages = [
   'dist/papers/language-models-are-unsupervised-multitask-learners/index.html',
   'dist/papers/scaling-laws-for-neural-language-models/index.html',
   'dist/papers/language-models-are-few-shot-learners/index.html',
+  'dist/papers/training-compute-optimal-large-language-models/index.html',
+  'dist/papers/training-language-models-to-follow-instructions-with-human-feedback/index.html',
+  'dist/papers/llama-open-and-efficient-foundation-language-models/index.html',
 ];
 /** @type {string[]} */
 const failures = [];

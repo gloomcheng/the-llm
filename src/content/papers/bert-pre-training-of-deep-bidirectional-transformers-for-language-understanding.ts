@@ -14,7 +14,7 @@ export const bertSources: SourceRecord[] = [
       '提出克漏字遮罩語言模型（Masked Language Model, MLM）：隨機遮蔽 15% 的詞彙，強迫模型同時結合左右兩側上下文推斷被遮蔽的詞',
       '提出下一句預測（Next Sentence Prediction, NSP）輔助任務：以二元分類預測兩句子是否連續，捕捉句子級別的語意關係',
       '在 11 項主流自然語言理解評測（GLUE、SQuAD v1.1、SQuAD v2.0、SWAG）中創下全數超越先前 SOTA 的歷史紀錄',
-      '證明模型規模擴展的巨大威力：BERT-Large（3.4 億參數）相較 BERT-Base（1.1 億參數）在小數據任務上依然能顯著提升遷移表現',
+      '證明模型規模擴展的巨大威力：BERT-Large（3.4 億參數）相較 BERT-Base（1.1 億參數）在小規模資料任務上依然能顯著提升遷移表現',
     ],
     limits:
       '奠定雙向預訓練理解模型的行業標竿。但因其預訓練任務為完形填空而非自回歸生成，BERT 無法直接進行流暢的開放式自然語言生成（如寫作、長文對話）。',
@@ -123,7 +123,7 @@ export const bertPaper: PaperRecord = {
     value: '10.18653/v1/N19-1423',
     url: 'https://doi.org/10.18653/v1/N19-1423',
     status: 'verified',
-    verificationNote: '經 ACL Anthology 與 DOI 官方數據庫雙重驗證通過。',
+    verificationNote: '經 ACL Anthology 與 DOI 官方資料庫雙重驗證通過。',
     sourceId: 'paper-2018-bert',
   },
   authors: ['Jacob Devlin', 'Ming-Wei Chang', 'Kenton Lee', 'Kristina Toutanova'],

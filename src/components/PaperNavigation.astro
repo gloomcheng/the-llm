@@ -1,5 +1,6 @@
 ---
 import { milestonePapers } from '../content/papers/milestones';
+import { withBase } from '../lib/paths';
 
 export interface NavItem {
   vol: string;
@@ -73,7 +74,7 @@ const next: NavItem | undefined =
   <div class:list={['grid gap-8', prev && next ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1']}>
     {prev && (
       <a
-        href={prev.url}
+        href={withBase(prev.url)}
         class="group flex flex-col justify-between border-2 border-line bg-surface p-7 sm:p-9 text-ink no-underline transition-all hover:border-ink hover:shadow-editorial"
         aria-label={`返回${prev.vol === '00' ? '序章' : `上一章：第 ${prev.vol} 章`} ${prev.title}`}
       >
@@ -112,7 +113,7 @@ const next: NavItem | undefined =
 
     {next && (
       <a
-        href={next.url}
+        href={withBase(next.url)}
         class="group flex flex-col justify-between border-2 border-ink bg-paper-deep/40 p-7 sm:p-9 text-ink no-underline transition-all hover:border-red hover:shadow-editorial"
         aria-label={`前往下一章：第 ${next.vol} 章 ${next.title}`}
       >

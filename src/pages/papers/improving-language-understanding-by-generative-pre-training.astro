@@ -1,10 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../lib/paths';
 import PaperMeta from '../../components/PaperMeta.astro';
 import StoryRail from '../../components/StoryRail.astro';
 import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
 import AsideCard from '../../components/AsideCard.astro';
 import AuthorGrid from '../../components/AuthorGrid.astro';
+import EvidenceList from '../../components/EvidenceList.astro';
 import PaperNavigation from '../../components/PaperNavigation.astro';
 import Callout from '../../components/Callout.astro';
 import {
@@ -19,7 +21,7 @@ const story = [
     year: '2013–2018 初',
     label: '桎梏 / THE BOTTLENECK',
     title: '手工標註的資料懸崖與專用網路的工程泥淖',
-    body: '監督式學習極度依賴昂貴且有限的人工標註，換一個任務就得重新設計專用神經網路架構，深層模型極易過擬合。',
+    body: '監督式學習極度依賴昂貴且有限的人工標註，換一個任務就得重新設計專用神經網路架構，深層模型極易過度擬合。',
     status: 'past' as const,
   },
   {
@@ -177,11 +179,11 @@ const timelineEpochs: TimelineEpoch[] = [
     <!-- 頂部頁首導航 -->
     <header class={`${shell} pt-10`}>
       <div class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
-        <a class="text-red underline underline-offset-4" href="/">
+        <a class="text-red underline underline-offset-4" href={withBase('/')}>
           THE LLM
         </a>
         <span aria-hidden="true">/</span>
-        <span>第二章</span>
+        <span>第 02 章</span>
       </div>
 
       <div class="grid grid-cols-1 items-end gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-24">
@@ -252,13 +254,13 @@ const timelineEpochs: TimelineEpoch[] = [
           </a>
         </div>
         <div class="flex items-center gap-2 text-xs sm:text-sm">
-          <span class="text-muted">上一篇章：</span>
+          <span class="text-muted">上一篇：</span>
           <a
-            href="/papers/attention-is-all-you-need"
+            href={withBase('/papers/attention-is-all-you-need')}
             class="font-semibold text-red underline underline-offset-4 hover:text-ink"
-            aria-label="返回第一章：Attention Is All You Need"
+            aria-label="返回：Attention Is All You Need"
           >
-            ← 第一章 Transformer
+            ← Transformer
           </a>
         </div>
       </div>
@@ -288,7 +290,7 @@ const timelineEpochs: TimelineEpoch[] = [
       <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            歷史開局 / 2013–2018：標註懸崖
+            章節 01 · 標註懸崖與無監督破局 / THE IMPASSE
           </p>
           <h2
             id="history-genesis-title"
@@ -308,7 +310,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
       <PaperReadingLayout class="text-base leading-8 text-ink">
         <div class="space-y-6">
-          <p class="text-lg leading-relaxed text-ink">
+          <p>
             2018
             年初的自然語言處理（NLP）領域正處於繁榮與窒息交織的奇異時刻。一方面，卷積神經網路（CNN）與長短期記憶模型（LSTM）在各類學術競賽中屢創佳績；但另一方面，所有機器學習從業者心頭都籠罩著一層揮之不去的陰霾：
             <strong>監督式學習的資料懸崖</strong>。
@@ -376,14 +378,14 @@ const timelineEpochs: TimelineEpoch[] = [
           </div>
 
           <p>
-            在第一章〈
+            在
             <a
-              href="/papers/attention-is-all-you-need"
+              href={withBase('/papers/attention-is-all-you-need')}
               class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
             >
               Attention Is All You Need
             </a>
-            〉中，我們見證了 Google Brain 發表 Transformer 架構{' '}
+            中，我們見證了 Google Brain 發表 Transformer 架構{' '}
             <a href="#epoch-2017" class="text-red font-mono underline underline-offset-4">
               [S02]
             </a>
@@ -421,10 +423,10 @@ const timelineEpochs: TimelineEpoch[] = [
               本篇以 Transformer 架構為基石。若想深入了解自注意力機制（Self-Attention）的 QKV
               矩陣運算與生活算例，建議先回溯閱讀
               <a
-                href="/papers/attention-is-all-you-need"
+                href={withBase('/papers/attention-is-all-you-need')}
                 class="font-semibold text-red underline underline-offset-4 hover:text-ink transition-colors"
               >
-                第一章〈Attention Is All You Need〉導讀 ↗
+                〈Attention Is All You Need〉導讀 ↗
               </a>
               。
             </p>
@@ -485,7 +487,7 @@ const timelineEpochs: TimelineEpoch[] = [
       <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            機制與直覺 / THE MECHANISM
+            章節 02 · 自回歸因果解碼機制 / THE MECHANISM
           </p>
           <h2
             id="core-mechanism-title"
@@ -716,7 +718,7 @@ const timelineEpochs: TimelineEpoch[] = [
                 </math>
               </div>
               <p class="mt-2 text-sm leading-relaxed text-muted">
-                僅依賴先前出現的詞預測下一個詞，形成無標註文本的自監督訓練閉環。
+                僅依賴先前出現的詞預測下一個詞，形成無標註文本的自監督完整的自監督訓練循環。
               </p>
             </AsideCard>
 
@@ -733,120 +735,198 @@ const timelineEpochs: TimelineEpoch[] = [
           </aside>
         </PaperReadingLayout>
 
-        <!-- 互動因果遮罩視覺化 -->
-        <div class="border border-line bg-surface p-6 sm:p-8 shadow-sm">
-          <div class="flex items-center justify-between border-b border-line pb-3 mb-4">
-            <span class="font-mono text-xs font-bold text-red uppercase tracking-wider">
-              互動推演 · 因果注意力遮罩矩陣 (Causal Attention Mask)
-            </span>
-            <span class="font-mono text-xs text-muted">當前焦點 Token 視角</span>
-          </div>
-
-          <p class="text-sm text-muted mb-4">
-            觀察序列「<span class="font-semibold text-ink">科技 巨頭 在 台灣 設立 研發 中心</span>
-            」在 GPT-1 中的注意力傳播規則。當焦點位於特定 Token
-            時，未來的文字被深墨因果壁壘徹底遮蔽：
-          </p>
-
-          <div
-            class="flex flex-wrap gap-2 mb-6"
-            id="causal-token-bar"
-            role="tablist"
-            aria-label="選擇 Token 觀察因果遮罩"
-          >
-            <button
-              type="button"
-              role="tab"
-              aria-selected="true"
-              data-idx="0"
-              class="causal-btn px-3 py-1.5 font-mono text-sm border-2 border-red bg-red text-white font-semibold transition-all"
-            >
-              1. 科技
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected="false"
-              data-idx="1"
-              class="causal-btn px-3 py-1.5 font-mono text-sm border-2 border-line bg-canvas text-ink hover:border-ink transition-all"
-            >
-              2. 巨頭
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected="false"
-              data-idx="2"
-              class="causal-btn px-3 py-1.5 font-mono text-sm border-2 border-line bg-canvas text-ink hover:border-ink transition-all"
-            >
-              3. 在
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected="false"
-              data-idx="3"
-              class="causal-btn px-3 py-1.5 font-mono text-sm border-2 border-line bg-canvas text-ink hover:border-ink transition-all"
-            >
-              4. 台灣
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected="false"
-              data-idx="4"
-              class="causal-btn px-3 py-1.5 font-mono text-sm border-2 border-line bg-canvas text-ink hover:border-ink transition-all"
-            >
-              5. 設立
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected="false"
-              data-idx="5"
-              class="causal-btn px-3 py-1.5 font-mono text-sm border-2 border-line bg-canvas text-ink hover:border-ink transition-all"
-            >
-              6. 研發
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected="false"
-              data-idx="6"
-              class="causal-btn px-3 py-1.5 font-mono text-sm border-2 border-line bg-canvas text-ink hover:border-ink transition-all"
-            >
-              7. 中心
-            </button>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-[1.2fr_0.8fr] gap-6 items-center">
-            <div class="bg-paper-deep p-4 border border-line">
-              <div class="font-mono text-xs text-muted mb-2">下三角注意力遮罩矩陣狀態：</div>
-              <div
-                class="grid grid-cols-7 gap-1 text-center font-mono text-xs"
-                id="causal-matrix-grid"
-              >
-                <!-- 矩陣由 JS 動態更新 -->
+        <!-- BREAKOUT: 動態實驗室：因果遮罩矩陣與自回歸實驗室 -->
+        <figure
+          class="my-16 w-full max-w-6xl mx-auto border border-ink bg-surface p-6 sm:p-10 shadow-sm"
+          role="region"
+          aria-labelledby="gpt1-lab-title"
+        >
+          <div class="border-b border-line pb-6">
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p class="m-0 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+                  動態實驗室 / INTERACTIVE CAUSAL ATTENTION LAB
+                </p>
+                <h3
+                  id="gpt1-lab-title"
+                  class="mt-2 m-0 font-display text-2xl sm:text-3xl font-bold text-ink"
+                >
+                  因果遮罩矩陣與自回歸實驗室：下三角鐵律如何杜絕偷看
+                </h3>
               </div>
+              <span class="font-mono text-xs text-muted">Radford 2018 原著第 3.1 節核心實作</span>
+            </div>
+            <figcaption class="mt-3 max-w-4xl text-sm leading-relaxed text-muted">
+              在 GPT-1 中，自回歸預訓練的核心在於<strong>因果遮罩（Causal Masking）</strong>：
+              當模型計算第 <span class="font-mono">i</span> 個詞的注意力時，未來所有位置皆被填入{' '}
+              <span class="font-mono">−∞</span>， 經 Softmax
+              轉換後權重為精確的零。請切換語句情境或切換「作弊模式（關閉因果遮罩）」，
+              親手體驗因果邊界如何迫使模型在無監督小說文本中自發壓縮世界知識！
+            </figcaption>
+          </div>
+
+          <!-- Scenario & Cheating Toggle Bar -->
+          <div class="mt-6 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <span class="font-mono text-xs font-bold uppercase tracking-wider text-ink">
+                選擇測試語句情境：
+              </span>
+              <span class="font-mono text-xs text-muted">點選單詞觀察因果可見視野</span>
             </div>
 
-            <div class="space-y-3">
-              <div class="border-l-2 border-red pl-3">
-                <div class="font-mono text-xs text-red font-semibold uppercase">目前預測目標</div>
-                <div class="font-display text-lg text-ink" id="causal-target-text">
-                  根據「科技」預測下一個詞
+            <!-- Scenario Tabs -->
+            <div class="flex flex-wrap gap-2" role="tablist" aria-label="情境切換">
+              <button
+                type="button"
+                class="gpt1-scenario-btn border border-ink bg-ink text-surface px-3 py-1.5 font-mono text-xs font-bold transition cursor-pointer"
+                data-scenario="tech-tw"
+                role="tab"
+                aria-selected="true"
+              >
+                臺灣科技：科技 巨頭 在 台灣 設立 研發 中心
+              </button>
+              <button
+                type="button"
+                class="gpt1-scenario-btn border border-ink bg-paper text-ink px-3 py-1.5 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer"
+                data-scenario="novel-en"
+                role="tab"
+                aria-selected="false"
+              >
+                小說長程：The detective found a mysterious clue in the library
+              </button>
+              <button
+                type="button"
+                class="gpt1-scenario-btn border border-ink bg-paper text-ink px-3 py-1.5 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer"
+                data-scenario="philosophy"
+                role="tab"
+                aria-selected="false"
+              >
+                哲學思辨：語言 的 邊界 即是 世界 的 邊界
+              </button>
+            </div>
+
+            <!-- Causal Mask Mode Toggle Bar -->
+            <div class="border border-ink bg-paper-deep p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-ink block mb-1">
+                  因果遮罩狀態 (Causal Masking Mode)：
+                </span>
+                <p id="gpt1-mask-mode-desc" class="m-0 font-mono text-xs text-muted">
+                  標準因果模式：上三角填入 −∞，未來詞彙權重為 0.0%，完全防止偷看
+                </p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button
+                  id="gpt1-mask-toggle-btn"
+                  type="button"
+                  class="border border-ink bg-red text-surface px-4 py-2 font-mono text-xs font-bold transition hover:opacity-90 cursor-pointer whitespace-nowrap shadow-xs"
+                >
+                  🔒 因果遮罩：啟用中 (標準)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Token Interaction Strip -->
+          <div class="mt-6 border border-ink bg-paper p-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+              <span class="font-mono text-xs font-bold uppercase tracking-wider text-ink">
+                點選當前預測步驟 (Focus Query Token)：
+              </span>
+              <span
+                id="gpt1-token-badge"
+                class="font-mono text-xs font-bold text-red bg-red-soft/40 px-2.5 py-0.5 border border-red/30"
+              >
+                目前步驟：第 1 格 [科技]
+              </span>
+            </div>
+            <div
+              id="gpt1-tokens-container"
+              class="flex flex-wrap gap-2"
+              role="toolbar"
+              aria-label="步驟選擇工具列"
+            ></div>
+          </div>
+
+          <!-- Matrix & Attention Stream Grid -->
+          <div class="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <!-- Left: N x N Causal Matrix Heatmap (7 cols) -->
+            <div class="lg:col-span-7 border border-ink bg-surface p-5 sm:p-6 space-y-4">
+              <div class="flex items-center justify-between border-b border-line pb-3">
+                <span class="font-mono text-xs font-bold uppercase text-ink">
+                  下三角因果注意力遮罩矩陣 (N × N Causal Matrix)
+                </span>
+                <span class="font-mono text-xs text-muted">縱軸 Query ↓ 橫軸 Key →</span>
+              </div>
+
+              <!-- Interactive Table Grid -->
+              <div class="overflow-x-auto">
+                <div
+                  id="gpt1-matrix-container"
+                  class="inline-block border border-line min-w-[360px]"
+                ></div>
+              </div>
+
+              <div class="border-t border-line pt-3 flex items-center justify-between text-xs font-mono">
+                <div class="flex items-center gap-2">
+                  <span class="inline-block w-3 h-3 bg-red"></span>
+                  <span class="text-ink">當前可見注意力 (Active)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="inline-block w-3 h-3 bg-ink/10 border border-line"></span>
+                  <span class="text-muted">−∞ 遮蔽區域 (Masked)</span>
                 </div>
               </div>
-              <p class="text-sm text-muted leading-relaxed" id="causal-explanation">
-                當模型處理「科技」時，只能看見自己。未來的所有 Token
-                被遮罩隔離，強迫模型調用深層參數來推敲後續可能出現的字詞機率分佈。
+            </div>
+
+            <!-- Right: Prediction & Loss Card (5 cols) -->
+            <div class="lg:col-span-5 border border-ink bg-surface p-5 sm:p-6 space-y-4">
+              <div class="border-b border-line pb-3">
+                <span class="font-mono text-xs font-semibold uppercase tracking-[0.1em] text-red">
+                  CAUSAL PREDICTION / 下一個詞自回歸預測
+                </span>
+                <h4 id="gpt1-pred-title" class="mt-1 m-0 font-display text-xl font-bold text-ink">
+                  根據目前已知前文預測目標
+                </h4>
+              </div>
+
+              <div class="border-l-2 border-red pl-3 py-1">
+                <div class="font-mono text-xs text-red font-semibold uppercase">可見歷史前文</div>
+                <div id="gpt1-context-text" class="font-mono text-sm text-ink mt-0.5">
+                  [科技]
+                </div>
+              </div>
+
+              <p id="gpt1-pred-explanation" class="text-sm text-muted leading-relaxed m-0">
+                當模型處理第 1 個詞「科技」時，因果遮罩封鎖了後續 6
+                個詞。模型僅能調用神經權重，在龐大的詞表中推算最可能接續出現的名詞或動詞。
               </p>
-              <div class="bg-surface p-2.5 border border-line font-mono text-xs text-ink">
-                <div>目標損失：L₁(U) = Σᵢ log P(uᵢ | u[i-k], ..., u[i-1])</div>
+
+              <!-- Top Candidate Predictions -->
+              <div class="border border-line bg-paper-deep/40 p-3.5 space-y-2">
+                <span class="font-mono text-xs font-bold uppercase text-ink block mb-1">
+                  模型輸出詞表 Top 預測機率：
+                </span>
+                <div id="gpt1-candidate-bars" class="space-y-2 font-mono text-xs"></div>
+              </div>
+
+              <!-- Loss Card -->
+              <div class="border-2 border-red bg-red-soft/30 p-4">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-mono text-xs font-bold text-red uppercase">
+                    自回歸損失 ℒ₁(U)
+                  </span>
+                  <span id="gpt1-loss-val" class="font-mono text-sm font-bold text-red">
+                    0.824 nats
+                  </span>
+                </div>
+                <p class="m-0 mt-1 font-mono text-xs text-ink leading-relaxed">
+                  ℒ₁(U) = ∑ᵢ log P(uᵢ | u[i-k], ..., u[i-1])
+                </p>
               </div>
             </div>
           </div>
-        </div>
+        </figure>
       </div>
     </section>
 
@@ -859,7 +939,7 @@ const timelineEpochs: TimelineEpoch[] = [
       <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            理論 / 這台機器
+            章節 03 · 統一輸入序列化 / ARCHITECTURE
           </p>
           <h2
             id="machine-title"
@@ -935,7 +1015,7 @@ const timelineEpochs: TimelineEpoch[] = [
                   <code>[Delim]</code>：分隔前提與假設，或問題與候選答案。
                 </li>
                 <li>
-                  <code>[Extract]</code>：末端聚合標記，輸出全局表徵向量。
+                  <code>[Extract]</code>：末端聚合標記，輸出全域表徵向量。
                 </li>
               </ul>
             </AsideCard>
@@ -1141,7 +1221,7 @@ const timelineEpochs: TimelineEpoch[] = [
                     為最後一層解碼器，<math class="font-serif"><mi>m</mi></math> 為序列尾端的{' '}
                     <code class="font-mono">[Extract]</code> 標記位置。
                     <math class="font-serif"><msubsup><mi>h</mi><mi>l</mi><mi>m</mi></msubsup><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mn>1</mn><mo>×</mo><mn>768</mn></mrow></msup></math>
-                    {' '} 是在因果遮罩下，唯一能夠「總結並吸收全句所有前文語意」的全局特徵向量。
+                    {' '} 是在因果遮罩下，唯一能夠「總結並吸收全句所有前文語意」的全域特徵向量。
                   </p>
                 </div>
                 <div class="border-l-2 border-red pl-3">
@@ -1385,7 +1465,7 @@ const timelineEpochs: TimelineEpoch[] = [
       <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            一手文獻清單 / 邊界與驗證
+            章節 04 · 消融實驗與零樣本曙光 / ABLATION & FINDINGS
           </p>
           <h2
             id="evidence-title"
@@ -1464,7 +1544,7 @@ const timelineEpochs: TimelineEpoch[] = [
             <p>
               消融實驗（Ablation Study）證明，加入輔助損失{' '}
               <math class="font-serif"><mi>λ</mi><mo>⋅</mo><msub><mi>L</mi><mn>1</mn></msub></math>
-              能顯著加速模型在微調階段的收斂速度，並在 MNLI、QQP 等大型數據集上為準確率帶來 0.5% 至
+              能顯著加速模型在微調階段的收斂速度，並在 MNLI、QQP 等大型資料集上為準確率帶來 0.5% 至
               1.5%
               的穩定增益。這項工程設計展示了預訓練表徵的強韌：即便在專門學習特定分類時，語言模型底層對語法結構的動態建模依然是維持泛化能力的防腐劑。
             </p>
@@ -1583,7 +1663,7 @@ const timelineEpochs: TimelineEpoch[] = [
       <div class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
-            未竟之功 / 時代回響
+            章節 05 · 單向與雙向的世紀交鋒 / PARADIGM SHIFT
           </p>
           <h2
             id="aftermath-title"
@@ -1603,7 +1683,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
       <PaperReadingLayout class="text-base leading-8 text-ink">
         <div class="space-y-6">
-          <p class="text-lg leading-relaxed text-ink">
+          <p>
             回望人工智慧史，2018 年是自然語言處理從「手工作坊」邁向「工業革命」的決定性年份。GPT-1
             的發表，正式敲響了傳統特徵工程與專用神經網路架構的喪鐘。
           </p>
@@ -1686,7 +1766,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
           <Callout
             variant="editorial"
-            title="本章的未竟之功：單向因果遮罩的代價，為第三章 BERT 留下破局點"
+            title="本篇的未竟之功：單向因果遮罩的代價，為 BERT 留下破局點"
             class="my-6"
           >
             <p class="mt-4 text-base leading-relaxed text-ink">
@@ -1700,21 +1780,23 @@ const timelineEpochs: TimelineEpoch[] = [
             </p>
             <p class="mt-3 mb-0 text-base leading-relaxed text-muted">
               這個未解之謎與性能天花板，在四個月後被 Google AI
-              敏銳捕捉：既然要追求極致的理解力，為什麼不回歸第一章〈
+              敏銳捕捉：既然要追求極致的理解力，為什麼不回歸
               <a
-                href="/papers/attention-is-all-you-need"
+                href={withBase('/papers/attention-is-all-you-need')}
                 class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
               >
                 Attention Is All You Need
               </a>
-              〉的全雙向 Transformer 編碼器？如何既享受雙向視野又不會「偷看答案」？這正是第三章〈
+              的全雙向 Transformer 編碼器？如何既享受雙向視野又不會「偷看答案」？這正是
               <a
-                href="/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding"
+                href={withBase(
+                  '/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding',
+                )}
                 class="font-medium text-ink underline decoration-line/80 underline-offset-4 transition-colors hover:text-red hover:decoration-red"
               >
-                BERT: Pre-training of Deep Bidirectional Transformers
+                BERT
               </a>
-              〉即將上演的驚天反轉。
+              即將上演的驚天反轉。
             </p>
           </Callout>
 
@@ -1770,224 +1852,49 @@ const timelineEpochs: TimelineEpoch[] = [
     </section>
 
     <!-- ========================================== -->
-    <!-- 第四部分：作者特寫 (THE AUTHORS) -->
+    <!-- 附錄 01：歷時溯源與一手文獻清單 (ZONE B) -->
     <!-- ========================================== -->
-    <AuthorGrid
-      authors={gpt1Paper.authorBriefs}
-      kicker="第四部分 · 團隊特寫 / THE AUTHORS"
-      title="GPT 系列的四位引路人"
-      description="依原始論文署名順序排列。採用經典鋼筆線雕肖像呈現作者歷史形象與經文獻考證之關鍵貢獻。"
+    <EvidenceList
+      timelineEpochs={timelineEpochs}
+      kickerBadge="文獻演進時間軸"
+      kickerEnglish="HISTORICAL CITATION TIMELINE (2013–2018)"
+      titleMain="一手文獻清單，與技術演進時間軸"
+      titleHighlight="從靜態詞嵌入到生成式預訓練典範的確立"
+      description="從 2013 年 Word2Vec 的靜態空間、BooksCorpus 的長篇敘事庫，到 2017 年 Transformer 骨幹、2018 年初 ELMo 與 GLUE 的激盪，最終走向 GPT-1 生成式預訓練典範與 BERT 雙向挑戰。"
     />
 
     <!-- ========================================== -->
-    <!-- 第五部分：破版破格的十年文獻時間軸 (REFERENCES) -->
+    <!-- 附錄 02：核心研發團隊檔案 (THE AUTHORS) -->
     <!-- ========================================== -->
-    <section
-      id="references"
-      class="w-full bg-[#f5efe4] border-t-2 border-ink py-20 sm:py-28 overflow-hidden mt-20"
-      aria-labelledby="references-heading"
+    <AuthorGrid
+      authors={gpt1Paper.authorBriefs}
+      kicker="研發團隊 · 核心檔案 / THE AUTHORS"
+      title="GPT 系列的四位引路人"
+      description="依原始論文署名順序排列。採用經典鋼筆線雕肖像呈現作者歷史形象與經文獻考證之關鍵貢獻。"
     >
-      <div class="mx-auto w-[calc(100%-2rem)] max-w-[1360px]">
-        <!-- 頂部破版導言 -->
-        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-12 border-b border-ink/20">
-          <div>
-            <div class="flex items-center gap-3 mb-3">
-              <span class="inline-block h-2 w-2 bg-red"></span>
-              <p class="m-0 font-mono text-xs font-bold uppercase tracking-[0.16em] text-red">
-                CHRONOLOGICAL CITATION TIMELINE · 2013–2018+
-              </p>
-            </div>
-            <h2
-              id="references-heading"
-              class="m-0 font-display text-4xl sm:text-5xl lg:text-6xl text-ink tracking-tight"
-            >
-              一手文獻清單，與技術演進時間軸
-            </h2>
-            <p class="mt-4 max-w-[70ch] text-base text-ink/70 leading-relaxed">
-              從 2013 年 Word2Vec 的靜態空間、BooksCorpus 的長篇敘事庫，到 2017 年 Transformer
-              骨幹、2018 年初 ELMo 與 GLUE 的激盪，最終走向 GPT-1 生成式預訓練典範與 BERT 雙向挑戰。
-            </p>
-          </div>
-
-          <!-- 快速跳轉年代按鈕 (Fast-travel) -->
-          <div class="flex flex-wrap items-center gap-2 font-mono text-xs">
-            <span class="text-ink/50 uppercase tracking-wider mr-1">跳轉年代：</span>
-            {timelineEpochs.map((epoch) => (
-              <a
-                href={`#${epoch.id}`}
-                class="px-3 py-1.5 border border-ink/20 bg-surface/80 hover:bg-ink hover:text-surface text-ink transition-all rounded-none font-semibold"
-              >
-                {epoch.year}
-              </a>
-            ))}
-          </div>
-        </div>
-
-        <!-- 時間軸主體容器 -->
-        <div class="relative mt-16 sm:mt-24">
-          <!-- 貫穿全軸的朱紅時間線 -->
-          <div
-            class="hidden md:block absolute left-4 sm:left-8 top-4 bottom-8 w-0.5 bg-gradient-to-b from-red via-ink/30 to-blue/40"
-            aria-hidden="true"
-          ></div>
-
-          <div class="space-y-24 sm:space-y-32">
-            {timelineEpochs.map((epoch) => (
-              <div id={epoch.id} class="relative scroll-mt-28">
-                <!-- 背景超大水印年份 (破版破格字體) -->
-                <div
-                  class="pointer-events-none select-none absolute -top-12 sm:-top-20 -left-6 sm:left-4 font-display font-black text-8xl sm:text-9xl lg:text-[11rem] leading-none text-ink/[0.04] tracking-tighter"
-                  aria-hidden="true"
-                >
-                  {epoch.year.split('–')[0].replace(/[^0-9]/g, '')}
-                </div>
-
-                <!-- 紀元標題與時間標記節點 -->
-                <div class="relative flex items-start gap-4 sm:gap-8 mb-8 sm:mb-12">
-                  <div
-                    class="hidden md:flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border-2 border-red bg-surface font-mono text-xs font-bold text-red shadow-sm z-10"
-                    aria-hidden="true"
-                  >
-                    {epoch.year.slice(-2)}
-                  </div>
-
-                  <div class="flex-1">
-                    <div class="flex flex-wrap items-center gap-3">
-                      <span class="font-mono text-xs font-bold uppercase tracking-[0.12em] text-red">
-                        {epoch.period}
-                      </span>
-                    </div>
-                    <h3 class="m-0 mt-1 font-display text-2xl sm:text-3xl text-ink tracking-tight">
-                      {epoch.title}
-                    </h3>
-                    <p class="m-0 mt-2 max-w-[85ch] text-sm sm:text-base text-ink/75 leading-relaxed">
-                      {epoch.summary}
-                    </p>
-                  </div>
-                </div>
-
-                <!-- 紀元內的論文卡片 -->
-                <div class="md:ml-16">
-                  {epoch.sources.some((s) => s.featured) ? (
-                    /* 旗艦奠基之作 (Centerpiece Breakout) */
-                    epoch.sources.map((item) => (
-                      <div
-                        id={item.source.id}
-                        class="group relative border-2 border-ink bg-surface p-6 sm:p-10 shadow-editorial transition-all hover:-translate-y-1 hover:shadow-2xl"
-                      >
-                        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-ink/10 pb-6 mb-6">
-                          <div class="flex items-center gap-3">
-                            <span class="bg-red px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider text-white">
-                              ★ 核心奠基文獻 [{item.refCode}]
-                            </span>
-                            <span class="font-mono text-xs text-muted">
-                              {item.source.published} · {item.source.publisher}
-                            </span>
-                          </div>
-                          <a
-                            href={item.source.url}
-                            target="_blank"
-                            rel="noreferrer"
-                            class="font-mono text-xs text-red font-bold underline underline-offset-4 hover:text-ink transition-colors"
-                          >
-                            開啟原始文獻 ↗
-                          </a>
-                        </div>
-
-                        <h4 class="m-0 font-display text-2xl sm:text-4xl text-ink leading-tight">
-                          {item.source.title}
-                        </h4>
-
-                        <p class="mt-4 text-base sm:text-lg text-ink font-medium leading-relaxed">
-                          {item.takeaway}
-                        </p>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6 p-5 bg-paper-deep border border-ink/10 font-mono text-xs">
-                          <div>
-                            <span class="font-bold text-ink uppercase block mb-1">
-                              模型規模與訓練語料：
-                            </span>
-                            <span class="text-muted">
-                              12 層 Transformer Decoder · 1.17 億參數（117M）· BooksCorpus 7,000
-                              本小說（約 8 億詞）
-                            </span>
-                          </div>
-                          <div>
-                            <span class="font-bold text-red uppercase block mb-1">歷史戰果：</span>
-                            <span class="text-muted">
-                              在 12 項 NLU 評測基準中奪得 9 項 SOTA · GLUE 總分 72.8 顯著刷新紀錄
-                            </span>
-                          </div>
-                        </div>
-
-                        <div class="space-y-2 border-t border-ink/10 pt-4">
-                          <div class="font-mono text-xs font-bold text-ink uppercase">
-                            支持之核心論據：
-                          </div>
-                          <ul class="m-0 space-y-1.5 text-xs sm:text-sm text-ink/80 list-disc list-outside pl-5">
-                            {item.source.supports.map((sup) => (
-                              <li>{sup}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    /* 一般時期卡片網格 */
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      {epoch.sources.map((item) => (
-                        <div
-                          id={item.source.id}
-                          class="group relative border border-ink/20 bg-surface p-6 shadow-sm transition-all hover:border-ink hover:shadow-md"
-                        >
-                          <div class="flex items-center justify-between border-b border-line pb-3 mb-3">
-                            <span class="font-mono text-xs font-bold text-red uppercase">
-                              [{item.refCode}] {item.role}
-                            </span>
-                            <span class="font-mono text-xs text-muted">
-                              {item.source.published}
-                            </span>
-                          </div>
-
-                          <h4 class="m-0 font-display text-lg sm:text-xl text-ink leading-snug">
-                            {item.source.title}
-                          </h4>
-
-                          <p class="mt-2 text-sm text-ink/75 leading-relaxed">{item.takeaway}</p>
-
-                          <div class="mt-4 border-t border-line/60 pt-3">
-                            <p class="m-0 text-sm text-muted">
-                              <span class="font-bold text-ink">邊界限制：</span>
-                              {item.source.limits}
-                            </p>
-                          </div>
-
-                          <div class="mt-4 text-right">
-                            <a
-                              href={item.source.url}
-                              target="_blank"
-                              rel="noreferrer"
-                              class="font-mono text-xs text-red underline underline-offset-4 hover:text-ink"
-                            >
-                              原始來源 ↗
-                            </a>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+      <div class="mb-12 max-w-4xl space-y-6 text-base leading-8 text-ink">
+        <p>
+          在 2018 年春天的舊金山，OpenAI
+          仍是一家探索通用人工智慧可行性的小型非營利實驗室。這篇宣告「生成式預訓練」時代降臨的論文，由四位在機器學習不同分支深耕的研究者共同鑄就。在學界對無標註文本自回歸學習普遍抱持懷疑的年代，他們率先證明了純解碼器架構在吸收海量常識後的驚人泛化威力。
+        </p>
+        <p class="text-muted">
+          第一作者 Alec Radford 是 GPT
+          典範的核心靈魂，他獨立編寫了分散式預訓練程式並設計了最初的生成目標，堅持將算力押注在看似粗糙的
+          BooksCorpus 小說語料上；共同作者 Karthik Narasimhan
+          則憑藉在強化學習與語義理解領域的深厚造詣，開創性地設計了「統一輸入序列化」方案，廢棄了所有針對特定任務量身打造的專用網路拓撲。
+        </p>
+        <p class="text-muted">
+          在生成對抗網路與半監督學習領域享有盛譽的 Tim Salimans 確保了深度 Transformer
+          訓練時的數值穩定性；而聯合創始人兼首席科學家 Ilya Sutskever
+          則在技術方向上堅定掌舵，將這場被視為非主流的「無監督自回歸豪賭」提升為整個實驗室的長期戰略核心。這四位研究者的探索，不僅確立了現代大型語言模型的基石架構，也點燃了後續整個生成式人工智慧時代的燎原之火。
+        </p>
       </div>
-    </section>
+    </AuthorGrid>
 
     <PaperNavigation
       currentId="improving-language-understanding-by-generative-pre-training"
       prev={{
-        summary: '徹底廢除循環神經網絡，以自注意力機制重塑全局幾何關聯。',
+        summary: '徹底廢除循環神經網路，以自注意力機制重塑全域幾何關聯。',
       }}
       next={{
         summary: '雙向遮罩克漏字語言模型，與 GPT 展開長達數年的架構大分流。',
@@ -2000,71 +1907,421 @@ const timelineEpochs: TimelineEpoch[] = [
     // ==========================================
     // 1. 因果注意力遮罩矩陣互動腳本
     // ==========================================
-    const tokens = ['科技', '巨頭', '在', '台灣', '設立', '研發', '中心'];
-    const matrixGrid = document.getElementById('causal-matrix-grid');
-    const targetText = document.getElementById('causal-target-text');
-    const explanation = document.getElementById('causal-explanation');
-    const buttons = document.querySelectorAll('.causal-btn');
-
-    const explanations = [
-      '當模型處理第 1 個詞「科技」時，只能看見自己。未來 6 個詞（巨頭、在、台灣…）皆被因果遮罩賦予 -∞，權重為精確的零。',
-      '處理第 2 個詞「巨頭」時，注意力僅能往前流向「科技」與「巨頭」，模型開始計算兩者之間的合成語意。',
-      '處理第 3 個詞「在」時，結合了「科技 巨頭」的主詞特徵，準備接收後續的地點受詞。',
-      '處理第 4 個詞「台灣」時，模型將主詞「科技 巨頭」與介系詞「在」進行交叉比對，鎖定在地化語義。',
-      '處理第 5 個詞「設立」時，模型注意力強烈聚焦於主詞「科技巨頭」與地點「台灣」，推斷動詞動向。',
-      '處理第 6 個詞「研發」時，模型已掌握完整的前文語境，精確預測即將出現的設施名詞。',
-      '處理第 7 個詞「中心」時，全句的歷史因果已被完整編碼，此時可用於預測句尾標點或承接下一句。',
-    ];
-
-    function updateCausalMatrix(focusIdx: number) {
-      if (!matrixGrid || !targetText || !explanation) return;
-
-      matrixGrid.innerHTML = '';
-      for (let r = 0; r < 7; r++) {
-        for (let c = 0; c < 7; c++) {
-          const cell = document.createElement('div');
-          cell.className = 'py-1 text-[11px] font-mono transition-colors';
-          if (c > r) {
-            // 未來位置：遮罩 -inf
-            cell.textContent = '-∞';
-            cell.className += ' text-muted/30 bg-ink/5';
-          } else {
-            // 合法注意力位置
-            cell.textContent = '1';
-            if (r === focusIdx) {
-              cell.className += ' text-white bg-red font-bold';
-            } else {
-              cell.className += ' text-ink bg-line/40';
-            }
-          }
-          matrixGrid.appendChild(cell);
-        }
-      }
-
-      targetText.textContent = `根據前文推演至「${tokens[focusIdx]}」`;
-      explanation.textContent = explanations[focusIdx];
-
-      buttons.forEach((btn, idx) => {
-        if (idx === focusIdx) {
-          btn.classList.add('bg-red', 'text-white', 'border-red');
-          btn.classList.remove('bg-canvas', 'text-ink', 'border-line');
-          btn.setAttribute('aria-selected', 'true');
-        } else {
-          btn.classList.remove('bg-red', 'text-white', 'border-red');
-          btn.classList.add('bg-canvas', 'text-ink', 'border-line');
-          btn.setAttribute('aria-selected', 'false');
-        }
-      });
+    interface Gpt1Scenario {
+      tokens: string[];
+      explanations: string[];
+      candidates: Record<number, { tok: string; prob: number }[]>;
     }
 
-    buttons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const idx = Number(btn.getAttribute('data-idx'));
-        updateCausalMatrix(idx);
-      });
-    });
+    const gpt1Scenarios: Record<string, Gpt1Scenario> = {
+      'tech-tw': {
+        tokens: ['科技', '巨頭', '在', '台灣', '設立', '研發', '中心'],
+        explanations: [
+          '當模型處理第 1 個詞「科技」時，因果遮罩將後續 6 個詞填入 −∞。模型只能依據自身權重推測接下來最可能出現的受詞或修飾詞。',
+          '處理第 2 個詞「巨頭」時，注意力僅能向前流向「科技」與「巨頭」，模型開始計算兩者之間的合成語意。',
+          '處理第 3 個詞「在」時，結合了「科技 巨頭」的主詞特徵，準備接收後續的地點受詞。',
+          '處理第 4 個詞「台灣」時，模型將主詞「科技 巨頭」與介系詞「在」進行交叉比對，鎖定在地化語意。',
+          '處理第 5 個詞「設立」時，模型注意力強烈聚焦於主詞「科技巨頭」與地點「台灣」，推斷動詞動向。',
+          '處理第 6 個詞「研發」時，模型已掌握完整的前文語境，精確預測即將出現的設施名詞。',
+          '處理第 7 個詞「中心」時，全句的歷史因果已被完整編碼，此時可用於預測句尾標點或承接下一句。',
+        ],
+        candidates: {
+          0: [
+            { tok: '巨頭', prob: 0.38 },
+            { tok: '產業', prob: 0.24 },
+            { tok: '公司', prob: 0.18 },
+            { tok: '園區', prob: 0.11 },
+          ],
+          1: [
+            { tok: '在', prob: 0.52 },
+            { tok: '宣布', prob: 0.26 },
+            { tok: '與', prob: 0.12 },
+            { tok: '將', prob: 0.06 },
+          ],
+          2: [
+            { tok: '台灣', prob: 0.44 },
+            { tok: '亞洲', prob: 0.22 },
+            { tok: '此地', prob: 0.16 },
+            { tok: '全球', prob: 0.1 },
+          ],
+          3: [
+            { tok: '設立', prob: 0.58 },
+            { tok: '投資', prob: 0.21 },
+            { tok: '擴建', prob: 0.12 },
+            { tok: '成立', prob: 0.05 },
+          ],
+          4: [
+            { tok: '研發', prob: 0.65 },
+            { tok: '全新', prob: 0.15 },
+            { tok: '營運', prob: 0.11 },
+            { tok: '資料', prob: 0.06 },
+          ],
+          5: [
+            { tok: '中心', prob: 0.82 },
+            { tok: '基地', prob: 0.09 },
+            { tok: '實驗室', prob: 0.06 },
+            { tok: '團隊', prob: 0.02 },
+          ],
+          6: [
+            { tok: '。', prob: 0.74 },
+            { tok: '，', prob: 0.15 },
+            { tok: '並', prob: 0.07 },
+            { tok: '預計', prob: 0.03 },
+          ],
+        },
+      },
+      'novel-en': {
+        tokens: ['The', 'detective', 'found', 'a', 'clue', 'in', 'the', 'library'],
+        explanations: [
+          '讀到「The」時，後文完全被封鎖，模型推測名詞主詞。',
+          '讀到「detective」時，確立場景主角為偵探。',
+          '讀到「found」時，動作確認為發現，預期出現受詞。',
+          '讀到「a」時，準備接收單數名詞。',
+          '讀到「clue」時，核心線索浮現。',
+          '讀到「in」時，介系詞引導地點。',
+          '讀到「the」時，特定地點冠詞。',
+          '讀到「library」時，全篇懸疑場景完整閉環。',
+        ],
+        candidates: {
+          0: [
+            { tok: 'detective', prob: 0.22 },
+            { tok: 'man', prob: 0.18 },
+            { tok: 'door', prob: 0.12 },
+            { tok: 'room', prob: 0.09 },
+          ],
+          1: [
+            { tok: 'found', prob: 0.35 },
+            { tok: 'looked', prob: 0.25 },
+            { tok: 'was', prob: 0.15 },
+            { tok: 'walked', prob: 0.1 },
+          ],
+          2: [
+            { tok: 'a', prob: 0.48 },
+            { tok: 'the', prob: 0.28 },
+            { tok: 'nothing', prob: 0.12 },
+            { tok: 'something', prob: 0.08 },
+          ],
+          3: [
+            { tok: 'clue', prob: 0.42 },
+            { tok: 'body', prob: 0.24 },
+            { tok: 'letter', prob: 0.15 },
+            { tok: 'key', prob: 0.1 },
+          ],
+          4: [
+            { tok: 'in', prob: 0.55 },
+            { tok: 'on', prob: 0.22 },
+            { tok: 'under', prob: 0.12 },
+            { tok: 'near', prob: 0.06 },
+          ],
+          5: [
+            { tok: 'the', prob: 0.65 },
+            { tok: 'a', prob: 0.18 },
+            { tok: 'his', prob: 0.09 },
+            { tok: 'dark', prob: 0.04 },
+          ],
+          6: [
+            { tok: 'library', prob: 0.45 },
+            { tok: 'room', prob: 0.25 },
+            { tok: 'desk', prob: 0.15 },
+            { tok: 'corner', prob: 0.08 },
+          ],
+          7: [
+            { tok: '.', prob: 0.85 },
+            { tok: ',', prob: 0.08 },
+            { tok: 'and', prob: 0.04 },
+            { tok: 'which', prob: 0.02 },
+          ],
+        },
+      },
+      philosophy: {
+        tokens: ['語言', '的', '邊界', '即是', '世界', '的', '邊界'],
+        explanations: [
+          '讀到「語言」時，哲學主體確立。',
+          '讀到「的」時，引導屬性名詞。',
+          '讀到「邊界」時，命題前半段成型。',
+          '讀到「即是」時，繫詞連接等價命題。',
+          '讀到「世界」時，對偶主體湧現。',
+          '讀到「的」時，引導對稱屬性。',
+          '讀到「邊界」時，維根斯坦經典命題完整合璧。',
+        ],
+        candidates: {
+          0: [
+            { tok: '的', prob: 0.72 },
+            { tok: '是', prob: 0.14 },
+            { tok: '與', prob: 0.08 },
+            { tok: '在', prob: 0.04 },
+          ],
+          1: [
+            { tok: '邊界', prob: 0.45 },
+            { tok: '本質', prob: 0.22 },
+            { tok: '力量', prob: 0.15 },
+            { tok: '限制', prob: 0.1 },
+          ],
+          2: [
+            { tok: '即是', prob: 0.38 },
+            { tok: '定義', prob: 0.25 },
+            { tok: '反映', prob: 0.18 },
+            { tok: '決定', prob: 0.12 },
+          ],
+          3: [
+            { tok: '世界', prob: 0.62 },
+            { tok: '思維', prob: 0.21 },
+            { tok: '認知', prob: 0.1 },
+            { tok: '存在', prob: 0.05 },
+          ],
+          4: [
+            { tok: '的', prob: 0.88 },
+            { tok: '本身', prob: 0.06 },
+            { tok: '全部', prob: 0.04 },
+            { tok: '真相', prob: 0.01 },
+          ],
+          5: [
+            { tok: '邊界', prob: 0.84 },
+            { tok: '極限', prob: 0.08 },
+            { tok: '盡頭', prob: 0.05 },
+            { tok: '輪廓', prob: 0.02 },
+          ],
+          6: [
+            { tok: '。', prob: 0.92 },
+            { tok: '，', prob: 0.05 },
+            { tok: '——', prob: 0.02 },
+            { tok: '！', prob: 0.01 },
+          ],
+        },
+      },
+    };
 
-    updateCausalMatrix(0);
+    let currentGpt1ScenarioKey = 'tech-tw';
+    let currentGpt1FocusIdx = 0;
+    let isCausalMaskActive = true;
+
+    function renderGpt1Lab() {
+      const scenario = gpt1Scenarios[currentGpt1ScenarioKey];
+      if (!scenario) return;
+
+      const tokens = scenario.tokens;
+      const n = tokens.length;
+      if (currentGpt1FocusIdx >= n) currentGpt1FocusIdx = 0;
+
+      const tokenBadge = document.getElementById('gpt1-token-badge');
+      const tokensContainer = document.getElementById('gpt1-tokens-container');
+      const matrixContainer = document.getElementById('gpt1-matrix-container');
+      const contextText = document.getElementById('gpt1-context-text');
+      const explanation = document.getElementById('gpt1-pred-explanation');
+      const candidateBars = document.getElementById('gpt1-candidate-bars');
+      const lossVal = document.getElementById('gpt1-loss-val');
+      const maskToggleBtn = document.getElementById('gpt1-mask-toggle-btn');
+      const maskDesc = document.getElementById('gpt1-mask-mode-desc');
+
+      if (
+        !tokenBadge ||
+        !tokensContainer ||
+        !matrixContainer ||
+        !contextText ||
+        !explanation ||
+        !candidateBars ||
+        !lossVal ||
+        !maskToggleBtn ||
+        !maskDesc
+      )
+        return;
+
+      // 1. Update Mask Button & Desc
+      if (isCausalMaskActive) {
+        maskToggleBtn.textContent = '🔒 因果遮罩：啟用中 (標準)';
+        maskToggleBtn.className =
+          'border border-ink bg-red text-surface px-4 py-2 font-mono text-xs font-bold transition hover:opacity-90 cursor-pointer whitespace-nowrap shadow-xs';
+        maskDesc.textContent = '標準因果模式：上三角填入 −∞，未來詞彙權重為 0.0%，完全防止偷看';
+      } else {
+        maskToggleBtn.textContent = '⚠️ 作弊模式：因果遮罩已關閉';
+        maskToggleBtn.className =
+          'border border-ink bg-blue text-surface px-4 py-2 font-mono text-xs font-bold transition hover:opacity-90 cursor-pointer whitespace-nowrap shadow-xs';
+        maskDesc.textContent =
+          '【警告：標籤洩漏】關閉因果遮罩後，模型可直接偷看未來詞彙，損失瞬間歸零但喪失推論能力！';
+      }
+
+      // 2. Token Buttons Strip
+      tokenBadge.textContent = `目前步驟：第 ${currentGpt1FocusIdx + 1} 格 [${tokens[currentGpt1FocusIdx]}]`;
+      tokensContainer.innerHTML = '';
+      tokens.forEach((tok, idx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        const isSelected = idx === currentGpt1FocusIdx;
+        btn.className = isSelected
+          ? 'px-3 py-1.5 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer'
+          : 'px-3 py-1.5 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+        btn.textContent = `${idx + 1}. ${tok}`;
+        btn.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+        btn.addEventListener('click', () => {
+          currentGpt1FocusIdx = idx;
+          renderGpt1Lab();
+        });
+        tokensContainer.appendChild(btn);
+      });
+
+      // 3. Render N x N Matrix Grid
+      matrixContainer.innerHTML = '';
+      const table = document.createElement('table');
+      table.className = 'border-collapse text-center font-mono text-xs select-none w-full';
+
+      // Header row
+      const thead = document.createElement('thead');
+      const headerRow = document.createElement('tr');
+      const cornerTh = document.createElement('th');
+      cornerTh.className = 'p-1.5 border border-line bg-paper-deep text-muted font-normal text-xs';
+      cornerTh.textContent = 'Q \\ K';
+      headerRow.appendChild(cornerTh);
+
+      tokens.forEach((tok) => {
+        const th = document.createElement('th');
+        th.className =
+          'p-1.5 border border-line bg-paper-deep text-ink font-semibold text-xs truncate max-w-[70px]';
+        th.textContent = tok;
+        headerRow.appendChild(th);
+      });
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      // Body rows
+      const tbody = document.createElement('tbody');
+      for (let r = 0; r < n; r++) {
+        const tr = document.createElement('tr');
+        const rowTh = document.createElement('th');
+        const isFocusRow = r === currentGpt1FocusIdx;
+        rowTh.className = isFocusRow
+          ? 'p-1.5 border border-line bg-red text-surface font-bold text-xs text-left truncate max-w-[70px]'
+          : 'p-1.5 border border-line bg-paper-deep text-ink font-semibold text-xs text-left truncate max-w-[70px]';
+        rowTh.textContent = `${r + 1}:${tokens[r]}`;
+        rowTh.addEventListener('click', () => {
+          currentGpt1FocusIdx = r;
+          renderGpt1Lab();
+        });
+        tr.appendChild(rowTh);
+
+        for (let c = 0; c < n; c++) {
+          const td = document.createElement('td');
+          const isFuture = c > r;
+
+          if (isCausalMaskActive && isFuture) {
+            // Masked: -inf
+            td.className =
+              'p-1.5 border border-line bg-ink/5 text-muted/40 font-mono text-xs select-none';
+            td.textContent = '−∞';
+            td.title = `因果遮罩：位置 ${c + 1} 屬於未來，被強制賦予 −∞`;
+          } else {
+            // Active visible cell
+            if (isFocusRow) {
+              td.className =
+                'p-1.5 border border-line bg-red text-surface font-bold font-mono text-xs cursor-pointer';
+            } else {
+              td.className =
+                'p-1.5 border border-line bg-surface text-ink font-mono text-xs cursor-pointer hover:bg-paper';
+            }
+            td.textContent = '1.0';
+            td.title = `合法可見注意力：查詢 [${tokens[r]}] 可關注前文 [${tokens[c]}]`;
+          }
+
+          td.addEventListener('click', () => {
+            currentGpt1FocusIdx = r;
+            renderGpt1Lab();
+          });
+          tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+      }
+      table.appendChild(tbody);
+      matrixContainer.appendChild(table);
+
+      // 4. Update Context & Prediction
+      const visibleTokens = isCausalMaskActive ? tokens.slice(0, currentGpt1FocusIdx + 1) : tokens;
+      contextText.textContent = visibleTokens.map((t) => `[${t}]`).join(' ');
+
+      if (isCausalMaskActive) {
+        explanation.textContent = scenario.explanations[currentGpt1FocusIdx] || '';
+      } else {
+        explanation.textContent =
+          '【作弊模式警告】因果遮罩已解除！模型在多層自注意力中直接向右偷看，獲知了整篇句子的完整文本，預測下一個詞的任務失去了任何自監督學習意義。';
+      }
+
+      // 5. Candidate Predictions
+      const cands = scenario.candidates[currentGpt1FocusIdx] || [
+        { tok: '詞彙 A', prob: 0.45 },
+        { tok: '詞彙 B', prob: 0.3 },
+        { tok: '詞彙 C', prob: 0.15 },
+        { tok: '詞彙 D', prob: 0.1 },
+      ];
+
+      candidateBars.innerHTML = '';
+      cands.forEach((cand, idx) => {
+        const row = document.createElement('div');
+        row.className = 'grid grid-cols-[5rem_1fr_3.5rem] items-center gap-2';
+
+        const label = document.createElement('div');
+        label.className = idx === 0 ? 'font-bold text-red truncate' : 'text-ink truncate';
+        label.textContent = cand.tok;
+
+        const track = document.createElement('div');
+        track.className = 'h-4 w-full bg-paper-deep border border-line relative overflow-hidden';
+
+        const fill = document.createElement('div');
+        const probVal = isCausalMaskActive ? cand.prob : idx === 0 ? 0.999 : 0.001;
+        const pct = (probVal * 100).toFixed(1);
+        fill.className = idx === 0 ? 'h-full bg-red' : 'h-full bg-blue/70';
+        fill.style.width = `${pct}%`;
+        track.appendChild(fill);
+
+        const pctLabel = document.createElement('div');
+        pctLabel.className = idx === 0 ? 'font-bold text-red text-right' : 'text-muted text-right';
+        pctLabel.textContent = `${pct}%`;
+
+        row.appendChild(label);
+        row.appendChild(track);
+        row.appendChild(pctLabel);
+        candidateBars.appendChild(row);
+      });
+
+      // Loss calculation
+      const topP = isCausalMaskActive ? cands[0]?.prob || 0.5 : 0.999;
+      const loss = -Math.log(topP);
+      lossVal.textContent = isCausalMaskActive
+        ? `${loss.toFixed(3)} nats`
+        : '0.001 nats (作弊崩潰)';
+    }
+
+    function setupGpt1LabListeners() {
+      // Scenario switcher
+      document.querySelectorAll<HTMLButtonElement>('.gpt1-scenario-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.gpt1-scenario-btn').forEach((b) => {
+            b.setAttribute('aria-selected', 'false');
+            b.className =
+              'gpt1-scenario-btn border border-ink bg-paper text-ink px-3 py-1.5 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer';
+          });
+          btn.setAttribute('aria-selected', 'true');
+          btn.className =
+            'gpt1-scenario-btn border border-ink bg-ink text-surface px-3 py-1.5 font-mono text-xs font-bold transition cursor-pointer';
+
+          const s = btn.dataset.scenario;
+          if (s && gpt1Scenarios[s]) {
+            currentGpt1ScenarioKey = s;
+            currentGpt1FocusIdx = 0;
+            renderGpt1Lab();
+          }
+        });
+      });
+
+      // Mask toggle button
+      const maskToggleBtn = document.getElementById('gpt1-mask-toggle-btn');
+      if (maskToggleBtn) {
+        maskToggleBtn.addEventListener('click', () => {
+          isCausalMaskActive = !isCausalMaskActive;
+          renderGpt1Lab();
+        });
+      }
+    }
+
+    setupGpt1LabListeners();
+    renderGpt1Lab();
 
     // ==========================================
     // 2. 任務統一序列化格式切換腳本

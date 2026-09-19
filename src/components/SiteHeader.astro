@@ -1,7 +1,26 @@
+---
+import { milestonePapers } from '../content/papers/milestones';
+import { withBase } from '../lib/paths';
+
+const publishedPapers = milestonePapers.filter((p) => p.status === 'published');
+const currentPath = Astro.url.pathname.replace(/\/$/, '');
+
+// Determine current paper if browsing a paper
+const currentIndex = publishedPapers.findIndex((p) => {
+  return currentPath.includes(p.id) || currentPath.endsWith(`/papers/${p.vol}`);
+});
+const currentPaper = currentIndex >= 0 ? publishedPapers[currentIndex] : null;
+const prevPaper = currentIndex > 0 ? publishedPapers[currentIndex - 1] : null;
+const nextPaper =
+  currentIndex >= 0 && currentIndex < publishedPapers.length - 1
+    ? publishedPapers[currentIndex + 1]
+    : null;
+---
+
 <header class="mx-auto grid w-[calc(100%-2rem)] max-w-[1280px] grid-cols-[auto_1fr_auto] items-center gap-4 border-b border-ink py-5 md:grid-cols-[auto_minmax(40px,1fr)_auto_auto] md:gap-6 md:py-7">
   <a
     class="inline-flex items-baseline gap-2 font-display text-xl font-semibold leading-none tracking-[-0.04em] no-underline"
-    href="/"
+    href={withBase('/')}
     aria-label="THE LLM 首頁"
   >
     <span class="font-mono text-xs font-semibold tracking-[0.14em] text-red">THE</span>
@@ -15,20 +34,153 @@
     class="flex items-center gap-3 font-mono text-sm uppercase tracking-[0.09em] sm:gap-5"
     aria-label="主要導覽"
   >
-    <a class="no-underline hover:text-red" href="/#timeline">
-      研究時間線
+    <a class="no-underline hover:text-red transition-colors" href={withBase('/#timeline')}>
+      {' '}
+      研究時間線{' '}
     </a>
-    <a class="no-underline hover:text-red" href="/papers/a-mathematical-theory-of-communication">
-      00. 資訊理論
-    </a>
-    <a class="no-underline hover:text-red" href="/papers/attention-is-all-you-need">
-      01. Transformer
-    </a>
-    <a
-      class="no-underline hover:text-red font-semibold"
-      href="/papers/improving-language-understanding-by-generative-pre-training"
-    >
-      02. GPT-1 <span aria-hidden="true">↗</span>
-    </a>
+
+    {prevPaper && (
+      <a
+        class="hidden lg:inline-flex items-center gap-1 no-underline text-muted hover:text-red transition-colors text-xs"
+        href={withBase(prevPaper.url)}
+        title={`上一篇：VOL. ${prevPaper.vol} ${prevPaper.title}`}
+        aria-label={`上一篇論文：VOL. ${prevPaper.vol}`}
+      >
+        <span>← VOL. {prevPaper.vol}</span>
+      </a>
+    )}
+
+    {nextPaper && (
+      <a
+        class="hidden lg:inline-flex items-center gap-1 no-underline text-muted hover:text-red transition-colors text-xs"
+        href={withBase(nextPaper.url)}
+        title={`下一篇：VOL. ${nextPaper.vol} ${nextPaper.title}`}
+        aria-label={`下一篇論文：VOL. ${nextPaper.vol}`}
+      >
+        <span>VOL. {nextPaper.vol} →</span>
+      </a>
+    )}
+
+    <!-- 全卷論文目錄下拉選單 -->
+    <details class="group relative inline-block text-left">
+      <summary
+        class="flex cursor-pointer items-center gap-1.5 no-underline hover:text-red transition-colors select-none list-none [&::-webkit-details-marker]:hidden"
+        aria-label="展開全卷論文目錄"
+      >
+        <span class="font-semibold text-ink group-hover:text-red">
+          全卷目錄 ({publishedPapers.length})
+        </span>
+        <svg
+          class="h-3.5 w-3.5 transition-transform duration-200 group-open:rotate-180 text-muted group-hover:text-red"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+            clip-rule="evenodd"
+          ></path>
+        </svg>
+      </summary>
+
+      <div class="absolute right-0 top-full mt-3 w-[340px] sm:w-[480px] max-h-[75vh] overflow-y-auto rounded border border-ink bg-surface p-5 shadow-2xl z-50 normal-case">
+        <div class="border-b border-ink/10 pb-3 mb-4">
+          <p class="font-mono text-xs uppercase tracking-[0.12em] text-red font-semibold">
+            THE LLM CHRONOLOGY / 全卷章節目錄
+          </p>
+          <p class="text-xs text-muted mt-1 leading-normal">
+            共收錄 16 篇劃時代論文，目前已出版 {publishedPapers.length} 篇完整導讀。
+          </p>
+        </div>
+
+        <!-- 雙軌分類清單 -->
+        <div class="space-y-4">
+          <div>
+            <p class="font-mono text-xs uppercase tracking-[0.08em] text-muted font-semibold mb-2">
+              語言與推理模型軌道 / LANGUAGE & REASONING
+            </p>
+            <ul class="space-y-1.5 list-none p-0 m-0">
+              {milestonePapers
+                .filter((p) => p.track === 'language')
+                .map((paper) => {
+                  const isCurrent = currentPaper?.id === paper.id;
+                  const isPublished = paper.status === 'published';
+                  return (
+                    <li>
+                      {isPublished ? (
+                        <a
+                          href={withBase(paper.url)}
+                          class={`flex items-center justify-between p-2 rounded hover:bg-paper transition-colors no-underline ${
+                            isCurrent
+                              ? 'bg-paper font-semibold text-red border-l-2 border-red pl-2.5'
+                              : 'text-ink'
+                          }`}
+                        >
+                          <span class="flex items-baseline gap-2">
+                            <span class="font-mono text-xs text-muted">VOL. {paper.vol}</span>
+                            <span class="text-sm">{paper.chineseTitle.split('：')[0]}</span>
+                          </span>
+                          <span class="font-mono text-xs text-muted">{paper.year}</span>
+                        </a>
+                      ) : (
+                        <div class="flex items-center justify-between p-2 text-muted/60 opacity-60">
+                          <span class="flex items-baseline gap-2">
+                            <span class="font-mono text-xs">VOL. {paper.vol}</span>
+                            <span class="text-sm">{paper.chineseTitle.split('：')[0]}</span>
+                          </span>
+                          <span class="font-mono text-xs tracking-wider">準備中</span>
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+            </ul>
+          </div>
+
+          <div class="border-t border-ink/10 pt-3">
+            <p class="font-mono text-xs uppercase tracking-[0.08em] text-muted font-semibold mb-2">
+              多模態與生成模型軌道 / MULTIMODAL & GENERATION
+            </p>
+            <ul class="space-y-1.5 list-none p-0 m-0">
+              {milestonePapers
+                .filter((p) => p.track === 'multimodal')
+                .map((paper) => {
+                  const isCurrent = currentPaper?.id === paper.id;
+                  const isPublished = paper.status === 'published';
+                  return (
+                    <li>
+                      {isPublished ? (
+                        <a
+                          href={withBase(paper.url)}
+                          class={`flex items-center justify-between p-2 rounded hover:bg-paper transition-colors no-underline ${
+                            isCurrent
+                              ? 'bg-paper font-semibold text-red border-l-2 border-red pl-2.5'
+                              : 'text-ink'
+                          }`}
+                        >
+                          <span class="flex items-baseline gap-2">
+                            <span class="font-mono text-xs text-muted">VOL. {paper.vol}</span>
+                            <span class="text-sm">{paper.chineseTitle.split('：')[0]}</span>
+                          </span>
+                          <span class="font-mono text-xs text-muted">{paper.year}</span>
+                        </a>
+                      ) : (
+                        <div class="flex items-center justify-between p-2 text-muted/60 opacity-60">
+                          <span class="flex items-baseline gap-2">
+                            <span class="font-mono text-xs">VOL. {paper.vol}</span>
+                            <span class="text-sm">{paper.chineseTitle.split('：')[0]}</span>
+                          </span>
+                          <span class="font-mono text-xs tracking-wider">準備中</span>
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </details>
   </nav>
 </header>

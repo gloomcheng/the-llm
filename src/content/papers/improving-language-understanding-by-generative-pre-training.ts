@@ -74,7 +74,7 @@ export const gpt1Sources: SourceRecord[] = [
     accessed: '2026-09-17',
     url: 'https://arxiv.org/abs/1804.07461',
     supports: [
-      '涵蓋推論、相似度、情緒分類等多種任務的標準評測基準，打破單一任務過擬合之盲點',
+      '涵蓋推論、相似度、情緒分類等多種任務的標準評測基準，打破單一任務過度擬合之盲點',
       'GPT-1 在 GLUE 基準測試中取得 72.8 總分，顯著超越先前基線模型（68.9），驗證預訓練遷移之廣度',
     ],
     limits: '綜合評測基準，提供客觀數據衡量模型是否真正掌握通用語言理解能力。',
@@ -144,7 +144,7 @@ export const gpt1Paper: PaperRecord = {
       affiliationAtPublication: 'OpenAI',
       roleInPaper: '共同作者；參與深度生成模型訓練動態與最佳化方法設計。',
       verifiedContext:
-        '機器學習最佳化與生成模型專家，在 Weight Normalization、進階正則化與自回歸生成穩定性方面提供深厚理論支援。',
+        '機器學習最佳化與生成模型專家，在 Weight Normalization、進階正規化與自回歸生成穩定性方面提供深厚理論支援。',
       evidenceIds: ['paper-2018-gpt1'],
       confidence: 'direct',
       unknowns: [],
@@ -169,7 +169,7 @@ export const gpt1Paper: PaperRecord = {
   motivationClaims: [
     {
       id: 'motivation-annotation-bottleneck',
-      claim: '監督學習受困於昂貴且有限的人工標註，使深層神經網路極易過擬合。',
+      claim: '監督學習受困於昂貴且有限的人工標註，使深層神經網路極易過度擬合。',
       explanation:
         '真實世界的特定領域往往只有數百到數千筆標註樣本，不足以訓練數千萬參數的深層架構；而未標註文本卻取之不盡。',
       status: 'documented',

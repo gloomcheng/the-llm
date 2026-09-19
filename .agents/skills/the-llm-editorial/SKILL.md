@@ -102,10 +102,16 @@ Macro structure is therefore governed by **Four Canonical Paper Archetypes**. Ea
 
 - **Strictly prohibit exposing internal pedagogical prompts in reader-facing headings:**
   Never use checklist tags or writing prompts such as `WHY`, `HOW`, `WHAT`, `第一部分 · 痛點根源`, `第二部分 · 機制拆解`, or `第三部分 · 現代啟示` as section titles or subtitles.
+- **Strictly prohibit theatrical and musical scaffolding:**
+  Never use `第一～四樂章` (Movements) or `第一～三幕` (Acts) as section labels. Numbered narrative chapters strictly follow `章節 XX · [核心主題] / [ENGLISH SUBTITLE]`.
+- **Strictly prohibit phantom part numbering:**
+  Never use `第四部分 · 團隊特寫` or `第五部分` when no earlier `第一部分` ~ `第三部分` exist. References and Author Dossiers are canonical appendices (`Zone B`) positioned at the end of the chapter and are NEVER numbered as narrative chapters.
 - **Strictly prohibit numbered badge clutter in titles:**
   Never place decorative circular numbers `1`, `2`, `3` or pill badges into section headings.
 - **Authoritative, substantive Traditional Chinese headings:**
   Every section heading must name a concrete technical concept, physical contradiction, or historical turning point in elegant Traditional Chinese (e.g., use 「預訓練的雙重困境：標註資料的懸崖，與專用架構的泥淖」 instead of 「第一部分 · 痛點根源 / WHY」; use 「四大關鍵機制拆解：QKV 檢索、縮放因子、多頭注意力與位置編碼」 instead of 「第二部分 · 機制 / HOW」).
+- **Mandatory author section lead-in narrative:**
+  Never drop an `<AuthorGrid />` component into a naked, zero-prose section heading. Every author dossier must provide 2–3 substantive paragraphs contextualizing the research team, systems architecture, data curation, and historical significance.
 
 ## Narrative and evidence
 

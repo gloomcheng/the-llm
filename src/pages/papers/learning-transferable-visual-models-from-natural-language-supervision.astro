@@ -1,0 +1,1615 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../lib/paths';
+import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
+import PaperSectionHeader from '../../components/PaperSectionHeader.astro';
+import AsideCard from '../../components/AsideCard.astro';
+import Callout from '../../components/Callout.astro';
+import AuthorGrid from '../../components/AuthorGrid.astro';
+import EvidenceList from '../../components/EvidenceList.astro';
+import PaperNavigation from '../../components/PaperNavigation.astro';
+import PaperMeta from '../../components/PaperMeta.astro';
+import StoryRail from '../../components/StoryRail.astro';
+import {
+  paper,
+  clipSources,
+  clipTimelineEpochs,
+} from '../../content/papers/learning-transferable-visual-models-from-natural-language-supervision';
+
+const shell = 'mx-auto w-[calc(100%-2rem)] max-w-[1120px]';
+
+interface StoryEvent {
+  year: string;
+  label: string;
+  title: string;
+  body: string;
+  status?: 'past' | 'current' | 'future';
+}
+
+const timelineEvents: StoryEvent[] = [
+  {
+    year: '2012',
+    label: '封閉標籤 / IMAGENET 1K',
+    title: '離散整數標籤的監督式學習統治',
+    body: 'AlexNet 引爆深度學習革命，確立以 ImageNet 1,000 個固定整數類別進行交叉熵訓練的經典典範，但同時也將電腦視覺鎖死在封閉集合的語意孤島中。',
+    status: 'past',
+  },
+  {
+    year: '2018',
+    label: '對比奠基 / INFONCE & CPC',
+    title: '互資訊最大化與對比預測編碼',
+    body: 'van den Oord 等人提出 InfoNCE 對比損失函數，證明透過區分正負樣本對最大化互資訊下界，能從無標註訊號中萃取深層結構表徵，奠定對比學習數學基石。',
+    status: 'past',
+  },
+  {
+    year: '2020',
+    label: '視覺純粹 / VIT & SIMCLR',
+    title: '純粹 Transformer 骨幹與超大批次經驗',
+    body: 'ViT 廢除卷積以純 Transformer 處理影像圖塊，SimCLR 驗證超大批次與精準溫度係數在對比表徵學習中的威力，為跨模態雙塔對齊備妥了算力與演算法基礎。',
+    status: 'past',
+  },
+  {
+    year: '2021.02',
+    label: '本篇焦點 / CONTRASTIVE ALIGNMENT',
+    title: '文字與影像共享同一套世界座標：CLIP',
+    body: 'OpenAI 發表 CLIP，爬取網路 4 億圖文資料進行雙塔對比預訓練，以極簡的對稱 InfoNCE 幾何將文字與影像拉入同一個高維超球體，實現震撼業界的零樣本開放分類。',
+    status: 'current',
+  },
+  {
+    year: '2022–至今',
+    label: '跨模態繁榮 / DIFFUSION & MLLM',
+    title: '文字生圖語意羅盤與多模態感官起點',
+    body: 'DALL-E 2 與 Stable Diffusion 以 CLIP 特徵導航擴散去噪，LLaVA 以凍結的 CLIP-ViT 賦予大型語言模型視覺感官，CLIP 成為現代多模態 AI 的底層大一統基礎。',
+    status: 'future',
+  },
+];
+---
+
+<BaseLayout title={`${paper.chineseTitle} | THE LLM`} description={paper.abstractSummary}>
+  <!-- HERO HEADER (UNIVERSAL INVARIANT) -->
+  <header class={`${shell} pt-10`}>
+    <div class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
+      <a class="text-red underline underline-offset-4" href={withBase('/')}>
+        THE LLM
+      </a>
+      <span aria-hidden="true">/</span>
+      <span>第十二章</span>
+    </div>
+
+    <div class="grid grid-cols-1 items-end gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-24">
+      <div>
+        <p class="mb-5 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
+          VOL. 12 / CONTRASTIVE ALIGNMENT
+        </p>
+        <h1 class="m-0 font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl leading-tight tracking-[-0.04em] text-ink">
+          <span class="block">Learning Transferable Visual Models</span>
+          <em class="block font-serif italic">From Natural Language Supervision.</em>
+        </h1>
+        <p class="mt-8 max-w-[52ch] text-lg leading-8 text-muted">
+          在 2021 年以前，電腦視覺如同被困在一千個固定號碼牌裡的啞巴學徒。CLIP
+          以四億對圖文資料進行對稱對比學習，將文字與影像狠狠拉入同一座高維超球體，讓機器第一次用人類豐富的自然語言看懂了整個世界。
+        </p>
+      </div>
+
+      <aside
+        class="border-t-4 border-red bg-surface p-6 shadow-editorial"
+        aria-label="這篇論文的一句評語"
+      >
+        <p class="mb-4 sm:mb-6 font-mono text-xs sm:text-sm font-semibold uppercase tracking-[0.12em] text-red">
+          一句評語 / THE SHORT VERDICT
+        </p>
+        <p class="m-0 max-w-[20ch] sm:max-w-[22ch] font-display text-2xl sm:text-3xl leading-tight text-ink">
+          文字與影像不是兩座孤島，而是同一座高維幾何宇宙中的不同投影。
+        </p>
+        <p class="mt-6 mb-0 text-sm sm:text-base leading-relaxed sm:leading-7 text-muted">
+          CLIP 徹底廢除固定標籤的封閉牢籠，以極簡的對稱 InfoNCE
+          幾何，讓電腦第一次以人類的開放語言凝視並理解真實世界，成為後續文字生圖與多模態大模型的通用語意羅盤。
+        </p>
+      </aside>
+    </div>
+
+    <PaperMeta
+      year={paper.year}
+      venue={paper.venue}
+      readTime="28 分鐘"
+      difficulty="核心概念"
+      doi={paper.doi}
+    />
+  </header>
+
+  <!-- STORY RAIL -->
+  <section class="border-y border-line py-12 bg-surface/50" aria-label="論文歷史時間線">
+    <div class={shell}>
+      <StoryRail events={timelineEvents} variant="list" />
+    </div>
+  </section>
+
+  <!-- MAIN READING LAYOUT -->
+  <PaperReadingLayout>
+    <!-- ========================================== -->
+    <!-- 章節 01 · 封閉集合的語意孤島 -->
+    <!-- ========================================== -->
+    <section id="chapter-01" class="scroll-mt-24" aria-labelledby="heading-chapter-01">
+      <PaperSectionHeader
+        kicker="章節 01 / CHAPTER 01"
+        title="封閉集合的語意孤島：ImageNet 標籤與監督式學習的盡頭"
+        subtitle="THE CLOSED-SET SEMANTIC ISLAND AND THE SUPERVISION CLIFF"
+      />
+
+      <div class="space-y-6 text-base leading-8 text-ink">
+        <p>
+          在 2021
+          年春季以前，整個電腦視覺領域的輝煌成果背後，潛藏著一個極其荒謬且頑固的工程現實：無論神經網路架構多麼深邃、卷積核或自注意力層設計得多麼精巧，絕大多數視覺模型在本質上都是「封閉集合的分類機器」。
+        </p>
+        <p>
+          自 2012 年 AlexNet 掀起深度學習巨浪以來，學界評估視覺智慧的黃金標尺始終是
+          ImageNet-1K。這項包含 1,000
+          個固定類別的基準，將每張輸入影像強制壓縮為一個千維的一熱編碼（One-Hot
+          Vector）目標。在數學上，神經網路最後一層的全連接權重矩陣{' '}
+          <math class="font-serif"><msub><mi>W</mi><mtext>cls</mtext></msub></math>{' '}
+          負責將高維特徵投影至 1,000 個離散通道，再透過 Softmax 函數計算各類別的條件機率。
+        </p>
+        <p>
+          這種受限監督方式帶來了致命的語意隔絕。在標準交叉熵損失的眼中，類別編號 0
+          的「丁鯛（Tench）」與類別編號 1 的「金魚（Goldfish）」之間的數學距離，和「丁鯛」與類別編號
+          500 的「懸崖懸居（Cliff Dwelling）」完全等價——所有錯誤類別在目標分佈中都被均勻賦予機率
+          0。分類器完全不知道金魚與丁鯛同屬於水生魚類，更不知道懸崖是一處地理景觀。它所學會的，僅僅是尋找能在千維輸出端點上最大化正確整數標籤的像素高頻捷徑。
+        </p>
+
+        <Callout variant="alert" title="人工標註懸崖：為什麼封閉標籤無法擴展至真實世界？">
+          <p class="m-0 text-sm leading-relaxed">
+            真實世界是由無限豐富的連續語意構成的。當一張照片呈現「一隻戴著草帽在蔚藍海灘上熟練衝浪的柴犬」時，傳統
+            ImageNet
+            分類器只能尷尬地輸出「柴犬：0.82、衝浪板：0.11、草帽：0.04」。模型缺乏任何語法結構來表達物體之間的動態關聯、環境氛圍或因果情境。更嚴峻的是，若工程師希望讓系統辨識「草帽衝浪犬」這個全新概念，唯一的途徑就是重新動員數千名標註員、人工清洗並框選數萬張圖片、重寫輸出層維度，並耗費昂貴算力重新微調。這座標註成本的懸崖，將視覺人工智慧死死錮禁在少數受資助的封閉任務中。
+          </p>
+        </Callout>
+
+        <p>
+          與此同時，自然語言處理（NLP）領域正在上演一場翻天覆地的典範轉移。從 2018 年的 GPT-1、BERT
+          到 2020 年的
+          GPT-3，語言研究者早已徹底拋棄了為「情緒分析」、「命名實體識別」或「文本蘊涵」單獨微調專用分類頭的傳統做法。語言模型直接在網際網路未經清洗的海量文本上進行自監督下一個詞預測，自主吸收了語言的文法、常識與世界模型。
+        </p>
+        <p>
+          OpenAI 的研究團隊（由 Alec Radford 領軍，匯聚了 Jong Wook Kim、Chris Hallacy、Aditya
+          Ramesh、Gabriel Goh 與 Ilya Sutskever
+          等核心學者）敏銳地意識到這個尖銳的矛盾：人類在嬰兒時期認識世界，從來不是靠父母拿著一千張字卡、強制要求背誦離散類別編號；人類是聽著伴隨視覺場景流動的連續語言描述（「看！那隻狗狗正在追皮球」）來理解世界的。如果能直接以網際網路上海量的自然語言作為監督信號，電腦視覺是否也能一舉掙脫固定標籤的牢籠，獲得與生俱來的開放詞彙理解力？
+        </p>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 章節 02 · 雙塔對比架構 -->
+    <!-- ========================================== -->
+    <section id="chapter-02" class="scroll-mt-24 mt-20" aria-labelledby="heading-chapter-02">
+      <PaperSectionHeader
+        kicker="章節 02 / CHAPTER 02"
+        title="雙塔對比架構：將文字與影像拉入同一個超球體座標系"
+        subtitle="THE DUAL-TOWER CONTRASTIVE ARCHITECTURE AND HYPERSPHERE ALIGNMENT"
+      />
+
+      <div class="space-y-6 text-base leading-8 text-ink">
+        <p>
+          要將自然語言引入視覺預訓練，最直觀的想法是構建一個「圖說生成器（Image
+          Captioner）」：讓卷積網路或視覺 Transformer
+          提取影像特徵，隨後由自回歸語言模型逐字預測這張圖片的文字說明。
+        </p>
+        <p>
+          然而，Radford
+          等人在早期探索中遭遇了巨大的算力壁壘。語言具有高度的靈活性與冗餘性：同一張小狗的照片，圖說可以是「一隻棕色的可愛幼犬」、「陽光下的米克斯犬」，或是「我家剛領養的寵物在客廳打瞌睡」。自回歸生成模型必須耗費極其龐大的計算容量去預測「一隻」、「的」、「在」等語法虛詞，並因為預測與真實標籤略有出入的同義詞而承受無謂的交叉熵懲罰。
+        </p>
+
+        <AsideCard
+          title="計算效率量化對決：生成式圖說 vs 對比預測"
+          kicker="COMPUTATIONAL EFFICIENCY / 12X ACCELERATION"
+        >
+          <div class="space-y-3 text-sm leading-relaxed text-muted">
+            <p class="m-0">
+              OpenAI 在嚴格對齊的硬體與資料預算下進行了消融實驗，對比了三種不同的多模態學習目標：
+            </p>
+            <ul class="m-0 list-disc pl-5 space-y-1">
+              <li>
+                <strong class="text-ink">自回歸圖說生成（Predictive Language Modeling）：</strong>
+                模型需逐字解碼完整句子，計算開銷最為沉重，收斂速度極其緩慢。
+              </li>
+              <li>
+                <strong class="text-ink">詞袋預測（Bag-of-Words Prediction）：</strong>
+                僅預測文本中出現的關鍵詞彙集合，速度提升約 4 倍，但丟失了詞序與語意深層結構。
+              </li>
+              <li>
+                <strong class="text-ink">
+                  對比表徵學習（Contrastive Representation Learning）：
+                </strong>
+                完全不生成文字，僅要求模型在批次中正確辨別「哪段文字與哪張圖片成對」，學習效率比自回歸生成高出整整{' '}
+                <strong>12 倍</strong>！
+              </li>
+            </ul>
+          </div>
+        </AsideCard>
+
+        <p>
+          對比學習的哲學本質是「化繁為簡」：我們不需要模型逐字繪製文字，只需要模型能夠判斷「意境是否相符」。這催生了
+          CLIP 標誌性的雙塔對比架構（Dual-Tower Architecture）。
+        </p>
+        <p>整個系統由兩個獨立的神經網路構成：</p>
+        <ul class="list-disc pl-6 space-y-2">
+          <li>
+            <strong class="text-ink">影像編碼塔（Image Encoder）：</strong>接收解析度為
+            224×224（或更高）的原始影像 <math class="font-serif"><mi>x</mi></math>。架構可採用改進版
+            ResNet（如 ResNet-50、ResNet-101、RN50x4）或純視覺
+            Transformer（ViT-B/32、ViT-B/16、ViT-L/14）。視覺主幹提取出全域表徵後，透過線性投影矩陣
+            <math class="font-serif"><msub><mi>W</mi><mi>I</mi></msub></math> 映射至共用特徵維度
+            <math class="font-serif"><mi>d</mi></math>（如 512 或 768）。
+          </li>
+          <li>
+            <strong class="text-ink">文字編碼塔（Text Encoder）：</strong>接收長度限制為 76 個 Token
+            的文字序列（前後分別插入序列起始標記 <code>[SOS]</code> 與結束標記 <code>[EOS]</code>
+            ）。採用標準 Transformer 結構（12 層、8 頭、隱藏維度 512）。取 <code>[EOS]</code>{' '}
+            位置的啟動向量，透過線性投影矩陣{' '}
+            <math class="font-serif"><msub><mi>W</mi><mi>T</mi></msub></math>{' '}
+            投影至相同的共用特徵維度 <math class="font-serif"><mi>d</mi></math>。
+          </li>
+        </ul>
+
+        <p>
+          在完成線性投影後，CLIP 施加了一項至關重要的幾何變換：
+          <strong>L2 向量正規化（L2 Normalization）</strong>
+          。所有影像特徵向量與文字特徵向量均被除以其自身的歐幾里得範數，被精確強制約束在半徑為 1
+          的高維超球體（Unit Hypersphere{' '}
+          <math class="font-serif"><msup><mi mathvariant="double-struck">S</mi><mrow><mi>d</mi><mo>-</mo><mn>1</mn></mrow></msup></math>
+          ）表面：
+        </p>
+
+        <math display="block" class="editorial-math my-6" aria-label="向量 L2 正規化公式">
+          <mrow>
+            <msub><mover><mi>I</mi><mo>~</mo></mover><mi>i</mi></msub>
+            <mo>=</mo>
+            <mfrac>
+              <mrow><msubsup><mi>W</mi><mi>I</mi><mi>T</mi></msubsup><msub><mi>f</mi><mi>I</mi></msub><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo stretchy="false">)</mo></mrow>
+              <msub><mrow><mo>&#x2225;</mo><msubsup><mi>W</mi><mi>I</mi><mi>T</mi></msubsup><msub><mi>f</mi><mi>I</mi></msub><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mo>&#x2225;</mo></mrow><mn>2</mn></msub>
+            </mfrac>
+            <mo>,</mo>
+            <mspace width="1.5em"/>
+            <msub><mover><mi>T</mi><mo>~</mo></mover><mi>j</mi></msub>
+            <mo>=</mo>
+            <mfrac>
+              <mrow><msubsup><mi>W</mi><mi>T</mi><mi>T</mi></msubsup><msub><mi>f</mi><mi>T</mi></msub><mo stretchy="false">(</mo><msub><mi>t</mi><mi>j</mi></msub><mo stretchy="false">)</mo></mrow>
+              <msub><mrow><mo>&#x2225;</mo><msubsup><mi>W</mi><mi>T</mi><mi>T</mi></msubsup><msub><mi>f</mi><mi>T</mi></msub><mo stretchy="false">(</mo><msub><mi>t</mi><mi>j</mi></msub><mo stretchy="false">)</mo><mo>&#x2225;</mo></mrow><mn>2</mn></msub>
+            </mfrac>
+          </mrow>
+        </math>
+
+        <div class="border-l-2 border-red pl-4 text-sm leading-relaxed text-muted">
+          <p class="m-0 font-bold text-ink">變數與維度定義規格：</p>
+          <ul class="m-0 mt-2 list-disc pl-5 space-y-1">
+            <li>
+              <math class="font-serif"><msub><mi>x</mi><mi>i</mi></msub></math> 與{' '}
+              <math class="font-serif"><msub><mi>t</mi><mi>j</mi></msub></math>：批次中第{' '}
+              <math class="font-serif"><mi>i</mi></math> 張原始影像與第{' '}
+              <math class="font-serif"><mi>j</mi></math> 段文字提示。
+            </li>
+            <li>
+              <math class="font-serif"><msub><mi>f</mi><mi>I</mi></msub><mo stretchy="false">(</mo><mo>·</mo><mo stretchy="false">)</mo><mo>&#x2208;</mo><msup><mi mathvariant="double-struck">R</mi><msub><mi>d</mi><mi>I</mi></msub></msup></math>
+              {' '} 與{' '}
+              <math class="font-serif"><msub><mi>f</mi><mi>T</mi></msub><mo stretchy="false">(</mo><mo>·</mo><mo stretchy="false">)</mo><mo>&#x2208;</mo><msup><mi mathvariant="double-struck">R</mi><msub><mi>d</mi><mi>T</mi></msub></msup></math>
+              ：影像與文字骨幹網路提取之原始高維表徵向量。
+            </li>
+            <li>
+              <math class="font-serif"><msub><mi>W</mi><mi>I</mi></msub><mo>&#x2208;</mo><msup><mi mathvariant="double-struck">R</mi><mrow><msub><mi>d</mi><mi>I</mi></msub><mo>&#xd7;</mo><mi>d</mi></mrow></msup></math>
+              {' '} 與{' '}
+              <math class="font-serif"><msub><mi>W</mi><mi>T</mi></msub><mo>&#x2208;</mo><msup><mi mathvariant="double-struck">R</mi><mrow><msub><mi>d</mi><mi>T</mi></msub><mo>&#xd7;</mo><mi>d</mi></mrow></msup></math>
+              ：跨模態對齊線性投影權重矩陣。
+            </li>
+            <li>
+              <math class="font-serif"><msub><mover><mi>I</mi><mo>~</mo></mover><mi>i</mi></msub><mo>,</mo><msub><mover><mi>T</mi><mo>~</mo></mover><mi>j</mi></msub><mo>&#x2208;</mo><msup><mi mathvariant="double-struck">S</mi><mrow><mi>d</mi><mo>-</mo><mn>1</mn></mrow></msup></math>
+              ：投影至單位超球體表面之單位特徵向量，滿足{' '}
+              <math class="font-serif"><mo>&#x2225;</mo><mover><mi>I</mi><mo>~</mo></mover><msub><mo>&#x2225;</mo><mn>2</mn></msub><mo>=</mo><mo>&#x2225;</mo><mover><mi>T</mi><mo>~</mo></mover><msub><mo>&#x2225;</mo><mn>2</mn></msub><mo>=</mo><mn>1</mn></math>
+              。
+            </li>
+          </ul>
+        </div>
+
+        <p>
+          這項幾何約束帶來了深遠的數學優勢：兩個單位向量的內積，完全等價於它們之間的夾角餘弦值（Cosine
+          Similarity）：
+          <math class="font-serif"><msub><mi>S</mi><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub><mo>=</mo><msub><mover><mi>I</mi><mo>~</mo></mover><mi>i</mi></msub><mo>&#xb7;</mo><msub><mover><mi>T</mi><mo>~</mo></mover><mi>j</mi></msub><mo>=</mo><mo>cos</mo><mo stretchy="false">(</mo><msub><mi>&#952;</mi><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub><mo stretchy="false">)</mo><mo>&#x2208;</mo><mo stretchy="false">[</mo><mo>-</mo><mn>1</mn><mo>,</mo><mn>1</mn><mo stretchy="false">]</mo></math>
+          。
+          這消除了特徵向量長度（模長）對相似度計算的干擾，避免模型透過無限制放大向量範數來操縱損失函數，保證所有特徵比較均在純粹的角度幾何空間中進行。
+        </p>
+
+        <p>
+          在一個包含 <math class="font-serif"><mi>N</mi></math>{' '}
+          個樣本的微批次（Mini-batch）中，我們擁有 <math class="font-serif"><mi>N</mi></math>{' '}
+          個真實配對的圖文對{' '}
+          <math class="font-serif"><msubsup><mrow><mo>&#123;</mo><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>,</mo><msub><mi>t</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mo>&#125;</mo></mrow><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></msubsup></math>
+          。影像塔輸出矩陣{' '}
+          <math class="font-serif"><mover><mi>I</mi><mo>~</mo></mover><mo>&#x2208;</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mi>N</mi><mo>&#xd7;</mo><mi>d</mi></mrow></msup></math>
+          {' '} 與文字塔輸出矩陣{' '}
+          <math class="font-serif"><mover><mi>T</mi><mo>~</mo></mover><mo>&#x2208;</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mi>N</mi><mo>&#xd7;</mo><mi>d</mi></mrow></msup></math>
+          {' '} 進行矩陣相乘，瞬間構成一個尺寸為{' '}
+          <math class="font-serif"><mi>N</mi><mo>&#xd7;</mo><mi>N</mi></math> 的餘弦相似度方陣：
+        </p>
+
+        <math display="block" class="editorial-math my-6" aria-label="CLIP 對稱 InfoNCE 損失函數">
+          <mtable displaystyle="true">
+            <mtr>
+              <mtd columnalign="right"><msub><mi>L</mi><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub></mtd>
+              <mtd columnalign="left"><mo>=</mo><mfrac><mrow><msub><mover><mi>I</mi><mo>~</mo></mover><mi>i</mi></msub><mo>&#xb7;</mo><msub><mover><mi>T</mi><mo>~</mo></mover><mi>j</mi></msub></mrow><mi>&#964;</mi></mfrac></mtd>
+            </mtr>
+            <mtr>
+              <mtd columnalign="right"><msub><mi mathvariant="script">L</mi><mrow><mi>I</mi><mo>&#x2192;</mo><mi>T</mi></mrow></msub></mtd>
+              <mtd columnalign="left"><mo>=</mo><mo>-</mo><mfrac><mn>1</mn><mi>N</mi></mfrac><munderover><mo>&#x2211;</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></munderover><mo>log</mo><mfrac><mrow><mo>exp</mo><mo stretchy="false">(</mo><msub><mi>L</mi><mrow><mi>i</mi><mo>,</mo><mi>i</mi></mrow></msub><mo stretchy="false">)</mo></mrow><mrow><msubsup><mo>&#x2211;</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></msubsup><mo>exp</mo><mo stretchy="false">(</mo><msub><mi>L</mi><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub><mo stretchy="false">)</mo></mrow></mfrac></mtd>
+            </mtr>
+            <mtr>
+              <mtd columnalign="right"><msub><mi mathvariant="script">L</mi><mrow><mi>T</mi><mo>&#x2192;</mo><mi>I</mi></mrow></msub></mtd>
+              <mtd columnalign="left"><mo>=</mo><mo>-</mo><mfrac><mn>1</mn><mi>N</mi></mfrac><munderover><mo>&#x2211;</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></munderover><mo>log</mo><mfrac><mrow><mo>exp</mo><mo stretchy="false">(</mo><msub><mi>L</mi><mrow><mi>j</mi><mo>,</mo><mi>j</mi></mrow></msub><mo stretchy="false">)</mo></mrow><mrow><msubsup><mo>&#x2211;</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></msubsup><mo>exp</mo><mo stretchy="false">(</mo><msub><mi>L</mi><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub><mo stretchy="false">)</mo></mrow></mfrac></mtd>
+            </mtr>
+            <mtr>
+              <mtd columnalign="right"><msub><mi mathvariant="script">L</mi><mtext>CLIP</mtext></msub></mtd>
+              <mtd columnalign="left"><mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mrow><mo stretchy="true">(</mo><msub><mi mathvariant="script">L</mi><mrow><mi>I</mi><mo>&#x2192;</mo><mi>T</mi></mrow></msub><mo>+</mo><msub><mi mathvariant="script">L</mi><mrow><mi>T</mi><mo>&#x2192;</mo><mi>I</mi></mrow></msub><mo stretchy="true">)</mo></mrow></mtd>
+            </mtr>
+          </mtable>
+        </math>
+
+        <div class="border-l-2 border-red pl-4 text-sm leading-relaxed text-muted">
+          <p class="m-0 font-bold text-ink">損失函數代數機制分解：</p>
+          <ul class="m-0 mt-2 list-disc pl-5 space-y-1">
+            <li>
+              <math class="font-serif"><mi>N</mi><mo>=</mo><mn>32</mn><mo>,</mo><mn>768</mn></math>
+              ：CLIP 預訓練使用的巨大全域批次大小（透過數百張 V100 GPU 跨節點聚合）。
+            </li>
+            <li>
+              <math class="font-serif"><mi>&#964;</mi><mo>=</mo><mo>exp</mo><mo stretchy="false">(</mo><mo>-</mo><mi>t</mi><mo stretchy="false">)</mo></math>
+              ：可學習溫度參數（Learnable Temperature），控制 Softmax
+              機率分佈的平滑度或銳利度，在訓練中被裁剪以防止數值溢位（
+              <math class="font-serif"><mi>&#964;</mi><mo>&#x2265;</mo><mn>0.01</mn></math>）。
+            </li>
+            <li>
+              <math class="font-serif"><msub><mi>L</mi><mrow><mi>i</mi><mo>,</mo><mi>i</mi></mrow></msub></math>
+              （主對角線項目）：<math class="font-serif"><mi>N</mi></math>{' '}
+              個真實配對正樣本，損失函數致力於將其數值推向極大。
+            </li>
+            <li>
+              <math class="font-serif"><msub><mi>L</mi><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></msub><mspace width="0.2em"/><mo stretchy="false">(</mo><mi>i</mi><mo>&#x2260;</mo><mi>j</mi><mo stretchy="false">)</mo></math>
+              （非對角線項目）：
+              <math class="font-serif"><mi>N</mi><mo stretchy="false">(</mo><mi>N</mi><mo>-</mo><mn>1</mn><mo stretchy="false">)</mo></math>
+              {' '} 個不匹配負樣本，分母中的指數和對其施加強烈排斥力。
+            </li>
+            <li>
+              <math class="font-serif"><msub><mi mathvariant="script">L</mi><mrow><mi>I</mi><mo>&#x2192;</mo><mi>T</mi></mrow></msub></math>
+              {' '} 與{' '}
+              <math class="font-serif"><msub><mi mathvariant="script">L</mi><mrow><mi>T</mi><mo>&#x2192;</mo><mi>I</mi></mrow></msub></math>
+              ：分別沿橫列（給定影像找文字）與直行（給定文字找影像）進行對稱交叉熵最佳化。
+            </li>
+          </ul>
+        </div>
+
+        <p>
+          這項極簡的對稱 InfoNCE
+          損失函數，在幾何上產生了令人驚嘆的拉力與斥力效應：在每一輪反向傳播中，同一張圖片與其對應的文字描述被一股強大的吸引力拉向超球體上的同一個幾何點；與此同時，批次中其餘
+          32,767 張圖片與文字則扮演無情反例，將所有不相關的特徵相互推開。經過 4
+          億對網際網路圖文的洗禮，文字空間與視覺空間的拓撲幾何終於完美熔融為一體。
+        </p>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 動態實驗室：對比學習幾何對齊與零樣本決策風洞 -->
+    <!-- ========================================== -->
+    <section
+      id="clip-interactive-lab"
+      class="border-y border-ink bg-paper-deep/60 py-16 sm:py-20 lg:py-24 scroll-mt-24"
+      aria-labelledby="clip-lab-title"
+    >
+      <div class={shell}>
+        <div class="mb-10 max-w-[800px]">
+          <p class="m-0 font-mono text-xs font-semibold uppercase tracking-[0.12em] text-red">
+            動態實驗室 / INTERACTIVE CLIP DUAL-TOWER LAB
+          </p>
+          <h3
+            id="clip-lab-title"
+            class="mt-2 m-0 font-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-ink"
+          >
+            對比學習幾何對齊與零樣本決策風洞
+          </h3>
+          <p class="mt-4 text-base leading-7 text-muted">
+            親手撥動溫度係數與跨模態樣本關聯，觀察 InfoNCE
+            如何透過對角線正樣本吸引與非對角線負樣本排斥，淬鍊出統一的超球體幾何；並在零樣本決策風洞中，親身體會提示詞工程（Prompt
+            Engineering）如何消除歧義，為下游分類帶來關鍵的精度躍升。
+          </p>
+        </div>
+
+        <!-- Mode Tab Bar -->
+        <div
+          class="flex flex-wrap gap-2 mb-8 border-b border-line pb-4"
+          role="tablist"
+          aria-label="實驗室模組切換"
+        >
+          <button
+            type="button"
+            id="clip-tab-matrix"
+            role="tab"
+            aria-selected="true"
+            aria-controls="clip-panel-matrix"
+            class="px-4 py-2 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer"
+          >
+            模組 01 · N × N 對比學習矩陣與 InfoNCE 損失沙盒
+          </button>
+          <button
+            type="button"
+            id="clip-tab-zeroshot"
+            role="tab"
+            aria-selected="false"
+            aria-controls="clip-panel-zeroshot"
+            class="px-4 py-2 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer"
+          >
+            模組 02 · 零樣本提示詞工程與分類決策風洞
+          </button>
+        </div>
+
+        <!-- MODULE 01: N x N 對比矩陣與 InfoNCE 損失沙盒 -->
+        <div
+          id="clip-panel-matrix"
+          role="tabpanel"
+          aria-labelledby="clip-tab-matrix"
+          class="space-y-8"
+        >
+          <!-- Controls Bar -->
+          <div class="grid grid-cols-1 gap-6 rounded-none border border-ink bg-surface p-6 md:grid-cols-3">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <label
+                  for="clip-temp-slider"
+                  class="font-mono text-xs font-bold uppercase tracking-wider text-ink"
+                >
+                  溫度係數 τ (Temperature)
+                </label>
+                <span id="clip-temp-val" class="font-mono text-sm font-bold text-red">
+                  0.07
+                </span>
+              </div>
+              <input
+                id="clip-temp-slider"
+                type="range"
+                min="0.01"
+                max="0.50"
+                step="0.01"
+                value="0.07"
+                class="w-full accent-red cursor-pointer"
+                aria-label="調節對比學習溫度參數 tau"
+              />
+              <p class="m-0 font-mono text-xs text-muted">
+                小 τ（0.02）使分佈極端銳利；大 τ（0.30+）使負樣本懲罰鈍化。
+              </p>
+            </div>
+
+            <div class="space-y-2">
+              <span class="block font-mono text-xs font-bold uppercase tracking-wider text-ink">
+                訓練階段情境切換
+              </span>
+              <div class="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  id="clip-preset-ideal"
+                  class="px-3 py-1.5 font-mono text-xs font-bold border border-ink bg-ink text-surface cursor-pointer"
+                >
+                  收斂完成 (Ideal)
+                </button>
+                <button
+                  type="button"
+                  id="clip-preset-random"
+                  class="px-3 py-1.5 font-mono text-xs font-medium border border-ink/40 bg-surface text-ink hover:border-ink cursor-pointer"
+                >
+                  未訓練 (Random)
+                </button>
+                <button
+                  type="button"
+                  id="clip-preset-confused"
+                  class="px-3 py-1.5 font-mono text-xs font-medium border border-ink/40 bg-surface text-ink hover:border-ink cursor-pointer"
+                >
+                  混淆衝突 (Perturbed)
+                </button>
+              </div>
+              <p class="m-0 font-mono text-xs text-muted">
+                觀察對角線（正樣本）與非對角線（負樣本）的特徵博弈。
+              </p>
+            </div>
+
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <label
+                  for="clip-perturb-slider"
+                  class="font-mono text-xs font-bold uppercase tracking-wider text-ink"
+                >
+                  負樣本相似度擾動 (I₁ 與 T₄)
+                </label>
+                <span id="clip-perturb-val" class="font-mono text-sm font-bold text-red">
+                  0.12
+                </span>
+              </div>
+              <input
+                id="clip-perturb-slider"
+                type="range"
+                min="-0.20"
+                max="0.85"
+                step="0.01"
+                value="0.12"
+                class="w-full accent-red cursor-pointer"
+                aria-label="調節特定負樣本對的餘弦相似度"
+              />
+              <p class="m-0 font-mono text-xs text-muted">
+                調高假負樣本相似度，見證 InfoNCE 損失瞬間激增！
+              </p>
+            </div>
+          </div>
+
+          <!-- Interactive 4x4 Matrix Heatmap Grid -->
+          <div class="border border-ink bg-surface p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-line pb-4 mb-6">
+              <div>
+                <h4 class="m-0 font-display text-lg font-bold text-ink">
+                  4 × 4 跨模態餘弦相似度與 Softmax 機率矩陣
+                </h4>
+                <p class="m-0 mt-1 font-mono text-xs text-muted">
+                  點擊方格可即時檢視：原始內積 S(i,j)、縮放 Logit 與雙向 Softmax 預測機率。
+                </p>
+              </div>
+              <div class="mt-3 sm:mt-0 flex items-center gap-4 font-mono text-xs text-muted">
+                <span class="flex items-center gap-1.5">
+                  <span class="inline-block h-3 w-3 bg-red/90 border border-ink/20"></span>
+                  高相似度 / 正樣本對
+                </span>
+                <span class="flex items-center gap-1.5">
+                  <span class="inline-block h-3 w-3 bg-surface border border-line"></span>
+                  低相似度 / 負樣本對
+                </span>
+              </div>
+            </div>
+
+            <!-- Heatmap Container -->
+            <div class="overflow-x-auto">
+              <div class="min-w-[620px]">
+                <!-- Matrix Column Headers (Text Prompts) -->
+                <div class="grid grid-cols-[140px_repeat(4,1fr)] gap-2 mb-2">
+                  <div class="font-mono text-xs font-bold text-muted p-2 flex items-end">
+                    影像 (I) \ 文字 (T)
+                  </div>
+                  <div class="bg-paper p-2 text-center border border-line">
+                    <p class="m-0 font-mono text-xs font-bold text-ink">T₁: 草帽衝浪柴犬</p>
+                    <p class="m-0 font-mono text-[11px] text-muted truncate">戴草帽在海灘衝浪</p>
+                  </div>
+                  <div class="bg-paper p-2 text-center border border-line">
+                    <p class="m-0 font-mono text-xs font-bold text-ink">T₂: 月球騎馬太空人</p>
+                    <p class="m-0 font-mono text-[11px] text-muted truncate">月球表面騎白馬</p>
+                  </div>
+                  <div class="bg-paper p-2 text-center border border-line">
+                    <p class="m-0 font-mono text-xs font-bold text-ink">T₃: 台北雨夜街頭</p>
+                    <p class="m-0 font-mono text-[11px] text-muted truncate">霓虹燈倒映夜雨</p>
+                  </div>
+                  <div class="bg-paper p-2 text-center border border-line">
+                    <p class="m-0 font-mono text-xs font-bold text-ink">T₄: 窗邊曬太陽橘貓</p>
+                    <p class="m-0 font-mono text-[11px] text-muted truncate">復古底片暖陽小貓</p>
+                  </div>
+                </div>
+
+                <!-- Matrix Rows (Images) -->
+                <div id="clip-matrix-rows" class="space-y-2">
+                  <!-- Row 1 -->
+                  <div class="grid grid-cols-[140px_repeat(4,1fr)] gap-2">
+                    <div class="bg-paper p-2.5 flex flex-col justify-center border border-line">
+                      <p class="m-0 font-mono text-xs font-bold text-ink">I₁: 衝浪柴犬圖</p>
+                      <p class="m-0 font-mono text-[11px] text-muted">Shiba Surfing</p>
+                    </div>
+                    <button
+                      type="button"
+                      data-r="0"
+                      data-c="0"
+                      class="clip-cell p-3 text-center border border-ink transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-red"
+                    ></button>
+                    <button
+                      type="button"
+                      data-r="0"
+                      data-c="1"
+                      class="clip-cell p-3 text-center border border-line transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-red"
+                    ></button>
+                    <button
+                      type="button"
+                      data-r="0"
+                      data-c="2"
+                      class="clip-cell p-3 text-center border border-line transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-red"
+                    ></button>
+                    <button
+                      type="button"
+                      data-r="0"
+                      data-c="3"
+                      class="clip-cell p-3 text-center border border-line transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-red"
+                    ></button>
+                  </div>
+                  <!-- Row 2 -->
+                  <div class="grid grid-cols-[140px_repeat(4,1fr)] gap-2">
+                    <div class="bg-paper p-2.5 flex flex-col justify-center border border-line">
+                      <p class="m-0 font-mono text-xs font-bold text-ink">I₂: 月球騎馬圖</p>
+                      <p class="m-0 font-mono text-[11px] text-muted">Astronaut Horse</p>
+                    </div>
+                    <button
+                      type="button"
+                      data-r="1"
+                      data-c="0"
+                      class="clip-cell p-3 text-center border border-line transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-red"
+                    ></button>
+                    <button
+                      type="button"
+                      data-r="1"
+                      data-c="1"
+                      class="clip-cell p-3 text-center border border-ink transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-red"
+                    ></button>
+                    <button
+                      type="button"
+                      data-r="1"
+                      data-c="2"
+                      class="clip-cell p-3 text-center border border-line transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-red"
+                    ></button>
+                    <button
+                      type="button"
+                      data-r="1"
+                      data-c="3"
+                      class="clip-cell p-3 text-center border border-line transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-red"
+                    ></button>
+                  </div>
+                  <!-- Row 3 -->
+                  <div class="grid grid-cols-[140px_repeat(4,1fr)] gap-2">
+                    <div class="bg-paper p-2.5 flex flex-col justify-center border border-line">
+                      <p class="m-0 font-mono text-xs font-bold text-ink">I₃: 台北雨夜圖</p>
+                      <p class="m-0 font-mono text-[11px] text-muted">Taipei Neon Rain</p>
+                    </div>
+                    <button
+                      type="button"
+                      data-r="2"
+                      data-c="0"
+                      class="clip-cell p-3 text-center border border-line transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-red"
+                    ></button>
+                    <button
+                      type="button"
+                      data-r="2"
+                      data-c="1"
+                      class="clip-cell p-3 text-center border border-line transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-red"
+                    ></button>
+                    <button
+                      type="button"
+                      data-r="2"
+                      data-c="2"
+                      class="clip-cell p-3 text-center border border-ink transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-red"
+                    ></button>
+                    <button
+                      type="button"
+                      data-r="2"
+                      data-c="3"
+                      class="clip-cell p-3 text-center border border-line transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-red"
+                    ></button>
+                  </div>
+                  <!-- Row 4 -->
+                  <div class="grid grid-cols-[140px_repeat(4,1fr)] gap-2">
+                    <div class="bg-paper p-2.5 flex flex-col justify-center border border-line">
+                      <p class="m-0 font-mono text-xs font-bold text-ink">I₄: 窗邊橘貓圖</p>
+                      <p class="m-0 font-mono text-[11px] text-muted">Window Cat</p>
+                    </div>
+                    <button
+                      type="button"
+                      data-r="3"
+                      data-c="0"
+                      class="clip-cell p-3 text-center border border-line transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-red"
+                    ></button>
+                    <button
+                      type="button"
+                      data-r="3"
+                      data-c="1"
+                      class="clip-cell p-3 text-center border border-line transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-red"
+                    ></button>
+                    <button
+                      type="button"
+                      data-r="3"
+                      data-c="2"
+                      class="clip-cell p-3 text-center border border-line transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-red"
+                    ></button>
+                    <button
+                      type="button"
+                      data-r="3"
+                      data-c="3"
+                      class="clip-cell p-3 text-center border border-ink transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-red"
+                    ></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Inspect Card & Metric Outputs -->
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4 border-t border-line pt-6">
+              <div class="bg-paper p-4 border border-line md:col-span-2">
+                <p class="m-0 font-mono text-xs font-bold uppercase tracking-wider text-muted">
+                  選定儲存格探針 (Cell Inspector)
+                </p>
+                <div id="clip-inspect-info" class="mt-2 space-y-1">
+                  <p class="m-0 font-display text-base font-bold text-ink">
+                    儲存格 [I₁, T₁]（主對角線正樣本）
+                  </p>
+                  <p class="m-0 font-mono text-xs text-muted">
+                    餘弦相似度 S: <span class="text-ink font-bold">0.88</span> | 縮放 Logit (S/τ):{' '}
+                    <span class="text-ink font-bold">12.57</span>
+                  </p>
+                  <p class="m-0 font-mono text-xs text-muted">
+                    影像到文字機率 P(T₁|I₁): <span class="text-red font-bold">99.8%</span> |
+                    文字到影像機率 P(I₁|T₁): <span class="text-red font-bold">99.7%</span>
+                  </p>
+                </div>
+              </div>
+
+              <div class="bg-paper p-4 border border-line">
+                <p class="m-0 font-mono text-xs font-bold uppercase tracking-wider text-muted">
+                  影像到文字損失 L(I→T)
+                </p>
+                <p id="clip-loss-i2t" class="mt-2 m-0 font-mono text-2xl font-bold text-ink">
+                  0.012
+                </p>
+                <p class="m-0 font-mono text-[11px] text-muted">橫列交叉熵平均</p>
+              </div>
+
+              <div class="bg-paper p-4 border border-line">
+                <p class="m-0 font-mono text-xs font-bold uppercase tracking-wider text-red">
+                  總 InfoNCE 損失 L(CLIP)
+                </p>
+                <p id="clip-loss-total" class="mt-2 m-0 font-mono text-2xl font-bold text-red">
+                  0.013
+                </p>
+                <p class="m-0 font-mono text-[11px] text-muted">雙向對稱損失平均</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODULE 02: 零樣本提示詞工程與分類決策風洞 -->
+        <div
+          id="clip-panel-zeroshot"
+          role="tabpanel"
+          aria-labelledby="clip-tab-zeroshot"
+          class="space-y-8 hidden"
+        >
+          <!-- Controls Bar -->
+          <div class="grid grid-cols-1 gap-6 rounded-none border border-ink bg-surface p-6 md:grid-cols-2">
+            <div class="space-y-3">
+              <span class="block font-mono text-xs font-bold uppercase tracking-wider text-ink">
+                步驟 1：選擇測試目標影像
+              </span>
+              <div class="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  data-img="zebra"
+                  class="clip-img-btn px-3 py-2 text-left font-mono text-xs border border-ink bg-ink text-surface cursor-pointer"
+                >
+                  <strong class="block font-sans text-sm">草原上的斑馬</strong>
+                  <span class="text-xs opacity-80 font-mono">ImageNet 類別: zebra</span>
+                </button>
+                <button
+                  type="button"
+                  data-img="banana"
+                  class="clip-img-btn px-3 py-2 text-left font-mono text-xs border border-ink/40 bg-surface text-ink hover:border-ink cursor-pointer"
+                >
+                  <strong class="block font-sans text-sm">廚房砧板切片香蕉</strong>
+                  <span class="text-xs opacity-80 font-mono">ImageNet 類別: banana</span>
+                </button>
+                <button
+                  type="button"
+                  data-img="crane"
+                  class="clip-img-btn px-3 py-2 text-left font-mono text-xs border border-ink/40 bg-surface text-ink hover:border-ink cursor-pointer"
+                >
+                  <strong class="block font-sans text-sm">白紙折成的紙鶴</strong>
+                  <span class="text-xs opacity-80 font-mono">多義詞歧義: crane</span>
+                </button>
+                <button
+                  type="button"
+                  data-img="xray"
+                  class="clip-img-btn px-3 py-2 text-left font-mono text-xs border border-ink/40 bg-surface text-ink hover:border-ink cursor-pointer"
+                >
+                  <strong class="block font-sans text-sm">胸部 X 光透視片</strong>
+                  <span class="text-xs opacity-80 font-mono">分佈外挑戰: chest x-ray</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <span class="block font-mono text-xs font-bold uppercase tracking-wider text-ink">
+                步驟 2：選擇文字提示詞策略 (Prompt Strategy)
+              </span>
+              <div class="space-y-2">
+                <label class="flex items-start gap-3 p-2 border border-line bg-paper cursor-pointer hover:border-ink">
+                  <input type="radio" name="clip-prompt-mode" value="raw" class="mt-1 accent-red" />
+                  <div>
+                    <strong class="block font-mono text-xs text-ink">
+                      策略 A · 裸標籤模式 (Raw Class Label)
+                    </strong>
+                    <span class="font-mono text-xs text-muted">
+                      直接使用類別單字，例如 "zebra"、"crane"
+                    </span>
+                  </div>
+                </label>
+                <label class="flex items-start gap-3 p-2 border border-ink bg-paper cursor-pointer">
+                  <input
+                    type="radio"
+                    name="clip-prompt-mode"
+                    value="template"
+                    checked
+                    class="mt-1 accent-red"
+                  />
+                  <div>
+                    <strong class="block font-mono text-xs text-ink">
+                      策略 B · 標準上下文模板 (Standard Template)
+                    </strong>
+                    <span class="font-mono text-xs text-muted">
+                      套用通用模板："a photo of a &#123;label&#125;."
+                    </span>
+                  </div>
+                </label>
+                <label class="flex items-start gap-3 p-2 border border-line bg-paper cursor-pointer hover:border-ink">
+                  <input
+                    type="radio"
+                    name="clip-prompt-mode"
+                    value="ensemble"
+                    class="mt-1 accent-red"
+                  />
+                  <div>
+                    <strong class="block font-mono text-xs text-ink">
+                      策略 C · 多提示詞集成 (Prompt Ensemble)
+                    </strong>
+                    <span class="font-mono text-xs text-muted">
+                      平均 8 種情境模板向量，消除偏好雜訊 (+5% 準確率)
+                    </span>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Zero-Shot Decision Wind Tunnel Output -->
+          <div class="border border-ink bg-surface p-6">
+            <div class="border-b border-line pb-4 mb-6">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between">
+                <div>
+                  <h4 class="m-0 font-display text-lg font-bold text-ink">
+                    動態分類器推論輸出：候選類別機率長條圖
+                  </h4>
+                  <p class="m-0 mt-1 font-mono text-xs text-muted">
+                    文字塔為各類別合成權重向量，與影像特徵即時計算餘弦相似度並進行 Softmax。
+                  </p>
+                </div>
+                <div
+                  class="mt-2 sm:mt-0 font-mono text-xs font-bold text-red"
+                  id="clip-prompt-display"
+                >
+                  Prompt: "a photo of a &#123;label&#125;."
+                </div>
+              </div>
+            </div>
+
+            <!-- Probabilities Bars -->
+            <div id="clip-prob-bars" class="space-y-4">
+              <!-- Dynamically populated via JS -->
+            </div>
+
+            <!-- Insight Note -->
+            <div
+              id="clip-zeroshot-insight"
+              class="mt-6 border-t border-line pt-4 bg-paper/50 p-4 border border-line"
+            >
+              <p class="m-0 font-display text-sm font-bold text-ink">提示詞工程深度洞察：</p>
+              <p id="clip-insight-text" class="mt-1 m-0 text-sm leading-relaxed text-muted">
+                在 ImageNet 上，僅僅將單純的類別單字 "zebra" 包裝為標準模板 "a photo of a
+                zebra."，零樣本分類準確率就能立馬提升 1.3
+                個百分點！這是因為在網路預訓練資料中，文字很少單獨孤立出現，完整的句式能精準激發文字塔中與「照片拍攝主體」相關聯的深層語意特徵。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 章節 03 · 零樣本遷移的幾何本質 -->
+    <!-- ========================================== -->
+    <section id="chapter-03" class="scroll-mt-24 mt-20" aria-labelledby="heading-chapter-03">
+      <PaperSectionHeader
+        kicker="章節 03 / CHAPTER 03"
+        title="零樣本遷移的幾何本質：動態分類器與強健性分水嶺"
+        subtitle="THE GEOMETRY OF ZERO-SHOT TRANSFER AND THE ROBUSTNESS WATERSHED"
+      />
+
+      <div class="space-y-6 text-base leading-8 text-ink">
+        <p>
+          在深入了解雙塔對比架構的訓練機制後，一個極具革命性的問題浮現出來：在完全不更新任何權重、不接觸任何下游訓練樣本的前提下，CLIP
+          究竟是如何實現「零樣本分類（Zero-shot Classification）」的？
+        </p>
+        <p>
+          傳統電腦視覺系統如果要分類 <math class="font-serif"><mi>K</mi></math>{' '}
+          個類別，必須訓練一個形狀為{' '}
+          <math class="font-serif"><mi>d</mi><mo>&#xd7;</mo><mi>K</mi></math> 的線性權重矩陣{' '}
+          <math class="font-serif"><mi>W</mi></math>
+          ，其中每一行代表該類別在特徵空間中的靜態超平面邊界。
+        </p>
+        <p>
+          而 CLIP 完成了一次極為優雅的代數置換：
+          <strong>文字編碼塔本身，就是一台即時合成分類器權重矩陣的生成器</strong>。
+        </p>
+        <p>
+          假設我們需要在包含 <math class="font-serif"><mi>K</mi></math>{' '}
+          個類別的資料集上進行評測。我們首先為每個類別填入預先設計的提示詞模板（如「a photo of a
+          &#123;class&#125;.」），並將這 <math class="font-serif"><mi>K</mi></math>{' '}
+          個句子依序輸入文字編碼器，獲得經過 L2 正規化的特徵向量{' '}
+          <math class="font-serif"><msubsup><mrow><mo>&#123;</mo><msub><mover><mi>T</mi><mo>~</mo></mover><mi>k</mi></msub><mo>&#125;</mo></mrow><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></msubsup></math>
+          。接著，我們將這些向量拼接為一個合成權重矩陣：
+        </p>
+
+        <math display="block" class="editorial-math my-6" aria-label="零樣本動態分類器矩陣構建">
+          <mrow>
+            <msub><mi>W</mi><mtext>zero-shot</mtext></msub>
+            <mo>=</mo>
+            <mrow><mo stretchy="true">[</mo><mtable><mtr><mtd><msub><mover><mi>T</mi><mo>~</mo></mover><mn>1</mn></msub></mtd><mtd><msub><mover><mi>T</mi><mo>~</mo></mover><mn>2</mn></msub></mtd><mtd><mo>&#x22ef;</mo></mtd><mtd><msub><mover><mi>T</mi><mo>~</mo></mover><mi>K</mi></msub></mtd></mtr></mtable><mo stretchy="true">]</mo></mrow>
+            <mo>&#x2208;</mo>
+            <msup><mi mathvariant="double-struck">R</mi><mrow><mi>d</mi><mo>&#xd7;</mo><mi>K</mi></mrow></msup>
+          </mrow>
+        </math>
+
+        <p>
+          當任意一張測試影像 <math class="font-serif"><mi>x</mi></math>{' '}
+          到來時，影像塔提取其單位特徵向量{' '}
+          <math class="font-serif"><mover><mi>I</mi><mo>~</mo></mover><mo>&#x2208;</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mn>1</mn><mo>&#xd7;</mo><mi>d</mi></mrow></msup></math>
+          。該影像屬於各類別的未正規化對數幾率（Logits）與 Softmax
+          機率分佈，僅僅是一次極速的矩陣向量乘法：
+        </p>
+
+        <math display="block" class="editorial-math my-6" aria-label="零樣本分類推論機率計算">
+          <mrow>
+            <mi>P</mi><mo stretchy="false">(</mo><mi>y</mi><mo>=</mo><mi>k</mi><mo>&#x2223;</mo><mi>x</mi><mo stretchy="false">)</mo>
+            <mo>=</mo>
+            <mfrac>
+              <mrow><mo>exp</mo><mrow><mo stretchy="true">(</mo><mfrac><mrow><mover><mi>I</mi><mo>~</mo></mover><mo>&#xb7;</mo><msub><mover><mi>T</mi><mo>~</mo></mover><mi>k</mi></msub></mrow><mi>&#964;</mi></mfrac><mo stretchy="true">)</mo></mrow></mrow>
+              <mrow><msubsup><mo>&#x2211;</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></msubsup><mo>exp</mo><mrow><mo stretchy="true">(</mo><mfrac><mrow><mover><mi>I</mi><mo>~</mo></mover><mo>&#xb7;</mo><msub><mover><mi>T</mi><mo>~</mo></mover><mi>j</mi></msub></mrow><mi>&#964;</mi></mfrac><mo stretchy="true">)</mo></mrow></mrow>
+            </mfrac>
+          </mrow>
+        </math>
+
+        <p>
+          整個過程不需要一張標註圖像進行梯度反向傳播！更令人震撼的是，在 ImageNet-1K 上，完全未見過
+          ImageNet 訓練集的 CLIP-ViT-L/14 達到了 <strong>76.2%</strong> 的 Top-1
+          準確率，精確打平了歷經數月監督微調的標準 ResNet-50 基準。
+        </p>
+
+        <Callout
+          variant="editorial"
+          title="多義詞危機與提示詞工程：為什麼 crane 會讓模型陷入困惑？"
+        >
+          <p class="m-0 text-sm leading-relaxed">
+            在建構文字分類器時，Radford 等人發現了一個深刻的語意問題：
+            <strong>多義詞（Polysemy）</strong>
+            。若直接使用類別單詞作為輸入，單字「crane」在向量空間中會同時受到「建築起重機」與「涉禽涉鳥（鶴）」兩種截然不同語意的拉扯，導致特徵向量偏離兩者。透過提示詞工程，我們將輸入改寫為「a
+            photo of a crane, a type of bird.」，便能精確錨定涉禽子空間；改寫為「a photo of a crane,
+            a construction equipment.」，則精準引導至機械領域。此外，OpenAI 發現針對特定領域設計 80
+            種不同提示模板（如「a cropped photo of the &#123;class&#125;」、「a centered photo of a
+            &#123;class&#125;」）並將它們的特徵向量取平均（Prompt Ensembling），在 ImageNet
+            上帶來了高達 <strong>4.9%</strong> 的顯著精度提升，相當於將模型訓練算力擴展了數倍！
+          </p>
+        </Callout>
+
+        <p>
+          然而，CLIP 最震撼學界的貢獻並不僅僅是「零樣本能打平監督模型」，而是它揭示了一條前所未見的
+          <strong>自然分佈漂移強健性分水嶺（Robustness Watershed）</strong>。
+        </p>
+        <p>
+          在機器學習實務中，模型在實驗室基準集上的高分往往是一場幻覺。當研究者將在 ImageNet 上達到
+          76.2% 準確率的 ResNet-50 拿去測試真實世界的各類自然變體時，發生了災難性的崩潰：
+        </p>
+        <ul class="list-disc pl-6 space-y-2">
+          <li>
+            <strong class="text-ink">ImageNet-V2（重新採集的測試集）：</strong>ResNet-50
+            準確率下跌約 12 個百分點；
+          </li>
+          <li>
+            <strong class="text-ink">ImageNet-R（風格化重繪、雕塑與藝術插畫）：</strong>ResNet-50
+            準確率自 76.2% 雪崩至 <strong>25.4%</strong>（狂跌 50.8%）；
+          </li>
+          <li>
+            <strong class="text-ink">
+              ImageNet-A（自然對抗樣本，能誘使 CNN 犯錯的真實日常相片）：
+            </strong>
+            ResNet-50 準確率甚至直接腰斬至 <strong>2.7%</strong>！
+          </li>
+        </ul>
+        <p>
+          為什麼在 ImageNet 上千錘百煉的監督式模型在藝術畫作或稍有變化的照片面前如此脆弱？因為監督式
+          CNN 為了降低千維交叉熵損失，極易過度擬合訓練集中的
+          <strong>高頻像素表面紋理與背景假關聯</strong>
+          （例如：只要背景是大片綠色草地，模型就傾向於預測為「乳牛」；只要看到某種特定毛皮紋理就判定為小狗，一旦變成木雕或水墨畫便徹底失明）。
+        </p>
+        <p>
+          反觀 CLIP：由於其預訓練信號來自 4
+          億張涵蓋了照片、漫畫、素描、油畫、表情包與網頁商品圖的海量自然對話，自然語言迫使模型學習的是
+          <strong>跨越表現形式的高層次不變概念（Semantic Invariants）</strong>。在 ImageNet-R
+          上，CLIP 零樣本模型維持在驚人的 <strong>88.9%</strong>；在極端嚴苛的 ImageNet-A 上，CLIP
+          依舊穩守 <strong>77.1%</strong>！
+        </p>
+        <p>
+          這項實證結果宣告了一個重大轉折：過去十年視覺領域追求的「在單一資料集上刷榜」，很多時候只是在精細過度擬合特定資料集的採樣偏差；唯有透過自然語言監督所孕育的跨模態幾何空間，才是通往強健開放世界感知的坦途。
+        </p>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 章節 04 · 多模態大航海 -->
+    <!-- ========================================== -->
+    <section id="chapter-04" class="scroll-mt-24 mt-20" aria-labelledby="heading-chapter-04">
+      <PaperSectionHeader
+        kicker="章節 04 / CHAPTER 04"
+        title="多模態大航海：從 CLIP 到文字生圖與具身智慧的語意燈塔"
+        subtitle="THE MULTIMODAL ODYSSEY: FROM CLIP TO GENERATIVE LIGHTHOUSES"
+      />
+
+      <div class="space-y-6 text-base leading-8 text-ink">
+        <p>
+          CLIP
+          的發表，宛如在漆黑未明的人工智慧地圖上點亮了一座光芒萬丈的「跨模態通用座標燈塔」。在此之前，文字生成（NLP）與圖像生成（CV）是兩條完全平行的技術軌道；在
+          CLIP 之後，任何連續的像素與離散的詞彙，都能在同一個 512 維超球體上找到彼此的確切幾何位置。
+        </p>
+        <p>這項特徵空間的貫通，直接引爆了 2022 年至 2024 年的現代生成式 AI 大爆炸：</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+          <div class="border border-ink bg-surface p-6">
+            <p class="m-0 font-mono text-xs font-bold uppercase tracking-wider text-red">
+              跨界應用 01 · 擴散生成模型的語意導航羅盤
+            </p>
+            <h4 class="mt-2 m-0 font-display text-xl font-bold text-ink">
+              DALL-E 2 (unCLIP) 與 Stable Diffusion
+            </h4>
+            <p class="mt-3 m-0 text-sm leading-relaxed text-muted">
+              在潛在擴散模型（Latent
+              Diffusion）中，反向去噪網路如何在每一輪去噪步幅中理解「一隻太空人在火星彈吉他」？底層的交叉注意力機制（Cross-Attention）直接以
+              CLIP 文字編碼器的特徵向量作為 Key 與
+              Value，精準導航隨機高斯噪點凝聚為符合提示詞的高解析度畫面。而在 OpenAI 的 DALL-E 2
+              中，生成過程更是直接以 CLIP
+              影像特徵作為先驗生成目標（Prior），實現了前所未有的圖生圖與語意內插。
+            </p>
+          </div>
+
+          <div class="border border-ink bg-surface p-6">
+            <p class="m-0 font-mono text-xs font-bold uppercase tracking-wider text-red">
+              跨界應用 02 · 多模態大語言模型的眼睛
+            </p>
+            <h4 class="mt-2 m-0 font-display text-xl font-bold text-ink">
+              LLaVA、MiniGPT-4 與開源 MLLM 奠基
+            </h4>
+            <p class="mt-3 m-0 text-sm leading-relaxed text-muted">
+              如何讓純文字的大型語言模型（如 LLaMA）看懂圖片？威斯康辛大學與微軟提出的 LLaVA
+              給出了最經典的解答：將預訓練好的 CLIP-ViT-L/14
+              視覺編碼器完全凍結，僅使用一個極其輕量的線性投影層（Projection Layer），將 CLIP 輸出的
+              256 個視覺圖塊 Token 投影為語言模型的詞嵌入維度。因為 CLIP
+              視覺特徵天生就與自然語言共享座標，LLM
+              僅需極少量的對話資料微調，便能瞬間學會看圖說話與複雜視覺推論。
+            </p>
+          </div>
+        </div>
+
+        <p>
+          然而，作為一座劃時代的里程碑，CLIP
+          並非沒有盲點。隨著學界與工業界對其展開全方位的顯微鏡式剖析，雙塔對比架構的深層局限也逐漸暴露：
+        </p>
+
+        <AsideCard
+          title="詞袋困境與空間屬性綁定缺陷：CLIP 為什麼讀不懂細緻關係？"
+          kicker="THE LIMITATIONS / BAG-OF-WORDS PHENOMENON"
+        >
+          <div class="space-y-3 text-sm leading-relaxed text-muted">
+            <ul class="m-0 list-disc pl-5 space-y-2">
+              <li>
+                <strong class="text-ink">屬性綁定失靈（Attribute Binding Failure）：</strong>
+                若輸入提示詞「一個紅色的方塊在藍色的圓球左邊」，對比「一個藍色的方塊在紅色的圓球左邊」，CLIP
+                的文字編碼器產生的特徵向量往往高達 0.95
+                以上的餘弦相似度！因為對比學習在巨量資料中往往只依賴「紅色」、「方塊」、「藍色」、「圓球」這幾個全域名詞與形容詞的出現與否來完成批次匹配，忽略了句法中精確的修飾關係，產生了典型的「詞袋效應（Bag-of-Words
+                Effect）」。
+              </li>
+              <li>
+                <strong class="text-ink">細粒度幾何與精確計數障礙：</strong>CLIP
+                在區分「三隻貓」與「四隻貓」、判斷複雜空間深度、或進行密集像素級語意分割時表現相對乏力。
+              </li>
+              <li>
+                <strong class="text-ink">網路資料的社會偏見遺毒：</strong>未經深層價值觀過濾的 4
+                億圖文資料庫，包含了網路廣泛存在的性別、種族與文化刻板印象。若未加審查直接作為真實世界門禁或醫療篩查工具，將帶來嚴重的演算法歧視風險。
+              </li>
+            </ul>
+          </div>
+        </AsideCard>
+
+        <p>
+          正是在這些局限的推動下，後續的多模態研究開啟了新的航道：從單純的雙塔對比學習，走向了引入自回歸密集生成的統一多模態架構，以及透過強化學習進行跨模態對齊的新前沿。
+        </p>
+        <p>
+          但無論未來的模型架構如何演變，CLIP
+          所確立的歷史功績已不可磨滅：它第一次向人類證明，文字與視覺不需要各自為政，只要給予足夠尺度的資料與極簡優雅的幾何設計，機器就能在同一個高維宇宙中，看見人類文字所描繪的萬千世界。
+        </p>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 附錄 01：一手文獻清單與技術宣稱邊界 (ZONE B) -->
+    <!-- ========================================== -->
+    <EvidenceList
+      sources={clipSources}
+      timelineEpochs={clipTimelineEpochs}
+      kicker="一手文獻清單 · 技術宣稱邊界 / EVIDENCE ARCHIVE"
+      title="文獻考證與歷史脈絡"
+      titleHighlight="從封閉集合分類到超球體跨模態幾何對齊"
+      description="本章立論嚴格本於 ICML 2021 原著論文、同期官方技術報告、同儕評審紀錄與相關多模態奠基文獻，依歷史時間線重現技術突破的演進軌跡與一手出處。"
+    />
+
+    <!-- ========================================== -->
+    <!-- 附錄 02：核心研發團隊檔案 (ZONE B) -->
+    <!-- ========================================== -->
+    <AuthorGrid
+      authors={paper.authorBriefs}
+      kicker="研發團隊 · 核心檔案 / THE AUTHORS"
+      title="跨越模態邊界的探險家"
+      description="原著論文由 OpenAI 團隊完成。本節呈現主導模型雙塔架構發明、大規模網路資料管線、多模態可解釋性分析與分散式訓練之核心科研人員經文獻考證之關鍵貢獻。"
+    >
+      <div class="mb-12 max-w-4xl space-y-6 text-base leading-8 text-ink">
+        <p>
+          CLIP 的誕生，是 OpenAI 在經歷 GPT
+          家族在純文字領域取得空前成功後，向電腦視覺領域發起的一場蓄謀已久的跨界突襲。在學界依然習慣於在
+          ImageNet、COCO
+          等人工標註的小魚塘裡精雕細琢專用卷積網路的年代，這支團隊展現了令人驚嘆的戰略定力：堅信通用自監督與極簡架構在超大規模資料下的穿透力。
+        </p>
+        <p class="text-muted">
+          第一作者 Alec Radford 再次展現了其作為現代生成式 AI 首席架構師的非凡品味。從 GPT-1、GPT-2
+          到 CLIP，Radford
+          一以貫之的哲學是「拋棄專用結構，回歸最通用的表徵學習」。他敏銳地捕捉到對比學習在計算效率上超越自回歸生成的
+          12 倍優勢，以極簡的對稱 InfoNCE 雙塔架構完成了這項壯舉；而來自 OpenAI 基礎設施與視覺團隊的
+          Jong Wook Kim、Chris Hallacy 與 Aditya Ramesh，則分別在大規模分散式訓練、4 億 WebImageText
+          資料清洗管線，以及多模態特徵幾何驗證上提供了無懈可擊的工程支撐。
+        </p>
+        <p class="text-muted">
+          Gabriel Goh 在神經網路可解釋性上的深刻洞察，則揭示了 CLIP 雙塔中跨模態神經元（Multimodal
+          Neurons）的湧現機制，證明模型內部確實演化出了獨立於特定模態的抽象語意世界觀；而 OpenAI
+          聯合創始人兼首席科學家 Ilya
+          Sutskever，則在整體戰略層面堅定推動超大規模對比學習路線。這支團隊的跨界探索，徹底推倒了分隔自然語言與電腦視覺長達數十年的高牆，為現代多模態人工智慧開啟了波瀾壯闊的大航海時代。
+        </p>
+      </div>
+    </AuthorGrid>
+
+    <!-- ========================================== -->
+    <!-- 篇章導航 -->
+    <!-- ========================================== -->
+    <PaperNavigation currentId="learning-transferable-visual-models-from-natural-language-supervision" />
+  </PaperReadingLayout>
+</BaseLayout>
+
+<script>
+  // ==========================================
+  // 動態實驗室交互邏輯 (CLIENT-SIDE TYPESCRIPT)
+  // ==========================================
+  document.addEventListener('DOMContentLoaded', () => {
+    // ------------------------------------------
+    // 1. Tab Switching Logic
+    // ------------------------------------------
+    const tabMatrix = document.getElementById('clip-tab-matrix');
+    const tabZeroshot = document.getElementById('clip-tab-zeroshot');
+    const panelMatrix = document.getElementById('clip-panel-matrix');
+    const panelZeroshot = document.getElementById('clip-panel-zeroshot');
+
+    if (tabMatrix && tabZeroshot && panelMatrix && panelZeroshot) {
+      tabMatrix.addEventListener('click', () => {
+        tabMatrix.classList.add('border-2', 'border-red', 'bg-red', 'text-surface');
+        tabMatrix.classList.remove('border', 'border-ink/40', 'bg-surface', 'text-ink');
+        tabMatrix.setAttribute('aria-selected', 'true');
+
+        tabZeroshot.classList.remove('border-2', 'border-red', 'bg-red', 'text-surface');
+        tabZeroshot.classList.add('border', 'border-ink/40', 'bg-surface', 'text-ink');
+        tabZeroshot.setAttribute('aria-selected', 'false');
+
+        panelMatrix.classList.remove('hidden');
+        panelZeroshot.classList.add('hidden');
+      });
+
+      tabZeroshot.addEventListener('click', () => {
+        tabZeroshot.classList.add('border-2', 'border-red', 'bg-red', 'text-surface');
+        tabZeroshot.classList.remove('border', 'border-ink/40', 'bg-surface', 'text-ink');
+        tabZeroshot.setAttribute('aria-selected', 'true');
+
+        tabMatrix.classList.remove('border-2', 'border-red', 'bg-red', 'text-surface');
+        tabMatrix.classList.add('border', 'border-ink/40', 'bg-surface', 'text-ink');
+        tabMatrix.setAttribute('aria-selected', 'false');
+
+        panelZeroshot.classList.remove('hidden');
+        panelMatrix.classList.add('hidden');
+      });
+    }
+
+    // ------------------------------------------
+    // 2. Module 01: Matrix & InfoNCE Loss Logic
+    // ------------------------------------------
+    const tempSlider = document.getElementById('clip-temp-slider') as HTMLInputElement | null;
+    const tempValDisplay = document.getElementById('clip-temp-val');
+    const perturbSlider = document.getElementById('clip-perturb-slider') as HTMLInputElement | null;
+    const perturbValDisplay = document.getElementById('clip-perturb-val');
+
+    const presetIdealBtn = document.getElementById('clip-preset-ideal');
+    const presetRandomBtn = document.getElementById('clip-preset-random');
+    const presetConfusedBtn = document.getElementById('clip-preset-confused');
+
+    const inspectInfo = document.getElementById('clip-inspect-info');
+    const lossI2TDisplay = document.getElementById('clip-loss-i2t');
+    const lossTotalDisplay = document.getElementById('clip-loss-total');
+
+    const cells = document.querySelectorAll<HTMLElement>('.clip-cell');
+
+    type PresetKey = 'ideal' | 'random' | 'confused';
+
+    const baseMatrices: Record<PresetKey, number[][]> = {
+      ideal: [
+        [0.88, 0.12, 0.05, 0.1],
+        [0.09, 0.91, 0.14, 0.08],
+        [0.06, 0.11, 0.86, 0.15],
+        [0.12, 0.07, 0.13, 0.89],
+      ],
+      random: [
+        [0.15, 0.12, 0.08, 0.14],
+        [0.11, 0.16, 0.09, 0.13],
+        [0.14, 0.1, 0.15, 0.11],
+        [0.09, 0.13, 0.12, 0.14],
+      ],
+      confused: [
+        [0.65, 0.25, 0.3, 0.58],
+        [0.35, 0.7, 0.42, 0.28],
+        [0.22, 0.38, 0.62, 0.45],
+        [0.48, 0.31, 0.39, 0.68],
+      ],
+    };
+
+    let currentMatrix: number[][] = JSON.parse(JSON.stringify(baseMatrices.ideal));
+    let selectedCell = { r: 0, c: 0 };
+
+    function calculateInfoNCE() {
+      const tau = parseFloat(tempSlider ? tempSlider.value : '0.07');
+      if (tempValDisplay) tempValDisplay.textContent = tau.toFixed(2);
+
+      const perturb = parseFloat(perturbSlider ? perturbSlider.value : '0.12');
+      if (perturbValDisplay) perturbValDisplay.textContent = perturb.toFixed(2);
+
+      // Apply perturbation to cell [0, 3] (I1 and T4)
+      currentMatrix[0][3] = perturb;
+
+      const N = 4;
+      const logits: number[][] = [];
+      for (let i = 0; i < N; i++) {
+        logits[i] = [];
+        for (let j = 0; j < N; j++) {
+          logits[i][j] = currentMatrix[i][j] / tau;
+        }
+      }
+
+      // Row-wise Softmax: P(T_j | I_i)
+      const probRow: number[][] = [];
+      for (let i = 0; i < N; i++) {
+        probRow[i] = [];
+        const maxLogit = Math.max(...logits[i]);
+        let sumExp = 0;
+        for (let j = 0; j < N; j++) {
+          sumExp += Math.exp(logits[i][j] - maxLogit);
+        }
+        for (let j = 0; j < N; j++) {
+          probRow[i][j] = Math.exp(logits[i][j] - maxLogit) / sumExp;
+        }
+      }
+
+      // Column-wise Softmax: P(I_i | T_j)
+      const probCol: number[][] = [];
+      for (let j = 0; j < N; j++) {
+        probCol[j] = [];
+        const colLogits = [logits[0][j], logits[1][j], logits[2][j], logits[3][j]];
+        const maxLogit = Math.max(...colLogits);
+        let sumExp = 0;
+        for (let i = 0; i < N; i++) {
+          sumExp += Math.exp(logits[i][j] - maxLogit);
+        }
+        for (let i = 0; i < N; i++) {
+          probCol[j][i] = Math.exp(logits[i][j] - maxLogit) / sumExp;
+        }
+      }
+
+      // Compute losses
+      let lossI2T = 0;
+      let lossT2I = 0;
+      for (let i = 0; i < N; i++) {
+        lossI2T += -Math.log(Math.max(probRow[i][i], 1e-9));
+        lossT2I += -Math.log(Math.max(probCol[i][i], 1e-9));
+      }
+      lossI2T /= N;
+      lossT2I /= N;
+      const totalLoss = (lossI2T + lossT2I) / 2;
+
+      if (lossI2TDisplay) lossI2TDisplay.textContent = lossI2T.toFixed(3);
+      if (lossTotalDisplay) lossTotalDisplay.textContent = totalLoss.toFixed(3);
+
+      // Render Cells
+      cells.forEach((cell) => {
+        const r = parseInt(cell.getAttribute('data-r') || '0', 10);
+        const c = parseInt(cell.getAttribute('data-c') || '0', 10);
+        const sim = currentMatrix[r][c];
+        const p = probRow[r][c];
+
+        // Color intensity based on similarity
+        let bgStyle: string;
+        let textStyle: string;
+        if (sim >= 0.7) {
+          bgStyle = `rgba(217, 38, 38, ${Math.min(0.9, 0.2 + sim * 0.7)})`;
+          textStyle = 'text-surface font-bold';
+        } else if (sim >= 0.4) {
+          bgStyle = `rgba(217, 38, 38, ${sim * 0.4})`;
+          textStyle = 'text-ink font-bold';
+        } else if (sim >= 0.2) {
+          bgStyle = `rgba(217, 38, 38, 0.1)`;
+          textStyle = 'text-ink';
+        } else {
+          bgStyle = 'var(--color-surface, #ffffff)';
+          textStyle = 'text-muted';
+        }
+
+        cell.style.backgroundColor = bgStyle;
+        cell.innerHTML = `
+          <div class="${textStyle} font-mono text-sm leading-tight">${sim.toFixed(2)}</div>
+          <div class="font-mono text-[11px] ${textStyle} opacity-90 mt-0.5">P: ${(p * 100).toFixed(1)}%</div>
+        `;
+
+        if (r === selectedCell.r && c === selectedCell.c) {
+          cell.classList.add('ring-2', 'ring-red', 'border-red');
+        } else {
+          cell.classList.remove('ring-2', 'ring-red', 'border-red');
+        }
+      });
+
+      // Update Inspector
+      if (inspectInfo) {
+        const r = selectedCell.r;
+        const c = selectedCell.c;
+        const sim = currentMatrix[r][c];
+        const logit = logits[r][c];
+        const pRow = probRow[r][c];
+        const pCol = probCol[c][r];
+        const isDiag = r === c;
+
+        const rowLabels = ['I₁: 衝浪柴犬', 'I₂: 月球騎馬', 'I₃: 台北雨夜', 'I₄: 窗邊橘貓'];
+        const colLabels = ['T₁: 衝浪柴犬', 'T₂: 月球騎馬', 'T₃: 台北雨夜', 'T₄: 窗邊橘貓'];
+
+        inspectInfo.innerHTML = `
+          <p class="m-0 font-display text-base font-bold text-ink">
+            儲存格 [${rowLabels[r]}, ${colLabels[c]}] ${isDiag ? '（主對角線正樣本）' : '（非對角線負樣本）'}
+          </p>
+          <p class="m-0 font-mono text-xs text-muted">
+            餘弦相似度 S: <span class="text-ink font-bold">${sim.toFixed(2)}</span> | 縮放 Logit (S/τ): <span class="text-ink font-bold">${logit.toFixed(2)}</span>
+          </p>
+          <p class="m-0 font-mono text-xs text-muted">
+            影像到文字機率 P(T|I): <span class="text-red font-bold">${(pRow * 100).toFixed(2)}%</span> | 文字到影像機率 P(I|T): <span class="text-red font-bold">${(pCol * 100).toFixed(2)}%</span>
+          </p>
+        `;
+      }
+    }
+
+    // Attach Cell Click
+    cells.forEach((cell) => {
+      cell.addEventListener('click', () => {
+        const r = parseInt(cell.getAttribute('data-r') || '0', 10);
+        const c = parseInt(cell.getAttribute('data-c') || '0', 10);
+        selectedCell = { r, c };
+        calculateInfoNCE();
+      });
+    });
+
+    // Preset Buttons
+    function setPreset(name: PresetKey) {
+      currentMatrix = JSON.parse(JSON.stringify(baseMatrices[name]));
+      if (perturbSlider) perturbSlider.value = currentMatrix[0][3].toString();
+
+      [presetIdealBtn, presetRandomBtn, presetConfusedBtn].forEach((btn) => {
+        if (!btn) return;
+        btn.classList.remove('border-ink', 'bg-ink', 'text-surface');
+        btn.classList.add('border-ink/40', 'bg-surface', 'text-ink');
+      });
+
+      const activeBtn =
+        name === 'ideal' ? presetIdealBtn : name === 'random' ? presetRandomBtn : presetConfusedBtn;
+      if (activeBtn) {
+        activeBtn.classList.add('border-ink', 'bg-ink', 'text-surface');
+        activeBtn.classList.remove('border-ink/40', 'bg-surface', 'text-ink');
+      }
+
+      calculateInfoNCE();
+    }
+
+    if (presetIdealBtn) presetIdealBtn.addEventListener('click', () => setPreset('ideal'));
+    if (presetRandomBtn) presetRandomBtn.addEventListener('click', () => setPreset('random'));
+    if (presetConfusedBtn) presetConfusedBtn.addEventListener('click', () => setPreset('confused'));
+
+    if (tempSlider) tempSlider.addEventListener('input', calculateInfoNCE);
+    if (perturbSlider) perturbSlider.addEventListener('input', calculateInfoNCE);
+
+    calculateInfoNCE();
+
+    // ------------------------------------------
+    // 3. Module 02: Zero-Shot Decision Wind Tunnel
+    // ------------------------------------------
+    const imgBtns = document.querySelectorAll<HTMLElement>('.clip-img-btn');
+    const promptRadios = document.querySelectorAll<HTMLInputElement>(
+      'input[name="clip-prompt-mode"]',
+    );
+    const probBarsContainer = document.getElementById('clip-prob-bars');
+    const promptDisplay = document.getElementById('clip-prompt-display');
+    const insightText = document.getElementById('clip-insight-text');
+
+    type ImageKey = 'zebra' | 'banana' | 'crane' | 'xray';
+    type PromptMode = 'raw' | 'template' | 'ensemble';
+
+    interface ZeroShotItem {
+      title: string;
+      candidates: string[];
+      sims: Record<PromptMode, number[]>;
+      insights: Record<PromptMode, string>;
+    }
+
+    let currentImgKey: ImageKey = 'zebra';
+    let currentPromptMode: PromptMode = 'template';
+
+    const zeroShotData: Record<ImageKey, ZeroShotItem> = {
+      zebra: {
+        title: '草原上的斑馬',
+        candidates: ['zebra (斑馬)', 'horse (馬)', 'donkey (驢子)', 'tiger (老虎)'],
+        sims: {
+          raw: [0.72, 0.65, 0.58, 0.4],
+          template: [0.86, 0.52, 0.45, 0.32],
+          ensemble: [0.91, 0.48, 0.4, 0.28],
+        },
+        insights: {
+          raw: '裸標籤模式下，"zebra" 與 "horse"、"donkey" 相似度相近（0.72 vs 0.65），模型對物種邊界判斷略帶猶豫。',
+          template:
+            '加入標準模板 "a photo of a zebra." 後，正類別相似度自 0.72 躍升至 0.86，馬與驢子的競爭被有效壓制，Top-1 機率大幅提升至 96%！',
+          ensemble:
+            '8 種情境模板集成後，模型對斑馬特徵的信心度達到 0.91，負類別機率被均勻壓至 2% 以下，展現出極致的分類強健性。',
+        },
+      },
+      banana: {
+        title: '廚房砧板切片香蕉',
+        candidates: ['banana (香蕉)', 'plantain (大蕉)', 'kitchen knife (菜刀)', 'lemon (檸檬)'],
+        sims: {
+          raw: [0.68, 0.64, 0.55, 0.42],
+          template: [0.83, 0.58, 0.46, 0.35],
+          ensemble: [0.89, 0.51, 0.4, 0.3],
+        },
+        insights: {
+          raw: '畫面中切片的黃色香蕉與大蕉極易混淆，且背景中的菜刀造成了額外的物體注意力分散。',
+          template:
+            '標準模板 "a photo of a banana." 明確了「主體是香蕉」的攝影意圖，菜刀的權重被自然降解為背景噪訊。',
+          ensemble:
+            '多模板集成有效平衡了近景特寫（close-up）與完整物件描述，香蕉的判定置信度高達 94.2%。',
+        },
+      },
+      crane: {
+        title: '白紙折成的紙鶴',
+        candidates: ['origami crane (摺紙鶴)', 'crane (起重機/鶴)', 'bird (鳥類)', 'toy (玩具)'],
+        sims: {
+          raw: [0.45, 0.62, 0.52, 0.48],
+          template: [0.65, 0.5, 0.58, 0.42],
+          ensemble: [0.88, 0.38, 0.45, 0.35],
+        },
+        insights: {
+          raw: '【多義詞翻車現場】裸標籤 "crane" 既代表工程起重機也代表鳥類，在紙鶴面前產生嚴重的語意空間撕裂，導致分類置信度混沌。',
+          template:
+            '模板 "a photo of a origami crane." 藉由構詞限定，將紙鶴從機械起重機與真實活鳥的雙重拉扯中成功拯救出來。',
+          ensemble:
+            '多提示詞集成徹底鎖定「藝術摺紙手工藝品」子空間，消除多義詞干擾，摺紙鶴以 91.5% 壓倒性勝出！',
+        },
+      },
+      xray: {
+        title: '胸部 X 光透視片',
+        candidates: [
+          'chest x-ray (胸透)',
+          'rib cage (肋骨架)',
+          'medical scan (醫療掃描)',
+          'skeleton (骷髏)',
+        ],
+        sims: {
+          raw: [0.55, 0.52, 0.5, 0.48],
+          template: [0.72, 0.56, 0.6, 0.42],
+          ensemble: [0.82, 0.48, 0.55, 0.36],
+        },
+        insights: {
+          raw: '面對醫學影像這種極端分佈外（Out-of-Distribution）資料，裸標籤的餘弦相似度普遍偏低（0.50~0.55），各類別分佈平坦。',
+          template:
+            '透過加入醫療語境模板 "a centered photo of a chest x-ray."，大幅激發了模型在預訓練中見過的醫學圖文記憶。',
+          ensemble:
+            '集成策略在分佈漂移任務上展現出最大價值：將醫學掃描與胸透的分類準確率自隨機猜測邊緣提升至 85% 以上！',
+        },
+      },
+    };
+
+    function updateZeroShot() {
+      const data = zeroShotData[currentImgKey];
+      const rawSims = data.sims[currentPromptMode];
+      const tau = 0.07;
+
+      // Calculate Softmax
+      const logits = rawSims.map((s: number) => s / tau);
+      const maxL = Math.max(...logits);
+      const exps = logits.map((l: number) => Math.exp(l - maxL));
+      const sumExp = exps.reduce((a: number, b: number) => a + b, 0);
+      const probs = exps.map((e: number) => e / sumExp);
+
+      // Prompt Display Text
+      if (promptDisplay) {
+        if (currentPromptMode === 'raw') {
+          promptDisplay.textContent = 'Prompt: "{label}" (裸標籤)';
+        } else if (currentPromptMode === 'template') {
+          promptDisplay.textContent = 'Prompt: "a photo of a {label}." (標準模板)';
+        } else {
+          promptDisplay.textContent = 'Prompt: 8-Prompt Ensemble Average (多模板集成)';
+        }
+      }
+
+      // Insight Text
+      if (insightText) {
+        insightText.textContent = data.insights[currentPromptMode];
+      }
+
+      // Render Bars
+      if (probBarsContainer) {
+        probBarsContainer.innerHTML = '';
+        data.candidates.forEach((cand: string, idx: number) => {
+          const sim = rawSims[idx];
+          const prob = probs[idx];
+          const isTop = prob === Math.max(...probs);
+
+          const barItem = document.createElement('div');
+          barItem.className = 'space-y-1.5';
+          barItem.innerHTML = `
+            <div class="flex items-center justify-between text-xs font-mono">
+              <span class="font-bold ${isTop ? 'text-red' : 'text-ink'}">${cand}</span>
+              <span class="text-muted">餘弦: <strong class="text-ink">${sim.toFixed(2)}</strong> | 機率: <strong class="${isTop ? 'text-red font-bold text-sm' : 'text-ink'}">${(prob * 100).toFixed(1)}%</strong></span>
+            </div>
+            <div class="h-3 w-full bg-paper border border-line overflow-hidden">
+              <div
+                class="h-full ${isTop ? 'bg-red' : 'bg-ink/40'} transition-all duration-500"
+                style="width: ${(prob * 100).toFixed(1)}%"
+              ></div>
+            </div>
+          `;
+          probBarsContainer.appendChild(barItem);
+        });
+      }
+    }
+
+    imgBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        imgBtns.forEach((b) => {
+          b.classList.remove('border-ink', 'bg-ink', 'text-surface');
+          b.classList.add('border-ink/40', 'bg-surface', 'text-ink');
+        });
+        btn.classList.add('border-ink', 'bg-ink', 'text-surface');
+        btn.classList.remove('border-ink/40', 'bg-surface', 'text-ink');
+        currentImgKey = (btn.getAttribute('data-img') as ImageKey) || 'zebra';
+        updateZeroShot();
+      });
+    });
+
+    promptRadios.forEach((radio) => {
+      radio.addEventListener('change', (e: Event) => {
+        const target = e.target as HTMLInputElement | null;
+        if (target && target.checked) {
+          currentPromptMode = target.value as PromptMode;
+          updateZeroShot();
+        }
+      });
+    });
+
+    updateZeroShot();
+  });
+</script>

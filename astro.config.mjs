@@ -2,7 +2,8 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  site: 'https://llm-field-notes.local',
+  site: 'https://gloomcheng.github.io',
+  base: '/the-llm',
   trailingSlash: 'never',
   vite: {
     plugins: [tailwindcss()],

@@ -16,8 +16,19 @@
     'HiraMinProN-W3', 'HiraMinProN-W6', 'Yu Mincho', 'YuMincho', 'Shippori Mincho',
     'Zen Old Mincho', 'BIZ UDPMincho', 'Noto Serif CJK TC', 'Noto Serif TC', 'Jigmo',
     'Iowan Old Style', 'Baskerville', Georgia, serif;
+  --font-serif: var(--font-display);
   --font-sans: 'LINE Seed TW', 'LINE Seed', 'Noto Sans TC', 'Helvetica Neue', Arial, sans-serif;
   --font-mono: 'SFMono-Regular', 'Roboto Mono', 'Noto Sans Mono', Consolas, monospace;
+
+  /* Typography System */
+  --text-body: 1rem;
+  --text-body--line-height: 2rem;
+  --text-body--letter-spacing: 0em;
+
+  --text-caption: 0.875rem;
+  --text-caption--line-height: 1.5rem;
+  --text-caption--letter-spacing: 0em;
+
   --shadow-editorial: 0 16px 36px rgb(42 35 24 / 7%);
 }
 

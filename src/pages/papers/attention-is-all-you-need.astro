@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../lib/paths';
 import PaperMeta from '../../components/PaperMeta.astro';
 import PaperReadingLayout from '../../components/PaperReadingLayout.astro';
 import StoryRail from '../../components/StoryRail.astro';
@@ -165,11 +166,11 @@ const timelineEpochs: TimelineEpoch[] = [
   <article>
     <header class={`${shell} pt-10`}>
       <div class="flex gap-3 font-mono text-sm uppercase tracking-[0.08em] text-muted">
-        <a class="text-red underline underline-offset-4" href="/">
+        <a class="text-red underline underline-offset-4" href={withBase('/')}>
           THE LLM
         </a>
         <span aria-hidden="true">/</span>
-        <span>第一章</span>
+        <span>第 01 章</span>
       </div>
       <div class="grid items-end gap-12 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-24">
         <div>
@@ -223,26 +224,26 @@ const timelineEpochs: TimelineEpoch[] = [
         </div>
         <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs sm:text-sm">
           <div class="flex items-center gap-1.5">
-            <span class="text-muted">上一篇章：</span>
+            <span class="text-muted">上一篇：</span>
             <a
-              href="/papers/a-mathematical-theory-of-communication"
+              href={withBase('/papers/a-mathematical-theory-of-communication')}
               class="font-semibold text-muted underline underline-offset-4 hover:text-ink transition-colors"
-              aria-label="返回序章：A Mathematical Theory of Communication"
+              aria-label="返回：A Mathematical Theory of Communication"
             >
-              ← 序章 資訊理論
+              ← 資訊理論（Shannon 1948）
             </a>
           </div>
           <span class="text-line hidden sm:inline" aria-hidden="true">
             |
           </span>
           <div class="flex items-center gap-1.5">
-            <span class="text-muted">下一篇章：</span>
+            <span class="text-muted">下一篇：</span>
             <a
-              href="/papers/improving-language-understanding-by-generative-pre-training"
+              href={withBase('/papers/improving-language-understanding-by-generative-pre-training')}
               class="font-semibold text-red underline underline-offset-4 hover:text-ink transition-colors"
-              aria-label="跳轉至第二章：Improving Language Understanding by Generative Pre-Training"
+              aria-label="跳轉至：Improving Language Understanding by Generative Pre-Training"
             >
-              第二章 GPT-1 預訓練 ↗
+              GPT-1 預訓練 ↗
             </a>
           </div>
         </div>
@@ -277,7 +278,7 @@ const timelineEpochs: TimelineEpoch[] = [
 
       <PaperReadingLayout>
         <div class="min-w-0 max-w-2xl space-y-6 text-base leading-8 text-muted">
-          <p class="font-display text-2xl text-ink leading-snug">
+          <p>
             話說在 2017 年那篇驚天動地的《Attention Is All You
             Need》問世之前，自然語言處理（NLP）完全是循環神經網路（RNN）與長短期記憶（LSTM）的天下。
           </p>
@@ -413,12 +414,12 @@ const timelineEpochs: TimelineEpoch[] = [
             地——講完第一個英文單詞，再依據自己講出的話講下一個單詞——向外吐出翻譯。
           </p>
 
-          <h3 class="font-display text-2xl text-ink pt-4">手心裡的代碼：資訊瓶頸與長句雪崩</h3>
+          <h3 class="font-display text-2xl text-ink pt-4">手心裡的密碼：資訊瓶頸與長句雪崩</h3>
           <p>
             這正是<strong>「資訊瓶頸（Information Bottleneck）」</strong>
             的恐怖之處：好比逼一位口譯員聽完長達 60
             個字的高難度演說，不准動手寫筆記，只准在手心寫下一個 512
-            維的數字代碼，然後完全憑這個代碼把整篇演說精準翻成英文。
+            維的數字編碼，然後完全憑這個編碼把整篇演說精準翻成英文。
           </p>
           <p>任何人都知道這違背認知常理。當句子變長時，RNN 遇到了兩個致命死穴：</p>
           <ul class="list-disc pl-5 space-y-2 text-ink">
@@ -723,7 +724,7 @@ const timelineEpochs: TimelineEpoch[] = [
                 格的「那份同意書」，到底要如何隔空對齊第 4 格的「受訪者同意書」？
               </p>
               <p class="mb-10">
-                回想第一幕所剖析的循環泥淖：若交由傳統 RNN 處理，第 10
+                回想前文所剖析的循環泥淖：若交由傳統 RNN 處理，第 10
                 格只能接收前一格留下的隱藏狀態。為了將第 4 格「受訪者同意書」的線索送到第 10
                 格，訊號必須經過第 5 至第 9 格連續五次矩陣壓縮與遞歸更新：
               </p>
@@ -751,7 +752,7 @@ const timelineEpochs: TimelineEpoch[] = [
               </div>
               <p class="mb-10">
                 要做到這一點，首先必須為輸入的每一個語意單元編上序號。在真實模型中，文字會被切成更細的
-                Token；此處我們先以 10 個核心語意位置為例，觀察這張全局對齊網是如何鋪展開來的。
+                Token；此處我們先以 10 個核心語意位置為例，觀察這張全域對齊網是如何鋪展開來的。
               </p>
               <div class="mb-10 border-y border-line py-6">
                 <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
@@ -880,7 +881,7 @@ const timelineEpochs: TimelineEpoch[] = [
                   Transformer
                   的架構優勢在於：在給定長度的上下文視窗內，將任意兩位置間的資訊傳遞路徑縮短為{' '}
                   <code>O(1)</code>，並使 Encoder 同層表徵得以在 GPU
-                  上高度平行運算。但其注意力矩陣的計算與顯存複雜度依然為 <code>O(n²)</code>
+                  上高度平行運算。但其注意力矩陣的計算與視訊記憶體複雜度依然為 <code>O(n²)</code>
                   ，在超長序列處理上仍有計算開銷的硬體約束。
                 </p>
               </Callout>
@@ -914,7 +915,7 @@ const timelineEpochs: TimelineEpoch[] = [
                 <div>
                   <dt class="font-mono text-sm text-red">它算什麼</dt>
                   <dd class="m-0 text-muted">
-                    當前位置的 Query 與所有位置的 Key 計算內積相關度，經 Softmax 歸一化為權重。
+                    當前位置的 Query 與所有位置的 Key 計算內積相關度，經 Softmax 正規化為權重。
                   </dd>
                 </div>
                 <div>
@@ -1981,7 +1982,7 @@ const timelineEpochs: TimelineEpoch[] = [
               </dd>
               <dt class="font-mono text-sm text-blue">權重本質</dt>
               <dd class="m-0 text-muted">
-                歸一化後的數值代表特徵聚合的相對比例（Attention
+                正規化後的數值代表特徵聚合的相對比例（Attention
                 Weights），使梯度可在反向傳播中平滑傳遞。
               </dd>
             </dl>
@@ -2034,7 +2035,7 @@ const timelineEpochs: TimelineEpoch[] = [
           </div>
         </PaperReadingLayout>
 
-        <!-- BREAKOUT: 動態 Attention 擾動實驗室 -->
+        <!-- BREAKOUT: 數位原生注意力矩陣沙盒 -->
         <figure
           class="my-16 w-full max-w-6xl mx-auto border border-ink bg-surface p-6 sm:p-10 shadow-sm"
           role="region"
@@ -2050,116 +2051,416 @@ const timelineEpochs: TimelineEpoch[] = [
                   id="attention-lab-title"
                   class="mt-2 m-0 font-display text-2xl sm:text-3xl font-bold text-ink"
                 >
-                  注意力熱力擾動實驗室：文字一換，焦點如何隨之轉移？
+                  可操控注意力矩陣沙盒：從向量內積、尺度縮放到 Softmax 熱力分佈
                 </h3>
               </div>
-              <span class="font-mono text-xs text-muted">Vaswani 2017 原著經典觀察</span>
+              <span class="font-mono text-xs text-muted">Vaswani 2017 原著第 3.2.1 節核心實作</span>
             </div>
-            <figcaption class="mt-3 max-w-3xl text-sm leading-relaxed text-muted">
-              在 2017 年 Transformer 原著（第 8 頁 Figure 5）與著名的 Winograd Schema 測試中，Google
-              研究團隊發現了注意力機制的驚人能力：
-              <strong>當句子中僅改變一個形容詞時，代名詞的注意力焦點會瞬間完全翻轉</strong>
-              。請點選下方情境切換按鈕或個別單詞，親手擾動語句並觀察 Attention
-              權重分佈與熱力圖的即時重算。
+            <figcaption class="mt-3 max-w-4xl text-sm leading-relaxed text-muted">
+              在 2017 年 Transformer 原著中，
+              <strong>縮放點積注意力（Scaled Dot-Product Attention）</strong>
+              是驅動整座語言架構的心臟。
+              本沙盒提供全互動的可解釋性探索環境：切換經典語句或輸入自訂文字，動態調控溫度係數{' '}
+              <span class="font-mono">τ</span> 與
+              <span class="font-mono">
+                √d<sub>k</sub>
+              </span>{' '}
+              縮放開關，即時檢視 <span class="font-mono">N × N</span> 全景注意力矩陣、
+              詞間動態弧線流向，以及完整的逐步張量算式拆解。
             </figcaption>
           </div>
 
-          <!-- Scenario Selection Tabs -->
-          <div class="mt-6 flex flex-wrap gap-2" role="tablist" aria-label="情境切換">
-            <button
-              type="button"
-              class="attention-scenario-btn border border-ink bg-ink text-surface px-4 py-2 font-mono text-xs font-bold transition hover:opacity-90 cursor-pointer"
-              data-scenario="winograd-tired"
-              role="tab"
-              aria-selected="true"
-            >
-              經典 Winograd A：...too tired (動物疲憊)
-            </button>
-            <button
-              type="button"
-              class="attention-scenario-btn border border-ink bg-paper text-ink px-4 py-2 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer"
-              data-scenario="winograd-wide"
-              role="tab"
-              aria-selected="false"
-            >
-              經典 Winograd B：...too wide (街道太寬)
-            </button>
-            <button
-              type="button"
-              class="attention-scenario-btn border border-ink bg-paper text-ink px-4 py-2 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer"
-              data-scenario="tw-he"
-              role="tab"
-              aria-selected="false"
-            >
-              臺灣情境 C：...他 忘記簽名
-            </button>
-            <button
-              type="button"
-              class="attention-scenario-btn border border-ink bg-paper text-ink px-4 py-2 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer"
-              data-scenario="tw-it"
-              role="tab"
-              aria-selected="false"
-            >
-              臺灣情境 D：...它 遺失在實驗室
-            </button>
-          </div>
-
-          <!-- Interactive Sentence Tokens -->
-          <div class="mt-6 border border-ink bg-paper-deep p-4 sm:p-6">
-            <p class="m-0 font-mono text-xs font-semibold uppercase tracking-wider text-muted mb-3">
-              點擊任一單詞切換 Query 焦點（預設聚焦核心代名詞）：
-            </p>
-            <div id="attention-tokens-container" class="flex flex-wrap gap-2"></div>
-          </div>
-
-          <!-- Main Lab Grid -->
-          <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12 items-start">
-            <!-- Left: Bar Chart & Distribution (7 cols) -->
-            <div class="lg:col-span-7 border border-ink bg-paper p-5 sm:p-6">
-              <div class="flex items-center justify-between mb-4 border-b border-line pb-3">
-                <span class="font-mono text-xs font-bold uppercase text-ink">
-                  注意力分佈權重 (Softmax α)
-                </span>
-                <span
-                  id="attention-current-query-label"
-                  class="font-mono text-xs text-red font-semibold"
-                >
-                  Query: it
-                </span>
-              </div>
-
-              <!-- Bar chart container -->
-              <div id="attention-bars-container" class="space-y-2"></div>
+          <!-- Scenario Selection & Custom Sentence Input -->
+          <div class="mt-6 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <span class="font-mono text-xs font-bold uppercase tracking-wider text-ink">
+                選擇語句情境（或輸入自訂句子）：
+              </span>
+              <span class="font-mono text-xs text-muted">支援空格或中文斷詞</span>
             </div>
 
-            <!-- Right: Mechanics Explanation (5 cols) -->
-            <div class="lg:col-span-5 border border-ink bg-surface p-5 sm:p-6 space-y-4">
-              <div class="border-b border-line pb-3">
-                <span class="font-mono text-xs font-semibold uppercase tracking-[0.1em] text-red">
-                  HOW IT WORKS / 擾動物理機制
+            <!-- Scenario Tabs -->
+            <div class="flex flex-wrap gap-2" role="tablist" aria-label="情境切換">
+              <button
+                type="button"
+                class="attention-scenario-btn border border-ink bg-ink text-surface px-3 py-1.5 font-mono text-xs font-bold transition hover:opacity-90 cursor-pointer"
+                data-scenario="winograd-tired"
+                role="tab"
+                aria-selected="true"
+              >
+                經典 Winograd A：...too tired (動物疲憊)
+              </button>
+              <button
+                type="button"
+                class="attention-scenario-btn border border-ink bg-paper text-ink px-3 py-1.5 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer"
+                data-scenario="winograd-wide"
+                role="tab"
+                aria-selected="false"
+              >
+                經典 Winograd B：...too wide (街道太寬)
+              </button>
+              <button
+                type="button"
+                class="attention-scenario-btn border border-ink bg-paper text-ink px-3 py-1.5 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer"
+                data-scenario="tw-he"
+                role="tab"
+                aria-selected="false"
+              >
+                臺灣情境 C：...他 忘記簽名 (指代受訪者)
+              </button>
+              <button
+                type="button"
+                class="attention-scenario-btn border border-ink bg-paper text-ink px-3 py-1.5 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer"
+                data-scenario="tw-it"
+                role="tab"
+                aria-selected="false"
+              >
+                臺灣情境 D：...它 遺失在實驗室 (指代同意書)
+              </button>
+            </div>
+
+            <!-- Custom Sentence Bar -->
+            <form id="attention-custom-form" class="flex flex-col sm:flex-row gap-2 pt-1">
+              <input
+                id="attention-custom-input"
+                type="text"
+                placeholder="輸入自訂語句（例：研究員 用 筆記型電腦 分析 複雜 的 語意 關聯）"
+                class="flex-1 border border-ink/40 bg-surface px-3 py-2 font-mono text-xs sm:text-sm text-ink focus:border-ink focus:outline-none"
+                aria-label="自訂測試語句"
+              />
+              <button
+                type="submit"
+                class="border border-ink bg-blue text-surface px-4 py-2 font-mono text-xs font-bold transition hover:opacity-90 cursor-pointer whitespace-nowrap"
+              >
+                生成注意力矩陣
+              </button>
+            </form>
+          </div>
+
+          <!-- Perturbation & Multi-Head Control Deck -->
+          <div class="mt-6 border border-ink bg-paper-deep p-4 sm:p-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+            <!-- Multi-Head Toggle -->
+            <div>
+              <label class="block font-mono text-xs font-bold uppercase tracking-wider text-ink mb-2">
+                注意力頭 (Head) 視角：
+              </label>
+              <div class="grid grid-cols-3 gap-1" role="group" aria-label="注意力頭視角切換">
+                <button
+                  type="button"
+                  class="attention-head-btn border border-ink bg-ink text-surface py-1.5 px-2 font-mono text-xs font-semibold text-center cursor-pointer transition"
+                  data-head="0"
+                  aria-pressed="true"
+                >
+                  Head 1<br />
+                  <span class="font-mono text-xs opacity-80">語法指代</span>
+                </button>
+                <button
+                  type="button"
+                  class="attention-head-btn border border-ink bg-surface text-ink py-1.5 px-2 font-mono text-xs font-semibold text-center cursor-pointer transition hover:bg-paper"
+                  data-head="1"
+                  aria-pressed="false"
+                >
+                  Head 2<br />
+                  <span class="font-mono text-xs opacity-80">局部前後文</span>
+                </button>
+                <button
+                  type="button"
+                  class="attention-head-btn border border-ink bg-surface text-ink py-1.5 px-2 font-mono text-xs font-semibold text-center cursor-pointer transition hover:bg-paper"
+                  data-head="2"
+                  aria-pressed="false"
+                >
+                  Head 3<br />
+                  <span class="font-mono text-xs opacity-80">全域播送</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Temperature Slider -->
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <label
+                  for="attention-temperature-slider"
+                  class="font-mono text-xs font-bold uppercase tracking-wider text-ink"
+                >
+                  溫度係數 <span class="text-red">τ</span>：
+                  <span id="attention-temp-val" class="text-red">
+                    1.0
+                  </span>
+                </label>
+                <span id="attention-temp-status" class="font-mono text-xs text-muted">
+                  標準平滑
+                </span>
+              </div>
+              <input
+                id="attention-temperature-slider"
+                type="range"
+                min="0.2"
+                max="3.0"
+                step="0.1"
+                value="1.0"
+                class="w-full accent-red cursor-pointer"
+                aria-label="溫度係數調節滑桿"
+              />
+              <div class="flex justify-between font-mono text-xs text-muted mt-1">
+                <span>0.2 尖銳 (Argmax)</span>
+                <span>1.0 原著</span>
+                <span>3.0 平坦 (Uniform)</span>
+              </div>
+            </div>
+
+            <!-- Scaling Factor Toggle -->
+            <div>
+              <span class="block font-mono text-xs font-bold uppercase tracking-wider text-ink mb-2">
+                尺度縮放因子 (Scaling Factor)：
+              </span>
+              <label class="flex items-center gap-2 cursor-pointer border border-ink/30 bg-surface p-2.5 transition hover:border-ink">
+                <input
+                  id="attention-scale-toggle"
+                  type="checkbox"
+                  checked
+                  class="accent-red cursor-pointer h-4 w-4"
+                />
+                <span class="font-mono text-xs text-ink leading-tight">
+                  除以 √d<sub>k</sub> (d<sub>k</sub>=64, 縮放=8)
+                </span>
+              </label>
+              <p id="attention-scale-warning" class="m-0 mt-1 font-mono text-xs text-muted">
+                維持內積方差為 1，避免 Softmax 梯度消失
+              </p>
+            </div>
+          </div>
+
+          <!-- Token Interaction Strip -->
+          <div class="mt-6 border border-ink bg-paper p-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+              <span class="font-mono text-xs font-bold uppercase tracking-wider text-ink">
+                點擊單詞設定查詢來源 (Query Token)：
+              </span>
+              <span
+                id="attention-current-query-badge"
+                class="font-mono text-xs font-bold text-red bg-red-soft/40 px-2 py-0.5 border border-red/30"
+              >
+                目前 Query: [it] (位置 7)
+              </span>
+            </div>
+            <div
+              id="attention-tokens-container"
+              class="flex flex-wrap gap-2"
+              role="toolbar"
+              aria-label="單詞選擇工具列"
+            ></div>
+          </div>
+
+          <!-- Visualization Switcher & Main Canvas -->
+          <div class="mt-6">
+            <div class="flex items-center justify-between border-b border-line pb-2 mb-4">
+              <div class="flex gap-2" role="tablist" aria-label="視覺化視圖切換">
+                <button
+                  type="button"
+                  class="attention-view-btn border border-ink bg-ink text-surface px-3 py-1 font-mono text-xs font-bold transition cursor-pointer"
+                  data-view="matrix"
+                  role="tab"
+                  aria-selected="true"
+                >
+                  N × N 全景矩陣熱力圖
+                </button>
+                <button
+                  type="button"
+                  class="attention-view-btn border border-ink bg-paper text-ink px-3 py-1 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer"
+                  data-view="arc"
+                  role="tab"
+                  aria-selected="false"
+                >
+                  詞間動態弧線圖 (Arc Flow)
+                </button>
+                <button
+                  type="button"
+                  class="attention-view-btn border border-ink bg-paper text-ink px-3 py-1 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer"
+                  data-view="bars"
+                  role="tab"
+                  aria-selected="false"
+                >
+                  單詞長條分佈圖
+                </button>
+              </div>
+              <span class="hidden sm:inline font-mono text-xs text-muted">
+                點選或懸停格子即時鎖定算式
+              </span>
+            </div>
+
+            <!-- View Container 1: N x N Matrix Heatmap -->
+            <div id="attention-view-matrix" class="block">
+              <div class="overflow-x-auto border border-ink bg-surface p-4 sm:p-6">
+                <div class="min-w-[500px]">
+                  <div class="mb-3 flex items-center justify-between font-mono text-xs text-muted">
+                    <span>橫軸：Key (被關注詞) →</span>
+                    <span>縱軸：Query (主動查詢詞) ↓</span>
+                  </div>
+                  <div id="attention-matrix-grid" class="inline-block border border-line"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- View Container 2: Dynamic Arc Flow (SVG) -->
+            <div id="attention-view-arc" class="hidden">
+              <div class="border border-ink bg-surface p-4 sm:p-6 overflow-x-auto">
+                <div class="min-w-[640px]">
+                  <p class="font-mono text-xs text-muted mb-2">
+                    動態流線顯示目前 Query 詞向全句各 Key 詞投射的注意力權重（線條粗細與透明度隨
+                    Softmax α 動態縮放）：
+                  </p>
+                  <svg
+                    id="attention-arc-svg"
+                    class="w-full h-64 bg-paper-deep/30 border border-line"
+                    viewBox="0 0 800 240"
+                    preserveAspectRatio="xMidYMid meet"
+                  ></svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- View Container 3: Bar Distribution -->
+            <div id="attention-view-bars" class="hidden">
+              <div class="border border-ink bg-paper p-5 sm:p-6">
+                <div class="flex items-center justify-between mb-4 border-b border-line pb-3">
+                  <span class="font-mono text-xs font-bold uppercase text-ink">
+                    各詞獲得之注意力分佈權重 (Softmax α)
+                  </span>
+                  <span
+                    id="attention-bars-query-badge"
+                    class="font-mono text-xs text-red font-semibold"
+                  >
+                    Query: it
+                  </span>
+                </div>
+                <div id="attention-bars-container" class="space-y-2.5"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Step-by-Step Tensor Inspector Card -->
+          <div class="mt-6 border border-ink bg-paper-deep/70 p-5 sm:p-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-line pb-4 gap-2">
+              <div>
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-red">
+                  MATHEMATICAL TENSOR INSPECTOR / 即時張量算式檢視
                 </span>
                 <h4
-                  id="attention-mechanics-title"
-                  class="mt-1 m-0 font-display text-xl font-bold text-ink"
+                  id="attention-inspector-title"
+                  class="m-0 mt-1 font-display text-lg sm:text-xl font-bold text-ink"
                 >
-                  內積如何引導語意跳躍？
+                  正在檢驗：Query(it) 與 Key(animal) 之配對運算
                 </h4>
               </div>
+              <span
+                id="attention-inspector-score-pill"
+                class="font-mono text-xs font-bold bg-ink text-surface px-3 py-1"
+              >
+                Softmax 權重 α = 84.2%
+              </span>
+            </div>
 
-              <div id="attention-mechanics-desc" class="text-sm leading-relaxed text-muted"></div>
-
-              <div class="border-t border-line pt-4">
-                <p class="m-0 font-mono text-xs font-bold text-ink mb-2">數學幾何本質：</p>
-                <div class="bg-paper-deep p-3 border border-ink/20 font-mono text-xs text-ink space-y-1">
-                  <div>
-                    Score(q, k) = (q · kᵀ) ÷ √d<sub>k</sub>
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <!-- Step 1: Dot Product -->
+              <div class="border border-ink/30 bg-surface p-4 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="font-mono text-xs font-bold text-ink">步驟 1：向量內積</span>
+                    <span class="font-mono text-xs text-muted">q · kᵀ</span>
                   </div>
-                  <div>Weight α = softmax(Scores)</div>
+                  <p class="font-mono text-xs text-muted leading-relaxed">
+                    Query 與 Key 投影向量之點積，衡量兩者語意方向的重合度。
+                  </p>
                 </div>
-                <p class="mt-3 mb-0 text-sm text-muted leading-relaxed">
-                  模型內部沒有預設任何硬編碼的語法樹規則，而是透過反向傳播訓練，使具備相容屬性的
-                  Query 與 Key 向量在高維空間中內積較大，自然重構出注意力分配。
+                <div class="mt-4 bg-paper-deep p-2.5 border border-line font-mono text-xs">
+                  <div class="text-muted font-mono text-xs">原始點積分數 (Score)：</div>
+                  <div id="attention-calc-dot" class="text-ink font-bold text-sm mt-1">
+                    42.80
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 2: Dimension Scaling -->
+              <div class="border border-ink/30 bg-surface p-4 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="font-mono text-xs font-bold text-ink">步驟 2：尺度縮放</span>
+                    <span class="font-mono text-xs text-muted">
+                      ÷ √d<sub>k</sub>
+                    </span>
+                  </div>
+                  <p class="font-mono text-xs text-muted leading-relaxed">
+                    除以維度平方根（√64=8），避免數值過大推向 Softmax 梯度飽和微弱區。
+                  </p>
+                </div>
+                <div class="mt-4 bg-paper-deep p-2.5 border border-line font-mono text-xs">
+                  <div class="text-muted font-mono text-xs">縮放後數值 (Scaled)：</div>
+                  <div id="attention-calc-scaled" class="text-ink font-bold text-sm mt-1">
+                    5.35
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 3: Temperature Scaling -->
+              <div class="border border-ink/30 bg-surface p-4 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="font-mono text-xs font-bold text-ink">步驟 3：溫度調整</span>
+                    <span class="font-mono text-xs text-muted">z = s / τ</span>
+                  </div>
+                  <p class="font-mono text-xs text-muted leading-relaxed">
+                    透過溫度參數 τ 調控機率分佈平滑度：低溫尖銳聚光，高溫均勻發散。
+                  </p>
+                </div>
+                <div class="mt-4 bg-paper-deep p-2.5 border border-line font-mono text-xs">
+                  <div class="text-muted font-mono text-xs">指數前數值 (Logit z)：</div>
+                  <div id="attention-calc-temp" class="text-ink font-bold text-sm mt-1">
+                    5.35
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 4: Softmax Normalization -->
+              <div class="border border-ink/30 bg-surface p-4 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="font-mono text-xs font-bold text-ink">步驟 4：Softmax 歸一</span>
+                    <span class="font-mono text-xs text-muted">eᶻ / ∑eᶻ</span>
+                  </div>
+                  <p class="font-mono text-xs text-muted leading-relaxed">
+                    經指數運算轉為機率分佈，全列相加恆等於 1.0 (100%)。
+                  </p>
+                </div>
+                <div class="mt-4 bg-paper-deep p-2.5 border border-line font-mono text-xs">
+                  <div class="text-muted font-mono text-xs">Softmax 權重 (α)：</div>
+                  <div id="attention-calc-softmax" class="text-red font-bold text-sm mt-1">
+                    0.842 (84.2%)
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dynamic Linguistic Explanation -->
+            <div class="mt-6 border-t border-line pt-4 flex flex-col sm:flex-row items-start justify-between gap-4">
+              <div class="flex-1">
+                <span class="font-mono text-xs font-bold text-ink uppercase tracking-wider block mb-1">
+                  語意機制與幾何診斷：
+                </span>
+                <p
+                  id="attention-inspector-narrative"
+                  class="m-0 text-sm leading-relaxed text-muted"
+                >
+                  載入中...
                 </p>
+              </div>
+              <div class="bg-surface border border-ink/20 p-3 font-mono text-xs text-ink min-w-[220px]">
+                <div class="text-muted font-mono text-xs uppercase font-bold mb-1">
+                  公式總結 (VASWANI 2017)
+                </div>
+                <div class="text-red font-semibold">Attention(Q, K, V) =</div>
+                <div>
+                  softmax(Q Kᵀ / √d<sub>k</sub>) V
+                </div>
               </div>
             </div>
           </div>
@@ -2169,11 +2470,15 @@ const timelineEpochs: TimelineEpoch[] = [
           interface ScenarioData {
             tokens: string[];
             defaultQueryIndex: number;
-            weights: Record<number, number[]>;
+            defaultKeyIndex: number;
+            // Base logits for 3 heads: [headIndex][queryIndex][keyIndex]
+            headLogits?: number[][][];
             title: string;
             description: string;
           }
 
+          // Precomputed realistic baseline logit matrices for standard scenarios
+          // Head 0: Coreference / Syntax; Head 1: Local Context; Head 2: Broadcast
           const scenarios: Record<string, ScenarioData> = {
             'winograd-tired': {
               tokens: [
@@ -2189,13 +2494,11 @@ const timelineEpochs: TimelineEpoch[] = [
                 'too',
                 'tired',
               ],
-              defaultQueryIndex: 7,
-              weights: {
-                7: [0.02, 0.84, 0.01, 0.02, 0.01, 0.05, 0.01, 0.02, 0.01, 0.0, 0.01],
-              },
-              title: '代名詞「it」強烈聚焦於「animal」',
+              defaultQueryIndex: 7, // 'it'
+              defaultKeyIndex: 1, // 'animal'
+              title: '代名詞「it」在 tired 語境下強烈聚焦於「animal」',
               description:
-                '當句子結尾是「tired（疲憊）」時，在經過多層注意力交互後，代名詞「it」的 Query 向量融合了後文疲憊的語義特徵。由於動物具備疲勞屬性，Query(it) 與 Key(animal) 算出的向量內積顯著最高，經 Softmax 轉換後產生高達 84% 的壓倒性注意力，成功辨識代名詞所指對象！',
+                '當句子結尾為「tired（疲憊）」時，在經過多層自注意力交互後，代名詞「it」的 Query 向量融合了後文疲憊的語意特徵。由於動物具備疲勞屬性，Query(it) 與 Key(animal) 算出的向量內積顯著最高，經 Softmax 轉換後產生高達 84% 的壓倒性注意力，成功辨識代名詞所指對象！',
             },
             'winograd-wide': {
               tokens: [
@@ -2211,10 +2514,8 @@ const timelineEpochs: TimelineEpoch[] = [
                 'too',
                 'wide',
               ],
-              defaultQueryIndex: 7,
-              weights: {
-                7: [0.01, 0.08, 0.01, 0.02, 0.02, 0.81, 0.01, 0.02, 0.01, 0.0, 0.01],
-              },
+              defaultQueryIndex: 7, // 'it'
+              defaultKeyIndex: 5, // 'street'
               title: '末詞換成 wide，「it」焦點瞬間翻轉至「street」',
               description:
                 '這是注意力機制最精妙之處：整句話僅將最後一個單詞從「tired」替換成「wide」，沒有任何人工語法規則介入。然而街道具有空間寬度屬性，使得「it」的 Query 向量在高維特徵空間中劇烈轉向，與「street」的 Key 內積激增，注意力佔比瞬間從 5% 暴衝至 81%！',
@@ -2232,10 +2533,8 @@ const timelineEpochs: TimelineEpoch[] = [
                 '忘記',
                 '簽名',
               ],
-              defaultQueryIndex: 7,
-              weights: {
-                7: [0.12, 0.01, 0.79, 0.02, 0.02, 0.0, 0.01, 0.01, 0.01, 0.01],
-              },
+              defaultQueryIndex: 7, // '他'
+              defaultKeyIndex: 2, // '受訪者'
               title: '代名詞「他」聚焦於「受訪者」',
               description:
                 '在臺灣學術倫理情境中，「補簽」的受格主體是「受訪者」，且接續動作為「忘記簽名」。陽性代名詞「他」在自注意力層中，與「受訪者」的 Key 產生高達 79% 的關聯權重，正確鎖定需補簽之對象。',
@@ -2254,144 +2553,696 @@ const timelineEpochs: TimelineEpoch[] = [
                 '在',
                 '實驗室',
               ],
-              defaultQueryIndex: 7,
-              weights: {
-                7: [0.04, 0.01, 0.03, 0.02, 0.83, 0.0, 0.01, 0.01, 0.02, 0.01, 0.02],
-              },
+              defaultQueryIndex: 7, // '它'
+              defaultKeyIndex: 4, // '同意書'
               title: '代名詞換成「它」，注意力立刻轉向「同意書」',
               description:
                 '當代名詞由人物的「他」替換為物稱「它」，且後方接續動詞「遺失在實驗室」時，「同意書」作為文件物品，與 Query(它) 向量產生高度共鳴，獲得 83% 的壓倒性注意力！',
             },
           };
 
+          // State
           let currentScenarioKey = 'winograd-tired';
+          let currentTokens: string[] = [...scenarios['winograd-tired'].tokens];
           let currentQueryIndex = 7;
+          let currentKeyIndex = 1;
+          let currentHead = 0; // 0: coreference, 1: local, 2: broadcast
+          let currentTemperature = 1.0;
+          let isScalingEnabled = true;
+          let currentActiveView = 'matrix'; // 'matrix' | 'arc' | 'bars'
 
-          function renderLab() {
-            const scenario = scenarios[currentScenarioKey];
-            if (!scenario) return;
+          // Compute raw synthetic dot-product logits between all token pairs
+          function computeRawLogits(tokens: string[], head: number): number[][] {
+            const n = tokens.length;
+            const matrix: number[][] = [];
 
-            const tokensContainer = document.getElementById('attention-tokens-container');
-            const barsContainer = document.getElementById('attention-bars-container');
-            const queryLabel = document.getElementById('attention-current-query-label');
-            const mechanicsTitle = document.getElementById('attention-mechanics-title');
-            const mechanicsDesc = document.getElementById('attention-mechanics-desc');
+            for (let i = 0; i < n; i++) {
+              const row: number[] = [];
+              for (let j = 0; j < n; j++) {
+                let score: number;
+                const tokenI = tokens[i].toLowerCase();
+                const tokenJ = tokens[j].toLowerCase();
 
-            if (
-              !tokensContainer ||
-              !barsContainer ||
-              !queryLabel ||
-              !mechanicsTitle ||
-              !mechanicsDesc
-            )
-              return;
+                if (head === 0) {
+                  // Head 0: Coreference / Semantic Dependency Head
+                  if (i === j) {
+                    score = 12.0; // self-attention baseline
+                  } else if (
+                    (tokenI === 'it' &&
+                      tokenJ === 'animal' &&
+                      tokens.some((t) => t.toLowerCase().includes('tired'))) ||
+                    (tokenI === 'it' &&
+                      tokenJ === 'street' &&
+                      tokens.some((t) => t.toLowerCase().includes('wide'))) ||
+                    (tokenI === '他' && tokenJ === '受訪者') ||
+                    (tokenI === '它' && tokenJ === '同意書')
+                  ) {
+                    score = 42.8; // dominant coreference resolution
+                  } else if (
+                    (tokenI === 'it' &&
+                      tokenJ === 'street' &&
+                      tokens.some((t) => t.toLowerCase().includes('tired'))) ||
+                    (tokenI === 'it' &&
+                      tokenJ === 'animal' &&
+                      tokens.some((t) => t.toLowerCase().includes('wide')))
+                  ) {
+                    score = 14.5; // suppressed competitor
+                  } else if (Math.abs(i - j) === 1) {
+                    score = 18.0; // immediate syntactic neighbor
+                  } else {
+                    // background semantic noise
+                    const hash = Math.abs(Math.sin(i * 13 + j * 37)) * 10;
+                    score = 6.0 + hash;
+                  }
+                } else if (head === 1) {
+                  // Head 1: Local Context Window Head (Diagonal dominance)
+                  const dist = Math.abs(i - j);
+                  if (dist === 0) score = 38.0;
+                  else if (dist === 1) score = 28.0;
+                  else if (dist === 2) score = 16.0;
+                  else score = Math.max(2.0, 10.0 - dist * 2);
+                } else {
+                  // Head 2: Global Broadcast Head (Uniform / first token anchor)
+                  if (j === 0)
+                    score = 25.0; // sentence start [CLS]/first token anchor
+                  else score = 18.0 + Math.sin(i + j) * 4;
+                }
 
-            // 1. Render Token Buttons
-            tokensContainer.innerHTML = '';
-            scenario.tokens.forEach((token, idx) => {
+                row.push(score);
+              }
+              matrix.push(row);
+            }
+            return matrix;
+          }
+
+          // Convert raw logits into Softmax probability matrix
+          function computeAttentionMatrix(
+            tokens: string[],
+            head: number,
+            temperature: number,
+            scaleEnabled: boolean,
+          ): { rawLogits: number[][]; scaledLogits: number[][]; weights: number[][] } {
+            const rawLogits = computeRawLogits(tokens, head);
+            const n = tokens.length;
+            const scaledLogits: number[][] = [];
+            const weights: number[][] = [];
+            const sqrtDk = scaleEnabled ? Math.sqrt(64) : 1.0; // 8.0 or 1.0
+
+            for (let i = 0; i < n; i++) {
+              const scaledRow: number[] = [];
+              const expRow: number[] = [];
+
+              for (let j = 0; j < n; j++) {
+                // Apply scaling by sqrt(d_k) and temperature tau
+                const s = rawLogits[i][j] / sqrtDk / temperature;
+                scaledRow.push(s);
+                expRow.push(Math.exp(s));
+              }
+
+              const sumExp = expRow.reduce((acc, val) => acc + val, 0);
+              const weightRow = expRow.map((v) => v / (sumExp || 1));
+
+              scaledLogits.push(scaledRow);
+              weights.push(weightRow);
+            }
+
+            return { rawLogits, scaledLogits, weights };
+          }
+
+          // Main render controller
+          function updateSandbox() {
+            const { rawLogits, scaledLogits, weights } = computeAttentionMatrix(
+              currentTokens,
+              currentHead,
+              currentTemperature,
+              isScalingEnabled,
+            );
+
+            // Clamp current indices
+            if (currentQueryIndex >= currentTokens.length) currentQueryIndex = 0;
+            if (currentKeyIndex >= currentTokens.length) currentKeyIndex = 0;
+
+            // 1. Update Token Button Strip
+            renderTokenStrip();
+
+            // 2. Render Views
+            renderMatrixView(weights);
+            renderArcView(weights);
+            renderBarsView(weights);
+
+            // 3. Update Mathematical Inspector
+            renderInspector(rawLogits, scaledLogits, weights);
+          }
+
+          // Render Token Buttons
+          function renderTokenStrip() {
+            const container = document.getElementById('attention-tokens-container');
+            const badge = document.getElementById('attention-current-query-badge');
+            if (!container || !badge) return;
+
+            badge.textContent = `目前 Query: [${currentTokens[currentQueryIndex]}] (位置 ${currentQueryIndex})`;
+
+            container.innerHTML = '';
+            currentTokens.forEach((tok, idx) => {
               const btn = document.createElement('button');
               btn.type = 'button';
               const isSelected = idx === currentQueryIndex;
               btn.className = isSelected
-                ? 'px-3 py-1.5 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer'
-                : 'px-3 py-1.5 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink transition cursor-pointer';
-              btn.textContent = `${idx}: ${token}`;
+                ? 'px-3 py-1.5 font-mono text-xs sm:text-sm font-bold border-2 border-red bg-red text-surface transition cursor-pointer shadow-xs'
+                : 'px-3 py-1.5 font-mono text-xs sm:text-sm font-medium border border-ink/40 bg-surface text-ink hover:border-ink hover:bg-paper transition cursor-pointer';
+              btn.textContent = `${idx}: ${tok}`;
+              btn.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
               btn.addEventListener('click', () => {
                 currentQueryIndex = idx;
-                renderLab();
+                updateSandbox();
               });
-              tokensContainer.appendChild(btn);
+              container.appendChild(btn);
             });
+          }
 
-            // 2. Compute/Retrieve Weights
-            const currentToken = scenario.tokens[currentQueryIndex];
-            queryLabel.textContent = `Query 位置 ${currentQueryIndex}：${currentToken}`;
+          // Render View 1: N x N Matrix Heatmap
+          function renderMatrixView(weights: number[][]) {
+            const gridContainer = document.getElementById('attention-matrix-grid');
+            if (!gridContainer) return;
 
-            let weightList = scenario.weights[currentQueryIndex];
-            if (!weightList) {
-              // Fallback synthetic weights for other tokens (attending self + adjacent)
-              weightList = scenario.tokens.map((_, idx) => {
-                if (idx === currentQueryIndex) return 0.45;
-                if (Math.abs(idx - currentQueryIndex) === 1) return 0.2;
-                return 0.15 / (scenario.tokens.length - 3);
+            const n = currentTokens.length;
+            gridContainer.innerHTML = '';
+
+            // Outer wrapper grid
+            const table = document.createElement('table');
+            table.className = 'border-collapse text-center font-mono text-xs select-none';
+
+            // Table Header: Columns (Keys)
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+
+            // Top-left corner cell
+            const cornerTh = document.createElement('th');
+            cornerTh.className =
+              'p-2 border border-line bg-paper-deep text-muted font-normal font-mono text-xs';
+            cornerTh.textContent = 'Q \\ K';
+            headerRow.appendChild(cornerTh);
+
+            currentTokens.forEach((tok, j) => {
+              const th = document.createElement('th');
+              const isSelectedKey = j === currentKeyIndex;
+              th.className = isSelectedKey
+                ? 'p-2 border border-line bg-red text-surface font-bold text-xs truncate max-w-[80px]'
+                : 'p-2 border border-line bg-paper-deep text-ink font-semibold text-xs truncate max-w-[80px]';
+              th.title = `Key ${j}: ${tok}`;
+              th.textContent = tok;
+              th.addEventListener('click', () => {
+                currentKeyIndex = j;
+                updateSandbox();
               });
+              headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            // Table Body: Rows (Queries)
+            const tbody = document.createElement('tbody');
+            for (let i = 0; i < n; i++) {
+              const tr = document.createElement('tr');
+              const isSelectedQuery = i === currentQueryIndex;
+
+              // Row Header (Query Token)
+              const rowTh = document.createElement('th');
+              rowTh.className = isSelectedQuery
+                ? 'p-2 border border-line bg-red text-surface font-bold text-xs text-left truncate max-w-[80px]'
+                : 'p-2 border border-line bg-paper-deep text-ink font-semibold text-xs text-left truncate max-w-[80px]';
+              rowTh.title = `Query ${i}: ${currentTokens[i]}`;
+              rowTh.textContent = `${i}:${currentTokens[i]}`;
+              rowTh.addEventListener('click', () => {
+                currentQueryIndex = i;
+                updateSandbox();
+              });
+              tr.appendChild(rowTh);
+
+              // Cells
+              for (let j = 0; j < n; j++) {
+                const td = document.createElement('td');
+                const w = weights[i][j];
+                const pct = (w * 100).toFixed(1);
+                const isSelectedCell = i === currentQueryIndex && j === currentKeyIndex;
+                const isCurrentRow = i === currentQueryIndex;
+
+                // Color calculation: interpolate based on weight
+                // Higher weight -> vibrant red/ink
+                let bgStyle: string;
+                let textClass: string;
+
+                if (w > 0.4) {
+                  bgStyle = `background-color: rgba(182, 65, 44, ${Math.min(1.0, 0.3 + w * 0.7)});`;
+                  textClass = 'text-surface font-bold';
+                } else if (w > 0.15) {
+                  bgStyle = `background-color: rgba(182, 65, 44, ${w * 0.75});`;
+                  textClass = 'text-ink font-semibold';
+                } else {
+                  bgStyle = `background-color: rgba(53, 91, 112, ${Math.max(0.04, w * 0.5)});`;
+                  textClass = 'text-muted';
+                }
+
+                if (isSelectedCell) {
+                  td.className = `p-2 border-2 border-red cursor-pointer transition-all duration-150 ${textClass} scale-105 z-10 relative font-bold shadow-sm`;
+                } else if (isCurrentRow) {
+                  td.className = `p-2 border border-ink/40 cursor-pointer hover:border-red transition-all duration-150 ${textClass}`;
+                } else {
+                  td.className = `p-2 border border-line cursor-pointer hover:border-ink/60 transition-all duration-150 ${textClass}`;
+                }
+
+                td.style.cssText = bgStyle;
+                td.textContent = `${pct}%`;
+                td.title = `Query [${currentTokens[i]}] -> Key [${currentTokens[j]}]: ${pct}%`;
+
+                // Hover & click events
+                td.addEventListener('mouseenter', () => {
+                  currentQueryIndex = i;
+                  currentKeyIndex = j;
+                  renderInspector(
+                    computeRawLogits(currentTokens, currentHead),
+                    computeAttentionMatrix(
+                      currentTokens,
+                      currentHead,
+                      currentTemperature,
+                      isScalingEnabled,
+                    ).scaledLogits,
+                    weights,
+                  );
+                  renderTokenStrip();
+                });
+
+                td.addEventListener('click', () => {
+                  currentQueryIndex = i;
+                  currentKeyIndex = j;
+                  updateSandbox();
+                });
+
+                tr.appendChild(td);
+              }
+              tbody.appendChild(tr);
+            }
+            table.appendChild(tbody);
+            gridContainer.appendChild(table);
+          }
+
+          // Render View 2: Dynamic Arc Flow (SVG)
+          function renderArcView(weights: number[][]) {
+            const svg = document.getElementById('attention-arc-svg');
+            if (!svg) return;
+
+            svg.innerHTML = '';
+            const n = currentTokens.length;
+            const width = 800;
+            const padding = 50;
+            const stepX = (width - padding * 2) / Math.max(1, n - 1);
+
+            const queryY = 40;
+            const keyY = 200;
+
+            const activeRowWeights = weights[currentQueryIndex] || [];
+
+            // Draw connecting arcs from currentQueryIndex to all keys
+            const qX = padding + currentQueryIndex * stepX;
+
+            // Draw all arcs
+            for (let j = 0; j < n; j++) {
+              const kX = padding + j * stepX;
+              const w = activeRowWeights[j] || 0;
+              const isSelectedKey = j === currentKeyIndex;
+
+              // Cubic or Quadratic Bezier control point
+              const midY = (queryY + keyY) / 2 + (j === currentQueryIndex ? -30 : 0);
+              const pathD = `M ${qX} ${queryY + 12} Q ${(qX + kX) / 2} ${midY} ${kX} ${keyY - 12}`;
+
+              const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+              path.setAttribute('d', pathD);
+              path.setAttribute('fill', 'none');
+
+              // Stroke width and opacity proportional to attention weight
+              const strokeWidth = Math.max(1, w * 12);
+              const opacity = isSelectedKey ? 1.0 : Math.max(0.15, w * 1.1);
+              const strokeColor = isSelectedKey ? '#b6412c' : w > 0.3 ? '#b6412c' : '#355b70';
+
+              path.setAttribute('stroke', strokeColor);
+              path.setAttribute('stroke-width', strokeWidth.toString());
+              path.setAttribute('stroke-opacity', opacity.toString());
+              path.style.cursor = 'pointer';
+
+              path.addEventListener('click', () => {
+                currentKeyIndex = j;
+                updateSandbox();
+              });
+
+              svg.appendChild(path);
             }
 
-            // 3. Render Attention Weight Bars
-            barsContainer.innerHTML = '';
-            const maxWeight = Math.max(...weightList);
+            // Draw Token Nodes (Top: Queries, Bottom: Keys)
+            currentTokens.forEach((tok, idx) => {
+              const x = padding + idx * stepX;
 
-            scenario.tokens.forEach((token, idx) => {
-              const w = weightList[idx];
-              const pct = Math.round(w * 100);
-              const isTop = w === maxWeight && w > 0.3;
+              // Top node (Query)
+              const qCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+              qCircle.setAttribute('cx', x.toString());
+              qCircle.setAttribute('cy', queryY.toString());
+              qCircle.setAttribute('r', idx === currentQueryIndex ? '10' : '6');
+              qCircle.setAttribute('fill', idx === currentQueryIndex ? '#b6412c' : '#1e2224');
+              qCircle.style.cursor = 'pointer';
+              qCircle.addEventListener('click', () => {
+                currentQueryIndex = idx;
+                updateSandbox();
+              });
+              svg.appendChild(qCircle);
+
+              // Top text
+              const qText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+              qText.setAttribute('x', x.toString());
+              qText.setAttribute('y', (queryY - 15).toString());
+              qText.setAttribute('text-anchor', 'middle');
+              qText.setAttribute('font-family', 'monospace');
+              qText.setAttribute('font-size', '11');
+              qText.setAttribute('font-weight', idx === currentQueryIndex ? 'bold' : 'normal');
+              qText.setAttribute('fill', idx === currentQueryIndex ? '#b6412c' : '#1e2224');
+              qText.textContent = tok;
+              svg.appendChild(qText);
+
+              // Bottom node (Key)
+              const kCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+              kCircle.setAttribute('cx', x.toString());
+              kCircle.setAttribute('cy', keyY.toString());
+              kCircle.setAttribute('r', idx === currentKeyIndex ? '10' : '6');
+              kCircle.setAttribute('fill', idx === currentKeyIndex ? '#b6412c' : '#355b70');
+              kCircle.style.cursor = 'pointer';
+              kCircle.addEventListener('click', () => {
+                currentKeyIndex = idx;
+                updateSandbox();
+              });
+              svg.appendChild(kCircle);
+
+              // Bottom text
+              const kText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+              kText.setAttribute('x', x.toString());
+              kText.setAttribute('y', (keyY + 22).toString());
+              kText.setAttribute('text-anchor', 'middle');
+              kText.setAttribute('font-family', 'monospace');
+              kText.setAttribute('font-size', '11');
+              kText.setAttribute('font-weight', idx === currentKeyIndex ? 'bold' : 'normal');
+              kText.setAttribute('fill', idx === currentKeyIndex ? '#b6412c' : '#355b70');
+              kText.textContent = tok;
+              svg.appendChild(kText);
+            });
+          }
+
+          // Render View 3: Bars
+          function renderBarsView(weights: number[][]) {
+            const container = document.getElementById('attention-bars-container');
+            const queryBadge = document.getElementById('attention-bars-query-badge');
+            if (!container || !queryBadge) return;
+
+            const activeWeights = weights[currentQueryIndex] || [];
+            queryBadge.textContent = `Query: ${currentTokens[currentQueryIndex]} (位置 ${currentQueryIndex})`;
+            container.innerHTML = '';
+
+            const maxW = Math.max(...activeWeights);
+
+            currentTokens.forEach((tok, idx) => {
+              const w = activeWeights[idx] || 0;
+              const pct = (w * 100).toFixed(1);
+              const isTop = w === maxW && w > 0.25;
+              const isSelectedKey = idx === currentKeyIndex;
 
               const row = document.createElement('div');
               row.className =
-                'grid grid-cols-[5rem_1fr_3.5rem] sm:grid-cols-[6rem_1fr_4rem] items-center gap-3 text-xs';
+                'grid grid-cols-[6rem_1fr_4rem] items-center gap-3 text-xs p-1.5 border transition cursor-pointer ' +
+                (isSelectedKey
+                  ? 'border-red bg-surface shadow-xs'
+                  : 'border-transparent hover:border-line hover:bg-surface/60');
 
-              const tokenLabel = document.createElement('div');
-              tokenLabel.className = isTop
-                ? 'font-mono font-bold text-red truncate'
-                : 'font-mono text-ink truncate';
-              tokenLabel.textContent = `${token}`;
+              row.addEventListener('click', () => {
+                currentKeyIndex = idx;
+                updateSandbox();
+              });
+
+              const label = document.createElement('div');
+              label.className =
+                isTop || isSelectedKey
+                  ? 'font-mono font-bold text-red truncate'
+                  : 'font-mono text-ink truncate';
+              label.textContent = `${idx}: ${tok}`;
 
               const barTrack = document.createElement('div');
               barTrack.className =
-                'h-5 w-full bg-surface border border-line relative overflow-hidden';
+                'h-5 w-full bg-paper-deep border border-line relative overflow-hidden';
 
               const barFill = document.createElement('div');
-              barFill.className = isTop
-                ? 'h-full bg-red transition-all duration-300'
-                : 'h-full bg-blue/70 transition-all duration-300';
+              barFill.className =
+                isTop || isSelectedKey
+                  ? 'h-full bg-red transition-all duration-300'
+                  : 'h-full bg-blue/70 transition-all duration-300';
               barFill.style.width = `${pct}%`;
               barTrack.appendChild(barFill);
 
               const pctLabel = document.createElement('div');
-              pctLabel.className = isTop
-                ? 'font-mono font-bold text-red text-right'
-                : 'font-mono text-muted text-right';
+              pctLabel.className =
+                isTop || isSelectedKey
+                  ? 'font-mono font-bold text-red text-right'
+                  : 'font-mono text-muted text-right';
               pctLabel.textContent = `${pct}%`;
 
-              row.appendChild(tokenLabel);
+              row.appendChild(label);
               row.appendChild(barTrack);
               row.appendChild(pctLabel);
-              barsContainer.appendChild(row);
+              container.appendChild(row);
             });
-
-            // 4. Update Explanation
-            if (currentQueryIndex === scenario.defaultQueryIndex) {
-              mechanicsTitle.textContent = scenario.title;
-              mechanicsDesc.innerHTML = `<p class="m-0">${scenario.description}</p>`;
-            } else {
-              mechanicsTitle.textContent = `目前檢視：token「${currentToken}」之注意力`;
-              mechanicsDesc.innerHTML = `<p class="m-0">模型正在將第 ${currentQueryIndex} 格「${currentToken}」作為 Query，與全句各詞的 Key 向量進行點積比對。若要體驗最經典的指代消歧語意擾動，請點擊上方代名詞「${scenario.tokens[scenario.defaultQueryIndex]}」。</p>`;
-            }
           }
 
-          // Initialize tabs
-          document.querySelectorAll<HTMLButtonElement>('.attention-scenario-btn').forEach((btn) => {
-            btn.addEventListener('click', () => {
-              document.querySelectorAll('.attention-scenario-btn').forEach((b) => {
-                b.setAttribute('aria-selected', 'false');
-                b.className =
-                  'attention-scenario-btn border border-ink bg-paper text-ink px-4 py-2 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer';
-              });
-              btn.setAttribute('aria-selected', 'true');
-              btn.className =
-                'attention-scenario-btn border border-ink bg-ink text-surface px-4 py-2 font-mono text-xs font-bold transition hover:opacity-90 cursor-pointer';
+          // Render Step-by-Step Mathematical Inspector Card
+          function renderInspector(
+            rawLogits: number[][],
+            scaledLogits: number[][],
+            weights: number[][],
+          ) {
+            const title = document.getElementById('attention-inspector-title');
+            const scorePill = document.getElementById('attention-inspector-score-pill');
+            const dotEl = document.getElementById('attention-calc-dot');
+            const scaledEl = document.getElementById('attention-calc-scaled');
+            const tempEl = document.getElementById('attention-calc-temp');
+            const softmaxEl = document.getElementById('attention-calc-softmax');
+            const narrativeEl = document.getElementById('attention-inspector-narrative');
 
-              const s = btn.dataset.scenario;
-              if (s && scenarios[s]) {
-                currentScenarioKey = s;
-                currentQueryIndex = scenarios[s].defaultQueryIndex;
-                renderLab();
+            if (
+              !title ||
+              !scorePill ||
+              !dotEl ||
+              !scaledEl ||
+              !tempEl ||
+              !softmaxEl ||
+              !narrativeEl
+            )
+              return;
+
+            const qTok = currentTokens[currentQueryIndex] || '';
+            const kTok = currentTokens[currentKeyIndex] || '';
+            const rawScore = rawLogits[currentQueryIndex]?.[currentKeyIndex] || 0;
+            const scaledScore = scaledLogits[currentQueryIndex]?.[currentKeyIndex] || 0;
+            const logitZ = scaledScore / currentTemperature;
+            const alpha = weights[currentQueryIndex]?.[currentKeyIndex] || 0;
+            const pct = (alpha * 100).toFixed(1);
+
+            title.textContent = `正在檢驗：Query「${qTok}」(位置 ${currentQueryIndex}) 與 Key「${kTok}」(位置 ${currentKeyIndex}) 之張量運算`;
+            scorePill.textContent = `Softmax 權重 α = ${pct}%`;
+
+            dotEl.textContent = rawScore.toFixed(2);
+            scaledEl.textContent = isScalingEnabled
+              ? `${scaledScore.toFixed(2)} (除以 8)`
+              : `${scaledScore.toFixed(2)} (未縮放)`;
+            tempEl.textContent = `${logitZ.toFixed(2)} (τ=${currentTemperature.toFixed(1)})`;
+            softmaxEl.textContent = `${alpha.toFixed(3)} (${pct}%)`;
+
+            // Dynamic Linguistic Diagnosis Narrative
+            let diagnosis: string;
+            if (
+              scenarios[currentScenarioKey] &&
+              currentTokens.length === scenarios[currentScenarioKey].tokens.length
+            ) {
+              if (
+                currentQueryIndex === scenarios[currentScenarioKey].defaultQueryIndex &&
+                currentKeyIndex === scenarios[currentScenarioKey].defaultKeyIndex
+              ) {
+                diagnosis = scenarios[currentScenarioKey].description;
+              } else if (currentQueryIndex === scenarios[currentScenarioKey].defaultQueryIndex) {
+                diagnosis = `此配對非主導關聯。模型正在衡量代名詞「${qTok}」與非目標詞「${kTok}」的相容性。由於兩者在高維語意空間中特徵不匹配，內積僅得 ${rawScore.toFixed(1)}，經 Softmax 後僅分配到 ${pct}% 之邊際權重。`;
+              } else {
+                diagnosis = `正在檢視自注意力矩陣中任意兩詞「${qTok}」與「${kTok}」的關聯。注意當溫度係數 τ 降低時，高分詞彙將迅速吞噬其餘詞彙之機率；若取消 √d<sub>k</sub> 縮放，分數差距會被劇烈放大，導致梯度飽和。`;
               }
-            });
-          });
+            } else {
+              diagnosis = `自訂語句分析中：第 ${currentQueryIndex} 格「${qTok}」作為 Query，與第 ${currentKeyIndex} 格「${kTok}」之 Key 向量進行縮放點積比對。在此組參數設定下，該詞對獲得 ${pct}% 的注意力流通權重。`;
+            }
 
-          // Initial render
-          renderLab();
+            if (!isScalingEnabled) {
+              diagnosis +=
+                ' <span class="text-red font-semibold">【警告：已停用 √d<sub>k</sub> 縮放】點積未受方差抑制，數值過大使得 Softmax 進入極度尖銳的梯度飽和區，極端壓抑其他詞彙的學習梯度！</span>';
+            }
+
+            narrativeEl.innerHTML = diagnosis;
+          }
+
+          // Setup Event Listeners
+          function setupLabListeners() {
+            // Scenario switcher
+            document
+              .querySelectorAll<HTMLButtonElement>('.attention-scenario-btn')
+              .forEach((btn) => {
+                btn.addEventListener('click', () => {
+                  document.querySelectorAll('.attention-scenario-btn').forEach((b) => {
+                    b.setAttribute('aria-selected', 'false');
+                    b.className =
+                      'attention-scenario-btn border border-ink bg-paper text-ink px-3 py-1.5 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer';
+                  });
+                  btn.setAttribute('aria-selected', 'true');
+                  btn.className =
+                    'attention-scenario-btn border border-ink bg-ink text-surface px-3 py-1.5 font-mono text-xs font-bold transition hover:opacity-90 cursor-pointer';
+
+                  const key = btn.dataset.scenario;
+                  if (key && scenarios[key]) {
+                    currentScenarioKey = key;
+                    currentTokens = [...scenarios[key].tokens];
+                    currentQueryIndex = scenarios[key].defaultQueryIndex;
+                    currentKeyIndex = scenarios[key].defaultKeyIndex;
+                    updateSandbox();
+                  }
+                });
+              });
+
+            // Head switcher
+            document.querySelectorAll<HTMLButtonElement>('.attention-head-btn').forEach((btn) => {
+              btn.addEventListener('click', () => {
+                document.querySelectorAll('.attention-head-btn').forEach((b) => {
+                  b.setAttribute('aria-pressed', 'false');
+                  b.className =
+                    'attention-head-btn border border-ink bg-surface text-ink py-1.5 px-2 font-mono text-xs font-semibold text-center cursor-pointer transition hover:bg-paper';
+                });
+                btn.setAttribute('aria-pressed', 'true');
+                btn.className =
+                  'attention-head-btn border border-ink bg-ink text-surface py-1.5 px-2 font-mono text-xs font-semibold text-center cursor-pointer transition';
+
+                currentHead = parseInt(btn.dataset.head || '0', 10);
+                updateSandbox();
+              });
+            });
+
+            // Temperature Slider
+            const tempSlider = document.getElementById(
+              'attention-temperature-slider',
+            ) as HTMLInputElement | null;
+            const tempVal = document.getElementById('attention-temp-val');
+            const tempStatus = document.getElementById('attention-temp-status');
+            if (tempSlider && tempVal && tempStatus) {
+              tempSlider.addEventListener('input', () => {
+                currentTemperature = parseFloat(tempSlider.value);
+                tempVal.textContent = currentTemperature.toFixed(1);
+                if (currentTemperature < 0.6) {
+                  tempStatus.textContent = '極度尖銳 (Argmax 聚光)';
+                  tempStatus.className = 'font-mono text-xs text-red font-bold';
+                } else if (currentTemperature > 1.8) {
+                  tempStatus.textContent = '平坦模糊 (均勻分佈)';
+                  tempStatus.className = 'font-mono text-xs text-blue font-bold';
+                } else {
+                  tempStatus.textContent = '標準平滑';
+                  tempStatus.className = 'font-mono text-xs text-muted';
+                }
+                updateSandbox();
+              });
+            }
+
+            // Scaling Toggle
+            const scaleToggle = document.getElementById(
+              'attention-scale-toggle',
+            ) as HTMLInputElement | null;
+            const scaleWarn = document.getElementById('attention-scale-warning');
+            if (scaleToggle && scaleWarn) {
+              scaleToggle.addEventListener('change', () => {
+                isScalingEnabled = scaleToggle.checked;
+                if (isScalingEnabled) {
+                  scaleWarn.textContent = '維持內積方差為 1，避免 Softmax 梯度消失';
+                  scaleWarn.className = 'm-0 mt-1 font-mono text-xs text-muted';
+                } else {
+                  scaleWarn.textContent = '未縮放：點積數值過大，導致 Softmax 梯度飽和！';
+                  scaleWarn.className = 'm-0 mt-1 font-mono text-xs text-red font-bold';
+                }
+                updateSandbox();
+              });
+            }
+
+            // Custom Sentence Form
+            const customForm = document.getElementById('attention-custom-form');
+            const customInput = document.getElementById(
+              'attention-custom-input',
+            ) as HTMLInputElement | null;
+            if (customForm && customInput) {
+              customForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const raw = customInput.value.trim();
+                if (!raw) return;
+
+                // Split by spaces or characters if CJK
+                let tokens: string[];
+                if (raw.includes(' ')) {
+                  tokens = raw.split(/\s+/).filter(Boolean);
+                } else {
+                  // Segment into 2-char chunks or chars
+                  tokens = Array.from(raw).slice(0, 12);
+                }
+
+                if (tokens.length > 0) {
+                  currentTokens = tokens.slice(0, 14); // Limit to 14 tokens for layout clarity
+                  currentScenarioKey = 'custom';
+                  currentQueryIndex = 0;
+                  currentKeyIndex = Math.min(1, currentTokens.length - 1);
+
+                  // Deselect preset tabs
+                  document.querySelectorAll('.attention-scenario-btn').forEach((b) => {
+                    b.setAttribute('aria-selected', 'false');
+                    b.className =
+                      'attention-scenario-btn border border-ink bg-paper text-ink px-3 py-1.5 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer';
+                  });
+
+                  updateSandbox();
+                }
+              });
+            }
+
+            // View Switcher (Matrix / Arc / Bars)
+            document.querySelectorAll<HTMLButtonElement>('.attention-view-btn').forEach((btn) => {
+              btn.addEventListener('click', () => {
+                document.querySelectorAll('.attention-view-btn').forEach((b) => {
+                  b.setAttribute('aria-selected', 'false');
+                  b.className =
+                    'attention-view-btn border border-ink bg-paper text-ink px-3 py-1 font-mono text-xs font-bold transition hover:bg-paper-deep cursor-pointer';
+                });
+                btn.setAttribute('aria-selected', 'true');
+                btn.className =
+                  'attention-view-btn border border-ink bg-ink text-surface px-3 py-1 font-mono text-xs font-bold transition cursor-pointer';
+
+                currentActiveView = btn.dataset.view || 'matrix';
+                const matrixView = document.getElementById('attention-view-matrix');
+                const arcView = document.getElementById('attention-view-arc');
+                const barsView = document.getElementById('attention-view-bars');
+
+                if (matrixView)
+                  matrixView.className = currentActiveView === 'matrix' ? 'block' : 'hidden';
+                if (arcView) arcView.className = currentActiveView === 'arc' ? 'block' : 'hidden';
+                if (barsView)
+                  barsView.className = currentActiveView === 'bars' ? 'block' : 'hidden';
+
+                updateSandbox();
+              });
+            });
+          }
+
+          // Initialize on mount
+          setupLabListeners();
+          updateSandbox();
         </script>
       </div>
     </section>
@@ -2429,7 +3280,7 @@ const timelineEpochs: TimelineEpoch[] = [
               <p class="m-0 font-mono text-sm font-semibold uppercase tracking-[0.12em] text-red">
                 編碼器 / ENCODER
               </p>
-              <span class="font-mono text-xs text-muted">雙向全局視野</span>
+              <span class="font-mono text-xs text-muted">雙向全域視野</span>
             </div>
             <div class="border border-ink bg-paper-deep p-4 text-center font-display text-base sm:text-lg">
               輸入 token
@@ -2588,7 +3439,7 @@ const timelineEpochs: TimelineEpoch[] = [
                   <code class="text-xs">
                     W₁ ∈ ℝ<sup>512 × 2048</sup>
                   </code>{' '}
-                  將維度放大 4 倍，經 ReLU 激活後，再由{' '}
+                  將維度放大 4 倍，經 ReLU 活化後，再由{' '}
                   <code class="text-xs">
                     W₂ ∈ ℝ<sup>2048 × 512</sup>
                   </code>{' '}
@@ -2718,14 +3569,21 @@ const timelineEpochs: TimelineEpoch[] = [
                 為什麼搞懂這四個模組，才讀得懂 GPT 與 BERT？
               </span>
             </div>
-            <p class="text-base sm:text-lg leading-8 text-ink">
+            <p class="text-base leading-8 text-ink">
               2017 年的這篇論文提出了一個完整的「雙塔（Encoder + Decoder）」體系，但在接下來的 12
               個月內，AI 歷史發生了驚人的大分裂：
             </p>
             <div class="mt-6 grid gap-6 md:grid-cols-2">
               <div class="border border-line bg-surface p-5">
                 <h5 class="font-mono text-sm font-bold text-red uppercase tracking-wider mb-2">
-                  下一章：GPT-1（2018 年 6 月）的減法哲學
+                  <a
+                    href={withBase(
+                      '/papers/improving-language-understanding-by-generative-pre-training',
+                    )}
+                    class="text-red hover:underline"
+                  >
+                    GPT-1（2018 年 6 月）的減法哲學 ↗
+                  </a>
                 </h5>
                 <p class="text-sm leading-6 text-muted m-0">
                   OpenAI
@@ -2738,7 +3596,14 @@ const timelineEpochs: TimelineEpoch[] = [
               </div>
               <div class="border border-line bg-surface p-5">
                 <h5 class="font-mono text-sm font-bold text-blue uppercase tracking-wider mb-2">
-                  後續章節：BERT（2018 年 10 月）的反向選擇
+                  <a
+                    href={withBase(
+                      '/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding',
+                    )}
+                    class="text-blue hover:underline"
+                  >
+                    BERT（2018 年 10 月）的反向選擇 ↗
+                  </a>
                 </h5>
                 <p class="text-sm leading-6 text-muted m-0">
                   Google 團隊則認為，遮罩 Attention
@@ -3514,12 +4379,26 @@ const timelineEpochs: TimelineEpoch[] = [
       </div>
     </section>
 
+    <!-- 附錄 02：核心研發團隊檔案 (THE AUTHORS) -->
     <AuthorGrid
       authors={paper.authorBriefs}
-      kicker="作者 / THE AUTHORS"
+      kicker="研發團隊 · 核心檔案 / THE AUTHORS"
       title="八位作者，共同署名一個架構"
       description="原著論文由八位作者共同署名，並明確註明全體貢獻均等；每位作者在架構設計、軟體實作與訓練優化上各有專攻。"
-    />
+    >
+      <div class="mb-12 max-w-4xl space-y-6 text-base leading-8 text-ink">
+        <p>
+          2017 年誕生於 Google Brain 與 Google Research 的 Transformer
+          架構，由八位背景截然不同的研究者在短時間內緊密協同完成。原著論文以星號明確註明「貢獻均等，名單順序為隨機排列」，這在高度講求第一作者署名的學術界中極為罕見，也恰如其分地體現了這個架構的本質——多個獨立視角在同一個空間中的完美交織。
+        </p>
+        <p class="text-muted">
+          從 Ashish Vaswani 與 Noam Shazeer 對無循環平行機制的執著、Niki Parmar 與 Jakob Uszkoreit
+          對長距離上下文比對的原型探索，到 Aidan N. Gomez、Łukasz Kaiser 與 Illia Polosukhin 在
+          Tensor2Tensor 框架下的海量調優，以及 Llion Jones 隨性卻一錘定音的論文命名《Attention Is
+          All You Need》；這八位研究者共同開啟了深度學習最具革命性的一頁。
+        </p>
+      </div>
+    </AuthorGrid>
 
     <PaperNavigation
       currentId="attention-is-all-you-need"
