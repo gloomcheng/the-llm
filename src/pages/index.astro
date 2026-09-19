@@ -160,13 +160,14 @@ const timeline = [
             <div>
               <dt class="font-mono text-xs text-blue uppercase font-bold">歷史問題</dt>
               <dd class="m-0 text-ink">
-                長距語義依賴在時間傳遞中的必然衰減，與現代 GPU 在循序鏈條上的算力停滯。
+                舊方法一次讀一個字，全句記憶擠在同一個向量裡接力傳遞，句子越長，開頭的內容被沖得越淡。同時，一次一字的做法無法平行計算，GPU
+                的算力形同停滯。
               </dd>
             </div>
             <div>
               <dt class="font-mono text-xs text-blue uppercase font-bold">本質突破</dt>
               <dd class="m-0 text-ink">
-                以「空間中的全域幾何注意力（Self-Attention）」取代「時間中的狀態迭代（Recurrence）」。
+                把整句攤開，每個字直接跟其他所有字計算關聯分數，一次看完全文，以這種全域注意力（Self-Attention）取代一次一字的狀態接力（Recurrence）。
               </dd>
             </div>
             <div>
@@ -178,7 +179,7 @@ const timeline = [
           </dl>
           <div class="mt-6 border-t border-dashed border-line pt-4">
             <p class="m-0 font-mono text-xs leading-6 text-faint">
-              「這篇論文最重要的貢獻不是在指標上多贏幾分，而是徹底改變了思考單位——不再問如何把序列依序帶過去，而是問哪些關係值得直接計算。」
+              「這篇論文最重要的提問轉換，是從如何把字串逐字傳遞，轉向哪些字與字的關係值得直接計算。」
             </p>
           </div>
         </aside>
@@ -219,7 +220,7 @@ const timeline = [
             人類的符號原本是孤立離散的記號。神經網路是如何在高達數千維的幾何空間裡，將世間所有詞彙編織成一張連續的拓撲地圖？當「概念」可以用向量加減運算時，機器究竟是真的理解了意義，還是掌握了語言最精密的投影？
           </p>
         </div>
-        <p class="mt-6 pt-4 border-t border-line font-mono text-xs text-blue m-0">
+        <p class="m-0 min-h-12 border-t border-line pt-4 font-mono text-xs text-blue">
           核心探索：Embedding 與語義流形
         </p>
       </article>
@@ -237,7 +238,7 @@ const timeline = [
             為什麼可以用「空間中所有位置的瞬時共振」，徹底終結了時間上的排隊等待？這項代價昂貴的平方級計算，究竟買到了什麼？
           </p>
         </div>
-        <p class="mt-6 pt-4 border-t border-line font-mono text-xs text-blue m-0">
+        <p class="m-0 min-h-12 border-t border-line pt-4 font-mono text-xs text-blue">
           核心探索：Recurrence 的黃昏與 Self-Attention
         </p>
       </article>
@@ -254,7 +255,7 @@ const timeline = [
             這是當代科學最深邃的謎團之一：當計算資源與數據跨過物理臨界點，單純追求「猜對下一個字」的統計目標，為什麼會突變成看似具備常識、多步推理與抽象反思的能力？量變是如何在神經突觸間引爆質變的？
           </p>
         </div>
-        <p class="mt-6 pt-4 border-t border-line font-mono text-xs text-blue m-0">
+        <p class="m-0 min-h-12 border-t border-line pt-4 font-mono text-xs text-blue">
           核心探索：Scaling Laws 與 In-Context Learning
         </p>
       </article>
@@ -273,7 +274,7 @@ const timeline = [
             的單字，擴散去噪能如畫家打草稿般由粗入細，而原生自回歸又能像修改文本一樣精確抽換畫面的局域？
           </p>
         </div>
-        <p class="mt-6 pt-4 border-t border-line font-mono text-xs text-blue m-0">
+        <p class="m-0 min-h-12 border-t border-line pt-4 font-mono text-xs text-blue">
           核心探索：ViT、擴散去噪與視覺自回歸
         </p>
       </article>
@@ -290,7 +291,7 @@ const timeline = [
             大語言模型是一面無比誠實的巨鏡，它原封不動地映照出人類文明的全部智慧，也映照出我們的深沉偏見、謊言與惡意。在無邊的可能文字生成中，我們如何用強化學習與直接偏好的韁繩，為一個具備超人知識的數學實體錨定良知與真實？
           </p>
         </div>
-        <p class="mt-6 pt-4 border-t border-line font-mono text-xs text-blue m-0">
+        <p class="m-0 min-h-12 border-t border-line pt-4 font-mono text-xs text-blue">
           核心探索：對齊問題、RLHF 與直接偏好優化
         </p>
       </article>

@@ -26,10 +26,24 @@ import Icon from './Icon.astro';
   </button>
 </aside>
 
+<!-- SELECTION ANNOTATION BAR (appears only while text is selected) -->
+<div
+  id="selection-annotate-bar"
+  class="fixed bottom-24 left-1/2 z-40 hidden w-fit -translate-x-1/2"
+>
+  <button
+    id="selection-annotate-btn"
+    type="button"
+    class="inline-flex cursor-pointer items-center gap-2 border-2 border-ink bg-ink px-5 py-2.5 font-mono text-xs font-bold text-surface shadow-editorial transition-colors hover:border-red hover:bg-red"
+  >
+    <span>標註選取段落</span>
+  </button>
+</div>
+
 <!-- INLINE PARAGRAPH POPOVER (DYNAMICALLY POSITIONED) -->
 <div
   id="inline-feedback-popover"
-  class="fixed z-50 hidden w-80 max-w-[calc(100vw-2rem)] border-2 border-ink bg-surface p-4 shadow-editorial transition-opacity"
+  class="fixed inset-x-0 bottom-0 z-50 mx-auto hidden max-h-[85vh] w-full max-w-2xl overflow-y-auto border-2 border-b-0 border-ink bg-surface p-4 sm:p-5 shadow-editorial"
   role="dialog"
   aria-modal="false"
   aria-label="段落共讀註記表單"
@@ -125,12 +139,12 @@ import Icon from './Icon.astro';
 
 <div
   id="feedback-drawer"
-  class="fixed inset-y-0 right-0 z-50 hidden w-full max-w-md border-l-2 border-ink bg-surface shadow-2xl transition-transform"
+  class="fixed inset-x-0 bottom-0 z-50 mx-auto hidden w-full max-w-2xl border-2 border-b-0 border-ink bg-surface shadow-2xl"
   role="dialog"
   aria-modal="true"
   aria-label="共讀訊號抽屜"
 >
-  <div class="flex h-full flex-col justify-between p-6">
+  <div class="flex max-h-[85vh] flex-col justify-between overflow-y-auto p-6">
     <div>
       <!-- Drawer Header -->
       <div class="flex items-start justify-between border-b border-line pb-4 mb-4">
@@ -157,7 +171,7 @@ import Icon from './Icon.astro';
       <!-- Annotation Items Container -->
       <div
         id="annotations-list"
-        class="max-h-[50vh] overflow-y-auto space-y-3 pr-1 divide-y divide-line"
+        class="max-h-[40vh] overflow-y-auto space-y-3 pr-1 divide-y divide-line"
       >
         <!-- Injected dynamically via JS -->
       </div>
@@ -165,13 +179,28 @@ import Icon from './Icon.astro';
       <div id="annotations-empty" class="py-8 text-center border border-dashed border-line">
         <p class="font-mono text-sm text-muted m-0">目前尚無註記</p>
         <p class="text-xs text-muted mt-2 mb-0">
-          在文章任意段落旁點「標註此段」，記下卡點或讀懂的瞬間。
+          在文章中選取一段文字，再點標註選取段落，記下卡點或讀懂的瞬間。
         </p>
       </div>
     </div>
 
     <!-- Drawer Footer Actions -->
     <div class="border-t border-line pt-4 space-y-2">
+      <button
+        id="btn-email-submit"
+        type="button"
+        class="inline-flex w-full items-center justify-center gap-1.5 border-2 border-red bg-red p-2.5 font-mono text-xs font-bold text-white hover:bg-red/90 cursor-pointer disabled:opacity-60 disabled:cursor-wait"
+      >
+        <Icon name="external" class="h-4 w-4" />
+        <span>送出給作者（免登入）</span>
+      </button>
+      <p
+        id="email-submit-status"
+        class="m-0 font-mono text-xs leading-relaxed text-muted"
+        aria-live="polite"
+      >
+        按送出代表同意將引文與卡點寄往作者信箱。
+      </p>
       <div class="grid grid-cols-2 gap-2">
         <button
           id="btn-copy-markdown"
@@ -186,10 +215,10 @@ import Icon from './Icon.astro';
           href="https://github.com/gloomcheng/the-llm/issues/new"
           target="_blank"
           rel="noreferrer"
-          class="inline-flex items-center justify-center gap-1.5 border-2 border-red bg-red p-2.5 font-mono text-xs font-bold text-white hover:bg-red/90 no-underline cursor-pointer"
+          class="inline-flex items-center justify-center gap-1.5 border border-ink bg-surface p-2.5 font-mono text-xs font-bold text-ink hover:border-red hover:text-red no-underline cursor-pointer"
         >
           <Icon name="external" class="h-4 w-4" />
-          <span>送出共讀問題</span>
+          <span>改用 Issue 送出</span>
         </a>
       </div>
       <button
@@ -218,6 +247,10 @@ import Icon from './Icon.astro';
 
   const STORAGE_KEY = 'the-llm-annotations-v1';
 
+  // Contact-form relay: no login, no self-hosted backend.
+  // First submission triggers an activation email to the inbox owner.
+  const FEEDBACK_ENDPOINT = 'https://formsubmit.co/ajax/gloomcheng@gmail.com';
+
   const typeLabels: Record<string, string> = {
     stuck: '卡住：想先補前提',
     derivation: '想看一步計算或例子',
@@ -228,7 +261,7 @@ import Icon from './Icon.astro';
   const typeHints: Record<string, string> = {
     stuck: '建議：記下斷掉的名詞或步驟，存檔後先回讀本章機制段與名詞表，再往下走。',
     derivation: '建議：寫下你想改動的輸入，存檔後去操作本章沙盒，看數字如何跟著動。',
-    clear: '建議：用一句話寫下这一段的結論，存檔後直接進入下一節驗證。',
+    clear: '建議：用一句話寫下這一段的結論，存檔後直接進入下一節驗證。',
     wording: '建議：寫下你覺得更貼切的台灣學術用詞，作者會對照譯名政策處理。',
   };
 
@@ -265,6 +298,8 @@ import Icon from './Icon.astro';
     const listContainer = document.getElementById('annotations-list');
     const emptyState = document.getElementById('annotations-empty');
     const btnCopy = document.getElementById('btn-copy-markdown');
+    const btnEmail = document.getElementById('btn-email-submit') as HTMLButtonElement | null;
+    const emailStatus = document.getElementById('email-submit-status');
     const btnGithub = document.getElementById('btn-github-issue') as HTMLAnchorElement | null;
     const btnClear = document.getElementById('btn-clear-annotations');
 
@@ -279,7 +314,7 @@ import Icon from './Icon.astro';
     ) as HTMLTextAreaElement | null;
     const popoverHint = document.getElementById('popover-hint');
 
-    let activeParagraph: HTMLParagraphElement | null = null;
+    let pendingQuote = '';
     let activeParagraphIndex = -1;
     let lastFocused: HTMLElement | null = null;
 
@@ -408,9 +443,10 @@ import Icon from './Icon.astro';
     // Popover Close
     function closePopover(): void {
       popover?.classList.add('hidden');
-      activeParagraph = null;
+      pendingQuote = '';
       activeParagraphIndex = -1;
       if (popoverNoteInput) popoverNoteInput.value = '';
+      refreshSelectBar();
     }
 
     popoverCloseBtn?.addEventListener('click', closePopover);
@@ -418,14 +454,14 @@ import Icon from './Icon.astro';
 
     // Save Annotation
     popoverSaveBtn?.addEventListener('click', () => {
-      if (!activeParagraph || activeParagraphIndex < 0) return;
+      if (!pendingQuote) return;
 
       const selectedRadio = document.querySelector<HTMLInputElement>(
         'input[name="feedback-type"]:checked',
       );
       const type = (selectedRadio?.value || 'stuck') as Annotation['type'];
       const note = popoverNoteInput?.value.trim() || '';
-      const quote = activeParagraph.textContent?.trim().slice(0, 200) || '';
+      const quote = pendingQuote;
 
       const newAnnotation: Annotation = {
         id: `ann-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
@@ -446,6 +482,56 @@ import Icon from './Icon.astro';
       closePopover();
       refreshUI();
       openDrawer();
+    });
+
+    // Email submit (contact-form relay, one email per page of annotations)
+    btnEmail?.addEventListener('click', async () => {
+      const pageAnnotations = loadAnnotations().filter((a) => a.url === window.location.pathname);
+      if (pageAnnotations.length === 0) {
+        if (emailStatus) emailStatus.textContent = '目前尚無註記可送出，先選取一段文字做註記。';
+        return;
+      }
+      if (!btnEmail || !emailStatus) return;
+      btnEmail.disabled = true;
+      emailStatus.textContent = '傳送中……';
+
+      let body = `共讀訊號（${document.title}）\n`;
+      body += `章節頁面：${window.location.href}\n\n`;
+      pageAnnotations.forEach((a, i) => {
+        body += `--- 註記 #${i + 1}：${a.typeLabel} ---\n`;
+        body += `引文：${a.quote}\n`;
+        if (a.note) body += `補充：${a.note}\n`;
+        const followup = typeFollowups[a.type];
+        if (followup) body += `${followup}\n`;
+        body += `\n`;
+      });
+
+      try {
+        const controller = new AbortController();
+        const timer = window.setTimeout(() => controller.abort(), 15000);
+        const res = await fetch(FEEDBACK_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            _subject: `[共讀訊號] ${document.title.split('—')[0].trim()}（${pageAnnotations.length}則）`,
+            _template: 'table',
+            _captcha: 'false',
+            _honey: '',
+            頁面: window.location.href,
+            註記數: String(pageAnnotations.length),
+            內容: body,
+          }),
+          signal: controller.signal,
+        });
+        window.clearTimeout(timer);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        emailStatus.textContent = `已送出 ${pageAnnotations.length} 則註記到作者信箱，謝謝你的回饋。`;
+      } catch (e) {
+        console.error('Failed to submit feedback:', e);
+        emailStatus.textContent = '傳送失敗，請檢查網路後重試，或改用 Issue 送出。';
+      } finally {
+        btnEmail.disabled = false;
+      }
     });
 
     // Copy Markdown
@@ -477,41 +563,63 @@ import Icon from './Icon.astro';
       }
     });
 
-    // Attach Inline Trigger Buttons to article paragraphs.
-    // Always visible so keyboard and touch readers can discover them;
-    // never hover-only.
-    const paragraphs = document.querySelectorAll<HTMLParagraphElement>('article p');
-    paragraphs.forEach((p, idx) => {
-      const trigger = document.createElement('button');
-      trigger.type = 'button';
-      trigger.className =
-        'feedback-inline-trigger ml-2 inline-flex items-center gap-1 font-mono text-xs text-muted underline underline-offset-4 decoration-line hover:text-red hover:decoration-red focus-visible:text-red cursor-pointer';
-      trigger.setAttribute('aria-label', `標註第 ${idx + 1} 段`);
-      trigger.textContent = '標註此段';
+    // Selection-based annotation trigger.
+    // Nothing is injected into paragraphs: a single docked button appears
+    // only while the reader selects text inside the article.
+    const selectBar = document.getElementById('selection-annotate-bar');
+    const selectBtn = document.getElementById('selection-annotate-btn');
 
-      p.classList.add('group', 'relative');
-      p.appendChild(trigger);
+    function selectionInsideArticle(): { text: string; paragraphIndex: number } | null {
+      const sel = window.getSelection();
+      if (!sel || sel.isCollapsed) return null;
+      const anchor = sel.anchorNode;
+      if (!anchor) return null;
+      const el = anchor instanceof Element ? anchor : anchor.parentElement;
+      if (!el) return null;
+      if (el.closest('#inline-feedback-popover, #feedback-drawer, #selection-annotate-bar')) {
+        return null;
+      }
+      const article = el.closest('article');
+      if (!article) return null;
+      const text = sel.toString().trim().slice(0, 200);
+      if (!text) return null;
+      let paragraphIndex = -1;
+      const hostP = el.closest('p');
+      if (hostP) {
+        paragraphIndex = [...article.querySelectorAll('p')].indexOf(hostP);
+      }
+      return { text, paragraphIndex };
+    }
 
-      trigger.addEventListener('click', (e) => {
-        e.stopPropagation();
-        activeParagraph = p;
-        activeParagraphIndex = idx;
+    function refreshSelectBar(): void {
+      if (!selectBar) return;
+      const popoverOpen = popover && !popover.classList.contains('hidden');
+      if (selectionInsideArticle() && !popoverOpen) {
+        selectBar.classList.remove('hidden');
+      } else {
+        selectBar.classList.add('hidden');
+      }
+    }
 
-        if (popoverQuotePreview) {
-          popoverQuotePreview.textContent = `"${p.textContent?.trim().slice(0, 120)}..."`;
-        }
-        refreshHint();
+    document.addEventListener('selectionchange', () => {
+      requestAnimationFrame(refreshSelectBar);
+    });
 
-        if (popover) {
-          popover.classList.remove('hidden');
-          const rect = trigger.getBoundingClientRect();
-          // Position popover near button or center on mobile
-          const top = Math.min(window.innerHeight - 380, Math.max(20, rect.bottom + 8));
-          const left = Math.min(window.innerWidth - 340, Math.max(16, rect.left - 100));
-          popover.style.top = `${top}px`;
-          popover.style.left = `${left}px`;
-        }
-      });
+    selectBtn?.addEventListener('click', () => {
+      const hit = selectionInsideArticle();
+      if (!hit || !popover) return;
+      pendingQuote = hit.text;
+      activeParagraphIndex = hit.paragraphIndex;
+
+      if (popoverQuotePreview) {
+        popoverQuotePreview.textContent = `"${hit.text.slice(0, 120)}..."`;
+      }
+      refreshHint();
+
+      // Bottom sheet: no viewport math, it docks to the bottom edge.
+      selectBar?.classList.add('hidden');
+      popover.classList.remove('hidden');
+      (popoverCloseBtn as HTMLElement | null)?.focus();
     });
 
     refreshHint();
